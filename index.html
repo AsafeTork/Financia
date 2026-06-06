@@ -400,9 +400,7 @@ const TxView = ({type,tx,products,onAdd,onEdit,onDelete,onDeductStock,brand,toas
   };
   const exportCSV = () => {
     const rows = filtered.map(t=>t.date+',"'+(t.desc||'')+'",'+(t.amount.toFixed(2))+','+(t.method||t.category||''));
-    const csv = 'Data,Descricao,Valor,Tipo
-'+rows.join('
-');
+    const csv = 'Data,Descricao,Valor,Tipo\n'+rows.join('\n');
     const a = document.createElement('a'); a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv); a.download=(isIncome?'vendas':'despesas')+'-'+today()+'.csv'; a.click();
     toast('CSV exportado!');
   };
@@ -694,9 +692,7 @@ const ReportView = ({tx,toast}) => {
   const bycat = filtered.filter(t=>t.type==='expense').reduce((a,t)=>{const k=t.category||'Outro';a[k]=(a[k]||0)+t.amount;return a;},{});
   const exportCSV = () => {
     const rows=filtered.map(t=>t.date+',"'+t.desc+'",'+t.amount.toFixed(2)+','+(t.type==='income'?'Entrada':'Saida')+','+(t.method||t.category||''));
-    const csv='Data,Descricao,Valor,Tipo,Metodo/Cat
-'+rows.join('
-');
+    const csv='Data,Descricao,Valor,Tipo,Metodo/Cat\n'+rows.join('\n');
     const a=document.createElement('a'); a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv); a.download='relatorio-'+month+'.csv'; a.click();
     toast('CSV exportado!');
   };
