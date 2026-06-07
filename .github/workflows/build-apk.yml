@@ -13,51 +13,51 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Java 17
+      - name: Setup Java 11
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: '11'
 
-      - name: Instalar SDK components
+      - name: Setup Android + Build APK
         run: |
-          echo "ANDROID_HOME=$ANDROID_HOME"
+          set -e
+          
+          # Android SDK
+          export ANDROID_HOME=/usr/local/lib/android/sdk
           yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager \
-            "platforms;android-33" "build-tools;33.0.2" 2>&1 | tail -5
-
-      - name: Baixar e instalar Gradle 7.5
-        run: |
-          wget -q https://services.gradle.org/distributions/gradle-7.5-bin.zip
-          unzip -q gradle-7.5-bin.zip
-          echo "$PWD/gradle-7.5/bin" >> $GITHUB_PATH
-          $PWD/gradle-7.5/bin/gradle --version
-
-      - name: Gerar keystore
-        run: |
-          keytool -genkeypair -keystore $PWD/android/app/keystore.jks -alias key0 \
+            "platforms;android-33" "build-tools;33.0.2" 2>&1 | tail -3
+          
+          # Keystore
+          keytool -genkeypair -keystore android/app/keystore.jks -alias key0 \
             -keyalg RSA -keysize 2048 -validity 10000 \
             -storepass gestao2024 -keypass gestao2024 \
             -dname "CN=Gestao,O=Gestao,C=BR" -noprompt
-          echo "Keystore: $(ls -lh android/app/keystore.jks)"
-
-      - name: Build APK
-        working-directory: android
-        run: |
-          export ANDROID_HOME=/usr/local/lib/android/sdk
-          gradle assembleDebug --no-daemon 2>&1
-        env:
-          STORE_PASS: gestao2024
-          KEY_PASS: gestao2024
-
-      - name: Encontrar APK
-        run: |
-          echo "Procurando APK..."
-          find . -name "*.apk" 2>/dev/null
-          find android -type d -name "outputs" 2>/dev/null
           
+          # Verificar Gradle disponivel
+          gradle --version 2>/dev/null || {
+            echo "Instalando Gradle..."
+            sudo apt-get install -y gradle 2>&1 | tail -3
+          }
+          
+          echo "Gradle: $(gradle --version | head -1)"
+          echo "Java: $(java -version 2>&1 | head -1)"
+          echo "ANDROID_HOME: $ANDROID_HOME"
+          
+          # Build
+          cd android
+          gradle assembleDebug --no-daemon --stacktrace 2>&1
+          
+          # Verificar resultado
+          echo "=== APKs gerados ==="
+          find . -name "*.apk" 2>/dev/null | tee /tmp/apks.txt
+          cat /tmp/apks.txt
+
+      - name: Copiar APK
+        run: |
           mkdir -p apk-output
-          find . -name "*.apk" -exec cp {} apk-output/gestao-financeira.apk \; 2>/dev/null
-          ls -lh apk-output/ 2>/dev/null || echo "Pasta apk-output vazia"
+          find android -name "*.apk" -exec cp {} apk-output/gestao-financeira.apk \; 2>/dev/null
+          ls -lh apk-output/ || echo "Sem APK"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
