@@ -19,8 +19,19 @@ jobs:
           distribution: temurin
           java-version: '11'
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+      - name: Verificar Android SDK
+        run: |
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
+          ls $ANDROID_HOME/build-tools/ 2>/dev/null | tail -3 || echo "build-tools nao encontrado"
+          ls $ANDROID_HOME/platforms/ 2>/dev/null | tail -3 || echo "platforms nao encontrado"
+
+      - name: Instalar SDK components
+        run: |
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager \
+            "platforms;android-33" \
+            "build-tools;33.0.2" \
+            "platform-tools" 2>/dev/null | tail -5
 
       - name: Download Gradle Wrapper JAR
         run: |
@@ -29,7 +40,7 @@ jobs:
             "https://github.com/gradle/gradle/raw/v7.5.0/gradle/wrapper/gradle-wrapper.jar" \
             -o android/gradle/wrapper/gradle-wrapper.jar
           chmod +x android/gradlew
-          echo "Wrapper JAR: $(ls -lh android/gradle/wrapper/gradle-wrapper.jar)"
+          ls -lh android/gradle/wrapper/
 
       - name: Gerar keystore
         run: |
@@ -40,21 +51,19 @@ jobs:
             -storepass gestao2024 -keypass gestao2024 \
             -dname "CN=Gestao,OU=App,O=Gestao,L=Braganca,S=Para,C=BR" \
             -noprompt
-          echo "Keystore OK"
 
       - name: Build APK
         working-directory: android
-        run: |
-          ./gradlew assembleRelease --no-daemon --stacktrace
+        run: ./gradlew assembleRelease --no-daemon --stacktrace 2>&1 | tail -50
         env:
-          ANDROID_HOME: /usr/local/lib/android/sdk
+          ANDROID_HOME: ${{ env.ANDROID_HOME }}
           KEYSTORE_PATH: keystore.jks
           STORE_PASS: gestao2024
           KEY_ALIAS: key0
           KEY_PASS: gestao2024
 
       - name: Listar APKs
-        run: find android -name "*.apk" | xargs ls -lh 2>/dev/null || echo "Sem APK"
+        run: find android -name "*.apk" | xargs ls -lh 2>/dev/null
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
