@@ -1005,6 +1005,7 @@ const SettingsView = ({brand,session,onSave,toast,confirm}) => {
             <div className="flex justify-between text-sm mb-1.5"><span className="text-gray-500">Banco</span><span className="font-medium">Supabase (PostgreSQL)</span></div>
             <div className="flex justify-between text-sm"><span className="text-gray-500">Hospedagem</span><span className="font-medium">Render</span></div>
           </div>
+          <InstallAppButton/>
           <button onClick={()=>confirm('Sair da conta?',()=>sb.auth.signOut())} className="w-full border border-gray-200 text-gray-600 rounded-xl py-2.5 text-sm font-medium hover:bg-gray-50">Sair da conta</button>
         </Card>
       )}
