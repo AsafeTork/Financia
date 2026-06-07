@@ -35,7 +35,7 @@ const today = () => new Date().toISOString().slice(0,10);
 const prevDays = n => { const d=new Date(); d.setDate(d.getDate()-n); return d.toISOString().slice(0,10); };
 const fmtDate = s => new Date(s+'T12:00').toLocaleDateString('pt-BR');
 const monthLabel = s => { const [y,m]=s.split('-'); return new Date(+y,+m-1).toLocaleDateString('pt-BR',{month:'long',year:'numeric'}); };
-const safe = s => String(s||'').replace(/[<>]/g,'').trim();
+const safe = s => String(s||'').replace(/[<>"]/g,'').replace(/javascript:/gi,'').trim().slice(0,200);
 const genPwd = () => { const c='ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#'; return Array.from({length:12},()=>c[Math.floor(Math.random()*c.length)]).join(''); };
 let _id=1;
 const uid = () => String(Date.now())+String(++_id);
@@ -811,7 +811,7 @@ const AdminPanel = ({toast}) => {
 };
 
 const SettingsView = ({brand,session,onSave,toast,confirm}) => {
-  const isAdmin = session && session.user && session.user.email === 'admin@gestao.com';
+  const isAdmin = isAdminDB;
   const [tab,setTab] = useState('brand');
   const [form,setForm] = useState({...brand});
   const [saving,setSaving] = useState(false);
@@ -996,16 +996,18 @@ function App() {
   const loadData = async uid => {
     setDataLoading(true); setDataError(null);
     try {
-      const [pr,pdr,txr,lr] = await Promise.all([
+      const [pr,pdr,txr,lr,roleRes] = await Promise.all([
         sb.from('company_profiles').select('*').eq('user_id',uid).maybeSingle(),
-        sb.from('products').select('*').order('created_at'),
-        sb.from('transactions').select('*').order('date',{ascending:false}),
-        sb.from('losses').select('*').order('date',{ascending:false}),
+        sb.from('products').select('*').order('created_at').limit(500),
+        sb.from('transactions').select('*').order('date',{ascending:false}).limit(500),
+        sb.from('losses').select('*').order('date',{ascending:false}).limit(500),
+        sb.from('user_roles').select('role').eq('user_id',uid).maybeSingle(),
       ]);
       if(pr.data) setBrand({name:pr.data.name,logo:pr.data.logo,color:pr.data.color,logo_url:pr.data.logo_url||null});
       if(pdr.data) setProducts(pdr.data);
       if(txr.data) setTx(txr.data.map(t=>({...t,desc:t.description,cat:t.category})));
       if(lr.data) setLosses(lr.data.map(l=>({...l,desc:l.description})));
+      setIsAdminDB(roleRes?.data?.role==='admin');
     } catch(e) { setDataError('Erro ao carregar dados. Verifique sua conexao.'); }
     setDataLoading(false);
   };
