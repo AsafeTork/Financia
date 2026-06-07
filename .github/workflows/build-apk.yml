@@ -19,15 +19,25 @@ jobs:
           distribution: temurin
           java-version: '11'
 
-      - name: Instalar componentes Android
+      - name: Instalar Android SDK components
         run: |
           yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager \
-            "platforms;android-33" "build-tools;33.0.2" 2>&1 | tail -3
+            "platforms;android-33" "build-tools;33.0.2" 2>&1 | grep -E "Warning|Error|done" | head -10
 
       - name: Setup Gradle 7.5
         uses: gradle/actions/setup-gradle@v3
         with:
           gradle-version: '7.5'
+
+      - name: Verificar estrutura do projeto
+        working-directory: android
+        run: |
+          echo "=== Arquivos do projeto ==="
+          find . -name "*.gradle" -o -name "*.xml" -o -name "*.java" | head -20
+          echo "=== settings.gradle ==="
+          cat settings.gradle
+          echo "=== app/build.gradle ==="  
+          cat app/build.gradle
 
       - name: Gerar keystore
         run: |
@@ -36,27 +46,29 @@ jobs:
             -storepass gestao2024 -keypass gestao2024 \
             -dname "CN=Gestao,O=Gestao,C=BR" -noprompt
 
-      - name: Build APK
+      - name: Build APK Debug
         working-directory: android
-        run: gradle assembleDebug --no-daemon 2>&1 | tail -30
+        run: |
+          gradle assembleDebug --no-daemon --info 2>&1
         env:
           ANDROID_HOME: ${{ env.ANDROID_HOME }}
 
-      - name: Localizar APK
+      - name: Verificar resultado
         run: |
-          echo "=== Todos os APKs ==="
-          find . -name "*.apk" -type f 2>/dev/null | tee /tmp/apks.txt
-          echo "=== Conteudo do build dir ==="
-          find android/app/build -name "*.apk" -o -name "*.aab" 2>/dev/null | head -20
+          echo "=== Buscando APK em todo o projeto ==="
+          find . -name "*.apk" -type f 2>/dev/null || echo "NENHUM APK ENCONTRADO"
+          echo "=== Conteudo de android/app/build/ ==="
+          find android/app/build -type f 2>/dev/null | head -30 || echo "sem pasta build"
           
-          # Copiar para pasta de saida
           mkdir -p apk-output
-          while read apk; do
-            cp "$apk" apk-output/gestao-financeira.apk
-            echo "Copiado: $apk"
-          done < /tmp/apks.txt
-          
-          ls -lh apk-output/ || echo "Pasta vazia"
+          APK=$(find . -name "*.apk" -type f 2>/dev/null | head -1)
+          if [ -n "$APK" ]; then
+            cp "$APK" apk-output/gestao-financeira.apk
+            echo "APK copiado: $APK"
+            ls -lh apk-output/
+          else
+            echo "APK nao gerado"
+          fi
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
