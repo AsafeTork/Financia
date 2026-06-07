@@ -13,11 +13,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Java 17
+      - name: Setup Java 11
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: '11'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Download Gradle Wrapper JAR
+        run: |
+          mkdir -p android/gradle/wrapper
+          curl -fsSL \
+            "https://github.com/gradle/gradle/raw/v7.5.0/gradle/wrapper/gradle-wrapper.jar" \
+            -o android/gradle/wrapper/gradle-wrapper.jar
+          chmod +x android/gradlew
+          echo "Wrapper JAR: $(ls -lh android/gradle/wrapper/gradle-wrapper.jar)"
 
       - name: Gerar keystore
         run: |
@@ -28,66 +40,26 @@ jobs:
             -storepass gestao2024 -keypass gestao2024 \
             -dname "CN=Gestao,OU=App,O=Gestao,L=Braganca,S=Para,C=BR" \
             -noprompt
-          echo "Keystore criado"
+          echo "Keystore OK"
 
-      - name: Preparar Gradle Wrapper
+      - name: Build APK
         working-directory: android
         run: |
-          gradle wrapper --gradle-version 8.4
+          ./gradlew assembleRelease --no-daemon --stacktrace
         env:
-          GRADLE_OPTS: "-Dorg.gradle.daemon=false"
-        continue-on-error: true
-
-      - name: Download Gradle direto
-        working-directory: android
-        run: |
-          mkdir -p gradle/wrapper
-          cat > gradle/wrapper/gradle-wrapper.properties << 'EOF'
-          distributionBase=GRADLE_USER_HOME
-          distributionPath=wrapper/dists
-          distributionUrl=https\://services.gradle.org/distributions/gradle-8.4-bin.zip
-          zipStoreBase=GRADLE_USER_HOME
-          zipStorePath=wrapper/dists
-          EOF
-          curl -L https://raw.githubusercontent.com/gradle/gradle/v8.4.0/gradle/wrapper/gradle-wrapper.jar -o gradle/wrapper/gradle-wrapper.jar 2>/dev/null || \
-          wget -q https://raw.githubusercontent.com/gradle/gradle/v8.4.0/gradle/wrapper/gradle-wrapper.jar -O gradle/wrapper/gradle-wrapper.jar || \
-          curl -L https://services.gradle.org/distributions/gradle-8.4-bin.zip -o gradle-8.4.zip && \
-          unzip -q gradle-8.4.zip && \
-          cp gradle-8.4/lib/gradle-wrapper.jar gradle/wrapper/gradle-wrapper.jar || true
-
-      - name: Instalar Gradle via SDK
-        run: |
-          sudo apt-get install -y gradle 2>/dev/null || true
-          gradle --version || true
-
-      - name: Build APK com Gradle direto
-        working-directory: android
-        run: |
-          # Usa gradle do sistema se wrapper nao funcionar
-          if [ -f gradlew ]; then
-            chmod +x gradlew
-            ./gradlew assembleRelease \
-              -PSTORE_PASS=gestao2024 \
-              -PKEY_PASS=gestao2024 \
-              --no-daemon --stacktrace
-          else
-            gradle assembleRelease \
-              -PSTORE_PASS=gestao2024 \
-              -PKEY_PASS=gestao2024 \
-              --no-daemon --stacktrace
-          fi
-        env:
-          STORE_PASS: gestao2024
-          KEY_PASS: gestao2024
           ANDROID_HOME: /usr/local/lib/android/sdk
+          KEYSTORE_PATH: keystore.jks
+          STORE_PASS: gestao2024
+          KEY_ALIAS: key0
+          KEY_PASS: gestao2024
 
-      - name: Listar APKs gerados
-        run: find android -name "*.apk" -type f | xargs ls -lh 2>/dev/null || echo "Nenhum APK encontrado"
+      - name: Listar APKs
+        run: find android -name "*.apk" | xargs ls -lh 2>/dev/null || echo "Sem APK"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: gestao-financeira-apk
-          path: android/app/build/outputs/apk/**/*.apk
-          retention-days: 60
+          name: gestao-financeira-v1.0
+          path: android/app/build/outputs/apk/release/*.apk
+          retention-days: 90
           if-no-files-found: warn
