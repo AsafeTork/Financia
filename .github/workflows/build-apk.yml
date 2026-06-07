@@ -19,42 +19,29 @@ jobs:
           distribution: temurin
           java-version: '11'
 
-      - name: Verificar Android SDK
-        run: |
-          echo "ANDROID_HOME=$ANDROID_HOME"
-          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
-          ls $ANDROID_HOME/build-tools/ 2>/dev/null | tail -3 || echo "build-tools nao encontrado"
-          ls $ANDROID_HOME/platforms/ 2>/dev/null | tail -3 || echo "platforms nao encontrado"
-
       - name: Instalar SDK components
         run: |
           yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager \
-            "platforms;android-33" \
-            "build-tools;33.0.2" \
-            "platform-tools" 2>/dev/null | tail -5
+            "platforms;android-33" "build-tools;33.0.2" 2>/dev/null | tail -3
 
       - name: Download Gradle Wrapper JAR
         run: |
           mkdir -p android/gradle/wrapper
-          curl -fsSL \
-            "https://github.com/gradle/gradle/raw/v7.5.0/gradle/wrapper/gradle-wrapper.jar" \
+          curl -fsSL "https://github.com/gradle/gradle/raw/v7.5.0/gradle/wrapper/gradle-wrapper.jar" \
             -o android/gradle/wrapper/gradle-wrapper.jar
           chmod +x android/gradlew
-          ls -lh android/gradle/wrapper/
 
       - name: Gerar keystore
         run: |
-          keytool -genkeypair \
-            -keystore android/app/keystore.jks \
-            -alias key0 \
+          keytool -genkeypair -keystore android/app/keystore.jks -alias key0 \
             -keyalg RSA -keysize 2048 -validity 10000 \
             -storepass gestao2024 -keypass gestao2024 \
-            -dname "CN=Gestao,OU=App,O=Gestao,L=Braganca,S=Para,C=BR" \
-            -noprompt
+            -dname "CN=Gestao,O=Gestao,L=Braganca,C=BR" -noprompt
 
       - name: Build APK
         working-directory: android
-        run: ./gradlew assembleRelease --no-daemon --stacktrace 2>&1 | tail -50
+        run: |
+          ./gradlew assembleRelease --no-daemon 2>&1
         env:
           ANDROID_HOME: ${{ env.ANDROID_HOME }}
           KEYSTORE_PATH: keystore.jks
@@ -62,13 +49,18 @@ jobs:
           KEY_ALIAS: key0
           KEY_PASS: gestao2024
 
-      - name: Listar APKs
-        run: find android -name "*.apk" | xargs ls -lh 2>/dev/null
+      - name: Encontrar e renomear APK
+        run: |
+          echo "=== Procurando APKs ==="
+          find android -name "*.apk" -type f 2>/dev/null
+          mkdir -p apk-output
+          find android -name "*.apk" -type f -exec cp {} apk-output/gestao-financeira.apk \; 2>/dev/null
+          ls -lh apk-output/ || echo "Sem APK"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: gestao-financeira-v1.0
-          path: android/app/build/outputs/apk/release/*.apk
+          name: gestao-financeira-apk
+          path: apk-output/
           retention-days: 90
-          if-no-files-found: warn
+          if-no-files-found: error
