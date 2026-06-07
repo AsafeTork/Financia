@@ -19,43 +19,44 @@ jobs:
           distribution: temurin
           java-version: '11'
 
-      - name: Instalar SDK components
+      - name: Debug ambiente
+        run: |
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          ls $ANDROID_HOME/build-tools/ 2>/dev/null | tail -5
+          ls $ANDROID_HOME/platforms/ 2>/dev/null | tail -5
+          java -version
+
+      - name: Instalar componentes Android
         run: |
           yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager \
-            "platforms;android-33" "build-tools;33.0.2" 2>/dev/null | tail -3
+            "platforms;android-33" \
+            "build-tools;33.0.2" \
+            --sdk_root=$ANDROID_HOME 2>&1 | tail -5
 
-      - name: Download Gradle Wrapper JAR
-        run: |
-          mkdir -p android/gradle/wrapper
-          curl -fsSL "https://github.com/gradle/gradle/raw/v7.5.0/gradle/wrapper/gradle-wrapper.jar" \
-            -o android/gradle/wrapper/gradle-wrapper.jar
-          chmod +x android/gradlew
+      - name: Setup Gradle via actions
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: '7.5'
 
       - name: Gerar keystore
         run: |
           keytool -genkeypair -keystore android/app/keystore.jks -alias key0 \
             -keyalg RSA -keysize 2048 -validity 10000 \
             -storepass gestao2024 -keypass gestao2024 \
-            -dname "CN=Gestao,O=Gestao,L=Braganca,C=BR" -noprompt
+            -dname "CN=Gestao,O=Gestao,C=BR" -noprompt
 
-      - name: Build APK
+      - name: Build APK Debug (mais simples)
         working-directory: android
         run: |
-          ./gradlew assembleRelease --no-daemon 2>&1
+          gradle assembleDebug --no-daemon --info 2>&1 | tail -60
         env:
           ANDROID_HOME: ${{ env.ANDROID_HOME }}
-          KEYSTORE_PATH: keystore.jks
-          STORE_PASS: gestao2024
-          KEY_ALIAS: key0
-          KEY_PASS: gestao2024
 
-      - name: Encontrar e renomear APK
+      - name: Encontrar APK
         run: |
-          echo "=== Procurando APKs ==="
-          find android -name "*.apk" -type f 2>/dev/null
+          find android -name "*.apk" 2>/dev/null
           mkdir -p apk-output
-          find android -name "*.apk" -type f -exec cp {} apk-output/gestao-financeira.apk \; 2>/dev/null
-          ls -lh apk-output/ || echo "Sem APK"
+          find android -name "*.apk" -exec cp {} apk-output/gestao-financeira.apk \;
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
