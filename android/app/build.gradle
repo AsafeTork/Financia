@@ -11,15 +11,9 @@ android {
     buildTypes {
         release {
             minifyEnabled false
-            signingConfig signingConfigs.release
         }
-    }
-    signingConfigs {
-        release {
-            storeFile file(System.getenv("KEYSTORE_PATH") ?: "keystore.jks")
-            storePassword System.getenv("STORE_PASS") ?: "gestao2024"
-            keyAlias System.getenv("KEY_ALIAS") ?: "key0"
-            keyPassword System.getenv("KEY_PASS") ?: "gestao2024"
+        debug {
+            minifyEnabled false
         }
     }
     namespace "com.gestaofinanceira.app"
