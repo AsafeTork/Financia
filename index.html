@@ -39,6 +39,7 @@ const sb = createClient(
 );
 
 const INIT_BRAND = {name:'Financia', color:'#002f59', logo:'G', logo_url:null}
+const fmt = n => 'R$ '+Number(n||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
 const fmtDate = s => new Date(s+'T12:00').toLocaleDateString('pt-BR');
 const monthLabel = s => { const [y,m]=s.split('-'); return new Date(+y,+m-1).toLocaleDateString('pt-BR',{month:'long',year:'numeric'}); };
 const safe = s => String(s||'').replace(/[<>"]/g,'').replace(/javascript:/gi,'').trim().slice(0,200);
