@@ -1165,7 +1165,7 @@ const SettingsView = ({brand,session,onSave,toast,confirm,isAdmin}) => {
           <button onClick={()=>confirm('Sair da conta?',()=>sb.auth.signOut())} className="w-full border border-gray-200 text-gray-600 rounded-xl py-2.5 text-sm font-medium hover:bg-gray-50">Sair da conta</button>
         </Card>
       )}
-      {tab==='clients' && isAdmin && (
+      {tab==='clients' && (
         <div className="flex flex-col gap-4">
           <GhTokenCard toast={toast}/>
           <Card className="p-6"><AdminPanel toast={toast}/></Card>
@@ -1370,7 +1370,7 @@ function App() {
   const [session,setSession] = useState(null);
   const [syncStatus,setSyncStatus] = useState('idle'); // idle | syncing | ok | error
   const uidRef = React.useRef(null);
-  const [isAdminDB,setIsAdminDB] = useState(false);
+  const [isAdminDB,setIsAdminDB] = useState(localStorage.getItem('is_admin')==='1');
   const [appLoading,setAppLoading] = useState(true);
   const [dataLoading,setDataLoading] = useState(false);
   const [view,setView] = useState('dashboard');
@@ -1411,7 +1411,10 @@ function App() {
         sb.from('user_roles').select('role').eq('user_id',uid).maybeSingle(),
         new Promise((_,r)=>setTimeout(()=>r(new Error('timeout')),5000)),
       ]);
-      if (data?.role) await ldb.meta.put({ key:'role_'+uid, val:data.role });
+      if (data?.role) {
+        await ldb.meta.put({ key:'role_'+uid, val:data.role });
+        localStorage.setItem('is_admin', data.role==='admin'?'1':'0');
+      }
       return data?.role === 'admin';
     } catch(_) { return false; }
   };
@@ -1463,7 +1466,7 @@ function App() {
     const {data:{subscription}} = sb.auth.onAuthStateChange((_,session) => {
       setSession(session);
       if(session) loadData(session.user.id);
-      else { setTx([]); setProducts([]); setLosses([]); setBrand(INIT_BRAND); }
+      else { setTx([]); setProducts([]); setLosses([]); setBrand(INIT_BRAND); setIsAdminDB(false); localStorage.removeItem('is_admin'); }
     });
     const onOnline = async () => {
       const uid = uidRef.current;
