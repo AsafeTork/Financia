@@ -1393,8 +1393,8 @@ function App() {
     const [profile, prods, txs, lss, roleMeta] = await Promise.all([
       ldb.profiles.get(uid),
       ldb.products.where('user_id').equals(uid).filter(r=>!r._deleted).sortBy('created_at'),
-      ldb.transactions.where('user_id').equals(uid).filter(r=>!r._deleted).sortBy('date'),
-      ldb.losses.where('user_id').equals(uid).filter(r=>!r._deleted).sortBy('date'),
+      ldb.transactions.where('user_id').equals(uid).filter(r=>!r._deleted).reverse().sortBy('date'),
+      ldb.losses.where('user_id').equals(uid).filter(r=>!r._deleted).reverse().sortBy('date'),
       ldb.meta.get('role_' + uid),
     ]);
     const roleRes = { data: roleMeta ? { role: roleMeta.val } : null };
@@ -1449,9 +1449,10 @@ function App() {
           if(lr.data){ const mapped=lr.data.map(l=>({...l,desc:l.description})); setLosses(mapped); await ldb.losses.bulkPut(lr.data.map(r=>toLocal(r,{user_id:uid,desc:r.description}))); }
           setIsAdminDB(roleRes?.data?.role==='admin');
           await setLastSync(now());
-        } catch(e2){ setDataError('Erro ao carregar dados.'); }
+        } catch(e2){ setDataError('Erro ao carregar dados.'); setDataLoading(false); }
       } else {
         setDataError('Sem conexao e sem dados locais. Conecte-se pelo menos uma vez.');
+        setDataLoading(false);
       }
     }
     setDataLoading(false);
