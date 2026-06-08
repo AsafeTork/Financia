@@ -1,5 +1,5 @@
-const CACHE = 'nancia-v3';
-const BRAND_CACHE = 'nancia-brand';
+const CACHE = 'financia-v1';
+const BRAND_CACHE = 'financia-brand';
 const URLS_TO_CACHE = ['/', '/icon-192.svg', '/icon-512.svg'];
 
 // ── Instala e cacheia ───────────────────────────────────────────────────────
@@ -22,7 +22,7 @@ self.addEventListener('message', async e => {
   if (e.data && e.data.type === 'UPDATE_BRAND') {
     const cache = await caches.open(BRAND_CACHE);
     await cache.put('/_brand', new Response(JSON.stringify({
-      name: e.data.name || 'Nancia',
+      name: e.data.name || 'Financia',
       logo_url: e.data.logo_url || null,
       color: e.data.color || '#002f59',
     }), { headers: { 'Content-Type': 'application/json' } }));
@@ -31,7 +31,7 @@ self.addEventListener('message', async e => {
 
 // ── Gera manifest dinamico com logo/nome atuais ─────────────────────────────
 async function dynamicManifest() {
-  let name = 'Nancia', logo_url = null, color = '#002f59';
+  let name = 'Financia', logo_url = null, color = '#002f59';
   try {
     const cache = await caches.open(BRAND_CACHE);
     const resp = await cache.match('/_brand');
