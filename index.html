@@ -359,7 +359,7 @@ const Dashboard = ({tx,products,brand,onNav}) => {
           {recent.length>0 && <button onClick={()=>onNav('report')} className="text-xs text-gray-400 hover:text-gray-600">Ver relatorio</button>}
         </div>
         {recent.length===0
-          ? <div className="py-10 flex flex-col items-center gap-2"><span className="text-3xl">📋</span><p className="text-sm text-gray-500">Nenhuma movimentacao</p><div className="flex gap-3"><button onClick={()=>onNav('income')} className="text-xs font-semibold text-green-600 hover:underline">+ Venda</button><button onClick={()=>onNav('expense')} className="text-xs font-semibold text-red-500 hover:underline">+ Despesa</button></div></div>
+          ? <div className="py-10 flex flex-col items-center gap-2"><span className="text-3xl">[Lista]</span><p className="text-sm text-gray-500">Nenhuma movimentacao</p><div className="flex gap-3"><button onClick={()=>onNav('income')} className="text-xs font-semibold text-green-600 hover:underline">+ Venda</button><button onClick={()=>onNav('expense')} className="text-xs font-semibold text-red-500 hover:underline">+ Despesa</button></div></div>
           : <div className="divide-y divide-gray-50">{recent.map(t=>(
               <div key={t.id} className="flex items-center justify-between px-5 py-3.5">
                 <div className="flex items-center gap-3 min-w-0">
@@ -549,7 +549,7 @@ const InventoryView = ({products,losses,onAddProduct,onEditProduct,onDeleteProdu
             <div className="relative"><svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg><input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Buscar por nome ou categoria..." className="w-full pl-9 pr-3 py-2 text-sm bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:border-gray-300"/></div>
           </div>
           {disp.length===0
-            ? <Empty icon="📦" title="Nenhum item" sub="Adicione produtos ou servicos com categoria, custo e estoque."/>
+            ? <Empty icon="[APK]" title="Nenhum item" sub="Adicione produtos ou servicos com categoria, custo e estoque."/>
             : grouped.map(([cat,items])=>(
                 <div key={cat}>
                   <button onClick={()=>toggleCat(cat)} className="w-full flex items-center justify-between px-5 py-2.5 bg-gray-50 hover:bg-gray-100 transition border-b border-gray-100">
@@ -585,7 +585,7 @@ const InventoryView = ({products,losses,onAddProduct,onEditProduct,onDeleteProdu
       {tab==='losses' && (
         <Card>
           {losses.length===0
-            ? <Empty icon="⚠️" title="Nenhuma perda" sub="Registre produtos vencidos, cancelados ou danificados."/>
+            ? <Empty icon="(!)️" title="Nenhuma perda" sub="Registre produtos vencidos, cancelados ou danificados."/>
             : <div className="divide-y divide-gray-50">{[...losses].sort((a,b)=>b.date.localeCompare(a.date)).map(l=>(
                 <div key={l.id} className="flex items-center justify-between px-4 py-3.5 gap-3">
                   <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -811,7 +811,7 @@ const GhTokenCard = ({toast}) => {
         <button onClick={save} className="px-4 py-2 text-white rounded-xl text-sm font-semibold flex-shrink-0"
           style={{background:'#002f59'}}>Salvar</button>
       </div>
-      {!tok && <p className="text-xs font-semibold" style={{color:'#dc2626'}}>⚠ Sem token — APK não gerado automaticamente.</p>}
+      {!tok && <p className="text-xs font-semibold" style={{color:'#dc2626'}}>(!) Sem token — APK não gerado automaticamente.</p>}
     </Card>
   );
 };
@@ -949,10 +949,10 @@ const AdminPanel = ({toast}) => {
                     <div className="flex gap-1.5 flex-shrink-0">
                       <button onClick={()=>rebuildApk(c)}
                         className="px-2.5 py-1.5 text-xs font-semibold rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50"
-                        title="Gerar APK">📦 APK</button>
+                        title="Gerar APK">[APK] APK</button>
                       <a href={'https://github.com/'+GH_REPO+'/actions'} target="_blank"
                         className="px-2.5 py-1.5 text-xs font-semibold rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50"
-                        title="Ver builds">↗</a>
+                        title="Ver builds">-></a>
                     </div>
                   </div>
                 ))}
@@ -976,14 +976,14 @@ const AdminPanel = ({toast}) => {
                 style={{background:form.primaryColor+'22'}}>
                 {form.logoUrl
                   ? <img src={form.logoUrl} className="w-full h-full object-contain p-1"/>
-                  : <span className="text-xl">🏢</span>}
+                  : <span className="text-xl">[Empresa]</span>}
               </div>
               <div className="flex-1 flex flex-col gap-1.5">
                 <input ref={logoRef} type="file" accept="image/*" className="hidden"
                   onChange={e=>uploadLogo(e.target.files[0])}/>
                 <button onClick={()=>logoRef.current.click()} disabled={uploading}
                   className="border border-gray-200 rounded-xl py-2 text-xs font-semibold text-gray-600 hover:bg-gray-50">
-                  {uploading?'Enviando...':'📁 Upload logo'}
+                  {uploading?'Enviando...':'[Upload] Upload logo'}
                 </button>
                 {form.colors.length>0 && (
                   <div className="flex items-center gap-1.5">
@@ -1019,7 +1019,7 @@ const AdminPanel = ({toast}) => {
 
           {done && (
             <div className="rounded-2xl p-4 flex flex-col gap-3" style={{background:'#f0fdf4',border:'1px solid #bbf7d0'}}>
-              <p className="text-sm font-bold text-gray-800">✓ {done.companyName||'Cliente'} criado!</p>
+              <p className="text-sm font-bold text-gray-800">OK {done.companyName||'Cliente'} criado!</p>
               <div className="bg-white rounded-xl p-3 font-mono text-xs flex flex-col gap-1 border border-gray-100">
                 <p><span className="text-gray-400">E-mail: </span><b>{done.email}</b></p>
                 <p><span className="text-gray-400">Senha:  </span><b>{done.password}</b></p>
@@ -1029,7 +1029,7 @@ const AdminPanel = ({toast}) => {
               <button onClick={()=>copyWpp(done.email,done.password,done.companyName,done.buildOk)}
                 className="w-full text-white rounded-xl py-2.5 text-sm font-bold hover:opacity-90"
                 style={{background:'#002f59'}}>
-                {copied===done.email?'✓ Copiado!':'Copiar para WhatsApp'}
+                {copied===done.email?'OK Copiado!':'Copiar para WhatsApp'}
               </button>
               <button onClick={()=>setDone(null)} className="text-xs text-gray-400 text-center hover:text-gray-600">
                 Criar outro
@@ -1385,9 +1385,9 @@ const syncAll = async uid => {
 const SyncBadge = ({ status }) => {
   if (status === 'idle') return null;
   const cfg = {
-    syncing: { bg:'#2563eb', text:'Sincronizando...', icon:'↻' },
-    ok:      { bg:'#1a6b5c', text:'Sincronizado',     icon:'✓' },
-    error:   { bg:'#dc2626', text:'Sem internet',     icon:'⚠' },
+    syncing: { bg:'#2563eb', text:'Sincronizando...', icon:'~' },
+    ok:      { bg:'#1a6b5c', text:'Sincronizado',     icon:'OK' },
+    error:   { bg:'#dc2626', text:'Sem internet',     icon:'(!)' },
   }[status];
   return (
     <div style={{position:'fixed',top:8,right:8,zIndex:9999,background:cfg.bg,color:'#fff',borderRadius:20,padding:'4px 12px',fontSize:12,fontWeight:600,display:'flex',alignItems:'center',gap:4,boxShadow:'0 2px 8px rgba(0,0,0,0.2)'}}>
@@ -1608,7 +1608,7 @@ function App() {
   if(dataLoading) return <Loader text="Carregando seus dados..."/>;
   if(dataError) return (
     <div className="min-h-screen flex items-center justify-center flex-col gap-4 p-6" style={{background:'#f8fafc'}}>
-      <span className="text-4xl">⚠️</span>
+      <span className="text-4xl">(!)️</span>
       <p className="text-sm font-semibold text-gray-700">{dataError}</p>
       <button onClick={()=>loadData(session.user.id)} className="px-6 py-2.5 text-white rounded-xl text-sm font-semibold bg-green-600">Tentar novamente</button>
     </div>
@@ -1654,12 +1654,4 @@ function App() {
 ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
 </script>
 </body>
-</html<script>
-window.onerror=function(msg,src,line,col,err){
-  var d=document.createElement('div');
-  d.style.cssText='position:fixed;top:0;left:0;right:0;bottom:0;background:#fee2e2;padding:20px;z-index:99999;overflow:auto;font-family:monospace;font-size:13px';
-  d.innerHTML='<b style="color:red">ERRO:</b> '+msg+'<br>Linha '+line+'<br><pre>'+(err?err.stack:'')+'</pre>';
-  document.body.appendChild(d);
-};
-</script>
->
+</html>
