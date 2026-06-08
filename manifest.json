@@ -1,12 +1,12 @@
 {
-  "name": "Gestao Financeira",
-  "short_name": "Gestao",
-  "description": "Controle financeiro para pequenas empresas",
+  "name": "Nancia",
+  "short_name": "Nancia",
+  "description": "Gestao financeira para pequenas empresas",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#0f172a",
-  "theme_color": "#0f172a",
+  "background_color": "#002f59",
+  "theme_color": "#002f59",
   "icons": [
     {
       "src": "/icon-192.svg",
