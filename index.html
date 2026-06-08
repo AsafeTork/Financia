@@ -259,7 +259,7 @@ const Sidebar = ({view,onNav,brand,open,onClose}) => (
         <span className="font-bold text-white truncate">{brand.name}</span>
       </div>
       <nav className="flex-1 px-3 py-4 flex flex-col gap-0.5 overflow-y-auto">
-        {NAV.map(({key,label,d}) => (
+        {NAV.filter(v=>!v.adminOnly||isAdminDB).map(({key,label,d}) => (
           <button key={key} onClick={()=>{onNav(key);onClose();}} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition w-full text-left relative"
             style={view===key?{background:'rgba(255,255,255,0.08)',color:'white'}:{color:'rgba(255,255,255,0.4)'}}>
             {view===key && <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 rounded-r-full" style={{background:brand.color}}/>}
