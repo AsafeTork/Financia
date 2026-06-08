@@ -8,9 +8,18 @@ android {
         versionCode 1
         versionName "1.0"
     }
+    signingConfigs {
+        release {
+            storeFile file(System.getenv("STORE_FILE") ?: "financia.jks")
+            storePassword System.getenv("STORE_PASS") ?: ""
+            keyAlias System.getenv("KEY_ALIAS") ?: "financia"
+            keyPassword System.getenv("KEY_PASS") ?: ""
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
+            signingConfig signingConfigs.release
         }
         debug {
             minifyEnabled false
