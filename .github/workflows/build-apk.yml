@@ -8,7 +8,7 @@ on:
       client_name:
         description: 'Nome da empresa'
         required: false
-        default: 'Nancia'
+        default: 'Financia'
       logo_url:
         description: 'URL publica do logo'
         required: false
@@ -46,7 +46,7 @@ jobs:
 
       - name: Aplicar nome do app
         env:
-          CLIENT_NAME: ${{ github.event.inputs.client_name || 'Nancia' }}
+          CLIENT_NAME: ${{ github.event.inputs.client_name || 'Financia' }}
         run: |
           sed -i "s|<string name=\"app_name\">.*</string>|<string name=\"app_name\">$CLIENT_NAME</string>|" \
             android/app/src/main/res/values/strings.xml
@@ -57,9 +57,7 @@ jobs:
           LOGO_URL: ${{ github.event.inputs.logo_url || '' }}
         run: |
           if [ -n "$LOGO_URL" ]; then
-            curl -fsSL "$LOGO_URL" -o /tmp/logo --max-time 20 && echo "Logo baixado" || echo "Sem logo"
-          else
-            echo "Sem logo URL"
+            curl -fsSL "$LOGO_URL" -o /tmp/logo --max-time 20 && echo "Logo OK" || echo "Sem logo"
           fi
 
       - name: Gerar icones PNG
@@ -67,31 +65,36 @@ jobs:
           HEX_COLOR: ${{ github.event.inputs.primary_color || '002f59' }}
         run: python3 scripts/gen_icons.py
 
-      - name: Gerar keystore
+      - name: Restaurar keystore permanente
+        env:
+          KEYSTORE_B64: ${{ secrets.KEYSTORE_B64 }}
         run: |
-          keytool -genkeypair -keystore android/app/keystore.jks -alias key0 \
-            -keyalg RSA -keysize 2048 -validity 10000 \
-            -storepass gestao2024 -keypass gestao2024 \
-            -dname "CN=Gestao,O=Gestao,C=BR" -noprompt
+          echo "$KEYSTORE_B64" | base64 -d > android/app/financia.jks
+          echo "Keystore restaurado: $(ls -lh android/app/financia.jks)"
 
-      - name: Build APK
+      - name: Build APK Release assinado
         working-directory: android
-        run: ./gradlew assembleDebug --no-daemon 2>&1 | tail -30
+        run: |
+          ./gradlew assembleRelease --no-daemon 2>&1 | tail -30
         env:
           ANDROID_HOME: ${{ env.ANDROID_HOME }}
+          STORE_FILE: financia.jks
+          STORE_PASS: ${{ secrets.KEYSTORE_PASS }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASS: ${{ secrets.KEYSTORE_PASS }}
 
       - name: Upload APK
         env:
-          CLIENT_NAME: ${{ github.event.inputs.client_name || 'nancia' }}
+          CLIENT_NAME: ${{ github.event.inputs.client_name || 'financia' }}
         run: |
           mkdir -p apk-output
           SAFE=$(echo "$CLIENT_NAME" | tr ' ' '-' | tr -cd 'a-zA-Z0-9-' | tr '[:upper:]' '[:lower:]')
-          find android -name "*.apk" -exec cp {} "apk-output/${SAFE:-nancia}.apk" \;
+          find android -name "*.apk" -exec cp {} "apk-output/${SAFE:-financia}.apk" \;
           ls -lh apk-output/
 
       - uses: actions/upload-artifact@v4
         with:
-          name: apk-${{ github.event.inputs.client_name || 'nancia' }}
+          name: apk-${{ github.event.inputs.client_name || 'financia' }}
           path: apk-output/
           retention-days: 90
           if-no-files-found: warn
