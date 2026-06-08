@@ -254,7 +254,7 @@ const Sidebar = ({view,onNav,brand,open,onClose}) => (
       <div className="px-5 py-5 flex items-center gap-3" style={{borderBottom:'1px solid rgba(255,255,255,0.06)'}}>
         {brand.logo_url
           ? <img src={brand.logo_url} alt="logo" className="w-9 h-9 rounded-xl object-cover flex-shrink-0"/>
-          : <div className="w-9 h-9 rounded-xl flex items-center justify-center text-lg flex-shrink-0" style={{background:brand.color}}>{brand.logo}</div>
+          : <div className="w-9 h-9 rounded-xl flex items-center justify-center text-lg flex-shrink-0" style={{background:brand.color}}><img src={brand.logo} alt="Financia" style={{width:'100%',height:'100%',objectFit:'contain',padding:'4px'}}/></div>
         }
         <span className="font-bold text-white truncate">{brand.name}</span>
       </div>
@@ -917,7 +917,7 @@ const AdminPanel = ({toast}) => {
       {/* Identidade visual */}
       <div className="rounded-2xl border border-gray-100 p-4 flex flex-col gap-3" style={{background:'#f8fafc'}}>
         <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Identidade visual</p>
-        <Inp label="Nome da empresa" value={form.companyName} onChange={e=>setForm(f=>{...f,companyName:e.target.value})} placeholder="Ex: Padaria do Joao"/>
+        <Inp label="Nome da empresa" value={form.companyName} onChange={e=>setForm(f=>({  ...f,companyName:e.target.value}))} placeholder="Ex: Padaria do Joao"/>
 
         {/* Upload logo */}
         <div className="flex flex-col gap-1.5">
@@ -958,7 +958,7 @@ const AdminPanel = ({toast}) => {
                 </button>
               ))}
               <input type="color" value={form.primaryColor}
-                onChange={e=>setForm(f=>{...f,primaryColor:e.target.value,colors:[...new Set([e.target.value,...f.colors])].slice(0,5)})}
+                onChange={e=>setForm(f=>({  ...f,primaryColor:e.target.value,colors:[...new Set([e.target.value,...f.colors])].slice(0,5)}))}
                 className="w-8 h-8 rounded-lg border border-gray-200 cursor-pointer p-0.5"
                 title="Cor personalizada"/>
               <span className="text-xs text-gray-400 font-mono">{form.primaryColor}</span>
@@ -984,14 +984,14 @@ const AdminPanel = ({toast}) => {
       {/* Credenciais */}
       <div className="flex flex-col gap-3">
         <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Acesso</p>
-        <Inp label="E-mail" type="email" value={form.email} onChange={e=>setForm(f=>{...f,email:e.target.value})} placeholder="cliente@email.com"/>
+        <Inp label="E-mail" type="email" value={form.email} onChange={e=>setForm(f=>({  ...f,email:e.target.value}))} placeholder="cliente@email.com"/>
         <div className="flex flex-col gap-1.5">
           <label className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Senha</label>
           <div className="flex gap-2">
-            <input type="text" value={form.password} onChange={e=>setForm(f=>{...f,password:e.target.value})}
+            <input type="text" value={form.password} onChange={e=>setForm(f=>({  ...f,password:e.target.value}))}
               placeholder="Minimo 8 caracteres"
               className="border border-gray-200 rounded-xl px-3 py-2.5 text-sm bg-white focus:outline-none focus:border-gray-500 transition flex-1"/>
-            <button onClick={()=>setForm(f=>{...f,password:genPwd()})}
+            <button onClick={()=>setForm(f=>({  ...f,password:genPwd()}))}
               className="px-3 py-2.5 border border-gray-200 rounded-xl text-xs font-semibold text-gray-600 hover:bg-gray-50 flex-shrink-0">Gerar</button>
           </div>
         </div>
@@ -1597,7 +1597,7 @@ function App() {
           <div className="flex items-center gap-2">
             {brand.logo_url
               ? <img src={brand.logo_url} alt="logo" className="w-7 h-7 rounded-lg object-cover"/>
-              : <div className="w-7 h-7 rounded-lg flex items-center justify-center text-sm" style={{background:brand.color}}>{brand.logo}</div>
+              : <div className="w-7 h-7 rounded-lg flex items-center justify-center text-sm" style={{background:brand.color}}><img src={brand.logo} alt="Financia" style={{width:'100%',height:'100%',objectFit:'contain',padding:'4px'}}/></div>
             }
             <span className="font-bold text-gray-900 text-sm">{brand.name}</span>
           </div>
