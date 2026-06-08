@@ -367,7 +367,7 @@ const Dashboard = ({tx,products,brand,onNav}) => {
               <div key={t.id} className="flex items-center justify-between px-5 py-3.5">
                 <div className="flex items-center gap-3 min-w-0">
                   <div className={'w-8 h-8 rounded-xl flex items-center justify-center text-sm font-bold flex-shrink-0 '+(t.type==='income'?'bg-green-50 text-green-600':'bg-red-50 text-red-500')}>{t.type==='income'?'UP':'DOWN'}</div>
-                  <div className="min-w-0"><p className="text-sm font-medium text-gray-800 truncate">{t.desc}</p><p className="text-xs text-gray-400">{fmtDate(t.date)+' . '+(t.method||t.category||'')}</p></div>
+                  <div className="min-w-0"><p className="text-sm font-medium text-gray-800 truncate">{t.desc}</p><p className="text-xs text-gray-400">{fmtDate(t.date)+' · '+(t.method||t.category||'')+(t.registered_by?' · '+t.registered_by:'')}</p></div>
                 </div>
                 <span className={'text-sm font-semibold flex-shrink-0 ml-3 '+(t.type==='income'?'text-green-600':'text-red-500')}>{(t.type==='income'?'+':'-')+fmt(t.amount)}</span>
               </div>
@@ -449,7 +449,7 @@ const TxView = ({type,tx,products,onAdd,onEdit,onDelete,onDeductStock,brand,toas
               <div key={t.id} className="flex items-center justify-between px-4 py-3.5 gap-3">
                 <div className="flex items-center gap-3 min-w-0 flex-1">
                   <div className={'w-8 h-8 rounded-xl flex items-center justify-center text-sm font-bold flex-shrink-0 '+(isIncome?'bg-green-50 text-green-600':'bg-red-50 text-red-500')}>{isIncome?'UP':'DOWN'}</div>
-                  <div className="min-w-0"><p className="text-sm font-medium text-gray-800 truncate">{t.desc}</p><p className="text-xs text-gray-400">{fmtDate(t.date)+' . '+(t.method||t.category||'')+(t.items&&t.items.length>1?' . '+t.items.length+' itens':'')}</p></div>
+                  <div className="min-w-0"><p className="text-sm font-medium text-gray-800 truncate">{t.desc}</p><p className="text-xs text-gray-400">{fmtDate(t.date)+' · '+(t.method||t.category||'')+(t.items&&t.items.length>1?' · '+t.items.length+' itens':'')+(t.registered_by?' · '+t.registered_by:'')}</p></div>
                 </div>
                 <div className="flex items-center gap-1 flex-shrink-0">
                   <span className={'text-sm font-semibold mr-1 '+(isIncome?'text-green-600':'text-red-500')}>{(isIncome?'+':'-')+fmt(t.amount)}</span>
@@ -568,7 +568,7 @@ const InventoryView = ({products,losses,onAddProduct,onEditProduct,onDeleteProdu
                         <div className="min-w-0 flex-1">
                           <p className="text-sm font-medium text-gray-800">{p.name}</p>
                           <div className="flex items-center gap-3 mt-0.5 flex-wrap">
-                            <span className="text-xs text-gray-400">{'Venda: '+fmt(p.price)}</span>
+                            <span className="text-xs text-gray-400">{'Venda: '+fmt(p.price)}</span>{p.registered_by&&<span className="text-xs text-gray-400">{'· por '+p.registered_by}</span>}
                             {p.cost!=null && <><span className="text-xs text-gray-400">{'Custo: '+fmt(p.cost)}</span><span className="text-xs text-green-600 font-medium">{'Margem: '+(((p.price-p.cost)/p.price)*100).toFixed(0)+'%'}</span></>}
                           </div>
                         </div>
@@ -749,7 +749,7 @@ const ReportView = ({tx,toast}) => {
                 <div key={t.id} className="flex items-center justify-between px-5 py-3">
                   <div className="flex items-center gap-3 min-w-0">
                     <div className={'w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0 '+(t.type==='income'?'bg-green-50 text-green-600':'bg-red-50 text-red-500')}>{t.type==='income'?'UP':'DOWN'}</div>
-                    <div className="min-w-0"><p className="text-sm font-medium text-gray-800 truncate">{t.desc}</p><p className="text-xs text-gray-400">{fmtDate(t.date)+' . '+(t.method||t.category||'')}</p></div>
+                    <div className="min-w-0"><p className="text-sm font-medium text-gray-800 truncate">{t.desc}</p><p className="text-xs text-gray-400">{fmtDate(t.date)+' · '+(t.method||t.category||'')+(t.registered_by?' · '+t.registered_by:'')}</p></div>
                   </div>
                   <span className={'text-sm font-semibold flex-shrink-0 ml-3 '+(t.type==='income'?'text-green-600':'text-red-500')}>{(t.type==='income'?'+':'-')+fmt(t.amount)}</span>
                 </div>
@@ -1002,10 +1002,10 @@ const Login = () => {
 
 // ── IndexedDB local (Dexie) ──────────────────────────────────────────────────
 const ldb = new Dexie('gestao_offline');
-ldb.version(1).stores({
-  transactions: 'id, user_id, date, _synced, _deleted, _updated_at',
-  products:     'id, user_id, category, _synced, _deleted, _updated_at',
-  losses:       'id, user_id, date, _synced, _deleted, _updated_at',
+ldb.version(2).stores({
+  transactions: 'id, user_id, date, _synced, _deleted, _updated_at, registered_by',
+  products:     'id, user_id, category, _synced, _deleted, _updated_at, registered_by',
+  losses:       'id, user_id, date, _synced, _deleted, _updated_at, registered_by',
   profiles:     'user_id, _synced, _updated_at',
   meta:         'key',
 });
@@ -1211,10 +1211,11 @@ function App() {
 
   const addTx = async t => {
     const uid = session.user.id;
-    const row = { id:t.id, type:t.type, description:t.desc, amount:t.amount, date:t.date, method:t.method||null, category:t.cat||null, items:t.items||null, user_id:uid, updated_at:now(), _synced:0, _deleted:0, _updated_at:now(), desc:t.desc, cat:t.cat||null };
+    const rb = session.user.user_metadata?.name || session.user.email;
+    const row = { id:t.id, type:t.type, description:t.desc, amount:t.amount, date:t.date, method:t.method||null, category:t.cat||null, items:t.items||null, user_id:uid, registered_by:rb, updated_at:now(), _synced:0, _deleted:0, _updated_at:now(), desc:t.desc, cat:t.cat||null };
     await ldb.transactions.put(row);
     setTx(p=>[row,...p]);
-    if (navigator.onLine) { const {error}=await sb.from('transactions').upsert({id:row.id,type:row.type,description:row.description,amount:row.amount,date:row.date,method:row.method,category:row.category,items:row.items,user_id:uid,updated_at:row.updated_at}); if(!error) await ldb.transactions.update(row.id,{_synced:1}); }
+    if (navigator.onLine) { const {error}=await sb.from('transactions').upsert({id:row.id,type:row.type,description:row.description,amount:row.amount,date:row.date,method:row.method,category:row.category,items:row.items,user_id:uid,registered_by:rb,updated_at:row.updated_at}); if(!error) await ldb.transactions.update(row.id,{_synced:1}); }
   };
   const editTx = async (id,u) => {
     const upd = { description:u.desc, amount:u.amount, date:u.date, method:u.method||null, category:u.cat||null, updated_at:now(), _synced:0, _updated_at:now(), desc:u.desc, cat:u.cat||null };
@@ -1230,10 +1231,11 @@ function App() {
 
   const addProduct = async p => {
     const uid = session.user.id;
-    const row = { ...p, user_id:uid, updated_at:now(), _synced:0, _deleted:0, _updated_at:now() };
+    const rb = session.user.user_metadata?.name || session.user.email;
+    const row = { ...p, user_id:uid, registered_by:rb, updated_at:now(), _synced:0, _deleted:0, _updated_at:now() };
     await ldb.products.put(row);
     setProducts(prev=>[...prev,row]);
-    if (navigator.onLine) { const {error}=await sb.from('products').upsert({id:row.id,name:row.name,category:row.category,price:row.price,cost:row.cost,stock:row.stock,user_id:uid,updated_at:row.updated_at}); if(!error) await ldb.products.update(row.id,{_synced:1}); }
+    if (navigator.onLine) { const {error}=await sb.from('products').upsert({id:row.id,name:row.name,category:row.category,price:row.price,cost:row.cost,stock:row.stock,user_id:uid,registered_by:rb,updated_at:row.updated_at}); if(!error) await ldb.products.update(row.id,{_synced:1}); }
   };
   const editProduct = async (id,u) => {
     const upd = { ...u, updated_at:now(), _synced:0, _updated_at:now() };
@@ -1257,10 +1259,11 @@ function App() {
 
   const addLoss = async l => {
     const uid = session.user.id;
-    const row = { id:l.id, description:l.desc, qty:l.qty, reason:l.reason||null, date:l.date, user_id:uid, updated_at:now(), _synced:0, _deleted:0, _updated_at:now(), desc:l.desc };
+    const rb = session.user.user_metadata?.name || session.user.email;
+    const row = { id:l.id, description:l.desc, qty:l.qty, reason:l.reason||null, date:l.date, user_id:uid, registered_by:rb, updated_at:now(), _synced:0, _deleted:0, _updated_at:now(), desc:l.desc };
     await ldb.losses.put(row);
     setLosses(p=>[row,...p]);
-    if (navigator.onLine) { const {error}=await sb.from('losses').upsert({id:row.id,description:row.description,qty:row.qty,reason:row.reason,date:row.date,user_id:uid,updated_at:row.updated_at}); if(!error) await ldb.losses.update(row.id,{_synced:1}); }
+    if (navigator.onLine) { const {error}=await sb.from('losses').upsert({id:row.id,description:row.description,qty:row.qty,reason:row.reason,date:row.date,user_id:uid,registered_by:rb,updated_at:row.updated_at}); if(!error) await ldb.losses.update(row.id,{_synced:1}); }
   };
   const editLoss = async (id,u) => {
     const upd = { description:u.desc, qty:u.qty, reason:u.reason||null, date:u.date, updated_at:now(), _synced:0, _updated_at:now(), desc:u.desc };
