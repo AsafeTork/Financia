@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gestão Financeira</title>
+<title>Financia</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/dexie@3/dist/dexie.min.js"></script>
 <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
@@ -38,7 +38,7 @@ const sb = createClient(
   'sb_publishable_EVJrndaIaxwLN9vUdSByUg__itH2rLy'
 );
 
-const INIT_BRAND = {name:'Nancia', color:'#002f59', logo:'data:image/svg+xml,<svg%20xmlns="http://www.w3.org/2000/svg"%20viewBox="0%200%20100%20100"><rect%20x="2"%20y="52"%20width="22"%20height="46"%20rx="4"%20fill="%23002f59"/><rect%20x="31"%20y="22"%20width="22"%20height="76"%20rx="4"%20fill="%231a6b5c"/><rect%20x="60"%20y="2"%20width="22"%20height="96"%20rx="4"%20fill="%236ec6c8"/><path%20d="M82%2028%20L62%2020%20L38%2054%20L26%2043%20L18%2051%20L38%2071%20L82%2028Z"%20fill="%238cf2d1"/></svg>', logo_url:null};
+const INIT_BRAND = {name:'Financia', color:'#002f59', logo:'data:image/svg+xml,<svg%20xmlns="http://www.w3.org/2000/svg"%20viewBox="0%200%20100%20100"><rect%20x="2"%20y="52"%20width="22"%20height="46"%20rx="4"%20fill="%23002f59"/><rect%20x="31"%20y="22"%20width="22"%20height="76"%20rx="4"%20fill="%231a6b5c"/><rect%20x="60"%20y="2"%20width="22"%20height="96"%20rx="4"%20fill="%236ec6c8"/><path%20d="M82%2028%20L62%2020%20L38%2054%20L26%2043%20L18%2051%20L38%2071%20L82%2028Z"%20fill="%238cf2d1"/></svg>', logo_url:null};
 const fmt = v => Number(v).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
 const today = () => new Date().toISOString().slice(0,10);
 const prevDays = n => { const d=new Date(); d.setDate(d.getDate()-n); return d.toISOString().slice(0,10); };
@@ -778,7 +778,7 @@ const triggerApkBuild = async (clientName, logoUrl, primaryColor) => {
       body: JSON.stringify({
         ref: 'main',
         inputs: {
-          client_name: clientName || 'Nancia',
+          client_name: clientName || 'Financia',
           logo_url: logoUrl || '',
           primary_color: primaryColor || '#002f59',
         },
@@ -1294,7 +1294,7 @@ const syncTable = async (uid, table, ldbTable, mapLocal, mapRemote) => {
   const lastSync = await getLastSync();
 
   // Push: locais não sincronizados
-  const unsynced = await ldbTable.where({ user_id: uid, _synced: 0 }).toArray();
+  const unsynced = await ldbTable.where('user_id').equals(uid).and(r=>r._synced===0).toArray();
   for (const row of unsynced) {
     const { _synced, _deleted, _updated_at, ...clean } = row;
     if (_deleted) {
@@ -1320,7 +1320,7 @@ const syncTable = async (uid, table, ldbTable, mapLocal, mapRemote) => {
 
 const syncProfiles = async uid => {
   if (!navigator.onLine) return;
-  const unsynced = await ldb.profiles.where({ user_id: uid, _synced: 0 }).toArray();
+  const unsynced = await ldb.profiles.where('user_id').equals(uid).and(r=>r._synced===0).toArray();
   for (const row of unsynced) {
     const { _synced, _deleted, _updated_at, ...clean } = row;
     await sb.from('company_profiles').upsert(clean);
@@ -1391,9 +1391,9 @@ function App() {
   const loadFromLocal = async uid => {
     const [profile, prods, txs, lss, roleRes] = await Promise.all([
       ldb.profiles.get(uid),
-      ldb.products.where({ user_id: uid, _deleted: 0 }).sortBy('created_at'),
-      ldb.transactions.where({ user_id: uid, _deleted: 0 }).reverse().sortBy('date'),
-      ldb.losses.where({ user_id: uid, _deleted: 0 }).reverse().sortBy('date'),
+      ldb.products.where('user_id').equals(uid).filter(r=>!r._deleted).sortBy('created_at'),
+      ldb.transactions.where('user_id').equals(uid).filter(r=>!r._deleted).sortBy('date'),
+      ldb.losses.where('user_id').equals(uid).filter(r=>!r._deleted).sortBy('date'),
       sb.from('user_roles').select('role').eq('user_id', uid).maybeSingle(),
     ]);
     if (profile) setBrand({ name:profile.name, logo:profile.logo, color:profile.color, logo_url:profile.logo_url||null });
