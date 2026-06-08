@@ -947,7 +947,7 @@ const AdminPanel = ({toast}) => {
             </label>
             <div className="flex items-center gap-2 flex-wrap">
               {form.colors.map(c=>(
-                <button key={c} onClick={()=>setForm(f=>{...f,primaryColor:c})}
+                <button key={c} onClick={()=>setForm(f=>({...f,primaryColor:c}))}
                   className="w-8 h-8 rounded-lg flex-shrink-0 transition-all"
                   style={{
                     background:c,
@@ -1256,6 +1256,13 @@ const Login = () => {
 
 // ── IndexedDB local (Dexie) ──────────────────────────────────────────────────
 const ldb = new Dexie('gestao_offline');
+ldb.version(1).stores({
+  transactions: 'id, user_id, date, _synced, _deleted, _updated_at',
+  products:     'id, user_id, category, _synced, _deleted, _updated_at',
+  losses:       'id, user_id, date, _synced, _deleted, _updated_at',
+  profiles:     'user_id, _synced, _updated_at',
+  meta:         'key',
+});
 ldb.version(2).stores({
   transactions: 'id, user_id, date, _synced, _deleted, _updated_at, registered_by',
   products:     'id, user_id, category, _synced, _deleted, _updated_at, registered_by',
