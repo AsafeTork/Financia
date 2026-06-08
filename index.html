@@ -795,6 +795,44 @@ const fetchClients = async () => {
   } catch(_) { return []; }
 };
 
+const GH_REPO = 'AsafeTork/gestao-financeira';
+const getGhToken = () => localStorage.getItem('nancia_gh_token') || '';
+
+const triggerApkBuild = async (clientName, logoUrl, primaryColor) => {
+  const tok = getGhToken();
+  if (!tok) return false;
+  const res = await fetch(
+    'https://api.github.com/repos/' + GH_REPO + '/actions/workflows/build-apk.yml/dispatches',
+    { method:'POST',
+      headers:{Authorization:'token '+tok,'Content-Type':'application/json'},
+      body: JSON.stringify({ ref:'main', inputs:{
+        client_name: clientName||'Financia',
+        logo_url: logoUrl||'',
+        primary_color: (primaryColor||'#002f59').replace('#',''),
+      }})
+    }
+  );
+  return res.status === 204;
+};
+
+const fetchClients = async () => {
+  try {
+    const { data } = await sb.from('company_profiles').select('*').order('user_id');
+    return data || [];
+  } catch(_) { return []; }
+};
+
+const deleteClient = async (uid) => {
+  try {
+    await sb.from('company_profiles').delete().eq('user_id', uid);
+    await sb.from('transactions').delete().eq('user_id', uid);
+    await sb.from('products').delete().eq('user_id', uid);
+    await sb.from('losses').delete().eq('user_id', uid);
+    await sb.from('user_roles').delete().eq('user_id', uid);
+    return true;
+  } catch(e) { return false; }
+};
+
 const GhTokenCard = ({toast}) => {
   const [tok,setTok] = React.useState(localStorage.getItem('nancia_gh_token')||'');
   const save = () => {
@@ -812,43 +850,92 @@ const GhTokenCard = ({toast}) => {
         <button onClick={save} className="px-4 py-2 text-white rounded-xl text-sm font-semibold flex-shrink-0"
           style={{background:'#002f59'}}>Salvar</button>
       </div>
-      {!tok && <p className="text-xs font-semibold" style={{color:'#dc2626'}}>(!) Sem token — APK não gerado automaticamente.</p>}
+      {!tok && <p className="text-xs font-semibold" style={{color:'#dc2626'}}>(!) Sem token - APK nao gerado.</p>}
+      {tok  && <p className="text-xs text-green-600 font-semibold">Token configurado.</p>}
     </Card>
   );
 };
 
-const AdminPanel = ({toast}) => {
-  const BLANK = {email:'',password:'',companyName:'',logoUrl:'',primaryColor:'#002f59',colors:['#002f59']};
-  const [form,setForm]         = useState(BLANK);
-  const [creating,setCreating] = useState(false);
-  const [building,setBuilding] = useState(false);
-  const [done,setDone]         = useState(null);
-  const [clients,setClients]   = useState([]);
-  const [loadingClients,setLoadingClients] = useState(true);
-  const [uploading,setUploading] = useState(false);
-  const logoRef = React.useRef();
-  const [copied,setCopied] = useState(null);
+const ClientEditModal = ({client, onSave, onClose, toast}) => {
+  const [color, setColor] = React.useState(client.color || '#002f59');
+  const [name,  setName]  = React.useState(client.name  || '');
+  const [saving,setSaving] = React.useState(false);
 
-  React.useEffect(() => {
-    fetchClients().then(c => { setClients(c); setLoadingClients(false); });
-  }, [done]);
+  const save = async () => {
+    setSaving(true);
+    const { error } = await sb.from('company_profiles')
+      .update({ name, color })
+      .eq('user_id', client.user_id);
+    setSaving(false);
+    if (error) { toast('Erro ao salvar.', 'error'); return; }
+    toast('Atualizado!');
+    onSave({ ...client, name, color });
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      style={{background:'rgba(0,0,0,0.5)'}}>
+      <div className="bg-white rounded-2xl p-5 w-full max-w-sm flex flex-col gap-4">
+        <div className="flex items-center justify-between">
+          <p className="font-bold text-gray-800">Editar cliente</p>
+          <button onClick={onClose} className="text-gray-400 text-xl">x</button>
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Nome da empresa</label>
+          <input value={name} onChange={e=>setName(e.target.value)}
+            className="border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-gray-400"/>
+        </div>
+        <div className="flex flex-col gap-2">
+          <label className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Cor principal</label>
+          <div className="flex items-center gap-3">
+            <input type="color" value={color} onChange={e=>setColor(e.target.value)}
+              className="w-10 h-10 rounded-xl border border-gray-200 cursor-pointer"/>
+            <div className="w-10 h-10 rounded-xl" style={{background:color}}/>
+            <span className="text-sm font-mono text-gray-600">{color}</span>
+          </div>
+        </div>
+        <div className="flex gap-2">
+          <button onClick={onClose}
+            className="flex-1 py-2.5 border border-gray-200 rounded-xl text-sm font-semibold text-gray-600">
+            Cancelar
+          </button>
+          <button onClick={save} disabled={saving}
+            className="flex-1 py-2.5 text-white rounded-xl text-sm font-semibold disabled:opacity-40"
+            style={{background:'#002f59'}}>
+            {saving ? 'Salvando...' : 'Salvar'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const AdminPanel = ({toast,confirm}) => {
+  const BLANK = {email:'',password:'',companyName:'',logoUrl:'',primaryColor:'#002f59',colors:['#002f59']};
+  const [form,setForm]         = React.useState(BLANK);
+  const [creating,setCreating] = React.useState(false);
+  const [building,setBuilding] = React.useState(false);
+  const [done,setDone]         = React.useState(null);
+  const [clients,setClients]   = React.useState([]);
+  const [loadingCli,setLoadingCli] = React.useState(true);
+  const [uploading,setUploading]   = React.useState(false);
+  const [editClient,setEditClient] = React.useState(null);
+  const [copied,setCopied]         = React.useState(null);
+  const logoRef = React.useRef();
+
+  const reload = () => fetchClients().then(c=>{setClients(c);setLoadingCli(false);});
+  React.useEffect(()=>{reload();},[done]);
 
   const extractColors = img => {
     try {
-      const c = document.createElement('canvas');
-      c.width=50; c.height=50;
-      const ctx=c.getContext('2d');
-      ctx.drawImage(img,0,0,50,50);
-      const d=ctx.getImageData(0,0,50,50).data;
-      const buckets={};
+      const c=document.createElement('canvas'); c.width=50;c.height=50;
+      const ctx=c.getContext('2d'); ctx.drawImage(img,0,0,50,50);
+      const d=ctx.getImageData(0,0,50,50).data; const buckets={};
       for(let i=0;i<d.length;i+=4){
         if(d[i+3]<128) continue;
-        const r=Math.round(d[i]/32)*32;
-        const g=Math.round(d[i+1]/32)*32;
-        const b=Math.round(d[i+2]/32)*32;
+        const r=Math.round(d[i]/32)*32,g=Math.round(d[i+1]/32)*32,b=Math.round(d[i+2]/32)*32;
         if(r>230&&g>230&&b>230) continue;
-        const k=r+','+g+','+b;
-        buckets[k]=(buckets[k]||0)+1;
+        const k=r+','+g+','+b; buckets[k]=(buckets[k]||0)+1;
       }
       const sorted=Object.entries(buckets).sort((a,b)=>b[1]-a[1]).slice(0,5);
       const hexes=sorted.map(([k])=>{const[r,g,b]=k.split(',').map(Number);return '#'+[r,g,b].map(v=>v.toString(16).padStart(2,'0')).join('');});
@@ -860,100 +947,89 @@ const AdminPanel = ({toast}) => {
     if(!file) return;
     setUploading(true);
     const path='client-logos/'+Date.now()+'.'+file.name.split('.').pop();
-    const {error} = await sb.storage.from('logos').upload(path,file,{upsert:true});
+    const {error}=await sb.storage.from('logos').upload(path,file,{upsert:true});
     if(error){toast('Erro no upload.','error');setUploading(false);return;}
-    const {data:{publicUrl}} = sb.storage.from('logos').getPublicUrl(path);
-    const url = publicUrl+'?t='+Date.now();
+    const {data:{publicUrl}}=sb.storage.from('logos').getPublicUrl(path);
+    const url=publicUrl+'?t='+Date.now();
     setForm(f=>({...f,logoUrl:url}));
     const img=new Image(); img.crossOrigin='anonymous';
     img.onload=()=>extractColors(img); img.src=url;
-    setUploading(false);
-    toast('Logo enviado!');
+    setUploading(false); toast('Logo enviado!');
   };
 
   const create = async () => {
-    if(!form.email||!form.password) return;
-    if(form.password.length<8){toast('Senha mínimo 8 chars.','error');return;}
+    if(!form.email||!form.password){toast('Preencha email e senha.','error');return;}
+    if(form.password.length<8){toast('Senha minimo 8 chars.','error');return;}
     if(!form.companyName){toast('Informe o nome da empresa.','error');return;}
     setCreating(true);
-
-    // 1. Criar conta no Supabase Auth
-    const {data:authData,error} = await sb.auth.signUp({email:form.email,password:form.password});
-    if(error){
-      toast(error.message.includes('already')?'E-mail já cadastrado.':'Erro: '+error.message,'error');
-      setCreating(false); return;
-    }
+    const {data:authData,error}=await sb.auth.signUp({email:form.email,password:form.password});
+    if(error){toast(error.message.includes('already')?'Email ja cadastrado.':'Erro: '+error.message,'error');setCreating(false);return;}
     const newUid = authData && authData.user ? authData.user.id : null;
-
-    // 2. Criar perfil da empresa para o novo cliente
     if(newUid){
-      await sb.from('company_profiles').upsert({
-        user_id: newUid,
-        name: form.companyName,
-        color: form.primaryColor||'#002f59',
-        logo: 'G',
-        logo_url: form.logoUrl||null,
-      });
+      await sb.from('company_profiles').upsert({user_id:newUid,name:form.companyName,color:form.primaryColor||'#002f59',logo:'G',logo_url:form.logoUrl||null});
     }
-
-    // 3. Disparar build do APK
-    const tok = getGhToken();
-    if(!tok){
-      toast('Cliente criado! Configure o token GitHub para gerar APK.','error');
-      setDone({...form,buildOk:false,newUid});
-      setForm(BLANK); setCreating(false); return;
-    }
+    const tok=getGhToken();
+    if(!tok){toast('Cliente criado! Configure token GitHub.','error');setDone({...form,buildOk:false,newUid});setForm(BLANK);setCreating(false);return;}
     setBuilding(true);
-    const built = await triggerApkBuild(form.companyName,form.logoUrl,form.primaryColor);
+    const built=await triggerApkBuild(form.companyName,form.logoUrl,form.primaryColor);
     setBuilding(false);
     setDone({...form,buildOk:built,newUid});
-    setForm(BLANK);
-    setCreating(false);
-    toast(built?'Cliente criado! APK em ~2min.':'Erro ao disparar APK — verifique o token.', built?'success':'error');
+    setForm(BLANK); setCreating(false);
+    toast(built?'Cliente criado! APK em ~2min.':'Erro no APK - verifique token.',built?'success':'error');
   };
 
-  const copyWpp = async (email,pass,name,build) => {
-    const msg=(name||'Financia')+'\n\nLink: https://gestao-financeira-7heu.onrender.com\nE-mail: '+email+'\nSenha: '+pass+(build?'\nAPK: github.com/'+GH_REPO+'/actions':'');
+  const copyWpp = async (c,done_) => {
+    const d = done_ || c;
+    const msg=(d.companyName||d.name||'Financia')+'\n\nLink: https://gestao-financeira-7heu.onrender.com\nEmail: '+d.email+'\nSenha: '+d.password+(d.buildOk?'\nAPK: github.com/'+GH_REPO+'/actions':'');
     await navigator.clipboard.writeText(msg);
-    setCopied(email);
+    setCopied(d.email||d.user_id);
     setTimeout(()=>setCopied(null),2000);
     toast('Copiado!');
   };
 
-  const rebuildApk = async (c) => {
-    const ok = await triggerApkBuild(c.name,c.logo_url,c.color);
-    toast(ok?'APK iniciado! Pronto em ~2min.':'Sem token GitHub.', ok?'success':'error');
+  const handleDelete = (c) => {
+    confirm('Excluir todos os dados de "'+( c.name||c.user_id)+'"? Isso nao pode ser desfeito.', async ()=>{
+      const ok = await deleteClient(c.user_id);
+      if(ok){toast('Cliente excluido.');reload();}
+      else toast('Erro ao excluir.','error');
+    });
   };
 
   return (
     <div className="flex flex-col gap-5">
-
-      {/* Clientes existentes */}
+      {/* Lista de clientes */}
       <div>
-        <p className="text-sm font-bold text-gray-800 mb-3">Clientes cadastrados</p>
-        {loadingClients
+        <p className="text-sm font-bold text-gray-800 mb-2">Clientes cadastrados</p>
+        {loadingCli
           ? <p className="text-xs text-gray-400">Carregando...</p>
-          : clients.length === 0
+          : clients.length===0
             ? <p className="text-xs text-gray-400">Nenhum cliente ainda.</p>
             : <div className="flex flex-col gap-2">
-                {clients.map(c => (
-                  <div key={c.user_id} className="rounded-xl border border-gray-100 p-3 flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-xl flex-shrink-0 flex items-center justify-center overflow-hidden"
+                {clients.map(c=>(
+                  <div key={c.user_id} className="rounded-xl border border-gray-100 p-3 flex items-center gap-3 bg-white">
+                    <div className="w-9 h-9 rounded-xl flex-shrink-0 overflow-hidden"
                       style={{background:c.color||'#002f59'}}>
                       {c.logo_url
-                        ? <img src={c.logo_url} className="w-full h-full object-contain p-1"/>
-                        : <span className="text-white text-xs font-bold">{(c.name||'?')[0]}</span>}
+                        ? <img src={c.logo_url} className="w-full h-full object-cover"/>
+                        : <div className="w-full h-full flex items-center justify-center text-white text-xs font-bold">{(c.name||'?')[0]}</div>}
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-semibold text-gray-800 truncate">{c.name||'Sem nome'}</p>
+                      <p className="text-xs text-gray-400 truncate">{c.user_id.slice(0,8)}...</p>
                     </div>
-                    <div className="flex gap-1.5 flex-shrink-0">
-                      <button onClick={()=>rebuildApk(c)}
-                        className="px-2.5 py-1.5 text-xs font-semibold rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50"
-                        title="Gerar APK">[APK] APK</button>
-                      <a href={'https://github.com/'+GH_REPO+'/actions'} target="_blank"
-                        className="px-2.5 py-1.5 text-xs font-semibold rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50"
-                        title="Ver builds">-></a>
+                    <div className="flex gap-1 flex-shrink-0">
+                      <button onClick={()=>setEditClient(c)}
+                        className="px-2.5 py-1.5 text-xs font-semibold rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50">
+                        Editar
+                      </button>
+                      <button onClick={()=>triggerApkBuild(c.name,c.logo_url,c.color).then(ok=>toast(ok?'APK iniciado!':'Sem token.', ok?'success':'error'))}
+                        className="px-2.5 py-1.5 text-xs font-semibold rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50">
+                        APK
+                      </button>
+                      <button onClick={()=>handleDelete(c)}
+                        className="px-2.5 py-1.5 text-xs font-semibold rounded-lg border border-red-200 text-red-500 hover:bg-red-50">
+                        Del
+                      </button>
                     </div>
                   </div>
                 ))}
@@ -967,24 +1043,26 @@ const AdminPanel = ({toast}) => {
       <div>
         <p className="text-sm font-bold text-gray-800 mb-3">Novo cliente</p>
         <div className="flex flex-col gap-3">
-
-          {/* Branding */}
           <div className="rounded-2xl p-4 flex flex-col gap-3" style={{background:'#f8fafc'}}>
-            <Inp label="Nome da empresa" value={form.companyName}
-              onChange={e=>setForm(f=>({...f,companyName:e.target.value}))} placeholder="Ex: Padaria do João"/>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Nome da empresa</label>
+              <input value={form.companyName} onChange={e=>setForm(f=>({...f,companyName:e.target.value}))}
+                placeholder="Ex: Padaria do Joao"
+                className="border border-gray-200 rounded-xl px-3 py-2.5 text-sm bg-white focus:outline-none focus:border-gray-400"/>
+            </div>
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-xl flex-shrink-0 flex items-center justify-center border-2 border-dashed border-gray-200 overflow-hidden"
+              <div className="w-12 h-12 rounded-xl flex-shrink-0 overflow-hidden border-2 border-dashed border-gray-200"
                 style={{background:form.primaryColor+'22'}}>
                 {form.logoUrl
                   ? <img src={form.logoUrl} className="w-full h-full object-contain p-1"/>
-                  : <span className="text-xl">[Empresa]</span>}
+                  : <div className="w-full h-full flex items-center justify-center text-gray-400 text-xl">[E]</div>}
               </div>
               <div className="flex-1 flex flex-col gap-1.5">
                 <input ref={logoRef} type="file" accept="image/*" className="hidden"
                   onChange={e=>uploadLogo(e.target.files[0])}/>
                 <button onClick={()=>logoRef.current.click()} disabled={uploading}
                   className="border border-gray-200 rounded-xl py-2 text-xs font-semibold text-gray-600 hover:bg-gray-50">
-                  {uploading?'Enviando...':'[Upload] Upload logo'}
+                  {uploading?'Enviando...':'[Upload] Logo'}
                 </button>
                 {form.colors.length>0 && (
                   <div className="flex items-center gap-1.5">
@@ -995,39 +1073,45 @@ const AdminPanel = ({toast}) => {
                     ))}
                     <input type="color" value={form.primaryColor}
                       onChange={e=>setForm(f=>({...f,primaryColor:e.target.value,colors:[...new Set([e.target.value,...f.colors])].slice(0,5)}))}
-                      className="w-6 h-6 rounded-md border border-gray-200 cursor-pointer p-0"/>
+                      className="w-6 h-6 rounded-md border border-gray-200 cursor-pointer"/>
                   </div>
                 )}
               </div>
             </div>
           </div>
-
-          {/* Credenciais */}
-          <Inp label="E-mail" type="email" value={form.email}
-            onChange={e=>setForm(f=>({...f,email:e.target.value}))} placeholder="cliente@email.com"/>
-          <div className="flex gap-2">
-            <Inp label="Senha" value={form.password}
-              onChange={e=>setForm(f=>({...f,password:e.target.value}))} placeholder="Mínimo 8 chars"/>
-            <button onClick={()=>setForm(f=>({...f,password:genPwd()}))}
-              className="border border-gray-200 rounded-xl px-3 text-xs font-semibold text-gray-600 hover:bg-gray-50 flex-shrink-0 mt-6">Gerar</button>
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Email</label>
+            <input type="email" value={form.email} onChange={e=>setForm(f=>({...f,email:e.target.value}))}
+              placeholder="cliente@email.com"
+              className="border border-gray-200 rounded-xl px-3 py-2.5 text-sm bg-white focus:outline-none focus:border-gray-400"/>
           </div>
-
+          <div className="flex gap-2">
+            <div className="flex flex-col gap-1.5 flex-1">
+              <label className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Senha</label>
+              <input type="text" value={form.password} onChange={e=>setForm(f=>({...f,password:e.target.value}))}
+                placeholder="Minimo 8 chars"
+                className="border border-gray-200 rounded-xl px-3 py-2.5 text-sm bg-white focus:outline-none focus:border-gray-400"/>
+            </div>
+            <button onClick={()=>setForm(f=>({...f,password:genPwd()}))}
+              className="border border-gray-200 rounded-xl px-3 text-xs font-semibold text-gray-600 hover:bg-gray-50 flex-shrink-0 mt-6">
+              Gerar
+            </button>
+          </div>
           <button onClick={create} disabled={creating||building||!form.email||!form.password}
             className="w-full text-white rounded-xl py-3 text-sm font-bold hover:opacity-90 disabled:opacity-40 flex items-center justify-center gap-2"
             style={{background:'#002f59'}}>
-            {(creating||building)?<><Spin white/>{creating?'Criando...':'Gerando APK...'}</>:'Criar cliente + APK'}
+            {(creating||building)?'Aguarde...':'Criar cliente + APK'}
           </button>
-
           {done && (
             <div className="rounded-2xl p-4 flex flex-col gap-3" style={{background:'#f0fdf4',border:'1px solid #bbf7d0'}}>
-              <p className="text-sm font-bold text-gray-800">OK {done.companyName||'Cliente'} criado!</p>
+              <p className="text-sm font-bold text-gray-800">OK: {done.companyName||'Cliente'} criado!</p>
               <div className="bg-white rounded-xl p-3 font-mono text-xs flex flex-col gap-1 border border-gray-100">
-                <p><span className="text-gray-400">E-mail: </span><b>{done.email}</b></p>
-                <p><span className="text-gray-400">Senha:  </span><b>{done.password}</b></p>
-                {done.buildOk && <p><span className="text-gray-400">APK:    </span>
-                  <a href={'https://github.com/'+GH_REPO+'/actions'} target="_blank" className="text-blue-500 underline">github.com/...actions</a></p>}
+                <p><span className="text-gray-400">Email: </span><b>{done.email}</b></p>
+                <p><span className="text-gray-400">Senha: </span><b>{done.password}</b></p>
+                {done.buildOk && <p><span className="text-gray-400">APK: </span>
+                  <a href={'https://github.com/'+GH_REPO+'/actions'} target="_blank" className="text-blue-500 underline">github.com/.../actions</a></p>}
               </div>
-              <button onClick={()=>copyWpp(done.email,done.password,done.companyName,done.buildOk)}
+              <button onClick={()=>copyWpp(null,done)}
                 className="w-full text-white rounded-xl py-2.5 text-sm font-bold hover:opacity-90"
                 style={{background:'#002f59'}}>
                 {copied===done.email?'OK Copiado!':'Copiar para WhatsApp'}
@@ -1039,6 +1123,15 @@ const AdminPanel = ({toast}) => {
           )}
         </div>
       </div>
+
+      {editClient && (
+        <ClientEditModal
+          client={editClient}
+          onSave={updated=>{setClients(cs=>cs.map(c=>c.user_id===updated.user_id?updated:c));setEditClient(null);}}
+          onClose={()=>setEditClient(null)}
+          toast={toast}
+        />
+      )}
     </div>
   );
 };
@@ -1502,16 +1595,14 @@ function App() {
       if(session) loadData(session.user.id);
       else { setTx([]); setProducts([]); setLosses([]); setBrand(INIT_BRAND); setIsAdminDB(false); localStorage.removeItem('is_admin'); }
     });
-    const onOnline = async () => {
+    // Sync a cada 2 minutos — sem polling constante
+    const syncInterval = setInterval(async () => {
       const uid = uidRef.current;
-      if (!uid) return;
-      setSyncStatus('syncing');
+      if (!uid || !navigator.onLine) return;
       const ok = await syncAll(uid);
       if (ok) { await loadFromLocal(uid); setSyncStatus('ok'); setTimeout(()=>setSyncStatus('idle'),3000); }
-      else setSyncStatus('error');
-    };
-    window.addEventListener('online', onOnline);
-    return () => { subscription.unsubscribe(); window.removeEventListener('online', onOnline); };
+    }, 120000);
+    return () => { subscription.unsubscribe(); clearInterval(syncInterval); };
   },[]);
 
   const addTx = async t => {
