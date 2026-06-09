@@ -179,8 +179,11 @@ export default function App() {
     catch(e) { toast('Erro ao salvar: ' + (e.message || 'tente novamente'), 'error'); return; }
     setTx(function(p) { return [row].concat(p); });
     if (navigator.onLine) {
-      const res = await sb.from('transactions').upsert({id:row.id, type:row.type, description:row.description, amount:row.amount, date:row.date, method:row.method, category:row.category, items:row.items, user_id:userId, registered_by:rb, updated_at:row.updated_at});
-      if (!res.error) await ldb.transactions.update(row.id, {_synced:1});
+      try {
+        const res = await sb.from('transactions').upsert({id:row.id, type:row.type, description:row.description, amount:row.amount, date:row.date, method:row.method, category:row.category, items:row.items, user_id:userId, registered_by:rb, updated_at:row.updated_at});
+        if (!res.error) await ldb.transactions.update(row.id, {_synced:1});
+        else toast('Aviso: nao sincronizado — sera tentado em breve.', 'success');
+      } catch(e) { toast('Aviso: nao sincronizado — sera tentado em breve.', 'success'); }
     }
   };
 
@@ -192,8 +195,11 @@ export default function App() {
     catch(e) { toast('Erro ao salvar: ' + (e.message || 'tente novamente'), 'error'); return; }
     setTx(function(p) { return p.map(function(t) { return t.id === id ? Object.assign({}, t, upd) : t; }); });
     if (navigator.onLine) {
-      const res = await sb.from('transactions').update({description:upd.description, amount:upd.amount, date:upd.date, method:upd.method, category:upd.category, updated_at:upd.updated_at}).eq('id', id);
-      if (!res.error) await ldb.transactions.update(id, {_synced:1});
+      try {
+        const res = await sb.from('transactions').update({description:upd.description, amount:upd.amount, date:upd.date, method:upd.method, category:upd.category, updated_at:upd.updated_at}).eq('id', id);
+        if (!res.error) await ldb.transactions.update(id, {_synced:1});
+        else toast('Aviso: nao sincronizado — sera tentado em breve.', 'success');
+      } catch(e) { toast('Aviso: nao sincronizado — sera tentado em breve.', 'success'); }
     }
   };
 
@@ -202,8 +208,10 @@ export default function App() {
     catch(e) { toast('Erro ao excluir: ' + (e.message || 'tente novamente'), 'error'); return; }
     setTx(function(p) { return p.filter(function(t) { return t.id !== id; }); });
     if (navigator.onLine) {
-      const res = await sb.from('transactions').delete().eq('id', id);
-      if (!res.error) await ldb.transactions.delete(id);
+      try {
+        const res = await sb.from('transactions').delete().eq('id', id);
+        if (!res.error) await ldb.transactions.delete(id);
+      } catch(e) { toast('Aviso: nao sincronizado — sera tentado em breve.', 'success'); }
     }
   };
 
@@ -219,8 +227,11 @@ export default function App() {
     catch(e) { toast('Erro ao salvar: ' + (e.message || 'tente novamente'), 'error'); return; }
     setProducts(function(prev) { return prev.concat([row]); });
     if (navigator.onLine) {
-      const res = await sb.from('products').upsert({id:row.id, name:row.name, category:row.category, price:row.price, cost:row.cost, stock:row.stock, user_id:userId, registered_by:rb, updated_at:row.updated_at});
-      if (!res.error) await ldb.products.update(row.id, {_synced:1});
+      try {
+        const res = await sb.from('products').upsert({id:row.id, name:row.name, category:row.category, price:row.price, cost:row.cost, stock:row.stock, user_id:userId, registered_by:rb, updated_at:row.updated_at});
+        if (!res.error) await ldb.products.update(row.id, {_synced:1});
+        else toast('Aviso: nao sincronizado — sera tentado em breve.', 'success');
+      } catch(e) { toast('Aviso: nao sincronizado — sera tentado em breve.', 'success'); }
     }
   };
 
@@ -231,8 +242,11 @@ export default function App() {
     catch(e) { toast('Erro ao salvar: ' + (e.message || 'tente novamente'), 'error'); return; }
     setProducts(function(p) { return p.map(function(prod) { return prod.id === id ? Object.assign({}, prod, upd) : prod; }); });
     if (navigator.onLine) {
-      const res = await sb.from('products').update({name:upd.name, category:upd.category, price:upd.price, cost:upd.cost, stock:upd.stock, updated_at:upd.updated_at}).eq('id', id);
-      if (!res.error) await ldb.products.update(id, {_synced:1});
+      try {
+        const res = await sb.from('products').update({name:upd.name, category:upd.category, price:upd.price, cost:upd.cost, stock:upd.stock, updated_at:upd.updated_at}).eq('id', id);
+        if (!res.error) await ldb.products.update(id, {_synced:1});
+        else toast('Aviso: nao sincronizado — sera tentado em breve.', 'success');
+      } catch(e) { toast('Aviso: nao sincronizado — sera tentado em breve.', 'success'); }
     }
   };
 
@@ -241,8 +255,10 @@ export default function App() {
     catch(e) { toast('Erro ao excluir: ' + (e.message || 'tente novamente'), 'error'); return; }
     setProducts(function(p) { return p.filter(function(prod) { return prod.id !== id; }); });
     if (navigator.onLine) {
-      const res = await sb.from('products').delete().eq('id', id);
-      if (!res.error) await ldb.products.delete(id);
+      try {
+        const res = await sb.from('products').delete().eq('id', id);
+        if (!res.error) await ldb.products.delete(id);
+      } catch(e) { toast('Aviso: nao sincronizado — sera tentado em breve.', 'success'); }
     }
   };
 
@@ -255,8 +271,11 @@ export default function App() {
     catch(e) { toast('Erro ao ajustar estoque: ' + (e.message || 'tente novamente'), 'error'); return; }
     setProducts(function(p) { return p.map(function(prod) { return prod.id === id ? Object.assign({}, prod, upd) : prod; }); });
     if (navigator.onLine) {
-      const res = await sb.from('products').update({stock:ns, updated_at:upd.updated_at}).eq('id', id);
-      if (!res.error) await ldb.products.update(id, {_synced:1});
+      try {
+        const res = await sb.from('products').update({stock:ns, updated_at:upd.updated_at}).eq('id', id);
+        if (!res.error) await ldb.products.update(id, {_synced:1});
+        else toast('Aviso: nao sincronizado — sera tentado em breve.', 'success');
+      } catch(e) { toast('Aviso: nao sincronizado — sera tentado em breve.', 'success'); }
     }
   };
 
@@ -271,8 +290,11 @@ export default function App() {
     catch(e) { toast('Erro ao salvar: ' + (e.message || 'tente novamente'), 'error'); return; }
     setLosses(function(p) { return [row].concat(p); });
     if (navigator.onLine) {
-      const res = await sb.from('losses').upsert({id:row.id, description:row.description, qty:row.qty, reason:row.reason, date:row.date, user_id:userId, registered_by:rb, updated_at:row.updated_at});
-      if (!res.error) await ldb.losses.update(row.id, {_synced:1});
+      try {
+        const res = await sb.from('losses').upsert({id:row.id, description:row.description, qty:row.qty, reason:row.reason, date:row.date, user_id:userId, registered_by:rb, updated_at:row.updated_at});
+        if (!res.error) await ldb.losses.update(row.id, {_synced:1});
+        else toast('Aviso: nao sincronizado — sera tentado em breve.', 'success');
+      } catch(e) { toast('Aviso: nao sincronizado — sera tentado em breve.', 'success'); }
     }
   };
 
@@ -284,8 +306,11 @@ export default function App() {
     catch(e) { toast('Erro ao salvar: ' + (e.message || 'tente novamente'), 'error'); return; }
     setLosses(function(p) { return p.map(function(l) { return l.id === id ? Object.assign({}, l, upd) : l; }); });
     if (navigator.onLine) {
-      const res = await sb.from('losses').update({description:upd.description, qty:upd.qty, reason:upd.reason, date:upd.date, updated_at:upd.updated_at}).eq('id', id);
-      if (!res.error) await ldb.losses.update(id, {_synced:1});
+      try {
+        const res = await sb.from('losses').update({description:upd.description, qty:upd.qty, reason:upd.reason, date:upd.date, updated_at:upd.updated_at}).eq('id', id);
+        if (!res.error) await ldb.losses.update(id, {_synced:1});
+        else toast('Aviso: nao sincronizado — sera tentado em breve.', 'success');
+      } catch(e) { toast('Aviso: nao sincronizado — sera tentado em breve.', 'success'); }
     }
   };
 
@@ -294,8 +319,10 @@ export default function App() {
     catch(e) { toast('Erro ao excluir: ' + (e.message || 'tente novamente'), 'error'); return; }
     setLosses(function(p) { return p.filter(function(l) { return l.id !== id; }); });
     if (navigator.onLine) {
-      const res = await sb.from('losses').delete().eq('id', id);
-      if (!res.error) await ldb.losses.delete(id);
+      try {
+        const res = await sb.from('losses').delete().eq('id', id);
+        if (!res.error) await ldb.losses.delete(id);
+      } catch(e) { toast('Aviso: nao sincronizado — sera tentado em breve.', 'success'); }
     }
   };
 
@@ -309,8 +336,11 @@ export default function App() {
       navigator.serviceWorker.controller.postMessage({type:'UPDATE_BRAND', name:nb.name, logo_url:nb.logo_url||null, color:nb.color||'#002f59'});
     }
     if (navigator.onLine) {
-      const res = await sb.from('company_profiles').upsert({user_id:userId, name:nb.name, logo:nb.logo, color:nb.color, logo_url:nb.logo_url||null});
-      if (!res.error) await ldb.profiles.update(userId, {_synced:1});
+      try {
+        const res = await sb.from('company_profiles').upsert({user_id:userId, name:nb.name, logo:nb.logo, color:nb.color, logo_url:nb.logo_url||null});
+        if (!res.error) await ldb.profiles.update(userId, {_synced:1});
+        else toast('Aviso: nao sincronizado — sera tentado em breve.', 'success');
+      } catch(e) { toast('Aviso: nao sincronizado — sera tentado em breve.', 'success'); }
     }
   };
 

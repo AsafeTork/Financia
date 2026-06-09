@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Card, Inp, Modal, EditBtn, DelBtn, Empty } from '../components/ui.jsx';
 import { PSearch } from '../components/SaleForm.jsx';
-import { fmt, today, safe, uid } from '../lib/utils.js';
+import { fmt, fmtDate, today, safe, uid } from '../lib/utils.js';
 
 export default function InventoryView({ products, losses, onAddProduct, onEditProduct, onDeleteProduct, onAddLoss, onEditLoss, onDeleteLoss, onAdjustStock, brand, toast, confirm }) {
   const [tab, setTab] = useState('products');
@@ -160,7 +160,7 @@ export default function InventoryView({ products, losses, onAddProduct, onEditPr
                     <div key={l.id} className="flex items-center justify-between px-4 py-3.5 gap-3">
                       <div className="flex items-center gap-3 min-w-0 flex-1">
                         <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-sm flex-shrink-0">!</div>
-                        <div className="min-w-0"><p className="text-sm font-medium text-gray-800">{l.qty + 'x ' + l.desc}</p><p className="text-xs text-gray-400">{fmtDate ? '' : ''}{new Date(l.date + 'T12:00').toLocaleDateString('pt-BR') + (l.reason ? ' . ' + l.reason : '')}</p></div>
+                        <div className="min-w-0"><p className="text-sm font-medium text-gray-800">{l.qty + 'x ' + l.desc}</p><p className="text-xs text-gray-400">{fmtDate(l.date) + (l.reason ? ' . ' + l.reason : '')}</p></div>
                       </div>
                       <div className="flex items-center gap-1 flex-shrink-0">
                         <EditBtn onClick={function() { setEditL({id:l.id, desc:l.desc, qty:String(l.qty), reason:l.reason||'', date:l.date}); }}/>
