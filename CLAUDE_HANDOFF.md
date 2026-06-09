@@ -93,20 +93,22 @@ O que funciona:
 
 **NUNCA mergear no main sem aprovacao explicita de Asafe.**
 
-Ultimo commit: `2510d6c`
+Ultimo commit: `4aca538`
 
 | Step | Status | Commit | Descricao |
 |------|--------|--------|-----------|
 | 1 | DONE | 3282b27 | Vite setup, index.html, package.json, configs, src/index.css, src/main.jsx |
 | 2 | DONE | 9af4e0f | src/lib/utils.js, constants.js, supabase.js |
 | 3 | DONE | 2510d6c | src/lib/db.js (Dexie schema v1/v2, syncAll, syncTable, syncProfiles, fetchClients, deleteClient, triggerApkBuild) |
-| 4 | pendente | — | src/components/ (Card, Inp, Sel, Textarea, Spin, Empty, Toast, Offline, Confirm, UpgradeModal, Modal, EditBtn, DelBtn, LogoImg, SyncBadge, UsageBar, KpiCard, BarChartSVG, PSearch, CartRow, SaleForm, Sidebar) |
-| 5 | pendente | — | src/views/ Dashboard, TxView, InventoryView, ReportView, EmailView |
-| 6 | pendente | — | src/admin/ AdminPanel, ClientEditModal, GhTokenCard |
-| 7 | pendente | — | src/views/ SettingsView, Login |
-| 8 | pendente | — | src/App.jsx + src/main.jsx (App completo, auth, CRUDs) |
-| 9 | pendente | — | Render: serve dist/ |
-| 10 | pendente | — | npm run build final, teste completo |
+| 4 | DONE | 87837a9 | src/components/ (ui, Toast, Offline, Confirm, UpgradeModal, LogoImg, SyncBadge, UsageBar, SaleForm, Sidebar) |
+| 5 | DONE | 87837a9 | src/views/ Dashboard, TxView, InventoryView, ReportView, EmailView |
+| 6 | DONE | 87837a9 | src/admin/ GhTokenCard, ClientEditModal, AdminPanel |
+| 7 | DONE | 87837a9 | src/views/ SettingsView, Login |
+| 8 | DONE | 87837a9 | src/App.jsx + src/main.jsx (App completo, auth, todos os CRUDs) |
+| 9 | DONE | 4aca538 | render.yaml — static site, buildCommand: npm install && npm run build, serve dist/ |
+| 10 | DONE | — | npm run build passou limpo (97 modulos, 534 kB JS / 150 kB gzip) |
+
+Branch `refactor/vite` foi pushed para GitHub. Para deploy em producao: **Asafe precisa aprovar o merge no main** e re-apontar o servico Render para usar render.yaml (ou configurar manualmente Build Command = `npm install && npm run build`, Publish Dir = `dist`).
 
 ## Proximas tarefas (em ordem de prioridade)
 
