@@ -561,8 +561,10 @@ const InventoryView = ({products,losses,onAddProduct,onEditProduct,onDeleteProdu
     if(!lf.desc||!lf.qty) return;
     setSaving(true);
     await onAddLoss({id:uid(),desc:safe(lf.desc),qty:Number(lf.qty),reason:lf.reason,date:lf.date});
-    const p=products.find(p=>p.name===lf.desc); if(p&&p.stock!=null) await onAdjustStock(p.id,-Number(lf.qty));
-    toast('Perda registrada'); setSaving(false); setLm(false); setLf({desc:'',qty:'1',reason:'',date:today()});
+    const p=products.find(p=>p.name===lf.desc);
+    if(p&&p.stock!=null) await onAdjustStock(p.id,-Number(lf.qty));
+    toast(p?'Perda registrada e estoque abatido':'Perda registrada (produto nao encontrado no estoque)');
+    setSaving(false); setLm(false); setLf({desc:'',qty:'1',reason:'',date:today()});
   };
   const saveEditL = async () => {
     if(!editL.desc||!editL.qty) return;
@@ -1199,7 +1201,7 @@ const SettingsView = ({brand,session,onSave,toast,confirm,isAdmin}) => {
   const [uploading,setUploading] = useState(false);
   const fileRef = useRef();
   const COLORS = ['#1a6b5c','#2563eb','#7c3aed','#dc2626','#ea580c','#0891b2','#be185d','#374151','#b45309','#0d9488'];
-  const handleSaveBrand = async () => { setSaving(true); await onSave(form); toast('Configuracoes salvas!'); setSaving(false); };
+  const handleSaveBrand = async () => { setSaving(true); try { await onSave(form); toast('Configuracoes salvas!'); } catch(_) { toast('Erro ao salvar.','error'); } finally { setSaving(false); } };
   const changePw = async () => {
     if(pwForm.newPw!==pwForm.confirm){toast('As senhas nao coincidem.','error');return;}
     if(pwForm.newPw.length<8){toast('Senha deve ter ao menos 8 caracteres.','error');return;}
@@ -1655,11 +1657,11 @@ function App() {
         sb.from('user_roles').select('role').eq('user_id',uid).maybeSingle(),
         new Promise((_,r)=>setTimeout(()=>r(new Error('timeout')),5000)),
       ]);
-      if (data && data.role ? data.role : null) {
+      if (data && data.role) {
         await ldb.meta.put({ key:'role_'+uid, val:data.role });
         localStorage.setItem('is_admin', data.role==='admin'?'1':'0');
       }
-      return data && data.role ? data.role : null === 'admin';
+      return !!(data && data.role === 'admin');
     } catch(_) { return false; }
   };
 
@@ -1882,4 +1884,4 @@ window.addEventListener('error', e => {
 ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
 </script>
 </body>
-</htm>
+</html>
