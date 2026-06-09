@@ -760,41 +760,6 @@ const ReportView = ({tx,toast}) => {
   );
 };
 
-const getGhToken = () => localStorage.getItem('nancia_gh_token') || '';
-const GH_REPO  = 'AsafeTork/gestao-financeira';
-
-const triggerApkBuild = async (clientName, logoUrl, primaryColor) => {
-  const res = await fetch(
-    `https://api.github.com/repos/${GH_REPO}/actions/workflows/build-apk.yml/dispatches`,
-    {
-      method: 'POST',
-      headers: {
-        Authorization: `token ${getGhToken()}`,
-        'Content-Type': 'application/json',
-        Accept: 'application/vnd.github.v3+json',
-      },
-      body: JSON.stringify({
-        ref: 'main',
-        inputs: {
-          client_name: clientName || 'Financia',
-          logo_url: logoUrl || '',
-          primary_color: primaryColor || '#002f59',
-        },
-      }),
-    }
-  );
-  return res.status === 204;
-};
-
-
-
-const fetchClients = async () => {
-  try {
-    const { data } = await sb.from('company_profiles').select('*').order('user_id');
-    return data || [];
-  } catch(_) { return []; }
-};
-
 const GH_REPO = 'AsafeTork/gestao-financeira';
 const getGhToken = () => localStorage.getItem('nancia_gh_token') || '';
 
