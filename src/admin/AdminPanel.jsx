@@ -75,7 +75,7 @@ export default function AdminPanel({ toast, confirm, session }) {
     if (authRes.error) { toast(authRes.error.message.includes('already') ? 'Email ja cadastrado.' : 'Erro: ' + authRes.error.message, 'error'); setCreating(false); return; }
     const newUid = authRes.data && authRes.data.user ? authRes.data.user.id : null;
     if (newUid) {
-      await sb.from('company_profiles').upsert({user_id:newUid, name:form.companyName, color:form.primaryColor||'#002f59', logo:'G', logo_url:form.logoUrl||null});
+      await sb.from('company_profiles').upsert({user_id:newUid, name:form.companyName, color:form.primaryColor||'#002f59', color_secondary:form.secondaryColor||null, color_accent:form.accentColor||null, theme:form.theme||'light', logo:'G', logo_url:form.logoUrl||null});
     }
     const tok = sessionStorage.getItem('nancia_gh_token') || '';
     if (!tok) { toast('Cliente criado! Configure token GitHub.', 'error'); setDone(Object.assign({}, form, {buildOk:false, newUid:newUid})); setForm(BLANK); setCreating(false); return; }
