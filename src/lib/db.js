@@ -138,7 +138,7 @@ export const deleteClient = async uid => {
 };
 
 export const triggerApkBuild = async (clientName, logoUrl, primaryColor) => {
-  const tok = sessionStorage.getItem('nancia_gh_token') || '';
+  const tok = localStorage.getItem('nancia_gh_token') || '';
   if (!tok) return false;
   const res = await fetch(
     'https://api.github.com/repos/AsafeTork/gestao-financeira/actions/workflows/build-apk.yml/dispatches',

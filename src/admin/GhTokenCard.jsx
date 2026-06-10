@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { Card } from '../components/ui.jsx';
 
 export default function GhTokenCard({ toast }) {
-  const [tok, setTok] = useState(sessionStorage.getItem('nancia_gh_token') || '');
+  const [tok, setTok] = useState(localStorage.getItem('nancia_gh_token') || '');
   const save = function() {
     const v = tok.trim();
-    if (v) { sessionStorage.setItem('nancia_gh_token', v); toast('Token salvo!'); }
-    else { sessionStorage.removeItem('nancia_gh_token'); toast('Token removido.'); }
+    if (v) { localStorage.setItem('nancia_gh_token', v); toast('Token salvo!'); }
+    else { localStorage.removeItem('nancia_gh_token'); toast('Token removido.'); }
   };
   return (
     <Card className="p-4 flex flex-col gap-2">
