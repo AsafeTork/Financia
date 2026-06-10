@@ -79,7 +79,7 @@ Colunas adicionadas:
 
 localStorage direto: apenas nancia_gh_token (GhTokenCard.jsx + db.js triggerApkBuild).
 
-## Estado do codigo (main, commit 85a7d09 — 2026-06-10)
+## Estado do codigo (main, commit 0fe1553 — 2026-06-10)
 
 Stack: Vite 5 + React 18 + Tailwind CSS v3 + Supabase JS v2 + Dexie v3
 
@@ -97,7 +97,10 @@ O que funciona:
 - InventoryView: tabs underline; badges de estoque coloridos
 - Gating de planos: enforceLimit bloqueia addTx/addProduct/addLoss quando Free bate limite
 - AdminPanel: lista clientes com badge FREE/PRO, botao Editar abre ClientEditModal
-- SettingsView: abas Branding e Clientes filtradas por isAdmin via allTabs.filter; tab inicial = isAdmin?'brand':'security'; onSave passa apenas {name,logo,logo_url,color}
+- SettingsView: aba Branding removida do allTabs; apenas 'clients' filtrada por isAdmin; tab inicial = isAdmin?'brand':'security' (brand nao existe mais, vai para security); onSave passa apenas {name,logo,logo_url,color}
+- BottomNav: background usa var(--bg-page), borderTop usa var(--border-color, #f1f5f9) — suporte dark theme
+- App.jsx: setDataLoading(false) no catch(e) do loadData antes do setSyncStatus
+- index.css: --border-color:#334155 adicionado ao bloco [data-theme="dark"]
 - ClientEditModal: save tem console.log temporario para diagnostico; extracao de 3 cores por grupo de luminancia (dark<0.15/mid 0.15-0.5/light>0.5), buckets de 48, filtro near-white>240, deduplicacao por distancia<30, UI com labels Primaria/Secundaria/Acento + Aplicar individual + Aplicar todas
 - Navegacao persistida no hash da URL (#dashboard, #inventory, etc.)
 - fetchClients usa RLS policy "select_own_or_admin" — sem service_role no front
