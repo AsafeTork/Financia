@@ -8,12 +8,12 @@ export default function TxView({ type, tx, products, onAdd, onEdit, onDelete, on
   var accentColor = isIncome ? brand.color : '#ef4444';
   var accentBg    = isIncome ? brandAlpha(brand.color, 0.08) : 'rgba(239,68,68,0.06)';
 
-  var [modal, setModal]     = useState(false);
+  var [modal, setModal]       = useState(false);
   var [editItem, setEditItem] = useState(null);
-  var [saving, setSaving]   = useState(false);
-  var [search, setSearch]   = useState('');
+  var [saving, setSaving]     = useState(false);
+  var [search, setSearch]     = useState('');
   var [dateFrom, setDateFrom] = useState('');
-  var [dateTo, setDateTo]   = useState('');
+  var [dateTo, setDateTo]     = useState('');
   var [form, setForm] = useState({desc:'', amount:'', date:today(), cat:'Fixo', method:'PIX'});
 
   var cats    = ['Fixo','Variavel','Estoque','Marketing','Pessoal','Servicos','Outro'];
@@ -64,14 +64,14 @@ export default function TxView({ type, tx, products, onAdd, onEdit, onDelete, on
   };
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-5 pb-20 lg:pb-0">
 
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900" style={{letterSpacing:'-0.5px'}}>{isIncome ? 'Vendas' : 'Despesas'}</h2>
-          <p className="text-sm text-gray-400 mt-0.5">
+          <h2 className="page-header">{isIncome ? 'Vendas' : 'Despesas'}</h2>
+          <p className="page-sub">
             {filtered.length} registro{filtered.length !== 1 ? 's' : ''}{' . '}
-            <span className="font-semibold" style={{color: accentColor}}>{fmt(total)}</span>
+            <span className="font-semibold tabular" style={{color: accentColor}}>{fmt(total)}</span>
           </p>
         </div>
         <div className="flex gap-2 flex-shrink-0">
@@ -139,28 +139,30 @@ export default function TxView({ type, tx, products, onAdd, onEdit, onDelete, on
               var dayTotal = dayItems.reduce(function(s, t) { return s + t.amount; }, 0);
               return (
                 <div key={date}>
-                  <div className="flex items-center justify-between px-4 py-2 bg-gray-50 border-b border-gray-100">
-                    <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide">{fmtDate(date)}</span>
-                    <span className="text-xs font-semibold" style={{color: accentColor}}>{fmt(dayTotal)}</span>
+                  <div className="flex items-center justify-between px-4 py-2.5 bg-gray-50 border-b border-gray-100">
+                    <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{fmtDate(date)}</span>
+                    <span className="text-xs font-semibold tabular" style={{color: accentColor}}>{fmt(dayTotal)}</span>
                   </div>
                   {dayItems.map(function(t) {
                     return (
                       <div key={t.id} className="flex items-center justify-between px-4 py-3.5 border-b border-gray-50 last:border-0 hover:bg-gray-50 transition-colors">
                         <div className="flex items-center gap-3 min-w-0 flex-1">
-                          <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0" style={{background: accentBg}}>
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={accentColor} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{background: accentBg}}>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={accentColor} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                               <path d={isIncome ? 'M5 15l7-7 7 7' : 'M19 9l-7 7-7-7'}/>
                             </svg>
                           </div>
                           <div className="min-w-0">
-                            <p className="text-sm font-medium text-gray-800 truncate">{t.desc}</p>
+                            <p className="text-sm font-semibold text-gray-800 truncate">{t.desc}</p>
                             <p className="text-xs text-gray-400">
-                              {t.method || t.category || ''}{t.items && t.items.length > 1 ? ' . ' + t.items.length + ' itens' : ''}{t.registered_by ? ' . ' + t.registered_by : ''}
+                              {t.method || t.category || ''}
+                              {t.items && t.items.length > 1 ? ' . ' + t.items.length + ' itens' : ''}
+                              {t.registered_by ? ' . ' + t.registered_by : ''}
                             </p>
                           </div>
                         </div>
                         <div className="flex items-center gap-0.5 flex-shrink-0 ml-2">
-                          <span className="text-sm font-bold mr-1" style={{color: accentColor}}>
+                          <span className="text-sm font-bold tabular mr-1" style={{color: accentColor}}>
                             {(isIncome ? '+' : '-') + fmt(t.amount)}
                           </span>
                           <EditBtn onClick={function() { openEdit(t); }}/>
