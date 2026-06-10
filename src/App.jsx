@@ -394,9 +394,9 @@ export default function App() {
     <div className="min-h-screen flex" style={{background:'#f8fafc'}}>
       <Offline/>
       <SyncBadge status={syncStatus}/>
-      <Sidebar view={view} onNav={navTo} brand={brand} open={sidebarOpen} isAdmin={isAdminDB} onClose={function() { setSidebarOpen(false); }}/>
+      <Sidebar view={view} onNav={navTo} brand={brand} open={sidebarOpen} isAdmin={isAdminDB} session={session} onClose={function() { setSidebarOpen(false); }}/>
       <div className="flex-1 lg:ml-64 flex flex-col min-h-screen">
-        <Header brand={brand} onMenuOpen={function() { setSidebarOpen(true); }}/>
+        <Header brand={brand} syncStatus={syncStatus} onMenuOpen={function() { setSidebarOpen(true); }}/>
         <main className="flex-1 p-4 lg:p-8 max-w-2xl w-full mx-auto pb-24 lg:pb-8">{views[view]}</main>
       </div>
       <BottomNav view={view} onNav={navTo} brand={brand}/>
