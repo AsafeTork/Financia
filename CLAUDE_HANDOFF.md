@@ -31,10 +31,13 @@ Audience: next Claude session. Asafe is not a coder. Tom: tecnico direto.
 
 ### Funcoes e triggers (criados manualmente no Studio, sem migration file)
 
-- `set_client_plan(actor uuid, new_plan text, target uuid)` SECURITY DEFINER
-  - Verifica se caller eh admin via user_roles
+- `set_client_plan(a_target uuid, b_plan text, c_actor text)` SECURITY DEFINER
+  - Params nomeados com prefixos a_/b_/c_ para que ordem alfabetica = ordem posicional
+    (PostgREST serializa JSON alfabeticamente; sem isso o actor ia para a posicao de target)
+  - Verifica se caller eh admin via user_roles (auth.uid())
   - Define `set_config("app.allow_plan_change", "1", true)` antes do UPDATE
   - Unica forma valida de alterar plan/plan_expires_at/plan_activated_by
+  - c_actor recebe adminEmail (string), nao UUID
 
 - `prevent_plan_change()` trigger BEFORE UPDATE em company_profiles
   - Permite bypass se `current_setting("app.allow_plan_change", true) = "1"`
@@ -69,7 +72,7 @@ O que funciona:
 - Gating de planos: enforceLimit bloqueia addTx/addProduct/addLoss quando Free bate limite
 - UpgradeModal aparece quando limite atingido
 - AdminPanel: lista clientes com badge FREE/PRO, botao Editar abre ClientEditModal
-- ClientEditModal: altera name/color via update direto; altera plan via sb.rpc("set_client_plan") com actor=session.user.id (UUID, nao email)
+- ClientEditModal: altera name/color via update direto; altera plan via sb.rpc("set_client_plan", {a_target, b_plan, c_actor:adminEmail})
 - Dashboard: card "Uso do plano gratuito" visivel so para Free, com barras de progresso
 - Navegacao persistida no hash da URL (#dashboard, #inventory, etc.)
 - fetchClients usa RLS policy "select_own_or_admin" — sem service_role no front
