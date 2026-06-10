@@ -52,15 +52,16 @@ Audience: next Claude session. Asafe is not a coder. Tom: tecnico direto.
 | Dado | Storage | Status |
 |------|---------|--------|
 | nancia_gh_token | sessionStorage | OK — limpa ao fechar browser |
+| nancia_gh_token | localStorage | OK — persiste entre sessoes (configuracao admin, nao dado de sessao) |
 | is_admin | sessionStorage | OK — limpa ao fechar browser |
 | role_<uid> | Dexie ldb.meta | OK — cache offline da role, ligado ao UID |
 | last_sync | Dexie ldb.meta | OK — timestamp tecnico de sync incremental |
 | tx/products/losses/profiles | Dexie | OK — offline-first por design |
 | JWT Supabase Auth | localStorage (SDK interno) | Fora do controle do app — comportamento padrao do @supabase/supabase-js, nao alterar |
 
-Zero usos de localStorage direto no codigo do app.
+localStorage direto: apenas nancia_gh_token (GhTokenCard.jsx + db.js triggerApkBuild).
 
-## Estado do codigo (main, ultimo commit 2d3b83f — 2026-06-09)
+## Estado do codigo (main, ultimo commit b2b126d — 2026-06-10)
 
 Stack: Vite 5 + React 18 + Tailwind CSS v3 + Supabase JS v2 + Dexie v3
 
@@ -68,13 +69,13 @@ O que funciona:
 - Gating de planos: enforceLimit bloqueia addTx/addProduct/addLoss quando Free bate limite
 - UpgradeModal aparece quando limite atingido
 - AdminPanel: lista clientes com badge FREE/PRO, botao Editar abre ClientEditModal
-- ClientEditModal: altera name/color via update direto; altera plan via sb.rpc("set_client_plan")
+- ClientEditModal: altera name/color via update direto; altera plan via sb.rpc("set_client_plan") com actor=session.user.id (UUID, nao email)
 - Dashboard: card "Uso do plano gratuito" visivel so para Free, com barras de progresso
 - Navegacao persistida no hash da URL (#dashboard, #inventory, etc.)
 - fetchClients usa RLS policy "select_own_or_admin" — sem service_role no front
 - Todos os CRUDs: try/catch em writes Dexie E em blocos Supabase (navigator.onLine)
 - syncProfiles e syncTable: verificam erro antes de marcar _synced=1
-- nancia_gh_token e is_admin em sessionStorage (nao persistem entre sessoes)
+- nancia_gh_token em localStorage (persiste); is_admin em sessionStorage (limpa ao fechar)
 - Offline-first: Dexie primeiro, sync Supabase em background a cada 2min
 - render.yaml configurado: static site, build npm install && npm run build, serve dist/
 
