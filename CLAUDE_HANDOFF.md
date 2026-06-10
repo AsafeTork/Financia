@@ -7,33 +7,18 @@ Audience: next Claude session. Asafe is not a coder. Tom: tecnico direto.
 - Pricing: Freemium. Free (offline, limites) + Pro R$ 70/mes (online, ilimitado).
 - Limites Free: 50 tx / 20 produtos / 10 perdas (totais, nao por mes).
 - Pro ativado manualmente pelo admin no painel — sem Stripe nesta fase.
-- Migração Vite: APROVADA mas POSTERGADA. Branch `refactor/vite`, nunca no main, so quando Asafe pedir.
+- Migracao Vite: CONCLUIDA e MERGEADA no main (commit 2d3b83f, aprovado por Asafe em 2026-06-09).
 - Stripe (Phase 3): postergado ate Asafe confirmar.
-- Token GitHub e is_admin: migrados para sessionStorage (commit 6c33786).
+- Token GitHub e is_admin: em sessionStorage (nao persistem entre sessoes).
 
 ## Regras de codigo (nao violar)
 
-- Sem optional chaining (?.) — Babel CDN nao suporta
+- Sem optional chaining (?.) — pode causar erros em browsers antigos
 - Sem arrow spreads iniciais (`=> {...spread}`) — causa parse error
 - Sem emoji em strings JS
-- Script tag: `<script type="text/babel" data-presets="react">`
-- Deploy sempre via git push main; Render auto-deploya
+- Deploy: git push main → Render auto-builda com `npm install && npm run build`
 - Nunca service_role key no front — tudo via RLS + sb.rpc() SECURITY DEFINER
-- Checklist pre-commit obrigatorio (ver abaixo)
-
-### Checklist pre-commit
-
-```js
-const fs=require("fs"),parser=require("@babel/parser");
-const js=fs.readFileSync("index.html","utf8").match(/<script type="text\/babel"[^>]*>([\s\S]*?)<\/script>/)[1];
-parser.parse(js,{sourceType:"script",plugins:["jsx"]});
-console.assert((js.match(/=>\{?\s*\.\.\./g)||[]).length===0,"arrow spreads");
-console.assert((js.match(/\?\.[a-zA-Z_]/g)||[]).length===0,"optional chain");
-console.assert(js.includes("const fmt"),"const fmt");
-console.assert(js.includes("const today"),"const today");
-console.assert(!js.includes("localStorage"),"localStorage direto — use sessionStorage ou Dexie");
-console.log("OK");
-```
+- Estrutura de arquivos: src/lib/, src/components/, src/views/, src/admin/
 
 ## Estado do banco (Supabase kxeqhorxhlgwcgywovqr)
 
@@ -73,9 +58,11 @@ console.log("OK");
 | tx/products/losses/profiles | Dexie | OK — offline-first por design |
 | JWT Supabase Auth | localStorage (SDK interno) | Fora do controle do app — comportamento padrao do @supabase/supabase-js, nao alterar |
 
-Zero usos de localStorage direto no codigo do app. Checklist pre-commit agora valida isso.
+Zero usos de localStorage direto no codigo do app.
 
-## Estado do codigo (main, ultimo commit 6c33786)
+## Estado do codigo (main, ultimo commit 2d3b83f — 2026-06-09)
+
+Stack: Vite 5 + React 18 + Tailwind CSS v3 + Supabase JS v2 + Dexie v3
 
 O que funciona:
 - Gating de planos: enforceLimit bloqueia addTx/addProduct/addLoss quando Free bate limite
@@ -85,31 +72,35 @@ O que funciona:
 - Dashboard: card "Uso do plano gratuito" visivel so para Free, com barras de progresso
 - Navegacao persistida no hash da URL (#dashboard, #inventory, etc.)
 - fetchClients usa RLS policy "select_own_or_admin" — sem service_role no front
-- Todos os CRUDs: try/catch em writes Dexie; validacoes de input
+- Todos os CRUDs: try/catch em writes Dexie E em blocos Supabase (navigator.onLine)
 - syncProfiles e syncTable: verificam erro antes de marcar _synced=1
 - nancia_gh_token e is_admin em sessionStorage (nao persistem entre sessoes)
+- Offline-first: Dexie primeiro, sync Supabase em background a cada 2min
+- render.yaml configurado: static site, build npm install && npm run build, serve dist/
 
-## Migracao Vite (branch refactor/vite)
+## Deploy (Render)
 
-**NUNCA mergear no main sem aprovacao explicita de Asafe.**
+- URL: https://gestao-financeira-7heu.onrender.com
+- Render detecta render.yaml automaticamente no root do repo
+- Build Command: `npm install && npm run build`
+- Publish Dir: `dist`
+- Qualquer push para main dispara novo deploy automaticamente
+- Build leva ~2-3 min; verificado online em 2026-06-09
 
-Ultimo commit: `0260943`
+## Migracao Vite — historico completo (CONCLUIDA)
 
-| Step | Status | Commit | Descricao |
-|------|--------|--------|-----------|
-| 1 | DONE | 3282b27 | Vite setup, index.html, package.json, configs, src/index.css, src/main.jsx |
-| 2 | DONE | 9af4e0f | src/lib/utils.js, constants.js, supabase.js |
-| 3 | DONE | 2510d6c | src/lib/db.js (Dexie schema v1/v2, syncAll, syncTable, syncProfiles, fetchClients, deleteClient, triggerApkBuild) |
-| 4 | DONE | 87837a9 | src/components/ (ui, Toast, Offline, Confirm, UpgradeModal, LogoImg, SyncBadge, UsageBar, SaleForm, Sidebar) |
-| 5 | DONE | 87837a9 | src/views/ Dashboard, TxView, InventoryView, ReportView, EmailView |
-| 6 | DONE | 87837a9 | src/admin/ GhTokenCard, ClientEditModal, AdminPanel |
-| 7 | DONE | 87837a9 | src/views/ SettingsView, Login |
-| 8 | DONE | 87837a9 | src/App.jsx + src/main.jsx (App completo, auth, todos os CRUDs) |
-| 9 | DONE | 4aca538 | render.yaml — static site, buildCommand: npm install && npm run build, serve dist/ |
-| 10 | DONE | — | npm run build passou limpo (97 modulos, 534 kB JS / 150 kB gzip) |
-| 11 | DONE | 0260943 | Bug fixes pre-merge: 11 try/catch em CRUD Supabase (App.jsx) + fmtDate import/uso em InventoryView.jsx |
+Merge commit: `2d3b83f` — aprovado por Asafe (41/41 checks), mergeado em 2026-06-09.
+Branch `refactor/vite` mantida como backup.
 
-Branch `refactor/vite` foi pushed para GitHub. Para deploy em producao: **Asafe precisa aprovar o merge no main** e re-apontar o servico Render para usar render.yaml (ou configurar manualmente Build Command = `npm install && npm run build`, Publish Dir = `dist`).
+| Step | Commit | Descricao |
+|------|--------|-----------|
+| 1 | 3282b27 | Vite setup, index.html, package.json, configs |
+| 2 | 9af4e0f | src/lib/utils.js, constants.js, supabase.js |
+| 3 | 2510d6c | src/lib/db.js (Dexie schema v1/v2, syncAll, fetchClients...) |
+| 4-8 | 87837a9 | Todos os components, views, admin, App.jsx |
+| 9 | 4aca538 | render.yaml |
+| fix | 0260943 | 11 try/catch CRUD Supabase + fmtDate InventoryView |
+| merge | 2d3b83f | Merge refactor/vite → main |
 
 ## Proximas tarefas (em ordem de prioridade)
 
@@ -117,18 +108,9 @@ Branch `refactor/vite` foi pushed para GitHub. Para deploy em producao: **Asafe 
    Arquitetura: Edge Function Supabase cria checkout session, webhook atualiza plan via
    set_client_plan. Nunca chave Stripe no front.
 
-## Correccoes aplicadas (commit 0260943)
-
-- App.jsx: todos os 11 blocos `if (navigator.onLine) { sb... }` agora tem try/catch
-  (addTx, editTx, deleteTx, addProduct, editProduct, deleteProduct, adjustStock,
-  addLoss, editLoss, deleteLoss, saveBrand)
-- InventoryView.jsx: `fmtDate` adicionado ao import e substituiu `new Date()` inline
-  na aba de perdas — corrige ReferenceError em runtime
-
 ## Problemas conhecidos
 
 - Cliente promovido para Pro precisa fazer logout/login (ou esperar 2min de sync) para ver mudanca.
 - Limites Free sao totais (nao por mes).
-- Babel no browser: performance ruim em mobile antigo. Resolvido na migracao Vite.
-- index.html monolitico ~1960 linhas. Resolvido na migracao Vite.
 - Admin que usa sessionStorage para is_admin precisa re-logar ao abrir nova aba (comportamento esperado).
+- Build JS: 535 kB / 151 kB gzip (Dexie + Supabase SDK). Aviso do Vite, nao erro.
