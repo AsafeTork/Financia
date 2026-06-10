@@ -5,6 +5,7 @@ import { now, today, safe, uid, brandAlpha } from './lib/utils.js';
 import { INIT_BRAND, INIT_PLAN, atLimit, limitFor } from './lib/constants.js';
 import Sidebar from './components/Sidebar.jsx';
 import BottomNav from './components/BottomNav.jsx';
+import Header from './components/Header.jsx';
 import Toast from './components/Toast.jsx';
 import Offline from './components/Offline.jsx';
 import Confirm from './components/Confirm.jsx';
@@ -386,20 +387,10 @@ export default function App() {
       <SyncBadge status={syncStatus}/>
       <Sidebar view={view} onNav={navTo} brand={brand} open={sidebarOpen} isAdmin={isAdminDB} onClose={function() { setSidebarOpen(false); }}/>
       <div className="flex-1 lg:ml-64 flex flex-col min-h-screen">
-        <header className="sticky top-0 z-20 bg-white border-b border-gray-100 px-4 py-3 flex items-center gap-3 lg:hidden">
-          <button onClick={function() { setSidebarOpen(true); }} className="text-gray-400 p-1 rounded-lg hover:bg-gray-100">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16"/></svg>
-          </button>
-          <div className="flex items-center gap-2">
-            {brand.logo_url
-              ? <img src={brand.logo_url} alt="logo" className="w-7 h-7 rounded-lg object-cover"/>
-              : <div className="w-7 h-7 rounded-lg flex items-center justify-center text-sm" style={{background:brand.color}}><span className="text-white font-bold">{((brand.logo||'F')[0])}</span></div>
-            }
-            <span className="font-bold text-gray-900 text-sm">{brand.name}</span>
-          </div>
-        </header>
-        <main className="flex-1 p-4 lg:p-8 max-w-2xl w-full mx-auto">{views[view]}</main>
+        <Header brand={brand} onMenuOpen={function() { setSidebarOpen(true); }}/>
+        <main className="flex-1 p-4 lg:p-8 max-w-2xl w-full mx-auto pb-24 lg:pb-8">{views[view]}</main>
       </div>
+      <BottomNav view={view} onNav={navTo} brand={brand}/>
       <Toast toast={toastData}/>
       {confirmData && <Confirm msg={confirmData.msg} onOk={function() { confirmData.onOk(); setConfirmData(null); }} onCancel={function() { setConfirmData(null); }}/>}
       {upgradeNotice && <UpgradeModal kind={upgradeNotice.kind} limit={upgradeNotice.limit} onClose={function() { setUpgradeNotice(null); }}/>}
