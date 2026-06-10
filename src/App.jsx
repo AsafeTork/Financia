@@ -115,6 +115,7 @@ export default function App() {
         else { setSyncStatus('error'); setTimeout(function() { setSyncStatus('idle'); }, 5000); }
       }
     } catch(e) {
+      setSyncStatus('error'); setTimeout(function() { setSyncStatus('idle'); }, 5000);
       if (navigator.onLine) {
         try {
           const allRes = await Promise.all([
@@ -158,8 +159,10 @@ export default function App() {
     const syncInterval = setInterval(async function() {
       const userId = uidRef.current;
       if (!userId || !navigator.onLine) return;
+      setSyncStatus('syncing');
       const ok = await syncAll(userId);
       if (ok) { await loadFromLocal(userId); setSyncStatus('ok'); setTimeout(function() { setSyncStatus('idle'); }, 3000); }
+      else { setSyncStatus('error'); setTimeout(function() { setSyncStatus('idle'); }, 5000); }
     }, 120000);
     const onHash = function() { setView(hashView()); };
     window.addEventListener('hashchange', onHash);
