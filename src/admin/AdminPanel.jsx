@@ -37,16 +37,26 @@ export default function AdminPanel({ toast, confirm, session }) {
         if (r > 220 && g > 220 && b > 220) continue;
         const k = r+','+g+','+b; buckets[k] = (buckets[k]||0)+1;
       }
-      const sorted = Object.entries(buckets).sort(function(a, b) { return b[1] - a[1]; }).slice(0, 5);
-      const hexes = sorted.map(function(pair) { const parts = pair[0].split(',').map(Number); return '#' + parts.map(function(v) { return v.toString(16).padStart(2, '0'); }).join(''); });
-      if (hexes.length) const toHex2 = function(k) { const [r2,g2,b2]=k.split(',').map(Number); return '#'+[r2,g2,b2].map(function(v){return v.toString(16).padStart(2,'0');}).join(''); };
-        const sorted2 = Object.entries(buckets).sort(function(a,b2){return b2[1]-a[1];});
-        const dark2=[],mid2=[],light2=[];
-        sorted2.forEach(function(entry){const k=entry[0]; const [r2,g2,b2]=k.split(',').map(Number); const l2=luminance(r2,g2,b2); const hex=toHex2(k); if(l2<0.15)dark2.push(hex); else if(l2<0.5)mid2.push(hex); else light2.push(hex);});
-        const prim = dark2[0]||mid2[0]||light2[0]||'#002f59';
-        const sec  = mid2[0]||(dark2[1]||light2[0])||'';
-        const acc  = light2[0]||(mid2[1]||dark2[1])||'';
+      const toHex2 = function(k) {
+        const parts = k.split(',').map(Number);
+        return '#' + parts.map(function(v) { return v.toString(16).padStart(2, '0'); }).join('');
+      };
+      const sorted2 = Object.entries(buckets).sort(function(a, b2) { return b2[1] - a[1]; });
+      const dark2 = [], mid2 = [], light2 = [];
+      sorted2.forEach(function(entry) {
+        const hex2 = toHex2(entry[0]);
+        const parts2 = entry[0].split(',').map(Number);
+        const l2 = luminance(parts2[0], parts2[1], parts2[2]);
+        if (l2 < 0.15) dark2.push(hex2);
+        else if (l2 < 0.5) mid2.push(hex2);
+        else light2.push(hex2);
+      });
+      const prim = dark2[0] || mid2[0] || light2[0] || '#002f59';
+      const sec  = mid2[0]  || dark2[1] || light2[0] || '';
+      const acc  = light2[0]|| mid2[1]  || dark2[1]  || '';
+      if (prim) {
         setForm(function(f) { return Object.assign({}, f, {colors:[prim,sec,acc].filter(Boolean), primaryColor:prim, secondaryColor:sec, accentColor:acc}); });
+      }
     } catch(_) {}
   };
 
