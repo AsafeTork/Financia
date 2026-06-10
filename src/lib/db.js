@@ -128,11 +128,8 @@ export const fetchClients = async () => {
 
 export const deleteClient = async uid => {
   try {
-    await sb.from('company_profiles').delete().eq('user_id', uid);
-    await sb.from('transactions').delete().eq('user_id', uid);
-    await sb.from('products').delete().eq('user_id', uid);
-    await sb.from('losses').delete().eq('user_id', uid);
-    await sb.from('user_roles').delete().eq('user_id', uid);
+    const { error } = await sb.rpc('admin_delete_client', { target_uid: uid });
+    if (error) throw error;
     return true;
   } catch (_) { return false; }
 };
