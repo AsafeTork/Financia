@@ -68,7 +68,7 @@ export default function TxView({ type, tx, products, onAdd, onEdit, onDelete, on
 
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h2 className="page-header">{isIncome ? 'Vendas' : 'Despesas'}</h2>
+          <h2 className="page-header">{isIncome ? 'Vendas / Ganhos' : 'Despesas'}</h2>
           <p className="page-sub">
             {filtered.length} registro{filtered.length !== 1 ? 's' : ''}{' . '}
             <span className="font-semibold tabular" style={{color: accentColor}}>{fmt(total)}</span>
