@@ -12,9 +12,12 @@ export default function SettingsView({ brand, session, onSave, toast, confirm, i
   var [pwForm, setPwForm] = useState({newPw:'', confirm:''});
   var [pwSaving, setPwSaving] = useState(false);
   var [uploading, setUploading] = useState(false);
+  var [extractedColors, setExtractedColors] = useState([]);
   var fileRef = useRef();
   React.useEffect(function() {
-    if (!isAdmin && (tab === 'brand' || tab === 'clients')) {
+    if (isAdmin && tab === 'security') {
+      setTab('clients');
+    } else if (!isAdmin && (tab === 'brand' || tab === 'clients')) {
       setTab('security');
     }
   }, [isAdmin]);

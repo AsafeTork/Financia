@@ -1,13 +1,13 @@
 import React from 'react';
 
 export const Card = function({ children, className, hover, variant, accent, color }) {
-  var base = 'bg-white border rounded-xl ';
-  if (variant === 'flat')   base += 'border-gray-100 ';
+  var base = 'border rounded-xl ';
+  if (variant === 'flat')        base += 'border-gray-100 ';
   else if (variant === 'raised') base += 'border-gray-100 shadow-md ';
-  else base += 'border-gray-100 shadow-sm ';
+  else                           base += 'border-gray-100 shadow-sm ';
   if (hover) base += 'card-hover ';
   return (
-    <div className={base + (className || '')} style={{position:'relative', overflow:'hidden'}}>
+    <div className={base + (className || '')} style={{position:'relative', overflow:'hidden', background:'var(--bg-card)'}}>
       {accent && <div style={{position:'absolute', top:0, left:0, right:0, height:3, background: color || 'var(--brand, #1a6b5c)', borderRadius:'inherit inherit 0 0'}}/>}
       {children}
     </div>
@@ -25,8 +25,8 @@ export const Inp = function({ label, hint, error, success, className, icon, ...p
         </div>
       )}
       <input
-        className="border border-gray-200 rounded-xl px-3 py-3 text-sm bg-white transition w-full"
-        style={borderColor ? {borderColor: borderColor} : {}}
+        className="border border-gray-200 rounded-xl px-3 py-3 text-sm transition w-full"
+        style={Object.assign({background:'var(--bg-input)', color:'var(--text-main)'}, borderColor ? {borderColor: borderColor} : {})}
         {...p}
       />
       {(hint || error) && (
@@ -40,7 +40,7 @@ export const Sel = function({ label, className, children, ...p }) {
   return (
     <div className={'flex flex-col gap-1.5 ' + (className || '')}>
       {label && <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{label}</label>}
-      <select className="border border-gray-200 rounded-xl px-3 py-3 text-sm bg-white transition" {...p}>{children}</select>
+      <select className="border border-gray-200 rounded-xl px-3 py-3 text-sm transition" style={{background:'var(--bg-input)', color:'var(--text-main)'}} {...p}>{children}</select>
     </div>
   );
 };
@@ -49,7 +49,7 @@ export const Textarea = function({ label, className, ...p }) {
   return (
     <div className={'flex flex-col gap-1.5 ' + (className || '')}>
       {label && <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{label}</label>}
-      <textarea className="border border-gray-200 rounded-xl px-3 py-3 text-sm bg-white transition w-full resize-none" rows={6} {...p}/>
+      <textarea className="border border-gray-200 rounded-xl px-3 py-3 text-sm transition w-full resize-none" style={{background:'var(--bg-input)', color:'var(--text-main)'}} rows={6} {...p}/>
     </div>
   );
 };
@@ -142,7 +142,7 @@ export const Modal = function({ title, onClose, onSave, color, saving, children,
   var bg = color || '#1a6b5c';
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 anim-fade" style={{background:'rgba(0,0,0,0.5)'}}>
-      <div className={'bg-white rounded-2xl flex flex-col w-full ' + (wide ? 'max-w-lg' : 'max-w-sm')} style={{boxShadow:'0 25px 60px rgba(0,0,0,0.2)', maxHeight:'90vh'}}>
+      <div className={'rounded-2xl flex flex-col w-full ' + (wide ? 'max-w-lg' : 'max-w-sm')} style={{background:'var(--bg-card)', boxShadow:'0 25px 60px rgba(0,0,0,0.2)', maxHeight:'90vh'}}>
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 flex-shrink-0">
           <span className="font-semibold text-gray-900">{title}</span>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 p-1 rounded-lg hover:bg-gray-100">
@@ -163,7 +163,7 @@ export const Modal = function({ title, onClose, onSave, color, saving, children,
 
 export const EditBtn = function({ onClick }) {
   return (
-    <button onClick={onClick} title="Editar" className="p-2 rounded-xl text-gray-300 hover:text-blue-500 hover:bg-blue-50 transition flex-shrink-0">
+    <button onClick={onClick} title="Editar" className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl text-gray-300 hover:text-blue-500 hover:bg-blue-50 transition flex-shrink-0">
       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
     </button>
   );
@@ -171,7 +171,7 @@ export const EditBtn = function({ onClick }) {
 
 export const DelBtn = function({ onClick }) {
   return (
-    <button onClick={onClick} title="Excluir" className="p-2 rounded-xl text-gray-300 hover:text-red-500 hover:bg-red-50 transition flex-shrink-0">
+    <button onClick={onClick} title="Excluir" className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl text-gray-300 hover:text-red-500 hover:bg-red-50 transition flex-shrink-0">
       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
     </button>
   );

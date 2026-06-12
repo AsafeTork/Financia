@@ -37,7 +37,7 @@ export default function Login({ brand }) {
   };
 
   return (
-    <div className="min-h-screen flex" style={{background:'#f0f4ff'}}>
+    <div className="min-h-screen flex" style={{background:'var(--bg-page)'}}>
 
       <div className="hidden lg:flex flex-col justify-between w-2/5 p-12 relative overflow-hidden" style={{background: brandColor}}>
         <div style={{position:'absolute', top:0, left:0, right:0, bottom:0, background:'rgba(0,0,0,0.12)', pointerEvents:'none'}}/>
