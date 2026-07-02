@@ -1,4 +1,4 @@
-export const fmt = function(n) { return 'R$ ' + Number(n || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); };
+export const fmt = function(n) { return 'R$\xa0' + Number(n || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); };
 export const hexToRgb = function(hex) {
   var h = (hex || '#002f59').replace('#', '');
   return { r: parseInt(h.substring(0, 2), 16), g: parseInt(h.substring(2, 4), 16), b: parseInt(h.substring(4, 6), 16) };
@@ -12,7 +12,20 @@ export const monthLabel = function(s) { const [y, m] = s.split('-'); return new 
 export const now = function() { return new Date().toISOString(); };
 export const today = function() { return new Date().toISOString().split('T')[0]; };
 export const prevDays = function(n) { const d = new Date(); d.setDate(d.getDate() - n); return d.toISOString().split('T')[0]; };
-export const safe = function(s) { return String(s || '').replace(/[<>"]/g, '').replace(/javascript:/gi, '').trim().slice(0, 200); };
+export const safe = function(s) {
+  if (typeof s === 'function') {
+    try {
+      return safe(s());
+    } catch (e) {
+      s = (e && e.message) || e || '';
+    }
+  }
+  var msg = String(s || '');
+  if (msg.includes('<') || msg.includes('>') || msg.includes('"') || msg.toLowerCase().includes('javascript:')) {
+    return '';
+  }
+  return msg.trim().slice(0, 200);
+};
 export const isUrl = function(s) { return !!(s && (s.startsWith('http') || s.startsWith('data:') || s.startsWith('/'))); };
 export const genPwd = function() { const c = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#'; return Array.from({ length: 12 }, () => c[Math.floor(Math.random() * c.length)]).join(''); };
 let _id = 1;
@@ -90,6 +103,7 @@ export const hslToHex = function(h, s, l) {
 // - secondary: tom suave da mesma cor (fundos, badges)
 // - accent: cor de contraste (hue girado ~150graus) vibrante (CTAs, graficos, destaques)
 export const deriveCores = function(primary) {
+  if (!primary) return { secondary: '#6c757d', accent: '#0dcaf0' };
   var p = primary || '#002f59';
   var hsl = hexToHsl(p);
   var secondary = hslToHex(hsl.h, clamp01(hsl.s * 0.55, 0.12, 0.5), 0.92);

@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
+// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
   // Apenas o conteudo de `public/` e copiado para `dist`. Arquivos sensiveis da
@@ -10,6 +11,13 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     emptyOutDir: true,
+  },
+  optimizeDeps: {
+    // Substitui `esbuildOptions` deprecated por `rolldownOptions`
+    rolldownOptions: {
+      // Configurações equivalentes para o novo bundler
+      external: [],
+    },
   },
   test: {
     environment: 'jsdom',
