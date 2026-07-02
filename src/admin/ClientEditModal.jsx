@@ -1,8 +1,9 @@
 import React, { useState, useRef } from 'react';
 import { sb } from '../lib/supabase.js';
-import { hexToRgb, luminance, deriveCores, lightenHex } from '../lib/utils.js';
-import { THEME_PRESETS } from '../lib/constants.js';
-import { gerarPaleta } from '../lib/ai.js';
+import { hexToRgb, luminance, deriveCores, lightenHex, fmt } from '../lib/utils.js';
+import { THEME_PRESETS, waLinkTo } from '../lib/constants.js';
+import { setClientCustomPrice, setClientWhiteLabel } from '../lib/db.js';
+import { gerarPaleta } from '../lib/aiClient.js';
 
 function PreviewPaleta({ primary, secondary, accent }) {
   var lum = luminance(primary || '#002f59');
@@ -64,13 +65,13 @@ function ColorField({ label, desc, value, onChange }) {
   );
 }
 
-export default function ClientEditModal({ client, adminEmail, onSave, onClose, toast }) {
+export default function ClientEditModal({ client, adminEmail, onSave, onClose, toast, onImpersonate, onBuildApk }) {
   var [color, setColorRaw]           = useState(client.color || '#002f59');
   var [colorSecondary, setSecondary] = useState(client.color_secondary || '');
   var [colorAccent, setAccent]       = useState(client.color_accent || '');
-  var [theme, setTheme]              = useState(client.theme || 'light');
   var [name, setName]                = useState(client.name || '');
   var [plan, setPlan]                = useState(client.plan || 'free');
+  var [whiteLabel, setWhiteLabel]    = useState(!!client.white_label);
   var [saving, setSaving]            = useState(false);
   var [extractedColors, setExtractedColors] = useState([]);
   var [logoUrl, setLogoUrl]          = useState(client.logo_url || null);
@@ -78,7 +79,34 @@ export default function ClientEditModal({ client, adminEmail, onSave, onClose, t
   var [aiSegment, setAiSegment]      = useState(client.segment || '');
   var [aiLoading, setAiLoading]      = useState(false);
   var [aiRationale, setAiRationale]  = useState('');
+  var [customProReais, setCustomProReais] = useState(client.custom_price_cents_pro ? String((client.custom_price_cents_pro / 100).toFixed(2)).replace('.', ',') : '');
+  var [customPremiumReais, setCustomPremiumReais] = useState(client.custom_price_cents_premium ? String((client.custom_price_cents_premium / 100).toFixed(2)).replace('.', ',') : '');
+  var [priceSaving, setPriceSaving]  = useState(false);
   var fileRef = useRef();
+
+  var clientWa = waLinkTo(client.phone, 'Olá! Aqui é da equipe Financia. Posso ajudar?');
+
+  var applyCustomPrice = async function(planId, value) {
+    var raw = String(value).replace(/\s/g, '').replace(',', '.').trim();
+    var cents = raw ? Math.round(parseFloat(raw) * 100) : null;
+    if (raw && (isNaN(cents) || cents < 0)) { toast('Valor inválido.', 'error'); return; }
+    setPriceSaving(true);
+    var res = await setClientCustomPrice(client.user_id, cents, planId);
+    setPriceSaving(false);
+    if (!res.ok) { toast('Erro ao salvar preço: ' + res.error, 'error'); return; }
+    if (!cents) { toast('Desconto removido para ' + planId.toUpperCase() + '.'); return; }
+    toast(res.applied ? ('Preço de ' + planId.toUpperCase() + ' aplicado — vale no próximo ciclo.') : ('Preço de ' + planId.toUpperCase() + ' salvo para novas assinaturas.'));
+  };
+
+  var clearCustomPrice = async function(planId) {
+    setPriceSaving(true);
+    var res = await setClientCustomPrice(client.user_id, null, planId);
+    setPriceSaving(false);
+    if (!res.ok) { toast('Erro ao remover: ' + res.error, 'error'); return; }
+    if (planId === 'pro') setCustomProReais('');
+    if (planId === 'premium') setCustomPremiumReais('');
+    toast('Desconto removido.');
+  };
 
   var runAI = async function() {
     setAiLoading(true);
@@ -89,7 +117,6 @@ export default function ClientEditModal({ client, adminEmail, onSave, onClose, t
     setColorRaw(res.palette.primary);
     setSecondary(res.palette.secondary || '');
     setAccent(res.palette.accent || '');
-    if (res.palette.theme) setTheme(res.palette.theme);
     setAiRationale(res.rationale || '');
     toast('Paleta gerada pela IA!');
   };
@@ -187,21 +214,25 @@ export default function ClientEditModal({ client, adminEmail, onSave, onClose, t
         color: color,
         color_secondary: colorSecondary || null,
         color_accent: colorAccent || null,
-        theme: theme,
         logo_url: logoUrl || null,
       };
       var profileRes = await sb.from('company_profiles').update(updateData).eq('user_id', client.user_id);
       if (profileRes.error) { toast('Erro ao salvar perfil.', 'error'); return; }
       if (planChanged) {
         var planRes = await sb.rpc('set_client_plan', {a_target: client.user_id, b_plan: plan, c_actor: adminEmail || 'admin'});
-        if (planRes.error) { toast('Erro ao alterar plano: ' + planRes.error.message, 'error'); return; }
+        if (planRes && planRes.error) { toast('Erro ao alterar plano: ' + planRes.error.message, 'error'); return; }
       }
-      toast(planChanged ? ('Plano alterado para ' + plan.toUpperCase()) : 'Atualizado!');
+      if (whiteLabel !== !!client.white_label) {
+        var wlRes = await setClientWhiteLabel(client.user_id, !!whiteLabel);
+        if (!wlRes.ok) { toast('Erro ao atualizar cortesia do pacote.', 'error'); return; }
+      }
+      toast('Atualizado!');
       var updated = Object.assign({}, client, updateData);
+      updated.white_label = !!whiteLabel;
       if (planChanged) {
         updated.plan = plan;
         updated.plan_expires_at = null;
-        updated.plan_activated_by = plan === 'pro' ? (adminEmail || 'admin') : null;
+        updated.plan_activated_by = plan !== 'free' ? (adminEmail || 'admin') : null;
       }
       onSave(updated);
     } catch (e) {
@@ -231,6 +262,30 @@ export default function ClientEditModal({ client, adminEmail, onSave, onClose, t
               className="border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-gray-400" style={{background:'var(--bg-input)', color:'var(--text-main)'}}/>
           </div>
 
+          <div className="grid grid-cols-2 gap-2">
+            <button type="button" onClick={function() { if (onImpersonate) onImpersonate(client); }}
+              className="py-2.5 text-sm font-semibold rounded-xl border border-blue-200 text-blue-600 hover:bg-blue-50 min-h-[44px] flex items-center justify-center gap-2">
+              <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/></svg>
+              Entrar
+            </button>
+            <button type="button" onClick={function() { if (onBuildApk) onBuildApk(client); }}
+              className="py-2.5 text-sm font-semibold rounded-xl border border-gray-200 text-gray-700 hover:bg-gray-50 min-h-[44px] flex items-center justify-center gap-2">
+              <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16"/></svg>
+              Gerar APK
+            </button>
+          </div>
+          {clientWa && (
+            <p className="text-xs" style={{color:'var(--text-muted)'}}>
+              WhatsApp disponível no ícone ao lado do nome do cliente.
+            </p>
+          )}
+
+          {!whiteLabel && (
+            <div className="rounded-xl p-3 text-xs" style={{background:'var(--bg-subtle)', border:'1px solid var(--border)', color:'var(--text-sub)'}}>
+              Personalização visual (logo, cores e tema) fica disponível quando o cliente compra o pacote de personalização. Nome e plano continuam editáveis.
+            </div>
+          )}
+          {whiteLabel && (<React.Fragment>
           {/* Logo */}
           <div className="flex flex-col gap-2">
             <label className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Logo</label>
@@ -364,39 +419,79 @@ export default function ClientEditModal({ client, adminEmail, onSave, onClose, t
             <PreviewPaleta primary={color} secondary={effectiveSecondary} accent={effectiveAccent}/>
           </div>
 
-          {/* Tema */}
+          </React.Fragment>)}
+
           <div className="flex flex-col gap-2">
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Tema</p>
+            <label className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Plano</label>
             <div className="flex gap-2">
-              <button onClick={function() { setTheme('light'); }}
-                className={'flex-1 py-2 min-h-[44px] rounded-xl text-sm font-semibold border transition hover:opacity-90 ' + (theme === 'light' ? 'text-white' : 'text-gray-600 border-gray-200')}
-                style={theme === 'light' ? {background: color, borderColor: color} : {background:'var(--bg-card)'}}>
-                Claro
-              </button>
-              <button onClick={function() { setTheme('dark'); }}
-                className={'flex-1 py-2 min-h-[44px] rounded-xl text-sm font-semibold border transition hover:opacity-90 ' + (theme === 'dark' ? 'text-white' : 'text-gray-600 border-gray-200')}
-                style={theme === 'dark' ? {background:'#0f172a', borderColor:'#0f172a'} : {background:'var(--bg-card)'}}>
-                Escuro
+              {[['free', 'Free', '#6b7280'], ['pro', 'Pro', color], ['premium', 'Premium', '#7c3aed']].map(function(opt) {
+                var active = plan === opt[0];
+                return (
+                  <button key={opt[0]} type="button" onClick={function() { setPlan(opt[0]); }}
+                    className={'flex-1 py-2 min-h-[44px] rounded-xl text-sm font-semibold border transition hover:opacity-90 ' + (active ? 'text-white' : 'text-gray-600 border-gray-200')}
+                    style={active ? {background: opt[2], borderColor: opt[2]} : {background:'var(--bg-card)'}}>
+                    {opt[1]}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-2 rounded-xl p-3" style={{border:'1px solid var(--border)', background:'var(--bg-subtle)'}}>
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Pacote de personalização</p>
+            <div className="flex items-center justify-between gap-2">
+              <p className="text-xs" style={{color:'var(--text-sub)'}}>Ativar/desativar como cortesia para este cliente.</p>
+              <button type="button" onClick={function() { setWhiteLabel(!whiteLabel); }}
+                className={'min-h-[44px] px-3 rounded-xl text-xs font-semibold border ' + (whiteLabel ? 'text-green-700 border-green-300 bg-green-50' : 'text-gray-600 border-gray-200 bg-white')}>
+                {whiteLabel ? 'Cortesia ativa' : 'Dar cortesia'}
               </button>
             </div>
           </div>
 
-          {/* Plano */}
-          <div className="flex flex-col gap-2">
-            <label className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Plano</label>
-            <div className="flex gap-2">
-              <button type="button" onClick={function() { setPlan('free'); }}
-                className={'flex-1 py-2 min-h-[44px] rounded-xl text-sm font-semibold border transition hover:opacity-90 ' + (plan === 'free' ? 'text-white' : 'text-gray-600 border-gray-200')}
-                style={plan === 'free' ? {background:'#6b7280', borderColor:'#6b7280'} : {background:'var(--bg-card)'}}>
-                Free
-              </button>
-              <button type="button" onClick={function() { setPlan('pro'); }}
-                className={'flex-1 py-2 min-h-[44px] rounded-xl text-sm font-semibold border transition hover:opacity-90 ' + (plan === 'pro' ? 'text-white' : 'text-gray-600 border-gray-200')}
-                style={plan === 'pro' ? {background: color, borderColor: color} : {background:'var(--bg-card)'}}>
-                Pro
-              </button>
+          {/* Preço / desconto customizado */}
+          <div className="flex flex-col gap-3 rounded-xl p-3" style={{border:'1px solid #fde68a', background:'#fffbeb'}}>
+            <div className="flex items-center gap-2">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#b45309" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 14l6-6M9.5 9h.01M14.5 15h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              <p className="text-xs font-bold" style={{color:'#92400e'}}>Preço customizado por plano</p>
             </div>
-            {client.plan_activated_by && plan === 'pro' && <p className="text-xs text-gray-400">Ativado por: {client.plan_activated_by}</p>}
+            <p className="text-xs" style={{color:'#92400e'}}>
+              Defina desconto específico para Pro e Premium. O usuário verá o preço especial no card de cada plano.
+            </p>
+            <div className="flex flex-col gap-2">
+              {[
+                ['pro', 'Pro', 49.9, customProReais, setCustomProReais],
+                ['premium', 'Premium', 99.9, customPremiumReais, setCustomPremiumReais],
+              ].map(function(row) {
+                var key = row[0];
+                var label = row[1];
+                var base = row[2];
+                var value = row[3];
+                var setValue = row[4];
+                return (
+                  <div key={key} className="rounded-xl p-2.5" style={{border:'1px solid #fde68a', background:'#fff7ed'}}>
+                    <p className="text-xs mb-1" style={{color:'#92400e'}}>Plano {label} (tabela: <b>{fmt(base)}</b>/mês)</p>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-semibold" style={{color:'#92400e'}}>R$</span>
+                      <input value={value}
+                        onChange={function(e) { setValue(e.target.value.replace(/[^0-9.,]/g, '')); }}
+                        placeholder="ex: 29,90" inputMode="decimal"
+                        className="border rounded-xl px-3 py-2 text-sm font-mono flex-1 focus:outline-none" style={{background:'var(--bg-input)', color:'var(--text-main)', borderColor:'#fde68a'}}/>
+                      <span className="text-xs" style={{color:'#92400e'}}>/mês</span>
+                    </div>
+                    <div className="flex gap-2 mt-2">
+                      <button onClick={function() { clearCustomPrice(key); }} disabled={priceSaving}
+                        className="flex-1 py-2 min-h-[44px] rounded-xl text-sm font-semibold border disabled:opacity-50" style={{borderColor:'#fca5a5', color:'#dc2626', background:'var(--bg-card)'}}>
+                        Remover
+                      </button>
+                      <button onClick={function() { applyCustomPrice(key, value); }} disabled={priceSaving}
+                        className="flex-1 py-2 min-h-[44px] rounded-xl text-sm font-semibold text-white disabled:opacity-50 hover:opacity-90 transition" style={{background:'#d97706'}}>
+                        {priceSaving ? 'Salvando...' : 'Aplicar'}
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
 
         </div>

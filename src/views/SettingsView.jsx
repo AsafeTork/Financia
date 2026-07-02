@@ -6,7 +6,10 @@ import { effectivePlan, PRICING_PLANS, waLink, SUPPORT_EMAIL } from '../lib/cons
 import AdminPanel from '../admin/AdminPanel.jsx';
 import GhTokenCard from '../admin/GhTokenCard.jsx';
 import InstallButton from '../components/InstallButton.jsx';
-import StripeCheckout from '../components/StripeCheckout.jsx';
+import UpdateCardModal from '../components/UpdateCardModal.jsx';
+import CardPreview from '../components/CardPreview.jsx';
+import { sb } from '../lib/supabase.js';
+import { triggerApkBuild } from '../lib/db.js';
 
 export default function SettingsView({ brand, session, planInfo, onSave, onSavePhone, toast, confirm, isAdmin, onNav }) {
   var [tab, setTab] = useState(function() {
@@ -22,7 +25,10 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
   var [pwModal, setPwModal] = useState(false);
   var [pwForm, setPwForm] = useState({newPw:'', confirm:''});
   var [pwSaving, setPwSaving] = useState(false);
-  var [payOpen, setPayOpen] = useState(false);
+  var [cardOpen, setCardOpen] = useState(false);
+  var [savedCard, setSavedCard] = useState(null);
+  var [cardLoading, setCardLoading] = useState(true);
+  var [cardReload, setCardReload] = useState(0);
   var planId = effectivePlan(planInfo || {});
   var planMeta = PRICING_PLANS.filter(function(p) { return p.id === planId; })[0] || PRICING_PLANS[0];
   var [phoneData, setPhoneData] = useState(function() { var p = parsePhone(brand.phone); return buildPhone(p.iso, p.digits); });
@@ -36,6 +42,24 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
       setTab('account');
     }
   }, [isAdmin]);
+
+  // Busca o cartao salvo ao abrir a aba Assinatura (e apos trocar/remover).
+  React.useEffect(function() {
+    if (tab !== 'subscription') return;
+    var alive = true;
+    setCardLoading(true);
+    sb.functions.invoke('get-payment-method', { body: {} }).then(function(result) {
+      if (!alive) return;
+      var data = result && result.data ? result.data : null;
+      setSavedCard(data && data.card ? data.card : null);
+      setCardLoading(false);
+    }).catch(function() {
+      if (!alive) return;
+      setSavedCard(null);
+      setCardLoading(false);
+    });
+    return function() { alive = false; };
+  }, [tab, cardReload]);
 
   const savePhone = async function() {
     setPhoneSaving(true);
@@ -55,9 +79,17 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
 
   var hasWhiteLabel = !!(brand && brand.white_label);
   var [appForm, setAppForm] = useState(function() {
-    return { color: brand.color || '#002f59', color_secondary: brand.color_secondary || '', logo_url: brand.logo_url || '' };
+    return {
+      name: brand.name || '',
+      color: brand.color || '#002f59',
+      color_secondary: brand.color_secondary || '',
+      color_accent: brand.color_accent || '',
+      theme: brand.theme || 'light',
+      logo_url: brand.logo_url || '',
+    };
   });
   var [appSaving, setAppSaving] = useState(false);
+  var [apkBusy, setApkBusy] = useState(false);
   var onLogoFile = function(e) {
     var file = e.target.files && e.target.files[0];
     if (!file) return;
@@ -71,24 +103,52 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
   };
   var saveAppearance = async function() {
     setAppSaving(true);
-    var nb = Object.assign({}, brand, { color: appForm.color, color_secondary: appForm.color_secondary || null, logo_url: appForm.logo_url || null });
+    var nb = Object.assign({}, brand, {
+      name: appForm.name || brand.name,
+      color: appForm.color,
+      color_secondary: appForm.color_secondary || null,
+      color_accent: appForm.color_accent || null,
+      theme: appForm.theme || 'light',
+      logo_url: appForm.logo_url || null,
+    });
     await onSave(nb);
     setAppSaving(false);
+  };
+  var buildPersonalizedApk = async function() {
+    if (!hasWhiteLabel) return;
+    setApkBusy(true);
+    try {
+      var res = await triggerApkBuild(appForm.name || brand.name, appForm.logo_url || brand.logo_url, appForm.color || brand.color);
+      if (res && res.ok) {
+        toast('Build do APK personalizado iniciado! Em alguns minutos, abra o botão de download.', 'success');
+      } else if (res && res.reason === 'no_token') {
+        toast('Token do GitHub ausente. Peça ao admin para configurar o token nas Configurações.', 'error');
+      } else if (res && res.reason === 'rate_limited') {
+        toast('Aguarde alguns minutos antes de pedir outro build.', 'warning');
+      } else {
+        toast('Não foi possível iniciar o build do APK agora.', 'error');
+      }
+    } catch (e) {
+      toast('Erro ao iniciar build do APK personalizado.', 'error');
+    }
+    setApkBusy(false);
   };
   var devMsg = 'Olá! Tenho o pacote de personalização e quero gerar o APK customizado do meu app.';
 
   var planExpiry = (planId !== 'free' && planInfo && planInfo.plan_expires_at) ? new Date(planInfo.plan_expires_at).toLocaleDateString('pt-BR') : '';
   var planPriceLabel = planMeta.price ? ('R$ ' + planMeta.price.toFixed(2).replace('.', ',') + (planMeta.period || '')) : 'Grátis';
-  var cardPlanId = planId !== 'free' ? planId : 'pro';
-  var cardPlan = PRICING_PLANS.filter(function(p) { return p.id === cardPlanId; })[0] || PRICING_PLANS[1];
   var subActions = [
     { label:'Gerenciar plano', desc:'Escolha entre Grátis, Pro e Premium', icon:'M7 7h.01M7 3h5a1.99 1.99 0 011.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.99 1.99 0 013 12V7a4 4 0 014-4z', act:function() { if (onNav) onNav('planos'); } },
-    { label:'Gerenciar forma de pagamento', desc:'Cadastrar ou atualizar o cartão (Stripe)', icon:'M3 10h18M3 7a2 2 0 012-2h14a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V7z', act:function() { setPayOpen(true); } },
   ];
+  if (hasWhiteLabel) {
+    subActions.push({ label:'Editar personalização', desc:'Mude logo, cores e tema quando quiser', icon:'M11 5h2m-1-1v2m0 14v-2m0 0h-2m2 0h2m-9.657-2.343l1.414-1.414m0 0a8 8 0 111.414 1.414L4.929 17.07zm13.314-10.142l-1.414 1.414', act:function() { setTab('appearance'); } });
+  }
+  // Seção sempre visível para evitar confusão: no plano grátis o cartão é opcional.
+  var showPayment = true;
 
   const allTabs = [{key:'account',label:'Conta'}, {key:'subscription',label:'Assinatura'}];
   if (hasWhiteLabel) allTabs.push({key:'appearance',label:'Aparência'});
-  allTabs.push({key:'clients',label:'Clientes',adminOnly:true});
+  allTabs.push({key:'clients',label:'Painel admin',adminOnly:true});
   const tabs = allTabs.filter(function(t) { return !t.adminOnly || isAdmin; });
 
   return (
@@ -193,14 +253,51 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
               );
             })}
           </div>
+
+          {showPayment && (
+            <div className="flex flex-col gap-3 pt-1">
+              <p className="text-xs font-semibold uppercase tracking-wide" style={{color:'var(--text-muted)'}}>Forma de pagamento</p>
+              {planId === 'free' && !savedCard && (
+                <p className="text-xs" style={{color:'var(--text-sub)'}}>
+                  No plano grátis, adicionar cartão é opcional. Você pode cadastrar agora ou ao assinar um plano.
+                </p>
+              )}
+              {cardLoading ? (
+                <div className="skeleton" style={{height:56}}/>
+              ) : savedCard ? (
+                <div className="flex flex-col gap-2">
+                  <CardPreview card={savedCard} brand={brand}/>
+                  <button onClick={function() { setCardOpen(true); }}
+                    className="w-full text-sm font-semibold px-4 py-3 rounded-xl border transition hover:opacity-80 min-h-[44px] flex items-center justify-center gap-2"
+                    style={{borderColor:'var(--border)', color: brand.color}}>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M3 7a2 2 0 012-2h14a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V7z"/></svg>
+                    Atualizar forma de pagamento
+                  </button>
+                </div>
+              ) : (
+                <button onClick={function() { setCardOpen(true); }}
+                  className="w-full text-sm font-semibold px-4 py-3 rounded-xl text-white transition hover:opacity-90 min-h-[44px] flex items-center justify-center gap-2"
+                  style={{background: brand.color}}>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4"/></svg>
+                  Adicionar forma de pagamento
+                </button>
+              )}
+            </div>
+          )}
         </Card>
+      )}
+
+      {cardOpen && (
+        <UpdateCardModal brand={brand} toast={toast}
+          onChanged={function() { setCardReload(function(k) { return k + 1; }); }}
+          onClose={function() { setCardOpen(false); setCardReload(function(k) { return k + 1; }); }} />
       )}
 
       {tab === 'appearance' && hasWhiteLabel && (
         <Card className="p-6 flex flex-col gap-5">
           <div>
             <p className="text-sm font-semibold mb-1" style={{color:'var(--text-main)'}}>Identidade visual</p>
-            <p className="text-xs mb-4" style={{color:'var(--text-muted)'}}>Defina as 2 cores principais e a logo da sua empresa.</p>
+            <p className="text-xs mb-4" style={{color:'var(--text-muted)'}}>Defina nome, logo, cores e tema. Você pode alterar quando quiser.</p>
 
             <div className="flex items-center gap-4 mb-5">
               <div className="w-16 h-16 rounded-2xl flex-shrink-0 overflow-hidden flex items-center justify-center" style={{background: appForm.color}}>
@@ -219,8 +316,10 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
               </div>
             </div>
 
+            <Inp label="Nome do app" value={appForm.name} onChange={function(e) { setAppField('name', e.target.value); }} placeholder="Ex.: Minha Empresa"/>
+
             <div className="grid grid-cols-2 gap-3">
-              {[{k:'color',l:'Cor principal'},{k:'color_secondary',l:'Cor secundária'}].map(function(field) {
+              {[{k:'color',l:'Cor principal'},{k:'color_secondary',l:'Cor secundária'},{k:'color_accent',l:'Cor de destaque'}].map(function(field) {
                 var val = appForm[field.k] || '#002f59';
                 return (
                   <div key={field.k} className="flex flex-col gap-1.5">
@@ -233,16 +332,45 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
                 );
               })}
             </div>
+            <div className="mt-3">
+              <label className="text-xs font-semibold" style={{color:'var(--text-sub)'}}>Tema base</label>
+              <div className="flex gap-2 mt-1.5">
+                <button type="button" onClick={function() { setAppField('theme', 'light'); }}
+                  className="flex-1 min-h-[44px] rounded-xl border text-sm font-semibold"
+                  style={appForm.theme === 'light' ? { borderColor: brand.color, color: brand.color, background:'var(--brand-soft)' } : { borderColor:'var(--border)', color:'var(--text-sub)' }}>
+                  Claro
+                </button>
+                <button type="button" onClick={function() { setAppField('theme', 'dark'); }}
+                  className="flex-1 min-h-[44px] rounded-xl border text-sm font-semibold"
+                  style={appForm.theme === 'dark' ? { borderColor: brand.color, color: brand.color, background:'var(--brand-soft)' } : { borderColor:'var(--border)', color:'var(--text-sub)' }}>
+                  Escuro
+                </button>
+              </div>
+            </div>
           </div>
 
           <button onClick={saveAppearance} disabled={appSaving} className="w-full text-white rounded-xl py-3 text-sm font-semibold hover:opacity-90 flex items-center justify-center gap-2 disabled:opacity-40 min-h-12" style={{background: brand.color}}>
             {appSaving ? <Spin white/> : 'Salvar aparência'}
           </button>
 
+          <button type="button" onClick={buildPersonalizedApk} disabled={apkBusy}
+            className="w-full rounded-xl py-3 text-sm font-semibold text-white flex items-center justify-center gap-2 transition hover:opacity-90 min-h-12 disabled:opacity-50" style={{background: brand.color}}>
+            {apkBusy ? <Spin white/> : (
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 16V3m0 13l4-4m-4 4l-4-4M4 21h16"/></svg>
+            )}
+            Gerar APK personalizado
+          </button>
+
+          <a href="https://github.com/AsafeTork/financia/releases/latest" target="_blank" rel="noreferrer"
+            className="w-full rounded-xl py-3 text-sm font-semibold flex items-center justify-center gap-2 transition hover:opacity-90 min-h-12" style={{border:'1px solid var(--border)', color:'var(--text-main)'}}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3v12m0 0l4-4m-4 4l-4-4M4 21h16"/></svg>
+            Baixar APK personalizado
+          </a>
+
           <a href={waLink(devMsg)} target="_blank" rel="noreferrer"
             className="w-full rounded-xl py-3 text-sm font-semibold flex items-center justify-center gap-2 transition hover:opacity-90 min-h-12" style={{border:'1px solid var(--border)', color:'var(--text-main)'}}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg>
-            Falar com o Desenvolvedor (gerar APK)
+            Falar com o Desenvolvedor
           </a>
         </Card>
       )}
@@ -262,9 +390,6 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
         </Modal>
       )}
 
-      {payOpen && (
-        <StripeCheckout plan={cardPlan} brand={brand} toast={toast} onClose={function() { setPayOpen(false); }}/>
-      )}
     </div>
   );
 }

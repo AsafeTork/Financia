@@ -175,6 +175,56 @@ export const fetchClientUsage = async function() {
   } catch (_) { return {}; }
 };
 
+/* Tamanho do banco + maiores tabelas (admin). { db_bytes, tables:[{name,bytes}] } ou null */
+export const fetchDbStats = async function() {
+  try {
+    const { data, error } = await sb.rpc('admin_db_stats');
+    if (error) return null;
+    return data || null;
+  } catch (_) { return null; }
+};
+
+/* Saldo real Stripe + MRR estimado (admin). { available_cents, pending_cents, mrr_cents, active_count } ou null */
+export const fetchStripeOverview = async function() {
+  try {
+    const res = await sb.functions.invoke('admin-stripe-overview', { body: {} });
+    if (res && res.error) return null;
+    return res && res.data && !res.data.error ? res.data : null;
+  } catch (_) { return null; }
+};
+
+/* Define/limpa o preco customizado de um cliente (centavos; null limpa). Aplica na assinatura ativa se houver. */
+export const setClientCustomPrice = async function(targetUserId, cents, planId) {
+  try {
+    const payload = { target_user_id: targetUserId, cents: cents };
+    if (planId) payload.plan_id = planId;
+    const res = await sb.functions.invoke('admin-set-custom-price', { body: payload });
+    if (res && res.error) {
+      var detail = res.data && res.data.error ? res.data.error : 'erro';
+      return { ok: false, error: detail };
+    }
+    var d = res && res.data ? res.data : {};
+    if (d.error) return { ok: false, error: d.error };
+    return { ok: true, applied: !!d.applied };
+  } catch (_) { return { ok: false, error: 'rede' }; }
+};
+
+/* Ativa/desativa o pacote white-label como cortesia para um cliente (admin-only). */
+export const setClientWhiteLabel = async function(targetUserId, enabled) {
+  try {
+    const res = await sb.functions.invoke('admin-set-white-label', {
+      body: { target_user_id: targetUserId, enabled: !!enabled },
+    });
+    if (res && res.error) {
+      var detail = res.data && res.data.error ? res.data.error : 'erro';
+      return { ok: false, error: detail };
+    }
+    var d = res && res.data ? res.data : {};
+    if (d.error) return { ok: false, error: d.error };
+    return { ok: true };
+  } catch (_) { return { ok: false, error: 'rede' }; }
+};
+
 /* v2 — usa RPC SECURITY DEFINER que deleta auth.users tambem */
 export const deleteClient = async function(uid) {
   try {
@@ -195,6 +245,17 @@ export const clearClientData = async function(uid, tables) {
 export const triggerApkBuild = async function(clientName, logoUrl, primaryColor) {
   const tok = localStorage.getItem('nancia_gh_token') || '';
   if (!tok) return { ok: false, reason: 'no_token' };
+  var last = Number(localStorage.getItem('nancia_last_build_at') || '0');
+  if (Date.now() - last < 5 * 60 * 1000) return { ok: false, reason: 'rate_limited' };
+  var safeName = String(clientName || 'Financia').replace(/[^\w\s\-]/g, '').trim().slice(0, 60) || 'Financia';
+  var safeLogo = '';
+  try {
+    var parsed = new URL(String(logoUrl || '').trim());
+    if (parsed.protocol === 'https:' || parsed.protocol === 'http:') safeLogo = parsed.toString().slice(0, 500);
+  } catch (e) {}
+  var safeColor = String(primaryColor || '#002f59').replace(/[^#0-9a-fA-F]/g, '');
+  if (!/^#?[0-9a-fA-F]{6}$/.test(safeColor)) safeColor = '#002f59';
+  if (safeColor.charAt(0) !== '#') safeColor = '#' + safeColor;
   try {
     const res = await fetch(
       'https://api.github.com/repos/AsafeTork/financia/actions/workflows/build.yml/dispatches',
@@ -202,13 +263,16 @@ export const triggerApkBuild = async function(clientName, logoUrl, primaryColor)
         method: 'POST',
         headers: { Authorization: 'token ' + tok, 'Content-Type': 'application/json' },
         body: JSON.stringify({ ref: 'main', inputs: {
-          client_name: clientName || 'Financia',
-          logo_url: logoUrl || '',
-          primary_color: (primaryColor || '#002f59').replace('#', ''),
+          client_name: safeName,
+          logo_url: safeLogo,
+          primary_color: safeColor.replace('#', ''),
         }}),
       }
     );
-    if (res.status === 204) return { ok: true };
+    if (res.status === 204) {
+      localStorage.setItem('nancia_last_build_at', String(Date.now()));
+      return { ok: true };
+    }
     return { ok: false, reason: 'api_error', status: res.status };
   } catch(e) {
     return { ok: false, reason: 'network_error' };

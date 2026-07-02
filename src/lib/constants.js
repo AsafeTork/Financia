@@ -19,6 +19,40 @@ export const effectivePlan = function(p) {
 
 export const limitFor = function(p, kind) { return PLAN_LIMITS[effectivePlan(p)][kind]; };
 export const atLimit = function(p, kind, count) { return count >= limitFor(p, kind); };
+
+// Plano dado MANUALMENTE pelo admin: set_client_plan grava plan_activated_by = email
+// do admin (c_actor). O webhook Stripe (stripe_activate_plan) grava 'stripe'. Ambos os
+// marcadores de pagamento (stripe/uuid) nao tem "@"; so o email do admin tem.
+// Logo: plan_activated_by com "@" => cortesia do admin (nao e receita).
+export const isAdminGranted = function(p) {
+  return !!(p && p.plan_activated_by && String(p.plan_activated_by).indexOf('@') !== -1);
+};
+// Conta como receita real apenas plano pago ATIVO que NAO seja cortesia do admin.
+export const countsAsRevenue = function(p) {
+  return effectivePlan(p) !== 'free' && !isAdminGranted(p);
+};
+
+// Hierarquia dos planos (free < pro < premium) para decidir upgrade/downgrade.
+var PLAN_RANK = { free: 0, pro: 1, premium: 2 };
+export const planRank = function(planId) {
+  if (!planId) return 0;
+  var r = PLAN_RANK[planId];
+  return typeof r === 'number' ? r : 0;
+};
+
+// Decide a acao do botao de um card de plano conforme o plano ATUAL do usuario.
+// kind: 'current' (atual, desabilitado) | 'subscribe' (free -> pago) |
+//       'upgrade' (pago menor -> maior) | 'downgrade' (pago maior -> menor) |
+//       'cancel' (pago -> free). Evita oferecer "assinar" um plano inferior solto.
+export const planChangeCta = function(currentId, targetId) {
+  var current = planRank(currentId);
+  var target = planRank(targetId);
+  if (currentId === targetId || current === target) return { kind: 'current', disabled: true };
+  if (targetId === 'free') return { kind: 'cancel', disabled: false };
+  if (current === 0) return { kind: 'subscribe', disabled: false };
+  if (target > current) return { kind: 'upgrade', disabled: false };
+  return { kind: 'downgrade', disabled: false };
+};
 export const PLAN_KIND_LABEL = { transactions: 'transacoes', products: 'produtos', losses: 'perdas' };
 
 export const GH_REPO = 'AsafeTork/financia';
@@ -33,6 +67,25 @@ export const SUPPORT_EMAIL = 'gestao.financia@gmail.com';
 // Monta link wa.me com mensagem pre-preenchida (abre conversa pronta).
 export const waLink = function(msg) {
   return 'https://wa.me/' + WHATSAPP + (msg ? '?text=' + encodeURIComponent(msg) : '');
+};
+
+// Link wa.me para o telefone de UM cliente especifico (contato direto do admin).
+// Telefone invalido/curto -> '' (front esconde o botao).
+export const waLinkTo = function(phone, msg) {
+  var digits = String(phone == null ? '' : phone).replace(/\D/g, '');
+  if (digits.length < 10) return '';
+  return 'https://wa.me/' + digits + (msg ? '?text=' + encodeURIComponent(msg) : '');
+};
+
+// Preco a EXIBIR para um plano, considerando preco customizado (desconto do admin).
+// customCents em centavos; quando >0, sobrescreve o preco de tabela.
+export const displayPlanPrice = function(planPrice, customCents) {
+  var base = Number(planPrice) || 0;
+  var cents = Number(customCents);
+  if (cents && cents > 0) {
+    return { value: cents / 100, custom: true, original: base };
+  }
+  return { value: base, custom: false, original: base };
 };
 
 // Pacote de personalizacao (white-label) — pagamento unico.
@@ -71,6 +124,44 @@ export const PRICING_PLANS = [
     features: ['Tudo do Pro', 'Vários usuários na mesma conta', 'Sincronização em tempo real entre dispositivos', 'Metas e orçamento mensal', 'Marca personalizada (white-label) — requer pacote de personalização', 'Relatórios avançados', 'Suporte dedicado'],
   },
 ];
+
+// Tema/base visual padrão por plano quando o cliente NÃO possui pacote white-label.
+// Sem pacote: usa identidade fixa por plano e não permite personalização manual.
+export const PLAN_VISUAL_DEFAULTS = {
+  free: {
+    color: '#0f3d3e',
+    color_secondary: '#ccfbf1',
+    color_accent: '#0d9488',
+    theme: 'light',
+  },
+  pro: {
+    color: '#0c3436',
+    color_secondary: '#bdeee6',
+    color_accent: '#0a7f74',
+    theme: 'light',
+  },
+  premium: {
+    color: '#082829',
+    color_secondary: '#a9ddd4',
+    color_accent: '#06665e',
+    theme: 'dark',
+  },
+};
+
+// Fallback visual do pacote de personalizacao: quando white-label estiver ativo
+// mas o cliente ainda nao definiu uma paleta propria, usamos uma base da marca.
+export const WHITE_LABEL_VISUAL_DEFAULT = {
+  color: '#1a6b5c',
+  color_secondary: '#d7efe9',
+  color_accent: '#8cf2d1',
+  theme: 'light',
+};
+
+export const planVisualDefaults = function(planInfo) {
+  var plan = effectivePlan(planInfo);
+  var preset = PLAN_VISUAL_DEFAULTS[plan];
+  return preset || PLAN_VISUAL_DEFAULTS.free;
+};
 
 // Temas prontos por segmento — para o admin aplicar a identidade do cliente
 // em um clique, sem precisar entender de cor (primary/secondary/accent).

@@ -4,7 +4,9 @@ import { useScrollReveal } from '../hooks/useScrollReveal.js';
 
 var INK = '#0a2540';
 var BRAND = '#002f59';
-var ACCENT = '#0f9d6c';
+var ACCENT = '#1a6b5c';
+var SKY = '#6ec6c8';
+var MINT = '#8cf2d1';
 var WARM = '#fbfaf7';
 var MUTED = '#5b6b7c';
 
@@ -59,12 +61,12 @@ export default function Landing({ onEnter }) {
     <div className="relative overflow-hidden" style={{ color: INK, minHeight: '100vh' }}>
 
       {/* Fundo gradiente continuo cobrindo 100% da pagina (nivel mais baixo). */}
-      <div className="fixed inset-0" style={{ zIndex: -20, background: 'linear-gradient(180deg, #fcfbf8 0%, #f4f8f5 45%, #eef3fa 100%)' }} aria-hidden="true" />
+      <div className="fixed inset-0" style={{ zIndex: -20, background: 'linear-gradient(180deg, #fcfbf8 0%, #f6faf8 42%, #eff5fb 100%)' }} aria-hidden="true" />
 
       {/* Notas de dinheiro (nivel intermediario): presas ao container central
           max-w-7xl — nunca coladas nas bordas da janela. Opacidade leve, atras do
           texto. Parallax vertical pelo scroll. Apenas desktop. */}
-      <div className="hidden md:block absolute inset-y-0 left-1/2 -translate-x-1/2 w-full max-w-7xl px-4 sm:px-6 lg:px-8 pointer-events-none" style={{ zIndex: -10, opacity: 0.55 }} aria-hidden="true">
+      <div className="hidden md:block absolute inset-y-0 left-1/2 -translate-x-1/2 w-full max-w-7xl px-4 sm:px-6 lg:px-8 pointer-events-none" style={{ zIndex: -10, opacity: 0.34 }} aria-hidden="true">
         {MONEY_NOTES.map(function(n, i) {
           var pos = { top: n.top };
           if (n.left) pos.left = n.left;
@@ -100,11 +102,6 @@ export default function Landing({ onEnter }) {
 
       {/* Hero */}
       <section className="max-w-6xl mx-auto px-5 pt-12 pb-16 lg:pt-20 lg:pb-24 relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
-          <div className="lp-orb" style={{ width: '460px', height: '460px', top: '-140px', right: '-120px', background: 'radial-gradient(circle, rgba(15,157,108,0.20), transparent 65%)' }} />
-          <div className="lp-orb lp-orb-2" style={{ width: '380px', height: '380px', bottom: '-160px', left: '-120px', background: 'radial-gradient(circle, rgba(0,47,89,0.16), transparent 65%)' }} />
-        </div>
-
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center relative z-10">
           <div>
             <div className="anim-up inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold mb-6" style={{ background: 'rgba(15,157,108,0.1)', color: ACCENT }}>
@@ -139,9 +136,9 @@ export default function Landing({ onEnter }) {
 
           {/* Mockup do produto */}
           <div className="anim-up relative" style={delay(180)}>
-            <div className="absolute -inset-6 rounded-3xl" style={{ background: 'radial-gradient(120% 120% at 70% 20%, rgba(15,157,108,0.16), transparent 60%)' }} />
-            <div className="lp-ring absolute -inset-8 rounded-full pointer-events-none" aria-hidden="true" style={{ background: 'conic-gradient(from 0deg, transparent 0deg, rgba(15,157,108,0.12) 80deg, transparent 170deg, rgba(0,47,89,0.12) 260deg, transparent 360deg)', opacity: 0.65 }} />
-            <div className="relative rounded-3xl p-5 sm:p-6 float-slow" style={{ background: '#fff', border: '1px solid rgba(10,37,64,0.08)', boxShadow: '0 30px 70px rgba(10,37,64,0.18)' }}>
+            <div className="absolute -inset-6 rounded-2xl" style={{ background: 'radial-gradient(110% 110% at 70% 20%, rgba(110,198,200,0.18), transparent 62%)' }} />
+            <div className="lp-ring absolute -inset-8 rounded-full pointer-events-none" aria-hidden="true" style={{ background: 'conic-gradient(from 0deg, transparent 0deg, rgba(26,107,92,0.1) 80deg, transparent 170deg, rgba(0,47,89,0.1) 260deg, transparent 360deg)', opacity: 0.42 }} />
+            <div className="relative rounded-2xl p-5 sm:p-6 float-slow" style={{ background: '#fff', border: '1px solid rgba(10,37,64,0.08)', boxShadow: '0 18px 42px rgba(10,37,64,0.14)' }}>
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <p className="text-xs font-medium" style={{ color: MUTED }}>Resultado do mês</p>
@@ -149,9 +146,9 @@ export default function Landing({ onEnter }) {
                 </div>
                 <span className="text-xs font-bold px-2.5 py-1 rounded-full" style={{ background: 'rgba(15,157,108,0.12)', color: ACCENT }}>+18%</span>
               </div>
-              <div className="flex items-end gap-1.5 h-24 mb-4">
+              <div className="flex items-end gap-1.5 h-24 mb-4 lp-main-chart">
                 {[40, 62, 48, 80, 55, 92, 70].map(function(h, i) {
-                  return <div key={String(i) + '-' + h} className="flex-1 rounded-md lp-bar" style={{ height: h + '%', background: i === 5 ? ACCENT : 'rgba(0,47,89,0.14)', animationDelay: (300 + i * 90) + 'ms' }} />;
+                  return <div key={String(i) + '-' + h} className="flex-1 rounded-md lp-bar lp-bar-hover" style={{ height: h + '%', background: i === 5 ? ACCENT : 'rgba(0,47,89,0.14)', animationDelay: (300 + i * 90) + 'ms' }} />;
                 })}
               </div>
               <div className="grid grid-cols-2 gap-3">
@@ -171,7 +168,7 @@ export default function Landing({ onEnter }) {
 
       {/* Prova / faixa */}
       <section ref={statsRef} className="max-w-6xl mx-auto px-5 py-10 scroll-reveal">
-        <div className="rounded-3xl px-6 py-8 grid grid-cols-3 gap-4 text-center" style={{ background: '#fff', border: '1px solid rgba(10,37,64,0.08)' }}>
+        <div className="rounded-2xl px-6 py-8 grid grid-cols-3 gap-4 text-center" style={{ background: '#fff', border: '1px solid rgba(10,37,64,0.08)' }}>
           {[['100%', 'no seu controle, online ou offline'], ['1 min', 'pra criar a conta e começar'], ['R$ 0', 'pra usar o plano grátis']].map(function(s) {
             return (
               <div key={s[0]}>
@@ -180,6 +177,48 @@ export default function Landing({ onEnter }) {
               </div>
             );
           })}
+        </div>
+      </section>
+
+      {/* Painel visual variado e mais criativo */}
+      <section className="max-w-6xl mx-auto px-5 pb-8">
+        <div className="grid md:grid-cols-3 gap-4">
+          <div className="lp-metric-card rounded-2xl p-5" style={{ background: '#fff', border: '1px solid rgba(10,37,64,0.08)' }}>
+            <p className="text-xs font-semibold" style={{ color: MUTED }}>Pulso de receita</p>
+            <div className="mt-3 rounded-xl p-2" style={{ background: 'rgba(110,198,200,0.12)' }}>
+              <svg viewBox="0 0 220 64" className="w-full lp-line-chart">
+                <path d="M4 42 C22 34, 34 34, 52 38 C70 42, 80 24, 98 26 C116 28, 126 52, 144 46 C162 40, 176 20, 194 24 C206 27, 214 22, 216 18" fill="none" stroke={BRAND} strokeWidth="3" strokeLinecap="round" />
+                {[52, 98, 144, 194].map(function(px, idx) {
+                  var py = [38, 26, 46, 24][idx];
+                  return <circle key={'pt-' + idx} className="lp-line-point" cx={px} cy={py} r="4" fill={idx % 2 === 0 ? ACCENT : SKY} />;
+                })}
+              </svg>
+            </div>
+            <p className="text-xs mt-2" style={{ color: MUTED }}>Leitura de tendência com pontos de virada.</p>
+          </div>
+          <div className="lp-metric-card rounded-2xl p-5" style={{ background: '#fff', border: '1px solid rgba(10,37,64,0.08)' }}>
+            <p className="text-xs font-semibold" style={{ color: MUTED }}>Mix de despesas</p>
+            <div className="mt-3 flex items-center gap-3">
+              <div className="lp-donut" style={{ background: 'conic-gradient(' + ACCENT + ' 0 42%, ' + SKY + ' 42% 74%, ' + MINT + ' 74% 100%)' }} />
+              <div className="flex-1 flex flex-col gap-1">
+                <span className="text-xs" style={{ color: MUTED }}>Operação <b style={{ color: INK }}>42%</b></span>
+                <span className="text-xs" style={{ color: MUTED }}>Insumos <b style={{ color: INK }}>32%</b></span>
+                <span className="text-xs" style={{ color: MUTED }}>Fixos <b style={{ color: INK }}>26%</b></span>
+              </div>
+            </div>
+            <p className="text-sm mt-2 font-semibold" style={{ color: INK }}>Distribuição visual instantânea</p>
+          </div>
+          <div className="lp-metric-card rounded-2xl p-5" style={{ background: '#fff', border: '1px solid rgba(10,37,64,0.08)' }}>
+            <p className="text-xs font-semibold" style={{ color: MUTED }}>Termômetro de saúde</p>
+            <div className="mt-3 flex items-end gap-2">
+              {[28, 46, 72].map(function(v, i) {
+                return <span key={'thermo-' + i} className="lp-thermo-col" style={{ height: v + 'px', background: i === 2 ? ACCENT : (i === 1 ? SKY : MINT) }} />;
+              })}
+              <p className="font-display font-semibold tabular ml-1" style={{ color: INK, fontSize: '1.5rem' }}>82</p>
+            </div>
+            <p className="text-xs mt-2" style={{ color: ACCENT }}>Índice financeiro do período</p>
+            <div className="lp-wave mt-3" style={{ height: 16, borderRadius: 10, background: 'linear-gradient(180deg, ' + MINT + '70, ' + SKY + '28)' }} />
+          </div>
         </div>
       </section>
 
@@ -192,7 +231,7 @@ export default function Landing({ onEnter }) {
         <div className="grid sm:grid-cols-2 gap-4">
           {FEATURES.map(function(f) {
             return (
-              <div key={f.t} className="rounded-3xl p-7 transition duration-200 hover:-translate-y-1 hover:shadow-lg" style={{ background: '#fff', border: '1px solid rgba(10,37,64,0.08)', boxShadow: '0 2px 10px rgba(10,37,64,0.04)' }}>
+              <div key={f.t} className="rounded-2xl p-7 transition duration-200 hover:-translate-y-1 hover:shadow-lg lp-metric-card" style={{ background: '#fff', border: '1px solid rgba(10,37,64,0.08)', boxShadow: '0 2px 10px rgba(10,37,64,0.04)' }}>
                 <div className="w-12 h-12 rounded-2xl flex items-center justify-center mb-4" style={{ background: 'rgba(15,157,108,0.1)' }}>
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={ACCENT} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d={f.icon} /></svg>
                 </div>
@@ -221,7 +260,7 @@ export default function Landing({ onEnter }) {
             var cardBorder = popular ? ('1px solid ' + INK) : ('1px solid ' + (isPremiumCard ? 'rgba(15,157,108,0.35)' : 'rgba(10,37,64,0.1)'));
             return (
               <div key={p.id}
-                className={'rounded-3xl p-7 flex flex-col gap-5 relative transition duration-200' + (popular ? ' md:-translate-y-3' : '')}
+                className={'rounded-2xl p-7 flex flex-col gap-5 relative transition duration-200' + (popular ? ' md:-translate-y-3' : '')}
                 style={{ background: popular ? INK : '#fff', border: cardBorder, boxShadow: popular ? '0 30px 70px rgba(10,37,64,0.30)' : '0 2px 14px rgba(10,37,64,0.05)' }}>
 
                 {popular && <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-xs font-bold px-4 py-1 rounded-full whitespace-nowrap" style={{ background: ACCENT, color: '#fff', boxShadow: '0 6px 16px rgba(15,157,108,0.4)' }}>Mais escolhido</span>}
@@ -308,8 +347,8 @@ export default function Landing({ onEnter }) {
 
       {/* CTA final */}
       <section ref={ctaRef} className="max-w-6xl mx-auto px-5 py-12 scroll-reveal">
-        <div className="rounded-[2rem] px-6 py-16 text-center relative overflow-hidden" style={{ background: INK }}>
-          <div className="absolute inset-0" style={{ background: 'radial-gradient(80% 120% at 50% 0%, rgba(15,157,108,0.22), transparent 55%)' }} />
+        <div className="rounded-[1.5rem] px-6 py-16 text-center relative overflow-hidden" style={{ background: INK }}>
+          <div className="absolute inset-0" style={{ background: 'radial-gradient(80% 120% at 50% 0%, rgba(110,198,200,0.15), transparent 58%)' }} />
           <div className="relative">
             <h2 className="font-display font-semibold text-white" style={{ fontSize: 'clamp(1.75rem, 4.5vw, 3rem)', letterSpacing: '-1px', lineHeight: 1.1 }}>Comece a organizar o seu negócio hoje</h2>
             <p className="mt-3 text-sm" style={{ color: 'rgba(255,255,255,0.7)' }}>Conta grátis, sem cartão. Leva menos de um minuto.</p>

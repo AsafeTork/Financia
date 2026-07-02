@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { Card, PageHead } from '../components/ui.jsx';
-import { PRICING_PLANS, WHITELABEL, waLink, effectivePlan } from '../lib/constants.js';
+import { Card, PageHead, Modal } from '../components/ui.jsx';
+import { PRICING_PLANS, WHITELABEL, waLink, effectivePlan, planChangeCta } from '../lib/constants.js';
 import { fmt } from '../lib/utils.js';
+import { sb } from '../lib/supabase.js';
+import { friendlyStripeError, readFnErrorMessage } from '../lib/stripe.js';
 import StripeCheckout from '../components/StripeCheckout.jsx';
 
 var CheckIcon = function({ color }) {
@@ -12,11 +14,21 @@ var CheckIcon = function({ color }) {
   );
 };
 
-function PlanCard({ plan, brand, current, onSubscribe }) {
+// Texto do botao conforme a acao decidida por planChangeCta.
+function ctaLabel(kind, plan) {
+  if (kind === 'subscribe') return 'Assinar ' + plan.name;
+  if (kind === 'upgrade') return 'Fazer upgrade';
+  if (kind === 'downgrade') return 'Mudar para ' + plan.name;
+  if (kind === 'cancel') return 'Voltar para o Grátis';
+  return 'Seu plano atual';
+}
+
+function PlanCard({ plan, brand, cta, onAction, open, onToggle }) {
   var popular = !!plan.popular;
-  var paid = plan.id === 'pro' || plan.id === 'premium';
   var isFree = plan.id === 'free';
   var priceNote = isFree ? 'grátis para sempre, sem cartão' : 'cobrado mensalmente, cancele quando quiser';
+  var current = cta.kind === 'current';
+  var kind = cta.kind;
 
   return (
     <Card className="p-5 flex flex-col gap-4" accent={popular} color={brand.color}>
@@ -26,13 +38,17 @@ function PlanCard({ plan, brand, current, onSubscribe }) {
           Mais escolhido
         </span>
       )}
-      <div className="flex items-start justify-between gap-2">
+      <button type="button" onClick={onToggle} aria-expanded={open}
+        className="flex items-start justify-between gap-2 text-left w-full min-h-[44px]">
         <div className="min-w-0">
           <p className="font-display text-lg font-semibold truncate" style={{color:'var(--text-main)'}}>{plan.name}</p>
           <p className="text-xs mt-0.5" style={{color:'var(--text-sub)'}}>{plan.tagline}</p>
         </div>
-        {current && <span className="text-xs font-bold px-2.5 py-1 rounded-full flex-shrink-0" style={{background:'var(--brand-soft)', color: brand.color}}>Seu plano</span>}
-      </div>
+        <div className="flex items-center gap-2 flex-shrink-0">
+          {current && <span className="text-xs font-bold px-2.5 py-1 rounded-full" style={{background:'var(--brand-soft)', color: brand.color}}>Seu plano</span>}
+          <svg className="w-4 h-4 transition-transform" style={{transform: open ? 'rotate(180deg)' : 'none', color:'var(--text-sub)'}} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7"/></svg>
+        </div>
+      </button>
 
       <div>
         <div className="flex items-end gap-1">
@@ -41,9 +57,15 @@ function PlanCard({ plan, brand, current, onSubscribe }) {
           </span>
           {plan.period && <span className="text-sm mb-1" style={{color:'var(--text-sub)'}}>{plan.period}</span>}
         </div>
+        {plan.original_price && plan.original_price > plan.price && (
+          <p className="text-xs mt-0.5" style={{color:'var(--text-muted)'}}>
+            De <span style={{textDecoration:'line-through'}}>{fmt(plan.original_price)}</span> por <b>{fmt(plan.price)}</b>/mês
+          </p>
+        )}
         <p className="text-xs mt-1.5" style={{color:'var(--text-sub)'}}>{priceNote}</p>
       </div>
 
+      {open && (
       <div className="flex flex-col gap-2">
         {plan.features.map(function(f) {
           var ladder = f.indexOf('Tudo do') === 0;
@@ -63,36 +85,91 @@ function PlanCard({ plan, brand, current, onSubscribe }) {
           );
         })}
       </div>
+      )}
 
-      {current ? (
+      {current && (
         <div className="mt-1 text-center text-sm font-semibold px-4 py-3 rounded-xl min-h-[44px] flex items-center justify-center" style={{background:'var(--brand-soft)', color: brand.color}}>Seu plano atual</div>
-      ) : paid ? (
-        <button type="button" onClick={function() { onSubscribe(plan); }}
+      )}
+      {(kind === 'subscribe' || kind === 'upgrade') && (
+        <button type="button" onClick={function() { onAction(plan, kind); }}
           className="mt-1 w-full text-sm font-semibold px-4 py-3 rounded-xl text-white transition hover:opacity-90 min-h-[44px] flex items-center justify-center gap-2"
           style={{background: brand.color}}>
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
-          Assinar {plan.name}
+          {ctaLabel(kind, plan)}
         </button>
-      ) : (
-        <div className="mt-1 text-center text-xs px-4 py-3" style={{color:'var(--text-sub)'}}>Plano inicial, gratuito para sempre</div>
+      )}
+      {kind === 'downgrade' && (
+        <button type="button" onClick={function() { onAction(plan, kind); }}
+          className="mt-1 w-full text-sm font-semibold px-4 py-3 rounded-xl transition hover:opacity-80 min-h-[44px] flex items-center justify-center gap-2"
+          style={{background:'var(--brand-soft)', color: brand.color}}>
+          {ctaLabel(kind, plan)}
+        </button>
+      )}
+      {kind === 'cancel' && (
+        <button type="button" onClick={function() { onAction(plan, kind); }}
+          className="mt-1 w-full text-sm font-semibold px-4 py-3 rounded-xl border transition hover:bg-gray-50 min-h-[44px] flex items-center justify-center"
+          style={{borderColor:'var(--border)', color:'var(--text-sub)'}}>
+          {ctaLabel(kind, plan)}
+        </button>
       )}
     </Card>
   );
 }
 
-var WL_PLAN = { id: 'white_label', name: 'Personalização', price: WHITELABEL.price, period: '' };
+var ADMIN_TEST_PRICE = 0.01;
 
-export default function PlansView({ brand, planInfo, toast, onNav }) {
+export default function PlansView({ brand, planInfo, toast, onNav, isAdmin }) {
   var plan = effectivePlan(planInfo);
   var checkoutState = useState(null);
-  var checkoutPlan = checkoutState[0];
-  var setCheckoutPlan = checkoutState[1];
+  var checkout = checkoutState[0];
+  var setCheckout = checkoutState[1];
+  var cancelState = useState(false);
+  var cancelOpen = cancelState[0];
+  var setCancelOpen = cancelState[1];
+  var cancellingState = useState(false);
+  var cancelling = cancellingState[0];
+  var setCancelling = cancellingState[1];
+  var openState = useState(plan && plan !== 'free' ? plan : 'pro');
+  var openPlan = openState[0];
+  var setOpenPlan = openState[1];
+  var customCents = planInfo && planInfo.custom_price_cents ? planInfo.custom_price_cents : 0;
+  var customProCents = planInfo && planInfo.custom_price_cents_pro ? planInfo.custom_price_cents_pro : 0;
+  var customPremiumCents = planInfo && planInfo.custom_price_cents_premium ? planInfo.custom_price_cents_premium : 0;
+  var isAdminTest = !!isAdmin;
+  var whiteLabelPrice = isAdminTest ? ADMIN_TEST_PRICE : WHITELABEL.price;
+  var wlPlan = { id: 'white_label', name: 'Personalização', price: whiteLabelPrice, period: '' };
   var wlState = useState(false);
   var wlOpen = wlState[0];
   var setWlOpen = wlState[1];
   var hasWhiteLabel = !!(brand && brand.white_label);
   var wlMsg = 'Olá! Quero o app personalizado da minha empresa (logo, nome e cores). Pode me passar como funciona?';
   var duvidaMsg = 'Olá! Tenho uma dúvida sobre o Financia.';
+
+  // Decide o que fazer ao clicar no botao de um plano.
+  var handleAction = function(p, kind) {
+    if (kind === 'cancel') { setCancelOpen(true); return; }
+    setCheckout({ plan: p, kind: kind });
+  };
+
+  var confirmCancel = async function() {
+    setCancelling(true);
+    try {
+      var res = await sb.functions.invoke('cancel-subscription', { body: {} });
+      var data = res && res.data ? res.data : null;
+      if (!data || !data.ok) {
+        var msg = await readFnErrorMessage(res, data);
+        if (toast) toast(friendlyStripeError(msg), 'error');
+        setCancelling(false);
+        return;
+      }
+      if (toast) toast('Assinatura cancelada. Você fica no plano atual até o fim do período já pago.', 'success');
+      setCancelling(false);
+      setCancelOpen(false);
+    } catch (e) {
+      if (toast) toast('Erro ao cancelar. Tente de novo.', 'error');
+      setCancelling(false);
+    }
+  };
 
   return (
     <div className="flex flex-col gap-5 pb-20 lg:pb-0">
@@ -109,19 +186,65 @@ export default function PlansView({ brand, planInfo, toast, onNav }) {
         sub="Escolha o plano ou tenha o app com a cara da sua empresa"
       />
 
+      {(customCents > 0 || customProCents > 0 || customPremiumCents > 0) && (
+        <div className="rounded-2xl p-4 flex items-center gap-3" style={{background:'var(--brand-soft)', border:'1px solid var(--border)'}}>
+          <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{background: brand.color}}>
+            <svg className="w-5 h-5" fill="none" stroke="#ffffff" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 14l6-6M9.5 9h.01M14.5 15h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <div className="min-w-0">
+            <p className="text-sm font-bold" style={{color: brand.color}}>Você tem um preço especial</p>
+            <p className="text-xs" style={{color:'var(--text-sub)'}}>
+              {customProCents > 0 && <span>Pro: <b>{fmt(customProCents / 100)}/mês</b>{customPremiumCents > 0 ? ' · ' : ''}</span>}
+              {customPremiumCents > 0 && <span>Premium: <b>{fmt(customPremiumCents / 100)}/mês</b></span>}
+              {customProCents <= 0 && customPremiumCents <= 0 && customCents > 0 && <span>Combinado com você: <b>{fmt(customCents / 100)}/mês</b> no plano que assinar.</span>}
+            </p>
+          </div>
+        </div>
+      )}
+      {isAdminTest && (
+        <div className="rounded-2xl p-4 flex items-center gap-3" style={{background:'#ecfeff', border:'1px solid #a5f3fc'}}>
+          <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{background:'#0891b2'}}>
+            <svg className="w-5 h-5" fill="none" stroke="#ffffff" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          </div>
+          <div className="min-w-0">
+            <p className="text-sm font-bold" style={{color:'#0e7490'}}>Modo de teste admin ativo</p>
+            <p className="text-xs" style={{color:'#155e75'}}>Cobranças para teste no admin estão em <b>R$ 0,01</b>.</p>
+          </div>
+        </div>
+      )}
+
       <div className="flex flex-col gap-3">
         {PRICING_PLANS.map(function(p) {
-          return <PlanCard key={p.id} plan={p} brand={brand} current={plan === p.id} onSubscribe={setCheckoutPlan}/>;
+          var price = p.price;
+          var originalPrice = null;
+          if (p.id === 'pro' && customProCents > 0) { originalPrice = p.price; price = customProCents / 100; }
+          if (p.id === 'premium' && customPremiumCents > 0) { originalPrice = p.price; price = customPremiumCents / 100; }
+          var planCard = Object.assign({}, p, { price: price, original_price: originalPrice });
+          return <PlanCard key={p.id} plan={planCard} brand={brand} cta={planChangeCta(plan, p.id)} onAction={handleAction}
+            open={openPlan === p.id} onToggle={function() { setOpenPlan(openPlan === p.id ? null : p.id); }}/>;
         })}
       </div>
 
-      {checkoutPlan && (
-        <StripeCheckout plan={checkoutPlan} brand={brand} toast={toast}
-          onClose={function() { setCheckoutPlan(null); }}/>
+      {checkout && (
+        <StripeCheckout plan={checkout.plan} ctaKind={checkout.kind} brand={brand} toast={toast}
+          onClose={function() { setCheckout(null); }}/>
+      )}
+
+      {cancelOpen && (
+        <Modal title="Cancelar assinatura" onClose={function() { setCancelOpen(false); }}
+          onSave={confirmCancel} saving={cancelling} saveLabel="Confirmar cancelamento"
+          color="#dc2626">
+          <p className="text-sm" style={{color:'var(--text-main)'}}>
+            Você voltará para o plano Grátis ao fim do período já pago. Seus dados continuam salvos.
+          </p>
+          <p className="text-xs mt-1" style={{color:'var(--text-muted)'}}>
+            Pode reativar quando quiser. Nenhuma cobrança nova será feita.
+          </p>
+        </Modal>
       )}
 
       {wlOpen && (
-        <StripeCheckout plan={WL_PLAN} mode="payment" brand={brand} toast={toast}
+        <StripeCheckout plan={wlPlan} mode="payment" brand={brand} toast={toast}
           onClose={function() { setWlOpen(false); }}/>
       )}
 
@@ -140,7 +263,7 @@ export default function PlansView({ brand, planInfo, toast, onNav }) {
         </div>
 
         <div className="flex items-end gap-2">
-          <span className="font-display text-3xl font-bold" style={{color:'var(--text-main)'}}>{fmt(WHITELABEL.price)}</span>
+          <span className="font-display text-3xl font-bold" style={{color:'var(--text-main)'}}>{fmt(whiteLabelPrice)}</span>
           <span className="text-sm mb-1 font-semibold" style={{color: brand.color}}>pagamento único</span>
         </div>
 
@@ -166,7 +289,7 @@ export default function PlansView({ brand, planInfo, toast, onNav }) {
               className="w-full text-sm font-semibold px-4 py-3 rounded-xl text-white transition hover:opacity-90 min-h-[44px] flex items-center justify-center gap-2"
               style={{background: brand.color}}>
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
-              Comprar personalização — {fmt(WHITELABEL.price)}
+              Comprar personalização — {fmt(whiteLabelPrice)}
             </button>
             <a href={waLink(wlMsg)} target="_blank" rel="noopener noreferrer"
               className="text-center text-xs font-semibold transition hover:opacity-70" style={{color: brand.color}}>

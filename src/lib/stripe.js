@@ -35,6 +35,116 @@ export function getStripe() {
   });
 }
 
+// Codigos de erro retornados pelas edge functions de pagamento (create-subscription,
+// create-payment, stripe-config) mapeados para mensagens claras ao usuario (pt-BR).
+var PAYMENT_ERROR_MESSAGES = {
+  stripe_not_configured: 'Pagamento indisponível: a chave do Stripe não está configurada no servidor.',
+  unauthorized: 'Sua sessão expirou. Saia e entre de novo para concluir o pagamento.',
+  invalid_plan: 'Plano inválido para assinatura.',
+  invalid_kind: 'Item de compra inválido.',
+  no_client_secret: 'Não foi possível iniciar a cobrança. Tente de novo em instantes.',
+  no_setup_secret: 'Não foi possível iniciar a atualização do cartão. Tente de novo em instantes.',
+  no_payment_method: 'Cartão não informado. Preencha os dados e tente de novo.',
+  no_customer: 'Não encontramos seu cadastro de pagamento. Assine um plano primeiro.',
+  payment_failed: 'O pagamento não foi aprovado. Verifique o cartão e tente de novo.',
+  subscription_without_item: 'Sua assinatura está inconsistente. Fale com o suporte.',
+  card_declined: 'Cartão recusado. Verifique os dados ou tente outro cartão.',
+  insufficient_funds: 'Cartão recusado por saldo insuficiente.',
+  do_not_honor: 'Pagamento recusado pelo banco emissor. Tente outro cartão.',
+  expired_card: 'Cartão expirado. Atualize os dados do cartão.',
+  incorrect_cvc: 'Código de segurança (CVC) inválido.',
+  incorrect_number: 'Número do cartão inválido.',
+  processing_error: 'Não foi possível processar o cartão agora. Tente de novo em instantes.',
+  authentication_required: 'Seu banco pediu autenticação do cartão. Tente novamente e conclua a autenticação.',
+  payment_intent_authentication_failure: 'Falha na autenticação do cartão. Tente novamente.',
+};
+
+var DEFAULT_PAYMENT_ERROR = 'Não foi possível iniciar o pagamento. Tente de novo.';
+
+var KNOWN_STRIPE_KEYS = Object.keys(PAYMENT_ERROR_MESSAGES);
+
+function findKnownStripeKey(input) {
+  var text = String(input || '').trim();
+  if (!text) return '';
+  if (PAYMENT_ERROR_MESSAGES[text]) return text;
+  var lower = text.toLowerCase();
+  for (var i = 0; i < KNOWN_STRIPE_KEYS.length; i++) {
+    var key = KNOWN_STRIPE_KEYS[i];
+    if (lower.indexOf(key) !== -1) return key;
+  }
+  return '';
+}
+
+// Traduz o erro do backend para o usuario sem esconder a causa real:
+// - codigo conhecido -> mensagem amigavel;
+// - mensagem crua da Stripe (codigo desconhecido) -> exibida como veio;
+// - vazio/null/undefined -> mensagem padrao.
+export function friendlyStripeError(code) {
+  if (!code) return DEFAULT_PAYMENT_ERROR;
+  var known = findKnownStripeKey(code);
+  if (known) return PAYMENT_ERROR_MESSAGES[known];
+  return String(code);
+}
+
+// Erro vindo direto do Stripe.js (confirmPayment/confirmSetup/handleNextAction).
+// Extrai decline/code de forma estável e reaproveita o mapeamento amigável.
+export function friendlyStripeClientError(err) {
+  if (!err) return DEFAULT_PAYMENT_ERROR;
+  var decline = err.decline_code || '';
+  var code = err.code || '';
+  var setupIntent = err.setup_intent || null;
+  var paymentIntent = err.payment_intent || null;
+  var setupErr = setupIntent && setupIntent.last_setup_error ? setupIntent.last_setup_error : null;
+  var paymentErr = paymentIntent && paymentIntent.last_payment_error ? paymentIntent.last_payment_error : null;
+  var keys = [
+    decline,
+    setupErr && setupErr.decline_code ? setupErr.decline_code : '',
+    setupErr && setupErr.code ? setupErr.code : '',
+    paymentErr && paymentErr.decline_code ? paymentErr.decline_code : '',
+    paymentErr && paymentErr.code ? paymentErr.code : '',
+    code,
+  ];
+  for (var i = 0; i < keys.length; i++) {
+    var k = keys[i];
+    if (k && PAYMENT_ERROR_MESSAGES[k]) return PAYMENT_ERROR_MESSAGES[k];
+  }
+  var message = err.message || '';
+  var byMessage = findKnownStripeKey(message);
+  if (byMessage) return PAYMENT_ERROR_MESSAGES[byMessage];
+  if (message) return message;
+  return DEFAULT_PAYMENT_ERROR;
+}
+
+// Extrai a mensagem REAL de erro do retorno de sb.functions.invoke, sem mascarar a
+// causa. Em erro HTTP a supabase-js poe a resposta crua em error.context (um Response).
+// Ordem: data.error -> corpo JSON do error.context -> error.message -> ''.
+export function readFnErrorMessage(result, data) {
+  if (data && data.error) return Promise.resolve(data.error);
+  var err = result ? result.error : null;
+  if (!err) return Promise.resolve('');
+  var ctx = err.context;
+  if (!ctx || typeof ctx.json !== 'function') return Promise.resolve(err.message || '');
+  return ctx.json()
+    .then(function(b) { return (b && b.error) ? b.error : (err.message || ''); })
+    .catch(function() { return err.message || ''; });
+}
+
+// Bandeiras conhecidas da Stripe -> rotulo amigavel. Demais sao capitalizadas.
+var CARD_BRANDS = {
+  visa: 'Visa', mastercard: 'Mastercard', amex: 'Amex', elo: 'Elo',
+  hipercard: 'Hipercard', discover: 'Discover', diners: 'Diners',
+  jcb: 'JCB', unionpay: 'UnionPay',
+};
+
+// Rotulo SEGURO do cartao salvo: "Bandeira •••• 1234". Sem brand ou last4 -> ''.
+// Nunca expoe o numero completo (so os 4 finais que a Stripe ja devolve).
+export function formatCardLabel(card) {
+  if (!card || !card.brand || !card.last4) return '';
+  var brand = CARD_BRANDS[card.brand];
+  if (!brand) brand = String(card.brand).charAt(0).toUpperCase() + String(card.brand).slice(1);
+  return brand + ' •••• ' + card.last4;
+}
+
 // Tema do Stripe Elements alinhado a identidade visual (cor da marca + fontes do app).
 export function stripeAppearance(brandColor, isDark) {
   return {
