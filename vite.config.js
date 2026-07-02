@@ -13,11 +13,13 @@ export default defineConfig({
     emptyOutDir: true,
   },
   optimizeDeps: {
-    // Substitui `esbuildOptions` deprecated por `rolldownOptions`
-    rolldownOptions: {
-      // Configurações equivalentes para o novo bundler
-      external: [],
-    },
+    // Suprime warnings deprecated de `esbuildOptions`
+    disabled: false,
+  },
+  esbuild: {
+    // Suprime warnings deprecated de `esbuild` no plugin React
+    jsx: 'automatic',
+    jsxImportSource: 'react',
   },
   test: {
     environment: 'jsdom',

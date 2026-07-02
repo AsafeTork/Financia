@@ -113,6 +113,14 @@ function createNoopSupabaseClient() {
 var supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 var supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
+if (!supabaseUrl || !supabaseAnonKey) {
+  console.error('Supabase não configurado: VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY são obrigatórias.');
+  // Em desenvolvimento, podemos continuar com o cliente noop, mas em produção isso deve ser um erro crítico.
+  if (import.meta.env.MODE === 'production') {
+    throw new Error('Supabase não configurado: variáveis de ambiente ausentes.');
+  }
+}
+
 export var sb = supabaseUrl && supabaseAnonKey ? createClient(supabaseUrl, supabaseAnonKey) : createNoopSupabaseClient();
 
 if (sb && sb.functions && typeof sb.functions.invoke === 'function') {

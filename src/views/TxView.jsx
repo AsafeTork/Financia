@@ -49,10 +49,17 @@ export default function TxView({ type, tx, products, onAdd, onEdit, onDelete, on
     setEditItem({id:t.id, desc:t.desc, amount:String(t.amount), date:t.date, cat:t.category||'Fixo', method:t.method||'PIX'});
   };
   var saveEdit = async function() {
-    if (!editItem.desc || !editItem.amount) return;
+    const amount = Number(editItem.amount) || 0;
+    if (!editItem.desc || amount <= 0) return;
     setSaving(true);
     try {
-      var ok = await onEdit(editItem.id, {desc:safe(editItem.desc), amount:Number(editItem.amount), date:editItem.date, method:isIncome ? editItem.method : null, cat:isIncome ? null : editItem.cat});
+      var ok = await onEdit(editItem.id, {
+        desc: safe(editItem.desc),
+        amount: amount,
+        date: editItem.date,
+        method: isIncome ? editItem.method : null,
+        cat: isIncome ? null : editItem.cat
+      });
       if (!ok) return;
       toast(isIncome ? 'Venda atualizada' : 'Despesa atualizada');
       setEditItem(null);
@@ -61,12 +68,13 @@ export default function TxView({ type, tx, products, onAdd, onEdit, onDelete, on
   };
   var resetForm = function() { setForm({desc:'', amount:'', date:today(), cat:'Fixo', method:'PIX', fixo:false, day:'5'}); };
   var saveNew = async function() {
-    if (!form.desc || !form.amount) return;
+    const amount = Number(form.amount) || 0;
+    if (!form.desc || amount <= 0) return;
     setSaving(true);
     try {
       if (!isIncome && form.fixo) {
         var day = Number(form.day) || 5;
-        var tpl = { id: uid(), desc: safe(form.desc), amount: Number(form.amount), day: day, category: form.cat, active: true };
+        var tpl = { id: uid(), desc: safe(form.desc), amount: amount, day: day, category: form.cat, active: true };
         var list = await getRecurring(userId);
         await setRecurring(userId, list.concat([tpl]));
         var row = buildRecurringRow(userId, tpl, periodOf(new Date()));
@@ -77,7 +85,15 @@ export default function TxView({ type, tx, products, onAdd, onEdit, onDelete, on
         resetForm();
         return;
       }
-      var ok = await onAdd({id:uid(), type:type, desc:safe(form.desc), amount:Number(form.amount), date:form.date, method:isIncome ? form.method : null, cat:isIncome ? null : form.cat});
+      var ok = await onAdd({
+        id: uid(),
+        type: type,
+        desc: safe(form.desc),
+        amount: amount,
+        date: form.date,
+        method: isIncome ? form.method : null,
+        cat: isIncome ? null : form.cat
+      });
       if (!ok) return;
       toast(isIncome ? 'Venda registrada!' : 'Despesa registrada!');
       setModal(false);

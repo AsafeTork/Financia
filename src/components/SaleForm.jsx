@@ -77,14 +77,24 @@ export function SaleForm({ products, brand, onSave, onClose }) {
     setItems(function(p) { return p.map(function(it, i) { return i === idx ? Object.assign({}, it, {desc:name, up:String(price)}) : it; }); });
   };
   const save = async function() {
-    const valid = items.filter(function(i) { return i.desc && i.up; });
+    const valid = items.filter(function(i) {
+      const qty = Number(i.qty) || 0;
+      const up = Number(i.up) || 0;
+      return i.desc && up > 0 && qty > 0;
+    });
     if (!valid.length || total <= 0) { setShowErrors(true); return; }
     setSaving(true);
     var ok = await onSave({
       id: uid(),
       type: 'income',
       desc: safe(valid.length === 1 ? valid[0].desc : valid.length + ' itens'),
-      items: valid.map(function(i) { return {desc:safe(i.desc), qty:Number(i.qty)||1, unitPrice:Number(i.up)}; }),
+      items: valid.map(function(i) {
+        return {
+          desc: safe(i.desc),
+          qty: Number(i.qty) || 1,
+          unitPrice: Number(i.up) || 0
+        };
+      }),
       amount: total,
       date: date,
       method: method,
