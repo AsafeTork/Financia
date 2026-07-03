@@ -1,4 +1,4 @@
-export const INIT_BRAND = { name: 'Financia', color: '#002f59', color_secondary: null, color_accent: null, theme: 'light', logo: 'G', logo_url: null, phone: '', white_label: false, niche: '' };
+export const INIT_BRAND = { name: 'Financia', color: '#002f59', color_secondary: '#e8f0f7', color_accent: '#1a6b5c', theme: 'light', logo: 'F', logo_url: null, phone: '', white_label: false, niche: '' };
 export const INIT_PLAN = { plan: 'free', plan_expires_at: null, plan_activated_by: null };
 
 export const PLAN_LIMITS = {
@@ -133,21 +133,21 @@ export const PRICING_PLANS = [
 // Sem pacote: usa identidade fixa por plano e não permite personalização manual.
 export const PLAN_VISUAL_DEFAULTS = {
   free: {
-    color: '#0f3d3e',
-    color_secondary: '#ccfbf1',
-    color_accent: '#0d9488',
+    color: '#002f59',
+    color_secondary: '#e8f0f7',
+    color_accent: '#1a6b5c',
     theme: 'light',
   },
   pro: {
     color: '#002f59',
-    color_secondary: '#dbe7f3',
-    color_accent: '#2563eb',
+    color_secondary: '#e8f0f7',
+    color_accent: '#3bbfa0',
     theme: 'light',
   },
   premium: {
-    color: '#1a1a2e',
-    color_secondary: '#e2e2f0',
-    color_accent: '#6c63ff',
+    color: '#002f59',
+    color_secondary: '#e8f0f7',
+    color_accent: '#6ec6c8',
     theme: 'dark',
   },
 };
@@ -155,9 +155,9 @@ export const PLAN_VISUAL_DEFAULTS = {
 // Fallback visual do pacote de personalizacao: quando white-label estiver ativo
 // mas o cliente ainda nao definiu uma paleta propria, usamos uma base da marca.
 export const WHITE_LABEL_VISUAL_DEFAULT = {
-  color: '#1a6b5c',
-  color_secondary: '#d7efe9',
-  color_accent: '#8cf2d1',
+  color: '#002f59',
+  color_secondary: '#e8f0f7',
+  color_accent: '#3bbfa0',
   theme: 'light',
 };
 
@@ -170,13 +170,13 @@ export const planVisualDefaults = function(planInfo) {
 // Temas prontos por segmento — para o admin aplicar a identidade do cliente
 // em um clique, sem precisar entender de cor (primary/secondary/accent).
 export const THEME_PRESETS = [
-  { name: 'Azul Corporativo', segment: 'Serviços e geral',        color: '#002f59', secondary: '#dbe7f3', accent: '#2563eb' },
-  { name: 'Verde Natural',    segment: 'Alimentos e saúde',       color: '#14532d', secondary: '#dcfce7', accent: '#16a34a' },
+  { name: 'Azul Corporativo', segment: 'Servicos e geral',        color: '#002f59', secondary: '#e8f0f7', accent: '#1a6b5c' },
+  { name: 'Verde Natural',    segment: 'Alimentos e saude',       color: '#14532d', secondary: '#dcfce7', accent: '#16a34a' },
   { name: 'Vermelho Energia', segment: 'Restaurante e oficina',   color: '#7f1d1d', secondary: '#fee2e2', accent: '#dc2626' },
-  { name: 'Roxo Premium',     segment: 'Beleza e estética',       color: '#4c1d95', secondary: '#ede9fe', accent: '#7c3aed' },
+  { name: 'Roxo Premium',     segment: 'Beleza e estetica',       color: '#4c1d95', secondary: '#ede9fe', accent: '#7c3aed' },
   { name: 'Laranja Vibrante', segment: 'Loja e varejo',           color: '#7c2d12', secondary: '#ffedd5', accent: '#ea580c' },
-  { name: 'Rosa Moderno',     segment: 'Moda e salão',            color: '#831843', secondary: '#fce7f3', accent: '#db2777' },
-  { name: 'Petróleo Sóbrio',  segment: 'Consultoria e tech',      color: '#0f3d3e', secondary: '#ccfbf1', accent: '#0d9488' },
+  { name: 'Rosa Moderno',     segment: 'Moda e salao',            color: '#831843', secondary: '#fce7f3', accent: '#db2777' },
+  { name: 'Petroleo Sobrio',  segment: 'Consultoria e tech',      color: '#0f3d3e', secondary: '#ccfbf1', accent: '#0d9488' },
   { name: 'Grafite Minimal',  segment: 'Premium e minimalista',   color: '#1f2937', secondary: '#e5e7eb', accent: '#0ea5e9' },
 ];
 

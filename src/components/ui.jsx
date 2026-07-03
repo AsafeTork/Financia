@@ -6,7 +6,7 @@ export const Card = function({ children, className, hover, variant, accent, colo
   if (hover) base += 'card-hover ';
   var shadow = variant === 'flat' ? 'none' : variant === 'raised' ? 'var(--shadow-md)' : 'var(--shadow-sm)';
   return (
-    <div className={base + (className || '')} style={{position:'relative', overflow:'hidden', background:'var(--bg-card)', border:'1px solid var(--border)', boxShadow: shadow}}>
+    <div className={base + (className || '')} style={{position:'relative', overflow:'hidden', background:'var(--bg-card)', border:'1px solid var(--border)', boxShadow: shadow, borderRadius: '16px'}}>
       {accent && <div style={{position:'absolute', top:0, left:0, right:0, height:3, background: color || 'var(--brand-grad, var(--brand))'}}/>}
       {children}
     </div>
@@ -24,8 +24,8 @@ export const Inp = function({ label, hint, error, success, className, icon, ...p
         </div>
       )}
       <input
-        className="border border-gray-200 rounded-xl px-3 py-3 text-sm transition w-full"
-        style={Object.assign({background:'var(--bg-input)', color:'var(--text-main)'}, borderColor ? {borderColor: borderColor} : {})}
+        className="border rounded-xl px-3.5 py-3 text-sm transition w-full focus:outline-none"
+        style={Object.assign({background:'var(--bg-input)', color:'var(--text-main)', borderColor: borderColor || 'var(--border-md)'}, {})}
         {...p}
       />
       {(hint || error) && (
@@ -92,15 +92,15 @@ export const Spin = function({ white, size }) {
 };
 
 var BTN_VARIANTS = {
-  primary:   'text-white hover:opacity-90 disabled:opacity-40',
-  secondary: 'border border-gray-200 text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-40',
-  ghost:     'text-gray-600 hover:bg-gray-100 disabled:opacity-40',
-  danger:    'text-white bg-red-500 hover:bg-red-600 disabled:opacity-40',
+  primary:   'text-white hover:brightness-110 disabled:opacity-40',
+  secondary: 'border border-[var(--border)] text-[var(--text-sub)] bg-[var(--bg-card)] hover:bg-[var(--bg-subtle)] disabled:opacity-40',
+  ghost:     'text-[var(--text-sub)] hover:bg-[var(--bg-subtle)] disabled:opacity-40',
+  danger:    'text-white bg-[#dc2626] hover:bg-[#b91c1c] disabled:opacity-40',
 };
 var BTN_SIZES = {
-  sm: 'px-3 py-1.5 text-xs rounded-lg',
+  sm: 'px-3.5 py-2 text-xs rounded-xl',
   md: 'px-4 py-2.5 text-sm rounded-xl',
-  lg: 'px-6 py-3 text-sm rounded-xl',
+  lg: 'px-6 py-3 text-sm rounded-2xl',
 };
 
 export const Btn = function({ variant, size, loading, children, style, className, ...p }) {
@@ -172,7 +172,7 @@ export const Modal = function({ title, onClose, onSave, color, saving, children,
   var bg = color || 'var(--brand)';
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 anim-fade" style={{background:'rgba(15,23,42,0.55)', backdropFilter:'blur(3px)', WebkitBackdropFilter:'blur(3px)'}}>
-      <div role="dialog" aria-modal="true" aria-label={title} className={'rounded-2xl flex flex-col w-full anim-scale ' + (wide ? 'max-w-lg' : 'max-w-sm')} style={{background:'var(--bg-card)', boxShadow:'var(--shadow-lg)', maxHeight:'90vh'}}>
+      <div role="dialog" aria-modal="true" aria-label={title} className={'rounded-3xl flex flex-col w-full anim-scale ' + (wide ? 'max-w-lg' : 'max-w-sm')} style={{background:'var(--bg-card)', boxShadow:'var(--shadow-lg)', maxHeight:'90vh', border:'1px solid var(--border)'}}>
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 flex-shrink-0">
           <span className="font-semibold text-gray-900">{title}</span>
           <button onClick={onClose} aria-label="Fechar" className="text-gray-400 hover:text-gray-600 p-1 rounded-lg hover:bg-gray-100">
@@ -215,8 +215,8 @@ export const PageHead = function({ icon, title, sub, right, color }) {
     <div className="flex items-start justify-between gap-3 flex-wrap">
       <div className="flex items-start gap-3 min-w-0">
         {icon && (
-          <div className="w-11 h-11 rounded-2xl flex items-center justify-center flex-shrink-0 mt-0.5" style={{background:'linear-gradient(135deg, var(--brand-soft), var(--brand-accent-soft, var(--brand-soft)))'}}>
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d={icon}/></svg>
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5" style={{background:'var(--brand-soft)'}}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d={icon}/></svg>
           </div>
         )}
         <div className="min-w-0">
