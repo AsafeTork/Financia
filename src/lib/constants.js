@@ -139,15 +139,15 @@ export const PLAN_VISUAL_DEFAULTS = {
     theme: 'light',
   },
   pro: {
-    color: '#0c3436',
-    color_secondary: '#bdeee6',
-    color_accent: '#0a7f74',
+    color: '#002f59',
+    color_secondary: '#dbe7f3',
+    color_accent: '#2563eb',
     theme: 'light',
   },
   premium: {
-    color: '#082829',
-    color_secondary: '#a9ddd4',
-    color_accent: '#06665e',
+    color: '#1a1a2e',
+    color_secondary: '#e2e2f0',
+    color_accent: '#6c63ff',
     theme: 'dark',
   },
 };

@@ -30,6 +30,17 @@ async function userEmailById(supabase: any, userId: string): Promise<string> {
   }
 }
 
+// Extrai o plan_id dos metadados da subscription, do price ou do item.
+function planOfSubFromEvent(sub: any): string {
+  const m = sub.metadata ? sub.metadata : {};
+  if (m.plan_id === 'pro' || m.plan_id === 'premium') return m.plan_id;
+  const item = sub.items && sub.items.data ? sub.items.data[0] : null;
+  if (!item) return 'pro';
+  const im = item.price && item.price.metadata ? item.price.metadata : {};
+  if (im.plan_id === 'pro' || im.plan_id === 'premium') return im.plan_id;
+  return 'pro';
+}
+
 Deno.serve(async function (req) {
   const stripeKey = Deno.env.get('STRIPE_SECRET_KEY');
   const webhookSecret = Deno.env.get('STRIPE_WEBHOOK_SECRET');
@@ -59,7 +70,17 @@ Deno.serve(async function (req) {
       const meta = session.metadata ? session.metadata : {};
       const userId = session.client_reference_id ? session.client_reference_id : meta.user_id;
       const planId = meta.plan_id ? meta.plan_id : 'pro';
-      const expires = new Date(Date.now() + 31 * 24 * 60 * 60 * 1000).toISOString();
+
+      // Usa o current_period_end da subscription criada, se disponivel
+      let expires = new Date(Date.now() + 31 * 24 * 60 * 60 * 1000).toISOString();
+      if (session.subscription) {
+        try {
+          const sub = await stripe.subscriptions.retrieve(session.subscription);
+          if (sub && sub.current_period_end) {
+            expires = new Date(Number(sub.current_period_end) * 1000).toISOString();
+          }
+        } catch (_) {}
+      }
 
       if (userId) {
         await supabase.rpc('stripe_activate_plan', {
@@ -196,30 +217,87 @@ Deno.serve(async function (req) {
           });
         }
       }
-    } else if (event.type === 'customer.subscription.deleted') {
-      const sub = event.data.object;
-      const subMeta = sub.metadata ? sub.metadata : {};
-      const userId = subMeta.user_id ? subMeta.user_id : null;
-      if (userId) {
-        await supabase.rpc('stripe_activate_plan', {
-          p_user: userId,
-          p_plan: 'free',
-          p_expires: null,
-        });
-        const to = await userEmailById(supabase, String(userId));
-        if (to) {
-          const txt =
-            'Sua assinatura foi encerrada e sua conta voltou para o plano Grátis.' + '\n\n' +
-            'Se quiser reativar um plano pago, acesse a aba de Assinatura.';
-          await sendSystemEmail({
-            to: to,
-            subject: 'Assinatura encerrada - Financia',
-            text: txt,
-            html: htmlFromText(txt),
-          });
+    } else if (event.type === 'customer.subscription.updated') {
+          const sub = event.data.object;
+          const subMeta = sub.metadata ? sub.metadata : {};
+          let userId = subMeta.user_id ? subMeta.user_id : null;
+          if (!userId) {
+            const item = sub.items && sub.items.data ? sub.items.data[0] : null;
+            const pm = item && item.price && item.price.metadata ? item.price.metadata : {};
+            const fallbackId = pm.user_id || pm.custom_for || null;
+            if (!fallbackId) return plainResponse(200, { received: true, note: 'no_user_id' });
+            userId = fallbackId;
+          }
+          const targetUserId = userId;
+          const status = sub.status;
+          const planFromSub = planOfSubFromEvent(sub);
+          const cancelAtPeriodEnd = sub.cancel_at_period_end || false;
+          const currentPeriodEnd = sub.current_period_end
+            ? new Date(Number(sub.current_period_end) * 1000).toISOString()
+            : null;
+
+          if (status !== 'active' && status !== 'trialing') {
+            if (status === 'incomplete_expired') {
+              await supabase.rpc('stripe_activate_plan', {
+                p_user: targetUserId,
+                p_plan: 'free',
+                p_expires: null,
+              });
+            }
+            return plainResponse(200, { received: true, note: 'non_active' });
+          }
+
+          if (targetUserId && planFromSub) {
+            await supabase.rpc('stripe_activate_plan', {
+              p_user: targetUserId,
+              p_plan: planFromSub,
+              p_expires: currentPeriodEnd,
+            });
+
+            if (cancelAtPeriodEnd) {
+              const to = await userEmailById(supabase, String(targetUserId));
+              if (to) {
+                const dateStr = currentPeriodEnd
+                  ? new Date(currentPeriodEnd).toLocaleDateString('pt-BR')
+                  : 'em breve';
+                const txt =
+                  'Lembrete: sua assinatura foi agendada para cancelamento.' + '\\n\\n' +
+                  'Você mantém o acesso até ' + dateStr + '.\\n' +
+                  'Depois dessa data, sua conta voltará para o plano Grátis.' + '\\n\\n' +
+                  'Se quiser reativar, acesse a aba de Assinatura no app.';
+                await sendSystemEmail({
+                  to: to,
+                  subject: 'Cancelamento agendado - Financia',
+                  text: txt,
+                  html: htmlFromText(txt),
+                });
+              }
+            }
+          }
+        } else if (event.type === 'customer.subscription.deleted') {
+          const sub = event.data.object;
+          const subMeta = sub.metadata ? sub.metadata : {};
+          const userIdSubDel = subMeta.user_id ? subMeta.user_id : null;
+          if (userIdSubDel) {
+            await supabase.rpc('stripe_activate_plan', {
+              p_user: userIdSubDel,
+              p_plan: 'free',
+              p_expires: null,
+            });
+            const to = await userEmailById(supabase, String(userIdSubDel));
+            if (to) {
+              const txt =
+                'Sua assinatura foi encerrada e sua conta voltou para o plano Gr\u00e1tis.' + '\\n\\n' +
+                'Se quiser reativar um plano pago, acesse a aba de Assinatura.';
+              await sendSystemEmail({
+                to: to,
+                subject: 'Assinatura encerrada - Financia',
+                text: txt,
+                html: htmlFromText(txt),
+              });
+            }
+          }
         }
-      }
-    }
 
     return plainResponse(200, { received: true });
   } catch (err) {

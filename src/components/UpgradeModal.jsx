@@ -4,10 +4,16 @@ import { brandAlpha } from '../lib/utils.js';
 
 var money = function(v) { return v === 0 ? 'R$ 0' : 'R$ ' + v.toFixed(2).replace('.', ','); };
 
-export default function UpgradeModal({ reason, brand, onClose }) {
+export default function UpgradeModal({ reason, brand, onClose, onNav }) {
   var c = (brand && brand.color) || '#002f59';
   var plans = PRICING_PLANS.filter(function(p) { return p.id !== 'free'; });
   var waBase = 'https://wa.me/' + WHATSAPP + '?text=';
+
+  var handlePlanClick = function(p) {
+    // Fecha o modal e navega para a tela de planos (onde o StripeCheckout é aberto)
+    if (onNav) onNav('planos');
+    if (onClose) onClose();
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 anim-fade" style={{ background: 'rgba(15,23,42,0.55)', backdropFilter: 'blur(3px)', WebkitBackdropFilter: 'blur(3px)' }}>
@@ -54,11 +60,12 @@ export default function UpgradeModal({ reason, brand, onClose }) {
                     );
                   })}
                 </div>
-                <a href={wa} target="_blank" rel="noopener noreferrer"
-                  className="block text-center text-sm font-semibold py-3 rounded-xl transition hover:opacity-90 min-h-[44px] flex items-center justify-center"
+                <button type="button" onClick={function() { handlePlanClick(p); }}
+                  className="block w-full text-center text-sm font-semibold py-3 rounded-xl transition hover:opacity-90 min-h-[44px] flex items-center justify-center"
                   style={popular ? { background: c, color: '#fff' } : { border: '1px solid var(--border-md)', color: 'var(--text-main)' }}>
-                  Quero o {p.name}
-                </a>
+                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                  Assinar {p.name}
+                </button>
               </div>
             );
           })}

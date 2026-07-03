@@ -321,7 +321,7 @@ export default function App() {
       <BottomNav view={view} onNav={navTo} brand={appBrand}/>
       <Toast toasts={toasts} onDismiss={dismissToast}/>
       {confirmData && <Confirm msg={confirmData.msg} onOk={function() { confirmData.onOk(); setConfirmData(null); }} onCancel={function() { setConfirmData(null); }}/>}
-      {showUpgrade && <UpgradeModal reason={typeof showUpgrade === 'object' ? showUpgrade : null} brand={appBrand} onClose={function() { setShowUpgrade(false); }}/>}
+      {showUpgrade && <UpgradeModal reason={typeof showUpgrade === 'object' ? showUpgrade : null} brand={appBrand} onClose={function() { setShowUpgrade(false); }} onNav={function(v) { navTo(v); }}/>}
     </div>
   );
 }

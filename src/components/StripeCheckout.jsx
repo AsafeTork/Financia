@@ -199,8 +199,28 @@ export default function StripeCheckout({ plan, brand, onClose, onDone, toast, mo
       else msg = 'Pagamento recebido! Seu plano será ativado em instantes.';
     }
     if (toast) toast(msg, 'success');
+    // Força recarga dos dados para refletir o novo plano imediatamente
+    refreshPlanData();
     if (onDone) onDone();
     onClose();
+  };
+
+  // Recarrega os dados de sessão para refletir o novo plano na UI
+  var refreshPlanData = function() {
+    var uid = null;
+    try {
+      var s = sb.auth.getSession();
+      uid = s && s.data && s.data.session ? s.data.session.user.id : null;
+    } catch (e) {}
+    if (uid && navigator.onLine) {
+      import('../lib/db.js').then(function(mod) {
+        mod.syncAll(uid).then(function(ok) {
+          if (ok) {
+            import('../hooks/useSession.js').catch(function() {});
+          }
+        });
+      });
+    }
   };
 
   // Paga o pacote white-label com o cartao ja salvo (off_session + 3DS se preciso).
