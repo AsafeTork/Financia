@@ -80,21 +80,44 @@ export default function ReportView({ tx, brand, toast, onNav, planInfo }) {
         <PageHead
           icon="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
           color={accentColor}
-          title="Relatório"
+          title="Relatorio"
           sub="Fechamento mensal"
         />
         <Card>
-          <div className="py-14 flex flex-col items-center gap-3 text-center px-6">
-            <div className="w-14 h-14 rounded-2xl flex items-center justify-center" style={{background: brandAlpha(accentColor, 0.08)}}>
-              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke={accentColor} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <div className="py-10 flex flex-col items-center gap-5 text-center px-6">
+            <div className="w-16 h-16 rounded-2xl flex items-center justify-center" style={{background: brandAlpha(accentColor, 0.08)}}>
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke={accentColor} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M9 17v-2m3 2v-4m3 4v-6M5 21h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2z"/>
               </svg>
             </div>
-            <p className="text-sm font-semibold" style={{color:'var(--text-main)'}}>Nenhum dado disponível</p>
-            <p className="text-xs max-w-xs leading-relaxed" style={{color:'var(--text-muted)'}}>Registre vendas e despesas para gerar relatórios mensais.</p>
+            <div>
+              <p className="text-sm font-semibold" style={{color:'var(--text-main)'}}>Nenhum dado disponivel</p>
+              <p className="text-xs mt-1 max-w-sm" style={{color:'var(--text-muted)'}}>Quando voce registrar vendas e despesas, aparecerao:</p>
+            </div>
+            {/* Grafico ficticio com transparencia */}
+            <div className="relative w-full max-w-xs opacity-30 select-none">
+              <div className="flex items-end gap-1.5 h-24 mb-1">
+                {[35, 48, 30, 62, 55, 78, 92].map(function(h, i) {
+                  return <div key={'rgh-' + i} className="flex-1 rounded-t-md" style={{height:h+'%', background: i === 6 ? accentColor : 'rgba(0,47,89,0.12)'}} />;
+                })}
+              </div>
+              <div className="flex justify-between text-[9px]" style={{color:'var(--text-muted)'}}>
+                {['Seg','Ter','Qua','Qui','Sex','Sab','Dom'].map(function(d) { return <span key={d}>{d}</span>; })}
+              </div>
+            </div>
+            <div className="flex flex-col gap-1 items-center">
+              {[{ icon:'M5 13l4 4L19 7', label:'Lucro liquido' }, { icon:'M5 13l4 4L19 7', label:'Fluxo de caixa' }, { icon:'M5 13l4 4L19 7', label:'Faturamento mensal' }, { icon:'M5 13l4 4L19 7', label:'Despesas por categoria' }, { icon:'M5 13l4 4L19 7', label:'Evolucao mensal' }].map(function(item) {
+                return (
+                  <div key={item.label} className="flex items-center gap-2 text-xs" style={{color:'var(--text-muted)'}}>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={accentColor} strokeWidth="2.5" strokeLinecap="round"><path d={item.icon}/></svg>
+                    {item.label}
+                  </div>
+                );
+              })}
+            </div>
             {onNav && (
               <button onClick={function() { onNav('income'); }}
-                className="text-xs font-semibold px-5 py-3 rounded-xl text-white hover:opacity-90 mt-1 min-h-[44px]"
+                className="text-xs font-semibold px-6 py-3 rounded-xl text-white hover:opacity-90 mt-1 min-h-[44px]"
                 style={{background: accentColor}}>
                 Registrar primeira venda
               </button>

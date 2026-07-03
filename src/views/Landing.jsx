@@ -206,11 +206,11 @@ export default function Landing({ onEnter }) {
                     <span className="text-xs font-bold px-2.5 py-1 rounded-full" style={{ background: 'rgba(59,191,160,0.1)', color: TEAL }}>+18%</span>
                   </div>
 
-                  <div className="flex items-end gap-1.5 h-28 mb-4 lp-main-chart">
+                  <div className="flex items-end gap-1.5 h-28 mb-4">
                     {MOCK_CHART.map(function(m, i) {
-                      var h = Math.round((m.i + m.o) / 18);
+                      var h = Math.max(Math.round((m.i + m.o) / 18), 6);
                       return (
-                        <div key={'hc-' + i} className="flex-1 rounded-t-md lp-bar" style={{ height: Math.max(h, 8) + '%', background: i === MOCK_CHART.length - 1 ? 'linear-gradient(180deg, #3bbfa0, #1a6b5c)' : 'rgba(0,47,89,0.10)', animationDelay: (300 + i * 90) + 'ms' }} />
+                        <div key={'hc-' + i} className="flex-1 rounded-t-md" style={{ height: h + '%', background: i === MOCK_CHART.length - 1 ? 'linear-gradient(180deg, #3bbfa0, #1a6b5c)' : 'rgba(0,47,89,0.10)', minHeight: 4 }} />
                       );
                     })}
                   </div>
@@ -326,12 +326,12 @@ export default function Landing({ onEnter }) {
             </div>
             <div className="flex items-end gap-2 h-36">
               {MOCK_CHART.map(function(m, i) {
-                var ih = (m.i / maxChart) * 100;
-                var oh = (m.o / maxChart) * 100;
+                var ih = Math.max((m.i / maxChart) * 100, 4);
+                var oh = Math.max((m.o / maxChart) * 100, 4);
                 return (
                   <div key={'bc-' + i} className="flex-1 flex flex-col items-center gap-0.5 justify-end">
-                    <div className="w-3/4 rounded-t-sm preview-bar-live" style={{ height: Math.max(oh, 3) + '%', background: '#ef4444', minHeight: 3, animationDelay: (i * 0.15) + 's' }} />
-                    <div className="w-3/4 rounded-t-sm preview-bar-live" style={{ height: Math.max(ih, 3) + '%', background: GREEN, minHeight: 3, animationDelay: (i * 0.15 + 0.08) + 's' }} />
+                    <div className="w-3/4 rounded-t-sm" style={{ height: oh + '%', background: '#ef4444', minHeight: 3 }} />
+                    <div className="w-3/4 rounded-t-sm" style={{ height: ih + '%', background: GREEN, minHeight: 3 }} />
                     <span className="text-[10px] tabular mt-0.5" style={{ color: MUTED }}>{m.day}</span>
                   </div>
                 );

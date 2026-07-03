@@ -21,10 +21,11 @@ export default function Sidebar({ view, onNav, brand, open, onClose, isAdmin }) 
     return (
       <button key={item.key} onClick={function() { onNav(item.key); onClose(); }}
         aria-current={active ? 'page' : undefined}
-        className={'relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition w-full text-left ' + (active ? 'text-white' : 'text-white/55 hover:text-white hover:bg-white/5')}
-        style={active ? {background: 'rgba(255,255,255,0.14)'} : {}}>
-        {active && <span className="absolute left-0 top-1/2 h-5 w-1 rounded-r-full bg-white" style={{transform:'translateY(-50%)'}}/>}
-        <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        className={'relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 w-full text-left ' + (active ? 'text-white' : 'text-white/55 hover:text-white hover:bg-white/5 hover:translate-x-0.5')}
+        style={active ? {background: 'rgba(255,255,255,0.14)', boxShadow: '0 2px 8px rgba(0,0,0,0.15)'} : {}}>
+        {active && <span className="absolute left-0 top-1/2 h-5 w-1 rounded-r-full bg-white transition-all duration-200" style={{transform:'translateY(-50%)'}}/>}
+        <svg className="w-5 h-5 flex-shrink-0 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+          style={{transform: active ? 'scale(1.05)' : 'scale(1)'}}>
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={active ? 2 : 1.6} d={item.d}/>
         </svg>
         <span className="truncate">{item.label}</span>
@@ -61,7 +62,7 @@ export default function Sidebar({ view, onNav, brand, open, onClose, isAdmin }) 
         </div>
 
         <div className="px-5 py-3 flex items-center gap-2" style={{borderTop:'1px solid rgba(255,255,255,0.06)'}}>
-          <span className="w-2 h-2 rounded-full flex-shrink-0" style={{background: online ? '#22c55e' : '#f59e0b', boxShadow: '0 0 0 3px ' + (online ? 'rgba(34,197,94,0.18)' : 'rgba(245,158,11,0.18)')}}/>
+          <span className="w-2 h-2 rounded-full flex-shrink-0 transition-all duration-300" style={{background: online ? '#22c55e' : '#f59e0b', boxShadow: '0 0 0 3px ' + (online ? 'rgba(34,197,94,0.18)' : 'rgba(245,158,11,0.18)')}}/>
           <p className="text-xs truncate" style={{color:'rgba(255,255,255,0.6)'}}>{online ? 'Online — tudo sincronizado' : 'Offline — salvo no aparelho'}</p>
         </div>
       </aside>

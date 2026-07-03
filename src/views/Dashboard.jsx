@@ -44,9 +44,8 @@ export default function Dashboard({ tx, products, brand, onNav, planInfo, losses
   var plan     = effectivePlan(planInfo);
   var canUseAI = plan !== 'free';
   var lowStock = products.filter(function(p) { return p.stock != null && p.stock <= 5; });
-  // Uso por categoria (cada uma com seu proprio limite e cor — independentes).
   var usage = [
-    { key: 'transactions', label: 'Transações', used: tx.length,        limit: PLAN_LIMITS.free.transactions, color: brand.color },
+    { key: 'transactions', label: 'Transacoes', used: tx.length,        limit: PLAN_LIMITS.free.transactions, color: brand.color },
     { key: 'products',     label: 'Produtos',   used: products.length,  limit: PLAN_LIMITS.free.products,     color: '#0f9d6c' },
     { key: 'losses',       label: 'Perdas',     used: lossesCount || 0, limit: PLAN_LIMITS.free.losses,       color: '#8b5cf6' },
   ];
@@ -99,27 +98,32 @@ export default function Dashboard({ tx, products, brand, onNav, planInfo, losses
       </div>
 
       {tx.length === 0 && products.length === 0 && (
-        <Card className="p-5" accent={true} color={brand.color}>
-          <p className="font-display text-lg font-semibold mt-1" style={{color:'var(--text-main)'}}>Bem-vindo ao Financia</p>
-          <p className="text-sm mt-1 mb-4" style={{color:'var(--text-sub)'}}>Em 3 passos o controle do seu negócio começa a funcionar.</p>
-          <div className="flex flex-col gap-2">
+        <div className="rounded-[20px] p-5 sm:p-6 flex flex-col gap-5" style={{background:'var(--bg-card)', border:'1px solid var(--border)', boxShadow:'var(--shadow-sm)'}}>
+          <div>
+            <p className="font-display text-lg font-semibold" style={{color:'var(--text-main)'}}>Bem-vindo ao Financia</p>
+            <p className="text-sm mt-1" style={{color:'var(--text-sub)'}}>Em 3 passos o controle do seu negocio comeca a funcionar.</p>
+          </div>
+          <div className="flex flex-col gap-2.5">
             {[
-              {n:'1', t:'Cadastre seus produtos ou serviços', act:function() { onNav('inventory'); }, btn:'Cadastrar'},
-              {n:'2', t:'Registre a sua primeira venda', act:function() { onNav('income'); }, btn:'Registrar'},
-              {n:'3', t:'Acompanhe o lucro aqui no painel', act:null, btn:''}
+              {n:'1', t:'Cadastre seus produtos ou servicos', sub:'Defina precos, custos e controle de estoque', act:function() { onNav('inventory'); }, btn:'Cadastrar produtos'},
+              {n:'2', t:'Registre sua primeira venda', sub:'Multiplos itens, calculo automatico e baixa de estoque', act:function() { onNav('income'); }, btn:'Registrar venda'},
+              {n:'3', t:'Acompanhe o lucro aqui no painel', sub:'Graficos diarios, KPIs e relatorios para decidir melhor', act:null, btn:''}
             ].map(function(step) {
               return (
-                <div key={step.n} className="flex items-center gap-3 rounded-xl px-3 py-2.5" style={{background:'var(--bg-subtle)'}}>
-                  <span className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0" style={{background: brand.color}}>{step.n}</span>
-                  <span className="text-sm flex-1 min-w-0" style={{color:'var(--text-main)'}}>{step.t}</span>
+                <div key={step.n} className="flex items-start gap-3 rounded-xl px-4 py-3" style={{background:'var(--bg-subtle)'}}>
+                  <span className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0" style={{background: brand.color}}>{step.n}</span>
+                  <div className="flex-1 min-w-0">
+                    <span className="text-sm font-semibold block" style={{color:'var(--text-main)'}}>{step.t}</span>
+                    <span className="text-xs block mt-0.5" style={{color:'var(--text-muted)'}}>{step.sub}</span>
+                  </div>
                   {step.act && (
-                    <button onClick={step.act} className="text-xs font-semibold px-3 rounded-lg flex-shrink-0 inline-flex items-center justify-center min-h-[44px] hover:opacity-90" style={{background: brandAlpha(brand.color, 0.12), color: brand.color}}>{step.btn}</button>
+                    <button onClick={step.act} className="text-xs font-semibold px-3 py-2 rounded-lg flex-shrink-0 inline-flex items-center justify-center min-h-[44px] hover:brightness-110 transition" style={{background: brandAlpha(brand.color, 0.12), color: brand.color}}>{step.btn}</button>
                   )}
                 </div>
               );
             })}
           </div>
-        </Card>
+        </div>
       )}
 
       {lowStock.length > 0 && (
@@ -147,64 +151,97 @@ export default function Dashboard({ tx, products, brand, onNav, planInfo, losses
         </div>
       )}
 
-      <div className="grid grid-cols-2 gap-3">
-        <KpiCard label="Entradas do mês"
-          value={fmt(ti)}
-          color="#22c55e"
-          accentBar="#22c55e"
-          variation={inVar}
-          onClick={function() { onNav('income'); }}
-          sub={inVar === null ? 'Sem dados anteriores' : undefined}/>
-        <KpiCard label="Saídas do mês"
-          value={fmt(to)}
-          color="#ef4444"
-          accentBar="#ef4444"
-          variation={outVar}
-          invert={true}
-          onClick={function() { onNav('expense'); }}
-          sub={outVar === null ? 'Sem dados anteriores' : undefined}/>
-        <KpiCard label="Resultado"
-          value={fmt(profitCurr)}
-          color={brand.color}
-          accentBar={brand.color}
-          variation={profVar}
-          sub={profVar === null ? 'Sem dados anteriores' : undefined}/>
-        <KpiCard label="Saldo hoje"
-          value={fmt(di - dout)}
-          color="#3b82f6"
-          accentBar="#3b82f6"
-          sub={di > 0 || dout > 0 ? ('+' + fmt(di) + ' / -' + fmt(dout)) : 'Sem movimento hoje'}/>
-      </div>
+      {/* ─── KPIs para empty state: cards educativos ─── */}
+      {tx.length === 0 && products.length === 0 ? (
+        <div className="grid grid-cols-2 gap-3">
+          {[
+            { icon:'M12 4v16m8-8l-8-8-8 8', label:'Entradas', desc:'Registre vendas para ver o quanto entrou', action:'Registrar venda', nav:'income', color:'#22c55e' },
+            { icon:'M12 20V4m-8 8l8 8 8-8', label:'Despesas', desc:'Cadastre contas e veja para onde vai o dinheiro', action:'Registrar despesa', nav:'expense', color:'#ef4444' },
+            { icon:'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4', label:'Estoque', desc:'Gerencie produtos, precos e controle de quantidade', action:'Adicionar produto', nav:'inventory', color:brand.color },
+            { icon:'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z', label:'Relatorios', desc:'Exporte PDF e Excel com dados organizados', action:'Ver relatorios', nav:'report', color:'#3b82f6' },
+          ].map(function(k) {
+            return (
+              <div key={k.label} className="rounded-[20px] p-4 sm:p-5 hover:-translate-y-0.5 transition-all duration-200" style={{background:'var(--bg-card)', border:'1px solid var(--border)', boxShadow:'var(--shadow-sm)'}}>
+                <div className="w-9 h-9 rounded-xl flex items-center justify-center mb-3" style={{background: brandAlpha(k.color, 0.1)}}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={k.color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d={k.icon}/></svg>
+                </div>
+                <p className="text-sm font-semibold" style={{color:'var(--text-main)'}}>{k.label}</p>
+                <p className="text-xs mt-1 mb-3 leading-relaxed" style={{color:'var(--text-muted)'}}>{k.desc}</p>
+                <button onClick={function() { onNav(k.nav); }} className="text-xs font-semibold px-4 py-2.5 rounded-xl text-white hover:brightness-110 hover:-translate-y-0.5 transition min-h-[44px]" style={{background: k.color}}>
+                  {k.action}
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 gap-3">
+          <KpiCard label="Entradas do mes"
+            value={fmt(ti)}
+            color="#22c55e"
+            accentBar="#22c55e"
+            variation={inVar}
+            onClick={function() { onNav('income'); }}
+            sub={inVar === null ? 'Sem dados anteriores' : undefined}/>
+          <KpiCard label="Saidas do mes"
+            value={fmt(to)}
+            color="#ef4444"
+            accentBar="#ef4444"
+            variation={outVar}
+            invert={true}
+            onClick={function() { onNav('expense'); }}
+            sub={outVar === null ? 'Sem dados anteriores' : undefined}/>
+          <KpiCard label="Resultado"
+            value={fmt(profitCurr)}
+            color={brand.color}
+            accentBar={brand.color}
+            variation={profVar}
+            sub={profVar === null ? 'Sem dados anteriores' : undefined}/>
+          <KpiCard label="Saldo hoje"
+            value={fmt(di - dout)}
+            color="#3b82f6"
+            accentBar="#3b82f6"
+            sub={di > 0 || dout > 0 ? ('+' + fmt(di) + ' / -' + fmt(dout)) : 'Sem movimento hoje'}/>
+        </div>
+      )}
 
+      {/* ─── IA ─── */}
       <Card className="p-5">
         <div className="flex items-center justify-between mb-3 gap-2">
           <div className="flex items-center gap-2 min-w-0">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={brand.color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0">
               <path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9L12 3z"/>
             </svg>
-            <p className="text-sm font-semibold text-gray-800 truncate">Insights da IA</p>
+            <p className="text-sm font-semibold" style={{color:'var(--text-main)'}}>Insights da IA</p>
+            {!canUseAI && <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{background: brandAlpha(brand.color, 0.10), color: brand.color}}>PRO</span>}
           </div>
           {canUseAI && (
             <button onClick={gerarInsights} disabled={aiLoading}
               className="text-xs font-semibold px-3 py-2 rounded-lg text-white transition hover:opacity-90 disabled:opacity-50 flex-shrink-0"
               style={{background: brand.color}}>
-              {aiLoading ? 'Analisando...' : (aiText ? 'Atualizar' : 'Gerar análise')}
+              {aiLoading ? 'Analisando...' : (aiText ? 'Atualizar' : 'Gerar analise')}
             </button>
           )}
         </div>
         {!canUseAI ? (
-          <div className="flex flex-col gap-2">
-            <p className="text-xs text-gray-500 leading-relaxed">Disponível apenas para planos Pro e Premium.</p>
+          <div className="flex flex-col gap-3">
+            <div className="relative rounded-xl p-4 overflow-hidden" style={{background: 'var(--bg-subtle)', filter: 'blur(2px)', opacity: 0.5, pointerEvents: 'none'}}>
+              <p className="text-xs leading-relaxed" style={{color:'var(--text-muted)'}}>"Suas despesas com estoque subiram 15%. Considere renegociar com fornecedores para melhorar sua margem."</p>
+              <p className="text-xs leading-relaxed mt-1" style={{color:'var(--text-muted)'}}>"Seu ticket medio e de R$ 195 — aumentar para R$ 220 geraria +R$ 1.200/mes."</p>
+            </div>
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{marginTop: '3rem'}}>
+              <span className="text-xs font-bold px-3 py-1 rounded-full" style={{background: brandAlpha(brand.color, 0.90), color: '#fff'}}>Disponivel no plano Pro</span>
+            </div>
             <button onClick={onUpgrade}
-              className="self-start text-xs font-semibold px-3 py-2 rounded-lg text-white transition hover:opacity-90 min-h-[44px]"
+              className="self-start text-xs font-semibold px-4 py-2.5 rounded-xl text-white transition hover:opacity-90 min-h-[44px]"
               style={{background: brand.color}}>
-              Fazer upgrade
+              Conhecer plano Pro
             </button>
           </div>
         ) : (
           <React.Fragment>
-            {aiErr && <p className="text-xs text-red-500">{aiErr}</p>}
-            {!aiText && !aiErr && !aiLoading && <p className="text-xs text-gray-400 leading-relaxed">Receba dicas práticas baseadas nos seus números do mês.</p>}
+            {aiErr && <p className="text-xs" style={{color:'#ef4444'}}>{aiErr}</p>}
+            {!aiText && !aiErr && !aiLoading && <p className="text-xs" style={{color:'var(--text-muted)'}}>Receba dicas praticas baseadas nos seus numeros do mes.</p>}
             {aiLoading && (
               <div className="flex flex-col gap-2 mt-1">
                 <div className="skeleton" style={{height:10, width:'100%'}}/>
@@ -217,16 +254,17 @@ export default function Dashboard({ tx, products, brand, onNav, planInfo, losses
         )}
       </Card>
 
+      {/* ─── PLANO FREE ─── */}
       {plan === 'free' && (
-        <Card className="px-5 py-4 flex flex-col gap-3">
+        <Card className="p-5 flex flex-col gap-4">
           <div className="flex items-center justify-between">
-            <p className="text-xs font-bold text-gray-500 uppercase tracking-wide">Plano gratuito</p>
+            <p className="text-xs font-bold uppercase tracking-wide" style={{color:'var(--text-muted)'}}>Plano gratuito</p>
             <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full text-white" style={{background: brand.color}}>FREE</span>
           </div>
           <div className="flex flex-col gap-3">
             {usage.map(function(u, i) {
               return (
-                <div key={u.key} className={i > 0 ? 'pt-3 border-t' : ''} style={i > 0 ? {borderColor:'var(--border)'} : {}}>
+                <div key={u.key} className={i > 0 ? 'pt-3' : ''} style={i > 0 ? {borderTop:'1px solid var(--border)'} : {}}>
                   <UsageBar label={u.label} used={u.used} limit={u.limit} color={u.color}/>
                 </div>
               );
@@ -240,6 +278,19 @@ export default function Dashboard({ tx, products, brand, onNav, planInfo, losses
               </p>
             </div>
           )}
+          <div className="rounded-xl p-4 flex flex-col gap-3" style={{background:'var(--bg-subtle)'}}>
+            <p className="text-xs font-semibold" style={{color:'var(--text-sub)'}}>Ao atualizar voce desbloqueia:</p>
+            <div className="flex flex-col gap-1.5">
+              {['IA Financeira com insights personalizados', 'Relatorios ilimitados', 'Exportacao em PDF e Excel', 'Historico ilimitado de transacoes', 'Backup prioritario'].map(function(b) {
+                return (
+                  <div key={b} className="flex items-center gap-2">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3bbfa0" strokeWidth="2.5" strokeLinecap="round"><path d="M5 13l4 4L19 7"/></svg>
+                    <span className="text-xs" style={{color:'var(--text-sub)'}}>{b}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
           <button onClick={onUpgrade}
             className="flex items-center justify-center gap-2 text-sm font-semibold text-white rounded-xl py-3 min-h-[44px] transition hover:opacity-90"
             style={{background: brand.color}}>
@@ -251,15 +302,15 @@ export default function Dashboard({ tx, products, brand, onNav, planInfo, losses
 
       <Card className="p-5">
         <div className="flex items-center justify-between mb-4">
-          <p className="text-sm font-semibold text-gray-800">Últimos 7 dias</p>
-          <div className="flex gap-3 text-xs text-gray-400">
+          <p className="text-sm font-semibold" style={{color:'var(--text-main)'}}>Ultimos 7 dias</p>
+          <div className="flex gap-3 text-xs" style={{color:'var(--text-muted)'}}>
             <span className="flex items-center gap-1.5">
               <span className="w-2.5 h-2.5 rounded-sm inline-block" style={{background: brand.color}}/>
               Entradas
             </span>
             <span className="flex items-center gap-1.5">
               <span className="w-2.5 h-2.5 rounded-sm inline-block" style={{background:'#ef4444'}}/>
-              Saídas
+              Saidas
             </span>
           </div>
         </div>
@@ -272,8 +323,8 @@ export default function Dashboard({ tx, products, brand, onNav, planInfo, losses
                 <rect x="34" y="15" width="12" height="27" rx="3" fill={brandAlpha(brand.color, 0.17)}/>
                 <rect x="2" y="42" width="44" height="2" rx="1" fill={brandAlpha(brand.color, 0.1)}/>
               </svg>
-              <p className="text-sm font-semibold text-gray-700">Nenhuma movimentação ainda</p>
-              <p className="text-xs text-gray-400">Registre sua primeira venda para ver o resumo aqui.</p>
+              <p className="text-sm font-semibold" style={{color:'var(--text-main)'}}>Nenhuma movimentacao ainda</p>
+              <p className="text-xs" style={{color:'var(--text-muted)'}}>Registre sua primeira venda para ver o resumo aqui.</p>
               <button onClick={function() { onNav('income'); }}
                 className="text-xs font-semibold px-5 py-3 rounded-xl text-white transition hover:opacity-90 min-h-[44px]"
                 style={{background: brand.color}}>
@@ -287,23 +338,23 @@ export default function Dashboard({ tx, products, brand, onNav, planInfo, losses
 
       <Card>
         <div className="px-5 py-4 border-b border-gray-50 flex items-center justify-between">
-          <p className="text-sm font-semibold text-gray-800">Movimentações recentes</p>
+          <p className="text-sm font-semibold" style={{color:'var(--text-main)'}}>Movimentacoes recentes</p>
           {recent.length > 0 && (
-            <button onClick={function() { onNav('report'); }} className="text-xs text-gray-400 hover:text-gray-600 font-medium inline-flex items-center min-h-[44px] -my-4 px-1 flex-shrink-0">
-              Ver relatório
+            <button onClick={function() { onNav('report'); }} className="text-xs font-medium hover:underline inline-flex items-center min-h-[44px] -my-4 px-1 flex-shrink-0" style={{color:'var(--text-sub)'}}>
+              Ver relatorio
             </button>
           )}
         </div>
         {recent.length === 0
           ? (
-            <div className="py-10 flex flex-col items-center gap-3">
-              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <div className="py-12 flex flex-col items-center gap-4 text-center px-6">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
               </svg>
-              <p className="text-sm text-gray-400">Nenhuma movimentação</p>
+              <p className="text-sm" style={{color:'var(--text-muted)'}}>Registre vendas e despesas para ver aqui</p>
               <div className="flex gap-3">
                 <button onClick={function() { onNav('income'); }} className="text-xs font-semibold px-4 py-3 rounded-lg text-white min-h-[44px] hover:opacity-90" style={{background:'#22c55e'}}>+ Venda</button>
-                <button onClick={function() { onNav('expense'); }} className="text-xs font-semibold px-4 py-3 rounded-lg text-white bg-red-400 min-h-[44px] hover:opacity-90">+ Despesa</button>
+                <button onClick={function() { onNav('expense'); }} className="text-xs font-semibold px-4 py-3 rounded-lg text-white min-h-[44px] hover:opacity-90" style={{background:'#ef4444'}}>+ Despesa</button>
               </div>
             </div>
           )
@@ -312,7 +363,7 @@ export default function Dashboard({ tx, products, brand, onNav, planInfo, losses
               {recent.map(function(t) {
                 var isInc = t.type === 'income';
                 return (
-                  <div key={t.id} className="flex items-center justify-between px-5 py-3.5 hover:bg-gray-50 transition-colors">
+                  <div key={t.id} className="flex items-center justify-between px-5 py-3.5 hover:bg-[var(--bg-subtle)] transition-colors">
                     <div className="flex items-center gap-3 min-w-0 flex-1">
                       <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
                         style={{background: isInc ? brandAlpha(brand.color, 0.1) : 'rgba(239,68,68,0.08)'}}>
@@ -322,8 +373,8 @@ export default function Dashboard({ tx, products, brand, onNav, planInfo, losses
                         </svg>
                       </div>
                       <div className="min-w-0">
-                        <p className="text-sm font-medium text-gray-800 truncate">{t.desc}</p>
-                        <p className="text-xs text-gray-400 truncate">{fmtDate(t.date)}{t.method ? ' . ' + t.method : ''}{t.category ? ' . ' + t.category : ''}</p>
+                        <p className="text-sm font-medium truncate" style={{color:'var(--text-main)'}}>{t.desc}</p>
+                        <p className="text-xs truncate" style={{color:'var(--text-muted)'}}>{fmtDate(t.date)}{t.method ? ' . ' + t.method : ''}{t.category ? ' . ' + t.category : ''}</p>
                       </div>
                     </div>
                     <span className="text-sm font-bold tabular flex-shrink-0 ml-3" style={{color: isInc ? brand.color : '#ef4444'}}>

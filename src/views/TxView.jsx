@@ -170,18 +170,42 @@ export default function TxView({ type, tx, products, onAdd, onEdit, onDelete, on
 
       <Card>
         {filtered.length === 0 ? (
-          <Empty
-            color={accentColor}
-            icon={(
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke={accentColor} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <div className="py-14 flex flex-col items-center gap-4 text-center px-6">
+            <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-1" style={{background: brandAlpha(accentColor, 0.08)}}>
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke={accentColor} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d={isIncome ? 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6' : 'M13 17h8m0 0V9m0 8l-8-8-4 4-6-6'}/>
               </svg>
+            </div>
+            <p className="text-sm font-semibold" style={{color:'var(--text-main)'}}>
+              {isIncome ? 'Nenhuma venda registrada' : 'Nenhuma despesa registrada'}
+            </p>
+            {isIncome ? (
+              <div className="flex flex-col gap-1.5 items-center">
+                <p className="text-xs max-w-xs" style={{color:'var(--text-muted)'}}>
+                  Registre vendas com multiplos itens, calculo automatico do total e baixa no estoque.
+                </p>
+                <div className="flex flex-wrap gap-2 justify-center text-xs mt-1" style={{color:'var(--text-muted)'}}>
+                  <span className="flex items-center gap-1"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={accentColor} strokeWidth="2.5" strokeLinecap="round"><path d="M5 13l4 4L19 7"/></svg> Multiplos itens</span>
+                  <span className="flex items-center gap-1"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={accentColor} strokeWidth="2.5" strokeLinecap="round"><path d="M5 13l4 4L19 7"/></svg> Baixa no estoque</span>
+                  <span className="flex items-center gap-1"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={accentColor} strokeWidth="2.5" strokeLinecap="round"><path d="M5 13l4 4L19 7"/></svg> Calculo automatico</span>
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-1.5 items-center">
+                <p className="text-xs max-w-xs" style={{color:'var(--text-muted)'}}>
+                  Cadastre aluguel, internet, fornecedores e outras saidas para descobrir seu lucro real.
+                </p>
+                <div className="flex flex-wrap gap-2 justify-center text-xs mt-1" style={{color:'var(--text-muted)'}}>
+                  {['Aluguel', 'Internet', 'Fornecedor', 'Energia', 'Frete'].map(function(ex) {
+                    return <span key={ex} className="px-2 py-0.5 rounded-full" style={{background:'var(--bg-subtle)', color:'var(--text-muted)'}}>{ex}</span>;
+                  })}
+                </div>
+              </div>
             )}
-            title={isIncome ? 'Nenhuma venda registrada' : 'Nenhuma despesa registrada'}
-            sub={isIncome ? 'Registre vendas com múltiplos itens e cálculo automático do total.' : 'Registre aluguel, energia, fornecedores e outras saídas.'}
-            action={isIncome ? 'Nova Venda' : 'Nova Despesa'}
-            onAction={function() { setModal(true); }}
-          />
+            <Btn onClick={function() { setModal(true); }} className="mt-2" style={{background: accentColor}}>
+              {isIncome ? 'Registrar venda' : 'Registrar despesa'}
+            </Btn>
+          </div>
         ) : (
           <div>
             {groupOrder.map(function(date) {
