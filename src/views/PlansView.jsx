@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Card, PageHead, Modal } from '../components/ui.jsx';
 import { PRICING_PLANS, WHITELABEL, waLink, effectivePlan, planChangeCta } from '../lib/constants.js';
-import { fmt } from '../lib/utils.js';
+import { fmt, fmtDate } from '../lib/utils.js';
 import { sb } from '../lib/supabase.js';
 import { friendlyStripeError, readFnErrorMessage } from '../lib/stripe.js';
 import StripeCheckout from '../components/StripeCheckout.jsx';
@@ -23,7 +23,7 @@ function ctaLabel(kind, plan) {
   return 'Seu plano atual';
 }
 
-function PlanCard({ plan, brand, cta, onAction, open, onToggle }) {
+function PlanCard({ plan, brand, cta, onAction, open, onToggle, planExpiresAt }) {
   var popular = !!plan.popular;
   var isFree = plan.id === 'free';
   var priceNote = isFree ? 'grátis para sempre, sem cartão' : 'cobrado mensalmente, cancele quando quiser';
@@ -46,6 +46,11 @@ function PlanCard({ plan, brand, cta, onAction, open, onToggle }) {
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
           {current && <span className="text-xs font-bold px-2.5 py-1 rounded-full" style={{background:'var(--brand-soft)', color: brand.color}}>Seu plano</span>}
+          {current && planExpiresAt && !isFree && (
+            <span className="text-[11px] font-medium px-2.5 py-1 rounded-full" style={{background:'#fef3c7', color:'#92400e'}}>
+              Expira em {fmtDate(planExpiresAt)}
+            </span>
+          )}
           <svg className="w-4 h-4 transition-transform" style={{transform: open ? 'rotate(180deg)' : 'none', color:'var(--text-sub)'}} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7"/></svg>
         </div>
       </button>
@@ -157,12 +162,34 @@ export default function PlansView({ brand, planInfo, toast, onNav, isAdmin }) {
       var res = await sb.functions.invoke('cancel-subscription', { body: {} });
       var data = res && res.data ? res.data : null;
       if (!data || !data.ok) {
-        var msg = await readFnErrorMessage(res, data);
-        if (toast) toast(friendlyStripeError(msg), 'error');
+        // Tentativa de extrair mensagem de erro do data ou do HTTP error
+        var errMsg = '';
+        if (data && data.error) {
+          // Caso em que data existe mas não tem .ok — data.error é a mensagem
+          errMsg = data.error;
+        } else {
+          errMsg = await readFnErrorMessage(res, data);
+        }
+        if (toast) toast(friendlyStripeError(errMsg || 'Erro ao cancelar'), 'error');
         setCancelling(false);
         return;
       }
-      if (toast) toast('Assinatura cancelada. Você fica no plano atual até o fim do período já pago.', 'success');
+      var msg = 'Assinatura cancelada.';
+      if (data.status === 'no_subscription') {
+        msg = 'Nenhuma assinatura ativa encontrada para cancelar.';
+        if (toast) toast(msg, 'warning');
+        setCancelling(false);
+        setCancelOpen(false);
+        return;
+      }
+      if (data.cancel_at) {
+        var d = new Date(Number(data.cancel_at) * 1000);
+        var dateStr = d.toLocaleDateString('pt-BR');
+        msg += ' Você mantém o plano atual até ' + dateStr + ' e depois volta para o Grátis.';
+      } else {
+        msg += ' Você fica no plano atual até o fim do período já pago.';
+      }
+      if (toast) toast(msg, 'success');
       setCancelling(false);
       setCancelOpen(false);
     } catch (e) {
@@ -221,7 +248,8 @@ export default function PlansView({ brand, planInfo, toast, onNav, isAdmin }) {
           if (p.id === 'premium' && customPremiumCents > 0) { originalPrice = p.price; price = customPremiumCents / 100; }
           var planCard = Object.assign({}, p, { price: price, original_price: originalPrice });
           return <PlanCard key={p.id} plan={planCard} brand={brand} cta={planChangeCta(plan, p.id)} onAction={handleAction}
-            open={openPlan === p.id} onToggle={function() { setOpenPlan(openPlan === p.id ? null : p.id); }}/>;
+            open={openPlan === p.id} onToggle={function() { setOpenPlan(openPlan === p.id ? null : p.id); }}
+            planExpiresAt={planInfo && planInfo.plan_expires_at}/>;
         })}
       </div>
 
@@ -234,12 +262,23 @@ export default function PlansView({ brand, planInfo, toast, onNav, isAdmin }) {
         <Modal title="Cancelar assinatura" onClose={function() { setCancelOpen(false); }}
           onSave={confirmCancel} saving={cancelling} saveLabel="Confirmar cancelamento"
           color="#dc2626">
-          <p className="text-sm" style={{color:'var(--text-main)'}}>
-            Você voltará para o plano Grátis ao fim do período já pago. Seus dados continuam salvos.
-          </p>
-          <p className="text-xs mt-1" style={{color:'var(--text-muted)'}}>
-            Pode reativar quando quiser. Nenhuma cobrança nova será feita.
-          </p>
+          <div className="flex flex-col gap-3">
+            <p className="text-sm" style={{color:'var(--text-main)'}}>
+              Você voltará para o plano Grátis ao fim do período já pago. Seus dados continuam salvos.
+            </p>
+            {planInfo && planInfo.plan_expires_at && (
+              <div className="rounded-xl px-4 py-3 flex items-center gap-3" style={{background:'#fffbeb', border:'1px solid #fde68a'}}>
+                <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="#d97706" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold" style={{color:'#92400e'}}>Seu plano fica ativo até {fmtDate(planInfo.plan_expires_at)}</p>
+                  <p className="text-xs mt-0.5" style={{color:'#b45309'}}>Depois dessa data, você volta automaticamente para o Grátis.</p>
+                </div>
+              </div>
+            )}
+            <p className="text-xs" style={{color:'var(--text-muted)'}}>
+              Pode reativar quando quiser. Nenhuma cobrança nova será feita.
+            </p>
+          </div>
         </Modal>
       )}
 

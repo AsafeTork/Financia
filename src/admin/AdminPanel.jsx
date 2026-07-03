@@ -3,7 +3,7 @@ import { Card, Empty, Skeleton } from '../components/ui.jsx';
 import { sb } from '../lib/supabase.js';
 import { triggerApkBuild, fetchClients, deleteClient, fetchClientUsage, fetchDbStats, fetchStripeOverview } from '../lib/db.js';
 import { genPwd, luminance, lightenHex, fmtDate, formatBytes, dbUsage } from '../lib/utils.js';
-import { GH_REPO, effectivePlan, PRICING_PLANS, countsAsRevenue, isAdminGranted, waLinkTo } from '../lib/constants.js';
+import { GH_REPO, effectivePlan, PRICING_PLANS, countsAsRevenue, isAdminGranted, waLinkTo, APP_URL } from '../lib/constants.js';
 
 // Limite de armazenamento do plano Supabase (free = 500 MB). Base do alerta de uso.
 var DB_LIMIT_BYTES = 500 * 1024 * 1024;
@@ -197,13 +197,13 @@ export default function AdminPanel({ toast, confirm, session }) {
   };
 
   const copyWpp = async function(c, done_) {
-    const d = done_ || c;
-    const msg = (d.companyName || d.name || 'Financia') + '\n\nLink: https://financia-gestao.onrender.com\nEmail: ' + d.email + '\nSenha: ' + d.password + (d.buildOk ? '\nAPK: github.com/' + GH_REPO + '/actions' : '');
-    await navigator.clipboard.writeText(msg);
-    setCopied(d.email || d.user_id);
-    setTimeout(function() { setCopied(null); }, 2000);
-    toast('Copiado!');
-  };
+      const d = done_ || c;
+      const msg = (d.companyName || d.name || 'Financia') + '\n\nLink: ' + APP_URL + '\nEmail: ' + d.email + '\nSenha: ' + d.password + (d.buildOk ? '\nAPK: github.com/' + GH_REPO + '/actions' : '');
+      await navigator.clipboard.writeText(msg);
+      setCopied(d.email || d.user_id);
+      setTimeout(function() { setCopied(null); }, 2000);
+      toast('Copiado!');
+    };
 
   const handleDelete = function(c) {
     confirm('Excluir todos os dados de "' + (c.name || c.user_id) + '"? Isso não pode ser desfeito.', async function() {

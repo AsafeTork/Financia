@@ -36,6 +36,10 @@ export const luminance = function(hex) {
   var toLinear = function(v) { v = v / 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); };
   return 0.2126 * toLinear(c.r) + 0.7152 * toLinear(c.g) + 0.0722 * toLinear(c.b);
 };
+
+// Alias para compatibilidade e clareza semântica
+export const calculateLuminosity = luminance;
+
 // Cor de texto legivel SOBRE um fundo solido `hex` (branco ou tinta escura).
 export const onColor = function(hex) {
   return luminance(hex) > 0.4 ? '#0a2540' : '#ffffff';

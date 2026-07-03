@@ -157,6 +157,31 @@ export const syncAll = async function(uid) {
   } catch (_) { return false; }
 };
 
+// Função para sincronizar apenas com Supabase (sem timeout wrapper)
+export const syncWithSupabase = async function(uid) {
+  if (!uid || !navigator.onLine) return false;
+  try {
+    const results = await Promise.all([
+      syncTable(uid, 'transactions', ldb.transactions, function(r) { return { desc: r.description, cat: r.category }; }),
+      syncTable(uid, 'products',     ldb.products,     function() { return {}; }),
+      syncTable(uid, 'losses',       ldb.losses,       function(r) { return { desc: r.description }; }),
+      syncProfiles(uid),
+    ]);
+    return results.every(Boolean);
+  } catch (_) { return false; }
+};
+
+// Função para logar erros de sincronização
+export const logSyncError = async function(error, context) {
+  try {
+    console.error('Sync error in ' + context + ':', error);
+    // Aqui poderia enviar para um serviço de logging (ex: Sentry, LogRocket, etc.)
+    // Exemplo: await fetch('/api/log-error', { method: 'POST', body: JSON.stringify({ error: error.message, context, timestamp: now() }) });
+  } catch (_) {}
+};
+
+// triggerApkBuild já existe abaixo (linhas 245-280)
+
 export const fetchClients = async function() {
   try {
     const { data } = await sb.from('company_profiles').select('*').order('user_id');
