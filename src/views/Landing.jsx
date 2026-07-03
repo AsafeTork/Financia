@@ -15,42 +15,74 @@ var money = function(v) { return v === 0 ? 'R$ 0' : 'R$ ' + v.toFixed(2).replace
 var FEATURES = [
   { t: 'Funciona offline', d: 'Registre a venda na hora, mesmo sem sinal. Tudo sincroniza sozinho quando a internet volta.',
     icon: 'M5 12.55a11 11 0 0114.08 0M1.42 9a16 16 0 0121.16 0M8.53 16.11a6 6 0 016.95 0M12 20h.01' },
-  { t: 'Ao vivo entre celulares', d: 'Você no caixa, seu sócio no estoque — os mesmos números, atualizados na hora nos dois aparelhos.',
+  { t: 'Ao vivo entre celulares', d: 'Voce no caixa, seu socio no estoque — os mesmos numeros, atualizados na hora nos dois aparelhos.',
     icon: 'M17 1l4 4-4 4M3 11V9a4 4 0 014-4h14M7 23l-4-4 4-4M21 13v2a4 4 0 01-4 4H3' },
-  { t: 'Vendas, despesas e estoque', d: 'O que entra, o que sai e o que tem na prateleira. Um app só, sem planilha bagunçada.',
+  { t: 'Vendas, despesas e estoque', d: 'O que entra, o que sai e o que tem na prateleira. Um app so, sem planilha baguncada.',
     icon: 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4' },
-  { t: 'Relatórios que decidem por você', d: 'Lucro do mês, onde o dinheiro está vazando e exportação pra planilha em um toque.',
+  { t: 'Relatorios que decidem por voce', d: 'Lucro do mes, onde o dinheiro esta vazando e exportacao pra planilha em um toque.',
     icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' },
 ];
 
 var FAQ = [
-  { q: 'Preciso de internet pra usar?', a: 'Não. O Financia funciona offline e sincroniza sozinho quando a conexão volta. Você nunca perde uma venda.' },
+  { q: 'Preciso de internet pra usar?', a: 'Nao. O Financia funciona offline e sincroniza sozinho quando a conexao volta. Voce nunca perde uma venda.' },
   { q: 'Funciona no celular e no computador?', a: 'Sim. Roda no navegador de qualquer aparelho e pode ser instalado como aplicativo no celular e no Windows.' },
-  { q: 'Dá pra começar de graça?', a: 'Dá. O plano Grátis já resolve pra quem está começando, sem cartão de crédito. Quando crescer, você passa pro Pro.' },
-  { q: 'Meus dados ficam seguros?', a: 'Ficam. Cada conta enxerga apenas os próprios dados, com conexão criptografada e isolamento por usuário no banco.' },
+  { q: 'Da pra comecar de graca?', a: 'Da. O plano Gratis ja resolve pra quem esta comecando, sem cartao de credito. Quando crescer, voce passa pro Pro.' },
+  { q: 'Meus dados ficam seguros?', a: 'Ficam. Cada conta enxerga apenas os proprios dados, com conexao criptografada e isolamento por usuario no banco.' },
 ];
 
-// Camada fixa (desktop): flutua nas laterais ao longo de toda a pagina, com
-// parallax pelo scroll. Posicionadas nas bordas para nao cobrir o conteudo.
-var MONEY_NOTES = [
-  { v: '+R$ 250',  type: 'gain', top: '16%', left: '2.5%', dur: 6,   delay: 0,   rot: -8, factor: 0.06,  size: 13 },
-  { v: '-R$ 80',   type: 'loss', top: '26%', right: '3%',  dur: 7,   delay: 0.8, rot: 7,  factor: 0.05,  size: 12 },
-  { v: '+R$ 1.2k', type: 'gain', top: '54%', left: '3.5%', dur: 8,   delay: 0.4, rot: 6,  factor: 0.08,  size: 13 },
-  { v: '-R$ 40',   type: 'loss', top: '70%', right: '4%',  dur: 6.5, delay: 1.2, rot: -6, factor: 0.07,  size: 11 },
-  { v: '+R$ 500',  type: 'gain', top: '40%', right: '5.5%',dur: 7.5, delay: 0.2, rot: -5, factor: 0.045, size: 12 },
+// Dados mockados que refletem fielmente as telas reais do app
+var MOCK_KPIS = [
+  { label: 'Entradas do mes', value: 'R$ 14.200', color: '#22c55e' },
+  { label: 'Saidas do mes', value: 'R$ 5.780', color: '#ef4444' },
+  { label: 'Resultado', value: 'R$ 8.420', color: BRAND },
+  { label: 'Saldo hoje', value: 'R$ 2.340', color: '#3b82f6' },
+];
+
+var MOCK_CHART = [
+  { day: 'Seg', i: 210, o: 140 },
+  { day: 'Ter', i: 350, o: 200 },
+  { day: 'Qua', i: 180, o: 280 },
+  { day: 'Qui', i: 490, o: 160 },
+  { day: 'Sex', i: 620, o: 310 },
+  { day: 'Sab', i: 780, o: 220 },
+  { day: 'Dom', i: 520, o: 150 },
+];
+
+var MOCK_MOVEMENTS = [
+  { desc: 'Venda balcao', detail: 'PIX', val: '+ R$ 450', type: 'income' },
+  { desc: 'Compra insumos', detail: 'Estoque', val: '- R$ 180', type: 'expense' },
+  { desc: 'Reposicao estoque', detail: 'Fixo', val: '- R$ 320', type: 'expense' },
+  { desc: 'Servico realizado', detail: 'Cartao de Credito', val: '+ R$ 890', type: 'income' },
+  { desc: 'Venda online', detail: 'PIX', val: '+ R$ 1.200', type: 'income' },
+];
+
+var MOCK_TX = [
+  { date: '03/07', items: [
+    { desc: 'Venda balcao', cat: 'PIX', val: '+ R$ 450', type: 'income' },
+    { desc: 'Aluguel', cat: 'Fixo', val: '- R$ 1.200', type: 'expense' },
+  ]},
+  { date: '02/07', items: [
+    { desc: 'Reposicao estoque', cat: 'Estoque', val: '- R$ 320', type: 'expense' },
+    { desc: 'Venda online', cat: 'Cartao de Credito', val: '+ R$ 1.200', type: 'income' },
+    { desc: 'Servico realizado', cat: 'PIX', val: '+ R$ 890', type: 'income' },
+  ]},
+  { date: '01/07', items: [
+    { desc: 'Compras insumos', cat: 'Variavel', val: '- R$ 540', type: 'expense' },
+    { desc: 'Venda balcao', cat: 'PIX', val: '+ R$ 780', type: 'income' },
+  ]},
+];
+
+var MOCK_PRODUCTS = [
+  { name: 'Corte de cabelo', cat: 'Servicos', price: 'R$ 45', stock: '—', stockColor: null },
+  { name: 'Camiseta basica', cat: 'Roupas', price: 'R$ 59', stock: '32 un', stockColor: 'green' },
+  { name: 'Shampoo 300ml', cat: 'Produtos', price: 'R$ 28', stock: '3 un', stockColor: 'amber' },
+  { name: 'Agenda personalizada', cat: 'Papelaria', price: 'R$ 22', stock: '12 un', stockColor: 'green' },
+  { name: 'Carregador USB', cat: 'Eletronicos', price: 'R$ 35', stock: '0 un', stockColor: 'red' },
 ];
 
 export default function Landing({ onEnter }) {
-  var waLink = makeWaLink('Quero conhecer o Financia para o meu negócio.');
+  var waLink = makeWaLink('Quero conhecer o Financia para o meu negocio.');
   var delay = function(ms) { return { animationDelay: ms + 'ms', animationFillMode: 'both' }; };
-  var scrollState = React.useState(0);
-  var scrollY = scrollState[0];
-  var setScrollY = scrollState[1];
-  React.useEffect(function() {
-    var onScroll = function() { setScrollY(window.scrollY || 0); };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return function() { window.removeEventListener('scroll', onScroll); };
-  }, []);
   var statsRef = useScrollReveal();
   var featRef = useScrollReveal();
   var priceRef = useScrollReveal();
@@ -60,32 +92,9 @@ export default function Landing({ onEnter }) {
   return (
     <div className="relative overflow-hidden" style={{ color: INK, minHeight: '100vh' }}>
 
-      {/* Fundo gradiente continuo cobrindo 100% da pagina (nivel mais baixo). */}
+      {/* Fundo gradiente continuo */}
       <div className="fixed inset-0" style={{ zIndex: -20, background: 'linear-gradient(180deg, #fcfbf8 0%, #f6faf8 42%, #eff5fb 100%)' }} aria-hidden="true" />
 
-      {/* Notas de dinheiro (nivel intermediario): presas ao container central
-          max-w-7xl — nunca coladas nas bordas da janela. Opacidade leve, atras do
-          texto. Parallax vertical pelo scroll. Apenas desktop. */}
-      <div className="hidden md:block absolute inset-y-0 left-1/2 -translate-x-1/2 w-full max-w-7xl px-4 sm:px-6 lg:px-8 pointer-events-none" style={{ zIndex: -10, opacity: 0.34 }} aria-hidden="true">
-        {MONEY_NOTES.map(function(n, i) {
-          var pos = { top: n.top };
-          if (n.left) pos.left = n.left;
-          if (n.right) pos.right = n.right;
-          var isGain = n.type === 'gain';
-          return (
-            <div key={'note-' + i} className="absolute" style={Object.assign({}, pos, { transform: 'translateY(' + (scrollY * n.factor).toFixed(1) + 'px)' })}>
-              <div className="money-note select-none" style={{ '--dur': n.dur + 's', '--delay': n.delay + 's', '--rot': n.rot + 'deg' }}>
-                <div className="flex items-center gap-1.5 rounded-xl px-3 py-2 shadow-lg" style={{ background: isGain ? 'rgba(15,157,108,0.95)' : 'rgba(225,29,72,0.95)', color: '#fff', fontSize: n.size + 'px', border: '1px solid rgba(255,255,255,0.28)' }}>
-                  <svg width={Math.round(n.size)} height={Math.round(n.size)} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d={isGain ? 'M5 15l7-7 7 7' : 'M19 9l-7 7-7-7'} /></svg>
-                  <span className="font-bold tabular">{n.v}</span>
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Conteudo no nivel mais alto (acima do gradiente e das notas), em coluna flex. */}
       <div className="relative z-10 flex flex-col min-h-screen w-full">
 
       <header className="sticky top-0 z-30" style={{ background: 'rgba(251,250,247,0.85)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', borderBottom: '1px solid rgba(10,37,64,0.08)' }}>
@@ -100,30 +109,30 @@ export default function Landing({ onEnter }) {
         </div>
       </header>
 
-      {/* Hero */}
+      {/* ─── HERO ─── */}
       <section className="max-w-6xl mx-auto px-5 pt-12 pb-16 lg:pt-20 lg:pb-24 relative overflow-hidden">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center relative z-10">
           <div>
             <div className="anim-up inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold mb-6" style={{ background: 'rgba(15,157,108,0.1)', color: ACCENT }}>
               <span className="w-1.5 h-1.5 rounded-full" style={{ background: ACCENT }} />
-              Feito para o pequeno negócio brasileiro
+              Feito para o pequeno negocio brasileiro
             </div>
             <h1 className="anim-up font-display font-semibold" style={Object.assign({ color: INK, fontSize: 'clamp(2.4rem, 5.5vw, 4rem)', lineHeight: 1.02, letterSpacing: '-1.5px' }, delay(60))}>
-              Suas finanças no controle, <span style={{ fontStyle: 'italic', color: ACCENT }}>sem complicação</span>.
+              Suas financas no controle, <span style={{ fontStyle: 'italic', color: ACCENT }}>sem complicacao</span>.
             </h1>
             <p className="anim-up mt-6 text-lg max-w-md" style={Object.assign({ color: MUTED, lineHeight: 1.55 }, delay(140))}>
-              Vendas, despesas e estoque do seu negócio em um só lugar. Esqueça o caderninho e a planilha confusa.
+              Vendas, despesas e estoque do seu negocio em um so lugar. Esqueca o caderninho e a planilha confusa.
             </p>
             <div className="anim-up mt-8 flex flex-col sm:flex-row gap-3" style={delay(220)}>
               <button onClick={onEnter} className="text-sm font-semibold px-7 py-4 rounded-2xl text-white transition hover:opacity-90 hover:-translate-y-0.5" style={{ background: BRAND, boxShadow: '0 10px 30px rgba(0,47,89,0.25)' }}>
-                Criar conta grátis
+                Criar conta gratis
               </button>
               <a href="#planos" className="text-sm font-semibold px-7 py-4 rounded-2xl transition hover:bg-black/5 text-center" style={{ border: '1px solid rgba(10,37,64,0.15)', color: INK }}>
                 Ver planos
               </a>
             </div>
             <div className="anim-up mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs" style={Object.assign({ color: MUTED }, delay(300))}>
-              {['Sem cartão de crédito', 'Funciona offline', 'Pronto em 1 minuto'].map(function(t) {
+              {['Sem cartao de credito', 'Funciona offline', 'Pronto em 1 minuto'].map(function(t) {
                 return (
                   <span key={t} className="flex items-center gap-1.5">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={ACCENT} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 13l4 4L19 7" /></svg>
@@ -134,21 +143,22 @@ export default function Landing({ onEnter }) {
             </div>
           </div>
 
-          {/* Mockup do produto */}
+          {/* Hero mockup — versao simplificada do Dashboard */}
           <div className="anim-up relative" style={delay(180)}>
             <div className="absolute -inset-6 rounded-2xl" style={{ background: 'radial-gradient(110% 110% at 70% 20%, rgba(110,198,200,0.18), transparent 62%)' }} />
             <div className="lp-ring absolute -inset-8 rounded-full pointer-events-none" aria-hidden="true" style={{ background: 'conic-gradient(from 0deg, transparent 0deg, rgba(26,107,92,0.1) 80deg, transparent 170deg, rgba(0,47,89,0.1) 260deg, transparent 360deg)', opacity: 0.42 }} />
             <div className="relative rounded-2xl p-5 sm:p-6 float-slow" style={{ background: '#fff', border: '1px solid rgba(10,37,64,0.08)', boxShadow: '0 18px 42px rgba(10,37,64,0.14)' }}>
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <p className="text-xs font-medium" style={{ color: MUTED }}>Resultado do mês</p>
+                  <p className="text-xs font-medium" style={{ color: MUTED }}>Resultado do mes</p>
                   <p className="font-display font-semibold tabular" style={{ color: INK, fontSize: '1.9rem', letterSpacing: '-0.5px' }}>R$ 8.420</p>
                 </div>
                 <span className="text-xs font-bold px-2.5 py-1 rounded-full" style={{ background: 'rgba(15,157,108,0.12)', color: ACCENT }}>+18%</span>
               </div>
               <div className="flex items-end gap-1.5 h-24 mb-4 lp-main-chart">
-                {[40, 62, 48, 80, 55, 92, 70].map(function(h, i) {
-                  return <div key={String(i) + '-' + h} className="flex-1 rounded-md lp-bar lp-bar-hover" style={{ height: h + '%', background: i === 5 ? ACCENT : 'rgba(0,47,89,0.14)', animationDelay: (300 + i * 90) + 'ms' }} />;
+                {MOCK_CHART.map(function(m, i) {
+                  var h = Math.round((m.i + m.o) / 22);
+                  return <div key={'hc-' + i} className="flex-1 rounded-md" style={{ height: Math.max(h, 10) + '%', background: i === MOCK_CHART.length - 1 ? ACCENT : 'rgba(0,47,89,0.14)', animationDelay: (300 + i * 90) + 'ms' }} />;
                 })}
               </div>
               <div className="grid grid-cols-2 gap-3">
@@ -157,7 +167,7 @@ export default function Landing({ onEnter }) {
                   <p className="font-bold tabular mt-0.5" style={{ color: INK }}>R$ 14.200</p>
                 </div>
                 <div className="rounded-2xl p-3.5" style={{ background: WARM }}>
-                  <p className="text-xs" style={{ color: MUTED }}>Saídas</p>
+                  <p className="text-xs" style={{ color: MUTED }}>Saidas</p>
                   <p className="font-bold tabular mt-0.5" style={{ color: INK }}>R$ 5.780</p>
                 </div>
               </div>
@@ -166,10 +176,10 @@ export default function Landing({ onEnter }) {
         </div>
       </section>
 
-      {/* Prova / faixa */}
+      {/* ─── STATS ─── */}
       <section ref={statsRef} className="max-w-6xl mx-auto px-5 py-10 scroll-reveal">
         <div className="rounded-2xl px-6 py-8 grid grid-cols-3 gap-4 text-center" style={{ background: '#fff', border: '1px solid rgba(10,37,64,0.08)' }}>
-          {[['100%', 'no seu controle, online ou offline'], ['1 min', 'pra criar a conta e começar'], ['R$ 0', 'pra usar o plano grátis']].map(function(s) {
+          {[['100%', 'no seu controle, online ou offline'], ['1 min', 'pra criar a conta e comecar'], ['R$ 0', 'pra usar o plano gratis']].map(function(s) {
             return (
               <div key={s[0]}>
                 <p className="font-display font-semibold" style={{ color: INK, fontSize: 'clamp(1.5rem, 4vw, 2.25rem)', letterSpacing: '-0.5px' }}>{s[0]}</p>
@@ -180,290 +190,201 @@ export default function Landing({ onEnter }) {
         </div>
       </section>
 
-      {/* Painel visual variado e mais criativo */}
-      <section className="max-w-6xl mx-auto px-5 pb-8">
-        <div className="grid md:grid-cols-3 gap-4">
-          <div className="lp-metric-card rounded-2xl p-5" style={{ background: '#fff', border: '1px solid rgba(10,37,64,0.08)' }}>
-            <p className="text-xs font-semibold" style={{ color: MUTED }}>Pulso de receita</p>
-            <div className="mt-3 rounded-xl p-2" style={{ background: 'rgba(110,198,200,0.12)' }}>
-              <svg viewBox="0 0 220 64" className="w-full lp-line-chart">
-                <path d="M4 42 C22 34, 34 34, 52 38 C70 42, 80 24, 98 26 C116 28, 126 52, 144 46 C162 40, 176 20, 194 24 C206 27, 214 22, 216 18" fill="none" stroke={BRAND} strokeWidth="3" strokeLinecap="round" />
-                {[52, 98, 144, 194].map(function(px, idx) {
-                  var py = [38, 26, 46, 24][idx];
-                  return <circle key={'pt-' + idx} className="lp-line-point" cx={px} cy={py} r="4" fill={idx % 2 === 0 ? ACCENT : SKY} />;
-                })}
-              </svg>
-            </div>
-            <p className="text-xs mt-2" style={{ color: MUTED }}>Leitura de tendência com pontos de virada.</p>
-          </div>
-          <div className="lp-metric-card rounded-2xl p-5" style={{ background: '#fff', border: '1px solid rgba(10,37,64,0.08)' }}>
-            <p className="text-xs font-semibold" style={{ color: MUTED }}>Mix de despesas</p>
-            <div className="mt-3 flex items-center gap-3">
-              <div className="lp-donut" style={{ background: 'conic-gradient(' + ACCENT + ' 0 42%, ' + SKY + ' 42% 74%, ' + MINT + ' 74% 100%)' }} />
-              <div className="flex-1 flex flex-col gap-1">
-                <span className="text-xs" style={{ color: MUTED }}>Operação <b style={{ color: INK }}>42%</b></span>
-                <span className="text-xs" style={{ color: MUTED }}>Insumos <b style={{ color: INK }}>32%</b></span>
-                <span className="text-xs" style={{ color: MUTED }}>Fixos <b style={{ color: INK }}>26%</b></span>
-              </div>
-            </div>
-            <p className="text-sm mt-2 font-semibold" style={{ color: INK }}>Distribuição visual instantânea</p>
-          </div>
-          <div className="lp-metric-card rounded-2xl p-5" style={{ background: '#fff', border: '1px solid rgba(10,37,64,0.08)' }}>
-            <p className="text-xs font-semibold" style={{ color: MUTED }}>Termômetro de saúde</p>
-            <div className="mt-3 flex items-end gap-2">
-              {[28, 46, 72].map(function(v, i) {
-                return <span key={'thermo-' + i} className="lp-thermo-col" style={{ height: v + 'px', background: i === 2 ? ACCENT : (i === 1 ? SKY : MINT) }} />;
-              })}
-              <p className="font-display font-semibold tabular ml-1" style={{ color: INK, fontSize: '1.5rem' }}>82</p>
-            </div>
-            <p className="text-xs mt-2" style={{ color: ACCENT }}>Índice financeiro do período</p>
-            <div className="lp-wave mt-3" style={{ height: 16, borderRadius: 10, background: 'linear-gradient(180deg, ' + MINT + '70, ' + SKY + '28)' }} />
-          </div>
-        </div>
-      </section>
-
-      {/* PREVIEW 1: Dashboard financeiro interativo */}
+      {/* ─── PREVIEW 1: Dashboard real ─── */}
       <section ref={useScrollReveal()} className="max-w-6xl mx-auto px-5 py-14 scroll-reveal">
         <div className="text-center mb-10">
-          <p className="text-xs font-bold uppercase tracking-widest" style={{ color: ACCENT }}>Preview ao vivo</p>
-          <h2 className="font-display font-semibold mt-2" style={{ color: INK, fontSize: 'clamp(1.75rem, 4vw, 2.75rem)', letterSpacing: '-1px', lineHeight: 1.1 }}>Seu painel financeiro em tempo real</h2>
-          <p className="mt-2 text-sm" style={{ color: MUTED }}>Passe o mouse nos cards para interagir.</p>
+          <p className="text-xs font-bold uppercase tracking-widest" style={{ color: ACCENT }}>Painel financeiro</p>
+          <h2 className="font-display font-semibold mt-2" style={{ color: INK, fontSize: 'clamp(1.75rem, 4vw, 2.75rem)', letterSpacing: '-1px', lineHeight: 1.1 }}>O que voce ve ao abrir o app</h2>
+          <p className="mt-2 text-sm" style={{ color: MUTED }}>Numeros reais, grafico de 7 dias e ultimas movimentacoes.</p>
         </div>
-        <div className="grid md:grid-cols-4 gap-4 mb-4">
-          {[
-            { label: 'Receita do mês', value: 'R$ 14.200', change: '+12%', color: ACCENT },
-            { label: 'Despesas', value: 'R$ 5.780', change: '-8%', color: SKY },
-            { label: 'Lucro líquido', value: 'R$ 8.420', change: '+18%', color: MINT },
-            { label: 'Meta realizada', value: '76%', change: null, color: BRAND },
-          ].map(function(m, i) {
+
+        {/* KPIs — exatamente como no Dashboard.jsx */}
+        <div className="grid grid-cols-2 gap-3 mb-4">
+          {MOCK_KPIS.map(function(k, i) {
             return (
-              <div key={'kpi-' + i} className="preview-card rounded-2xl p-5 cursor-default" style={{ background: '#fff', border: '1px solid rgba(10,37,64,0.08)', boxShadow: '0 2px 10px rgba(10,37,64,0.04)' }}>
-                <p className="text-xs font-medium" style={{ color: MUTED }}>{m.label}</p>
-                <p className="font-display font-semibold tabular mt-1" style={{ color: INK, fontSize: '1.3rem', letterSpacing: '-0.3px' }}>{m.value}</p>
-                {m.change && (
-                  <span className="inline-block mt-1 text-xs font-bold px-2 py-0.5 rounded-full preview-chip" style={{ background: 'rgba(15,157,108,0.1)', color: m.color }}>{m.change}</span>
-                )}
+              <div key={'kpi-' + i} className="preview-card rounded-2xl p-4" style={{ background: '#fff', border: '1px solid rgba(10,37,64,0.08)' }}>
+                <p className="text-xs font-medium" style={{ color: MUTED }}>{k.label}</p>
+                <p className="font-display font-semibold tabular mt-1" style={{ color: k.color, fontSize: '1.25rem', letterSpacing: '-0.3px' }}>{k.value}</p>
               </div>
             );
           })}
         </div>
-        <div className="preview-card rounded-2xl p-6 grid md:grid-cols-3 gap-6" style={{ background: '#fff', border: '1px solid rgba(10,37,64,0.08)', boxShadow: '0 2px 10px rgba(10,37,64,0.04)' }}>
-          <div className="md:col-span-2">
-            <p className="text-xs font-semibold mb-3" style={{ color: MUTED }}>Evolução de receita (últimos 7 dias)</p>
-            <div className="flex items-end gap-2 h-36">
-              {[35, 48, 32, 62, 55, 78, 92].map(function(h, i) {
+
+        {/* Grafico de 7 dias + Movimentacoes — como no Dashboard real */}
+        <div className="preview-card rounded-2xl overflow-hidden" style={{ background: '#fff', border: '1px solid rgba(10,37,64,0.08)' }}>
+          {/* Grafico */}
+          <div className="p-5 border-b" style={{ borderColor: 'rgba(10,37,64,0.06)' }}>
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-sm font-semibold" style={{ color: INK }}>Ultimos 7 dias</p>
+              <div className="flex gap-3 text-xs" style={{ color: MUTED }}>
+                <span className="flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-sm inline-block" style={{ background: BRAND }}/>
+                  Entradas
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-sm inline-block" style={{ background: '#ef4444' }}/>
+                  Saidas
+                </span>
+              </div>
+            </div>
+            <div className="flex items-end gap-2 h-32">
+              {MOCK_CHART.map(function(m, i) {
+                var maxV = Math.max.apply(null, MOCK_CHART.map(function(x) { return Math.max(x.i, x.o); }));
+                var ih = (m.i / maxV) * 100;
+                var oh = (m.o / maxV) * 100;
                 return (
-                  <div key={'ch-' + i} className="flex-1 flex flex-col items-center gap-1">
-                    <div className="w-full preview-bar-live rounded-t-md" style={{ height: h + '%', background: i === 6 ? ACCENT : (i % 3 === 0 ? SKY : 'rgba(0,47,89,0.12)'), animationDelay: (i * 0.3) + 's', transition: 'background 0.3s' }}
-                      onMouseEnter={function(e) { e.target.style.background = BRAND; }}
-                      onMouseLeave={function(e) { e.target.style.background = i === 6 ? ACCENT : (i % 3 === 0 ? SKY : 'rgba(0,47,89,0.12)'); }}
-                    />
-                    <span className="text-[10px] tabular" style={{ color: MUTED }}>{['Seg','Ter','Qua','Qui','Sex','Sab','Dom'][i]}</span>
+                  <div key={'bc-' + i} className="flex-1 flex flex-col items-center gap-1 justify-end">
+                    <div className="w-full flex flex-col items-center gap-0.5 justify-end" style={{ height: '100%' }}>
+                      <div className="w-3/4 rounded-t-sm" style={{ height: Math.max(oh, 4) + '%', background: '#ef4444', minHeight: 4 }} />
+                      <div className="w-3/4 rounded-t-sm" style={{ height: Math.max(ih, 4) + '%', background: BRAND, minHeight: 4 }} />
+                    </div>
+                    <span className="text-[10px] tabular" style={{ color: MUTED }}>{m.day}</span>
                   </div>
                 );
               })}
             </div>
           </div>
-          <div className="flex flex-col gap-3">
-            <p className="text-xs font-semibold" style={{ color: MUTED }}>Resumo rápido</p>
-            <div className="flex-1 flex flex-col justify-center gap-3">
-              <div className="tx-row-shimmer rounded-xl px-4 py-3" style={{ background: WARM }}>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-semibold" style={{ color: INK }}>Vendas do dia</p>
-                    <p className="text-xs" style={{ color: MUTED }}>12 pedidos</p>
+
+          {/* Movimentacoes recentes — como no Dashboard real */}
+          <div className="px-5 py-4 border-b" style={{ borderColor: 'rgba(10,37,64,0.06)' }}>
+            <p className="text-sm font-semibold" style={{ color: INK }}>Movimentacoes recentes</p>
+          </div>
+          <div>
+            {MOCK_MOVEMENTS.map(function(t, i) {
+              var isInc = t.type === 'income';
+              return (
+                <div key={'mov-' + i} className="flex items-center justify-between px-5 py-3.5 hover:bg-[#f8f8f6] transition-colors" style={{ borderBottom: i < MOCK_MOVEMENTS.length - 1 ? '1px solid rgba(10,37,64,0.04)' : 'none' }}>
+                  <div className="flex items-center gap-3 min-w-0 flex-1">
+                    <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: isInc ? 'rgba(0,47,89,0.08)' : 'rgba(239,68,68,0.08)' }}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={isInc ? BRAND : '#ef4444'} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d={isInc ? 'M5 15l7-7 7 7' : 'M19 9l-7 7-7-7'} />
+                      </svg>
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium" style={{ color: INK }}>{t.desc}</p>
+                      <p className="text-xs" style={{ color: MUTED }}>{t.detail}</p>
+                    </div>
                   </div>
-                  <span className="text-sm font-bold tabular" style={{ color: ACCENT }}>R$ 2.340</span>
+                  <span className="text-sm font-bold tabular flex-shrink-0 ml-3" style={{ color: isInc ? BRAND : '#ef4444' }}>
+                    {t.val}
+                  </span>
                 </div>
-              </div>
-              <div className="tx-row-shimmer rounded-xl px-4 py-3" style={{ background: WARM }}>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-semibold" style={{ color: INK }}>Ticket médio</p>
-                    <p className="text-xs" style={{ color: MUTED }}>últimos 30 dias</p>
-                  </div>
-                  <span className="text-sm font-bold tabular" style={{ color: BRAND }}>R$ 195</span>
-                </div>
-              </div>
-              <div className="tx-row-shimmer rounded-xl px-4 py-3" style={{ background: WARM }}>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-semibold" style={{ color: INK }}>Clientes ativos</p>
-                    <p className="text-xs" style={{ color: MUTED }}>este mês</p>
-                  </div>
-                  <span className="text-sm font-bold tabular" style={{ color: '#0d9488' }}>47</span>
-                </div>
-              </div>
-            </div>
+              );
+            })}
           </div>
         </div>
       </section>
 
-      {/* PREVIEW 2: Transações e extrato */}
+      {/* ─── PREVIEW 2: Transacoes agrupadas por data (como TxView) ─── */}
       <section ref={useScrollReveal()} className="max-w-6xl mx-auto px-5 py-14 scroll-reveal">
         <div className="text-center mb-10">
-          <p className="text-xs font-bold uppercase tracking-widest" style={{ color: ACCENT }}>Organização total</p>
-          <h2 className="font-display font-semibold mt-2" style={{ color: INK, fontSize: 'clamp(1.75rem, 4vw, 2.75rem)', letterSpacing: '-1px', lineHeight: 1.1 }}>Cada centavo registrado, cada categoria no lugar</h2>
+          <p className="text-xs font-bold uppercase tracking-widest" style={{ color: ACCENT }}>Extrato completo</p>
+          <h2 className="font-display font-semibold mt-2" style={{ color: INK, fontSize: 'clamp(1.75rem, 4vw, 2.75rem)', letterSpacing: '-1px', lineHeight: 1.1 }}>Todas as vendas e despesas organizadas</h2>
+          <p className="mt-2 text-sm" style={{ color: MUTED }}>Registre, edite e exclua. Agrupado por data como no app.</p>
         </div>
-        <div className="grid md:grid-cols-2 gap-5">
-          <div className="preview-card rounded-2xl p-6" style={{ background: '#fff', border: '1px solid rgba(10,37,64,0.08)', boxShadow: '0 2px 10px rgba(10,37,64,0.04)' }}>
-            <div className="flex items-center justify-between mb-4">
-              <p className="text-xs font-semibold" style={{ color: MUTED }}>Últimas movimentações</p>
-              <span className="text-xs font-medium preview-badge px-2.5 py-1 rounded-full" style={{ background: 'rgba(110,198,200,0.12)', color: SKY }}>Ao vivo</span>
-            </div>
-            <div className="flex flex-col gap-2">
-              {[
-                { desc: 'Venda balcão', cat: 'Vendas', val: '+R$ 450', type: 'gain' },
-                { desc: 'Compra insumos', cat: 'Custos', val: '-R$ 180', type: 'loss' },
-                { desc: 'Reposição estoque', cat: 'Custos', val: '-R$ 320', type: 'loss' },
-                { desc: 'Serviço realizado', cat: 'Serviços', val: '+R$ 890', type: 'gain' },
-                { desc: 'Venda online', cat: 'Vendas', val: '+R$ 1.200', type: 'gain', last: true },
-              ].map(function(t, i) {
-                return (
-                  <div key={'tx-' + i} className="flex items-center justify-between px-3 py-2.5 rounded-xl transition hover:-translate-y-0.5" style={{ background: t.type === 'gain' ? 'rgba(15,157,108,0.04)' : 'rgba(225,29,72,0.03)', cursor: 'default', borderBottom: i < 4 ? '1px solid rgba(10,37,64,0.04)' : 'none' }}>
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: t.type === 'gain' ? 'rgba(15,157,108,0.1)' : 'rgba(225,29,72,0.08)' }}>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={t.type === 'gain' ? '#0f9d6c' : '#e11d48'} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d={t.type === 'gain' ? 'M5 15l7-7 7 7' : 'M19 9l-7 7-7-7'} /></svg>
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-sm font-semibold truncate" style={{ color: INK }}>{t.desc}</p>
-                        <p className="text-xs truncate" style={{ color: MUTED }}>{t.cat}</p>
-                      </div>
-                    </div>
-                    <span className="text-sm font-bold tabular flex-shrink-0 ml-2" style={{ color: t.type === 'gain' ? '#0f9d6c' : '#e11d48' }}>{t.val}</span>
-                  </div>
-                );
-              })}
-            </div>
+
+        <div className="preview-card rounded-2xl overflow-hidden" style={{ background: '#fff', border: '1px solid rgba(10,37,64,0.08)' }}>
+          <div className="px-4 py-3 border-b flex items-center gap-2" style={{ borderColor: 'rgba(10,37,64,0.06)' }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={MUTED} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            <input placeholder="Buscar vendas ou despesas..." className="flex-1 text-sm border-none outline-none bg-transparent" style={{ color: INK }} disabled/>
           </div>
-          <div className="flex flex-col gap-4">
-            <div className="preview-card rounded-2xl p-5" style={{ background: '#fff', border: '1px solid rgba(10,37,64,0.08)', boxShadow: '0 2px 10px rgba(10,37,64,0.04)' }}>
-              <p className="text-xs font-semibold mb-3" style={{ color: MUTED }}>Distribuição por categoria</p>
-              {[
-                { label: 'Vendas', pct: 58, color: ACCENT },
-                { label: 'Serviços', pct: 22, color: SKY },
-                { label: 'Produtos', pct: 12, color: MINT },
-                { label: 'Outros', pct: 8, color: BRAND },
-              ].map(function(c, i) {
-                return (
-                  <div key={'cat-' + i} className="flex items-center gap-3 mb-2.5 last:mb-0">
-                    <span className="text-xs font-medium w-16" style={{ color: MUTED }}>{c.label}</span>
-                    <div className="flex-1 h-2 rounded-full" style={{ background: 'rgba(10,37,64,0.06)' }}>
-                      <div className="h-full rounded-full transition-all duration-500 preview-bar-live" style={{ width: c.pct + '%', background: c.color }} />
-                    </div>
-                    <span className="text-xs font-bold tabular" style={{ color: INK }}>{c.pct}%</span>
-                  </div>
-                );
-              })}
-            </div>
-            <div className="preview-card rounded-2xl p-5" style={{ background: '#fff', border: '1px solid rgba(10,37,64,0.08)', boxShadow: '0 2px 10px rgba(10,37,64,0.04)' }}>
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-xs font-semibold" style={{ color: MUTED }}>Metas do mês</p>
-                <span className="text-xs font-bold" style={{ color: ACCENT }}>76%</span>
-              </div>
-              <div className="h-3 rounded-full mb-4" style={{ background: 'rgba(10,37,64,0.06)' }}>
-                <div className="h-full rounded-full preview-bar-live" style={{ width: '76%', background: 'linear-gradient(90deg, ' + ACCENT + ', ' + MINT + ')' }} />
-              </div>
-              <div className="grid grid-cols-3 gap-2 text-center">
-                {[{ v: 'R$ 14k', l: 'Receita' }, { v: 'R$ 6k', l: 'Despesas' }, { v: '47', l: 'Clientes' }].map(function(m, i) {
+          {MOCK_TX.map(function(g, gi) {
+            var isGain = g.items.some(function(i) { return i.type === 'income'; });
+            return (
+              <div key={'tg-' + gi}>
+                <div className="flex items-center justify-between px-4 py-2.5" style={{ background: 'rgba(10,37,64,0.03)', borderBottom: '1px solid rgba(10,37,64,0.06)' }}>
+                  <span className="text-xs font-semibold uppercase tracking-wide" style={{ color: MUTED }}>{g.date}</span>
+                  <span className="text-xs font-semibold tabular" style={{ color: isGain ? BRAND : '#ef4444' }}>
+                    {g.items.reduce(function(s, i) {
+                      var v = Number(i.val.replace(/[^\d]/g, ''));
+                      return i.type === 'income' ? s + v : s - v;
+                    }, 0) > 0 ? '+' : ''}
+                    {money(g.items.reduce(function(s, i) {
+                      var v = Number(i.val.replace(/[^\d]/g, ''));
+                      return i.type === 'income' ? s + v : s - v;
+                    }, 0))}
+                  </span>
+                </div>
+                {g.items.map(function(t, ti) {
                   return (
-                    <div key={'goal-' + i}>
-                      <p className="font-semibold tabular text-sm" style={{ color: INK }}>{m.v}</p>
-                      <p className="text-[10px]" style={{ color: MUTED }}>{m.l}</p>
+                    <div key={'tgi-' + gi + '-' + ti} className="flex items-center justify-between px-4 py-3 hover:bg-[#f8f8f6] transition-colors" style={{ borderBottom: ti < g.items.length - 1 || gi < MOCK_TX.length - 1 ? '1px solid rgba(10,37,64,0.04)' : 'none' }}>
+                      <div className="flex items-center gap-3 min-w-0 flex-1">
+                        <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: t.type === 'income' ? 'rgba(0,47,89,0.08)' : 'rgba(239,68,68,0.06)' }}>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={t.type === 'income' ? BRAND : '#ef4444'} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <path d={t.type === 'income' ? 'M5 15l7-7 7 7' : 'M19 9l-7 7-7-7'} />
+                          </svg>
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-sm font-semibold truncate" style={{ color: INK }}>{t.desc}</p>
+                          <p className="text-xs truncate" style={{ color: MUTED }}>{t.cat}</p>
+                        </div>
+                      </div>
+                      <span className="text-sm font-bold tabular flex-shrink-0 ml-2" style={{ color: t.type === 'income' ? BRAND : '#ef4444' }}>
+                        {t.val}
+                      </span>
                     </div>
                   );
                 })}
               </div>
-            </div>
-          </div>
+            );
+          })}
         </div>
       </section>
 
-      {/* PREVIEW 3: Estoque, relatórios e indicadores */}
+      {/* ─── PREVIEW 3: Estoque real ─── */}
       <section ref={useScrollReveal()} className="max-w-6xl mx-auto px-5 py-14 scroll-reveal">
         <div className="text-center mb-10">
-          <p className="text-xs font-bold uppercase tracking-widest" style={{ color: ACCENT }}>Inteligência de negócio</p>
-          <h2 className="font-display font-semibold mt-2" style={{ color: INK, fontSize: 'clamp(1.75rem, 4vw, 2.75rem)', letterSpacing: '-1px', lineHeight: 1.1 }}>Saiba onde está ganhando e onde está perdendo</h2>
+          <p className="text-xs font-bold uppercase tracking-widest" style={{ color: ACCENT }}>Estoque e perdas</p>
+          <h2 className="font-display font-semibold mt-2" style={{ color: INK, fontSize: 'clamp(1.75rem, 4vw, 2.75rem)', letterSpacing: '-1px', lineHeight: 1.1 }}>Produtos, categorias e controle de quantidade</h2>
+          <p className="mt-2 text-sm" style={{ color: MUTED }}>Adicione produtos, veja margem de lucro e estoque baixo em destaque.</p>
         </div>
-        <div className="grid md:grid-cols-3 gap-4">
-          <div className="preview-card rounded-2xl p-5" style={{ background: '#fff', border: '1px solid rgba(10,37,64,0.08)' }}>
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(15,157,108,0.1)' }}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={ACCENT} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
-              </div>
-              <div>
-                <p className="text-sm font-semibold" style={{ color: INK }}>Estoque</p>
-                <p className="text-xs" style={{ color: MUTED }}>Produtos cadastrados</p>
-              </div>
-            </div>
-            <div className="flex items-end justify-between mb-3">
-              <p className="font-display font-semibold tabular" style={{ color: INK, fontSize: '1.8rem' }}>234</p>
-              <span className="text-xs font-bold px-2 py-0.5 rounded-full preview-badge" style={{ background: 'rgba(239,68,68,0.1)', color: '#ef4444' }}>8 com estoque baixo</span>
-            </div>
-            <div className="h-2 rounded-full" style={{ background: 'rgba(10,37,64,0.06)' }}>
-              <div className="h-full rounded-full" style={{ width: '72%', background: ACCENT }} />
-            </div>
-            <p className="text-xs mt-1" style={{ color: MUTED }}>72% do estoque disponível</p>
-          </div>
-          <div className="preview-card rounded-2xl p-5" style={{ background: '#fff', border: '1px solid rgba(10,37,64,0.08)' }}>
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(110,198,200,0.1)' }}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={SKY} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-              </div>
-              <div>
-                <p className="text-sm font-semibold" style={{ color: INK }}>Relatórios</p>
-                <p className="text-xs" style={{ color: MUTED }}>Exporte em PDF e Excel</p>
-              </div>
-            </div>
-            <div className="flex flex-col gap-2">
-              {['Lucro líquido: R$ 8.420', 'Margem: 59%', 'Melhor dia: Sexta'].map(function(r, i) {
-                return (
-                  <div key={'rep-' + i} className="flex items-center gap-2 text-xs" style={{ color: INK }}>
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={ACCENT} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 13l4 4L19 7"/></svg>
-                    {r}
-                  </div>
-                );
-              })}
+
+        <div className="preview-card rounded-2xl overflow-hidden" style={{ background: '#fff', border: '1px solid rgba(10,37,64,0.08)' }}>
+          {/* Abas */}
+          <div className="flex border-b" style={{ borderColor: 'rgba(10,37,64,0.06)' }}>
+            <div className="flex items-center gap-2 pb-3 px-4 pt-4 text-sm font-semibold" style={{ color: BRAND, borderBottom: '2px solid ' + BRAND }}>
+              Produtos
+              <span className="text-xs font-semibold px-1.5 py-0.5 rounded-md text-white" style={{ background: BRAND }}>{MOCK_PRODUCTS.length}</span>
             </div>
           </div>
-          <div className="preview-card rounded-2xl p-5" style={{ background: '#fff', border: '1px solid rgba(10,37,64,0.08)' }}>
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(0,47,89,0.1)' }}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={BRAND} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
-              </div>
-              <div>
-                <p className="text-sm font-semibold" style={{ color: INK }}>Indicadores</p>
-                <p className="text-xs" style={{ color: MUTED }}>Decisões baseadas em dados</p>
-              </div>
-            </div>
-            <div className="space-y-2">
-              {[
-                { l: 'Ticket médio', v: 'R$ 195', p: 100 },
-                { l: 'Custo fixo', v: '32%', p: 32 },
-                { l: 'Inadimplência', v: '4%', p: 4 },
-              ].map(function(m, i) {
-                return (
-                  <div key={'ind-' + i}>
-                    <div className="flex justify-between text-xs mb-1">
-                      <span style={{ color: MUTED }}>{m.l}</span>
-                      <span className="font-semibold tabular" style={{ color: INK }}>{m.v}</span>
+
+          {/* Categorias e produtos */}
+          {['Servicos', 'Produtos', 'Roupas', 'Eletronicos', 'Papelaria'].map(function(cat, ci) {
+            var catItems = MOCK_PRODUCTS.filter(function(p) { return p.cat === cat; });
+            if (catItems.length === 0) return null;
+            return (
+              <div key={'cat-' + ci}>
+                <div className="flex items-center gap-2 px-4 py-2.5" style={{ background: 'rgba(10,37,64,0.03)', borderBottom: '1px solid rgba(10,37,64,0.06)' }}>
+                  <svg className="w-3.5 h-3.5" style={{ color: MUTED }} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7"/></svg>
+                  <span className="text-xs font-semibold uppercase tracking-wide" style={{ color: MUTED }}>{cat}</span>
+                </div>
+                {catItems.map(function(p, pi) {
+                  var stockStyle = p.stockColor === 'red' ? { color: '#dc2626', background: 'rgba(220,38,38,0.08)' } : p.stockColor === 'amber' ? { color: '#d97706', background: 'rgba(217,119,6,0.08)' } : { color: '#16a34a', background: 'rgba(22,163,74,0.08)' };
+                  return (
+                    <div key={'prod-' + ci + '-' + pi} className="flex items-center justify-between px-4 py-3 hover:bg-[#f8f8f6] transition-colors" style={{ borderBottom: pi < catItems.length - 1 ? '1px solid rgba(10,37,64,0.04)' : 'none' }}>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold truncate" style={{ color: INK }}>{p.name}</p>
+                        <div className="flex items-center gap-2 mt-0.5">
+                          <span className="text-xs font-semibold tabular" style={{ color: BRAND }}>{p.price}</span>
+                        </div>
+                      </div>
+                      <span className="text-xs font-semibold px-2.5 py-1 rounded-lg" style={stockStyle}>
+                        {p.stock}
+                      </span>
                     </div>
-                    <div className="h-1.5 rounded-full" style={{ background: 'rgba(10,37,64,0.06)' }}>
-                      <div className="h-full rounded-full preview-bar-live" style={{ width: m.p + '%', background: i === 2 ? '#ef4444' : (i === 1 ? SKY : ACCENT) }} />
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+                  );
+                })}
+              </div>
+            );
+          })}
         </div>
       </section>
 
-      {/* Features */}
+      {/* ─── FEATURES ─── */}
       <section ref={featRef} className="max-w-6xl mx-auto px-5 py-14 scroll-reveal">
         <div className="max-w-xl mb-10">
           <p className="text-xs font-bold uppercase tracking-widest" style={{ color: ACCENT }}>Por que o Financia</p>
-          <h2 className="font-display font-semibold mt-2" style={{ color: INK, fontSize: 'clamp(1.75rem, 4vw, 2.75rem)', letterSpacing: '-1px', lineHeight: 1.1 }}>Tudo que o seu negócio precisa, nada que ele não usa</h2>
+          <h2 className="font-display font-semibold mt-2" style={{ color: INK, fontSize: 'clamp(1.75rem, 4vw, 2.75rem)', letterSpacing: '-1px', lineHeight: 1.1 }}>Tudo que o seu negocio precisa, nada que ele nao usa</h2>
         </div>
         <div className="grid sm:grid-cols-2 gap-4">
           {FEATURES.map(function(f) {
@@ -480,19 +401,19 @@ export default function Landing({ onEnter }) {
         </div>
       </section>
 
-      {/* Pricing */}
+      {/* ─── PRICING ─── */}
       <section ref={priceRef} id="planos" className="max-w-6xl mx-auto px-5 py-16 scroll-mt-20 scroll-reveal">
         <div className="text-center mb-12">
           <p className="text-xs font-bold uppercase tracking-widest" style={{ color: ACCENT }}>Planos</p>
-          <h2 className="font-display font-semibold mt-2" style={{ color: INK, fontSize: 'clamp(1.75rem, 4vw, 2.75rem)', letterSpacing: '-1px' }}>Um preço justo pra cada fase</h2>
-          <p className="mt-3 text-sm" style={{ color: MUTED }}>Comece de graça. Mude de plano quando quiser, sem fidelidade.</p>
+          <h2 className="font-display font-semibold mt-2" style={{ color: INK, fontSize: 'clamp(1.75rem, 4vw, 2.75rem)', letterSpacing: '-1px' }}>Um preco justo pra cada fase</h2>
+          <p className="mt-3 text-sm" style={{ color: MUTED }}>Comece de graca. Mude de plano quando quiser, sem fidelidade.</p>
         </div>
         <div className="grid md:grid-cols-3 gap-5 items-stretch">
           {PRICING_PLANS.map(function(p) {
             var popular = !!p.popular;
             var isFree = p.id === 'free';
             var isPremiumCard = p.id === 'premium';
-            var priceNote = isFree ? 'grátis para sempre, sem cartão' : 'cobrado mensalmente, cancele quando quiser';
+            var priceNote = isFree ? 'gratis para sempre, sem cartao' : 'cobrado mensalmente, cancele quando quiser';
             var btnStyle = popular ? { background: ACCENT, color: '#fff' } : (isFree ? { background: 'rgba(10,37,64,0.06)', color: INK } : { background: BRAND, color: '#fff' });
             var cardBorder = popular ? ('1px solid ' + INK) : ('1px solid ' + (isPremiumCard ? 'rgba(15,157,108,0.35)' : 'rgba(10,37,64,0.1)'));
             return (
@@ -502,7 +423,6 @@ export default function Landing({ onEnter }) {
 
                 {popular && <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-xs font-bold px-4 py-1 rounded-full whitespace-nowrap" style={{ background: ACCENT, color: '#fff', boxShadow: '0 6px 16px rgba(15,157,108,0.4)' }}>Mais escolhido</span>}
 
-                {/* Nome + para quem e */}
                 <div>
                   <div className="flex items-center gap-2">
                     <p className="font-display font-semibold text-2xl" style={{ color: popular ? '#fff' : INK }}>{p.name}</p>
@@ -511,7 +431,6 @@ export default function Landing({ onEnter }) {
                   <p className="text-xs mt-1.5" style={{ color: popular ? 'rgba(255,255,255,0.65)' : MUTED }}>{p.tagline}</p>
                 </div>
 
-                {/* Preco + microcopy de confianca */}
                 <div>
                   <div className="flex items-end gap-1">
                     <span className="font-display font-semibold tabular" style={{ color: popular ? '#fff' : INK, fontSize: '2.6rem', letterSpacing: '-1px', lineHeight: 1 }}>{money(p.price)}</span>
@@ -520,10 +439,8 @@ export default function Landing({ onEnter }) {
                   <p className="text-xs mt-2.5" style={{ color: popular ? 'rgba(255,255,255,0.5)' : MUTED }}>{priceNote}</p>
                 </div>
 
-                {/* CTA */}
                 <button onClick={onEnter} className="text-sm font-semibold py-3.5 rounded-2xl transition hover:opacity-90 min-h-[44px]" style={btnStyle}>{p.cta}</button>
 
-                {/* Beneficios */}
                 <div className="flex flex-col gap-2.5 pt-1">
                   {p.features.map(function(feat) {
                     var ladder = feat.indexOf('Tudo do') === 0;
@@ -548,7 +465,6 @@ export default function Landing({ onEnter }) {
           })}
         </div>
 
-        {/* Garantias + canal sob medida */}
         <div className="mt-9 flex flex-col items-center gap-3">
           <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs" style={{ color: MUTED }}>
             {['Sem fidelidade', 'Troque ou cancele quando quiser', 'Pagamento seguro pela Stripe'].map(function(t) {
@@ -564,7 +480,7 @@ export default function Landing({ onEnter }) {
         </div>
       </section>
 
-      {/* FAQ */}
+      {/* ─── FAQ ─── */}
       <section ref={faqRef} className="max-w-2xl mx-auto px-5 py-14 scroll-reveal">
         <h2 className="font-display font-semibold text-center mb-10" style={{ color: INK, fontSize: 'clamp(1.6rem, 4vw, 2.25rem)', letterSpacing: '-0.5px' }}>Perguntas frequentes</h2>
         <div className="flex flex-col gap-3">
@@ -582,15 +498,15 @@ export default function Landing({ onEnter }) {
         </div>
       </section>
 
-      {/* CTA final */}
+      {/* ─── CTA FINAL ─── */}
       <section ref={ctaRef} className="max-w-6xl mx-auto px-5 py-12 scroll-reveal">
         <div className="rounded-[1.5rem] px-6 py-16 text-center relative overflow-hidden" style={{ background: INK }}>
           <div className="absolute inset-0" style={{ background: 'radial-gradient(80% 120% at 50% 0%, rgba(110,198,200,0.15), transparent 58%)' }} />
           <div className="relative">
-            <h2 className="font-display font-semibold text-white" style={{ fontSize: 'clamp(1.75rem, 4.5vw, 3rem)', letterSpacing: '-1px', lineHeight: 1.1 }}>Comece a organizar o seu negócio hoje</h2>
-            <p className="mt-3 text-sm" style={{ color: 'rgba(255,255,255,0.7)' }}>Conta grátis, sem cartão. Leva menos de um minuto.</p>
+            <h2 className="font-display font-semibold text-white" style={{ fontSize: 'clamp(1.75rem, 4.5vw, 3rem)', letterSpacing: '-1px', lineHeight: 1.1 }}>Comece a organizar o seu negocio hoje</h2>
+            <p className="mt-3 text-sm" style={{ color: 'rgba(255,255,255,0.7)' }}>Conta gratis, sem cartao. Leva menos de um minuto.</p>
             <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
-              <button onClick={onEnter} className="text-sm font-semibold px-8 py-4 rounded-2xl transition hover:opacity-90" style={{ background: ACCENT, color: '#fff' }}>Criar conta grátis</button>
+              <button onClick={onEnter} className="text-sm font-semibold px-8 py-4 rounded-2xl transition hover:opacity-90" style={{ background: ACCENT, color: '#fff' }}>Criar conta gratis</button>
               <a href={waLink} target="_blank" rel="noreferrer" className="text-sm font-semibold px-8 py-4 rounded-2xl transition hover:bg-white/10" style={{ border: '1px solid rgba(255,255,255,0.3)', color: '#fff' }}>Falar no WhatsApp</a>
             </div>
           </div>
@@ -603,7 +519,7 @@ export default function Landing({ onEnter }) {
             <img src="/icon-192.svg" alt="" className="w-6 h-6" />
             <span className="font-display text-sm font-semibold" style={{ color: INK }}>Financia</span>
           </div>
-          <p className="text-xs" style={{ color: MUTED }}>Gestão financeira para pequenos negócios</p>
+          <p className="text-xs" style={{ color: MUTED }}>Gestao financeira para pequenos negocios</p>
           <div className="flex items-center gap-4 text-xs" style={{ color: MUTED }}>
             <a href="#privacidade" className="transition hover:opacity-70" style={{ color: MUTED }}>Privacidade</a>
             <a href="#termos" className="transition hover:opacity-70" style={{ color: MUTED }}>Termos de Uso</a>
