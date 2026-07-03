@@ -39,7 +39,7 @@ export default function RecurringManager({ uid, color, toast, onClose, onApply }
         var row = buildRecurringRow(uid, tpl, periodOf(new Date()));
         await onApply(row);
       }
-      toast('Despesa recorrente adicionada.');
+      toast('Despesa recorrente adicionada.', 'success');
       setForm({ desc: '', amount: '', day: '5', category: 'Fixo' });
     } catch (e) { toast('Erro ao salvar.', 'error'); }
     finally { setBusy(false); }

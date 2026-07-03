@@ -148,7 +148,7 @@ export default function AdminPanel({ toast, confirm, session }) {
     img.onload = function() { extractColors(img); };
     img.src = url;
     setUploading(false);
-    toast('Logo enviado!');
+    toast('Logo enviado!', 'success');
   };
 
   const create = async function() {
@@ -202,13 +202,13 @@ export default function AdminPanel({ toast, confirm, session }) {
       await navigator.clipboard.writeText(msg);
       setCopied(d.email || d.user_id);
       setTimeout(function() { setCopied(null); }, 2000);
-      toast('Copiado!');
+      toast('Copiado!', 'success');
     };
 
   const handleDelete = function(c) {
     confirm('Excluir todos os dados de "' + (c.name || c.user_id) + '"? Isso não pode ser desfeito.', async function() {
       const ok = await deleteClient(c.user_id);
-      if (ok) { toast('Cliente excluído.'); reload(); }
+      if (ok) { toast('Cliente excluído.', 'success'); reload(); }
       else toast('Erro ao excluir.', 'error');
     });
   };

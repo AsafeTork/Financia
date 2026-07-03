@@ -61,7 +61,7 @@ export default function InventoryView({ products, losses, onAddProduct, onEditPr
     var rows = products.map(function(p) {
       return [p.name, p.category || '', fmt(p.price), p.cost != null ? fmt(p.cost) : '', p.stock != null ? String(p.stock) : '—'];
     });
-    if (kind === 'xls') { exportXLS({ filename: 'estoque-' + today(), headers: headers, rows: rows }); toast('Excel exportado!'); return; }
+    if (kind === 'xls') { exportXLS({ filename: 'estoque-' + today(), headers: headers, rows: rows }); toast('Excel exportado!', 'success'); return; }
     var ok = exportPDF({ title: 'Estoque', brandName: (brand && brand.name) || 'Financia', subtitle: 'Produtos — ' + products.length + ' item(ns)', accent: brand.color, headers: headers, rows: rows });
     if (!ok) toast('Permita pop-ups para exportar o PDF.', 'error');
   };
@@ -73,7 +73,7 @@ export default function InventoryView({ products, losses, onAddProduct, onEditPr
     try {
       var ok = await onAddProduct({id:uid(), name:safe(pf.name), category:pf.category||null, price:Number(pf.price), cost:pf.cost?Number(pf.cost):null, stock:pf.stock!==''?Number(pf.stock):null});
       if (!ok) return;
-      toast('Produto adicionado!');
+      toast('Produto adicionado!', 'success');
       dispatch({type:'CLOSE_PM'});
     } catch(_) {}
     finally { dispatch({type:'SET_SAVING', v:false}); }
@@ -85,7 +85,7 @@ export default function InventoryView({ products, losses, onAddProduct, onEditPr
     try {
       var ok = await onEditProduct(editP.id, {name:safe(editP.name), category:editP.category||null, price:Number(editP.price), cost:editP.cost?Number(editP.cost):null, stock:editP.stock!==''&&editP.stock!=null?Number(editP.stock):null});
       if (!ok) return;
-      toast('Produto atualizado');
+      toast('Produto atualizado', 'success');
       dispatch({type:'SET_EDIT_P', v:null});
     } catch(_) {}
     finally { dispatch({type:'SET_SAVING', v:false}); }
@@ -99,7 +99,7 @@ export default function InventoryView({ products, losses, onAddProduct, onEditPr
       if (!ok) return;
       const p = products.find(function(p) { return p.name.toLowerCase() === lf.desc.toLowerCase(); });
       if (p && p.stock != null) await onAdjustStock(p.id, -Number(lf.qty));
-      toast(p ? 'Perda registrada e estoque abatido' : 'Perda registrada (produto nao encontrado no estoque)');
+      toast(p ? 'Perda registrada e estoque abatido' : 'Perda registrada (produto nao encontrado no estoque)', 'success');
       dispatch({type:'CLOSE_LM'});
     } catch(_) {}
     finally { dispatch({type:'SET_SAVING', v:false}); }
@@ -111,7 +111,7 @@ export default function InventoryView({ products, losses, onAddProduct, onEditPr
     try {
       var ok = await onEditLoss(editL.id, {desc:safe(editL.desc), qty:Number(editL.qty), reason:editL.reason, date:editL.date});
       if (!ok) return;
-      toast('Perda atualizada');
+      toast('Perda atualizada', 'success');
       dispatch({type:'SET_EDIT_L', v:null});
     } catch(_) {}
     finally { dispatch({type:'SET_SAVING', v:false}); }
@@ -123,7 +123,7 @@ export default function InventoryView({ products, losses, onAddProduct, onEditPr
     try {
       var ok = await onAdjustStock(sm, Number(sq));
       if (!ok) return;
-      toast('Estoque atualizado!');
+      toast('Estoque atualizado!', 'success');
       dispatch({type:'SET_SM', v:null});
     } catch(_) {}
     finally { dispatch({type:'SET_SAVING', v:false}); }
@@ -269,7 +269,7 @@ export default function InventoryView({ products, losses, onAddProduct, onEditPr
                                   </button>
                                 )}
                                 <EditBtn onClick={function() { dispatch({type:'SET_EDIT_P', v:{id:p.id, name:p.name, category:p.category||'', price:String(p.price), cost:p.cost!=null?String(p.cost):'', stock:p.stock!=null?String(p.stock):''}}); }}/>
-                                <DelBtn onClick={function() { confirm('Excluir "' + p.name + '"?', async function() { var ok = await onDeleteProduct(p.id); if (ok) toast('Produto removido'); }); }}/>
+                                <DelBtn onClick={function() { confirm('Excluir "' + p.name + '"?', async function() { var ok = await onDeleteProduct(p.id); if (ok) toast('Produto removido', 'success'); else toast('Erro ao excluir. Tente de novo.', 'error'); }); }}/>
                               </div>
                             </div>
                           </div>
@@ -317,7 +317,7 @@ export default function InventoryView({ products, losses, onAddProduct, onEditPr
                     </div>
                     <div className="flex items-center gap-1 flex-shrink-0">
                       <EditBtn onClick={function() { dispatch({type:'SET_EDIT_L', v:{id:l.id, desc:l.desc, qty:String(l.qty), reason:l.reason||'', date:l.date}}); }}/>
-                      <DelBtn onClick={function() { confirm('Excluir esta perda?', async function() { var ok = await onDeleteLoss(l.id); if (ok) toast('Perda removida'); }); }}/>
+                      <DelBtn onClick={function() { confirm('Excluir esta perda?', async function() { var ok = await onDeleteLoss(l.id); if (ok) toast('Perda removida', 'success'); else toast('Erro ao excluir. Tente de novo.', 'error'); }); }}/>
                     </div>
                   </div>
                 );

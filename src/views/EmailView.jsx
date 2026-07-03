@@ -30,7 +30,7 @@ export default function EmailView({ brand, toast }) {
     }
     setBody(txt);
     setTpl('custom');
-    toast('Texto gerado pela IA');
+    toast('Texto gerado pela IA', 'success');
   };
 
   const applyTpl = function(id) {
@@ -56,7 +56,7 @@ export default function EmailView({ brand, toast }) {
         setSending(false);
         return;
       }
-      toast('E-mail enviado automaticamente.');
+      toast('E-mail enviado automaticamente.', 'success');
     } catch (e) {
       toast('Erro de conexão ao enviar e-mail.', 'error');
     }
@@ -66,7 +66,7 @@ export default function EmailView({ brand, toast }) {
     await navigator.clipboard.writeText('Para: ' + to + '\nAssunto: ' + subject + '\n\n' + body);
     setCopied(true);
     setTimeout(function() { setCopied(false); }, 2000);
-    toast('Copiado!');
+    toast('Copiado!', 'success');
   };
 
   return (

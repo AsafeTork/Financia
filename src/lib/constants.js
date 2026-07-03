@@ -97,11 +97,11 @@ export const displayPlanPrice = function(planPrice, customCents) {
 // entregue para Android (APK) e Windows (.exe). Sem homologacao iOS no momento.
 export const WHITELABEL = {
   price: 497,
-  tagline: 'O app com a cara da sua empresa, entregue pronto',
+  tagline: 'Sua identidade visual, seu app — sem complicação técnica',
   features: [
-    'Sua logo e nome no app e no icone',
+    'Sua logo e nome no app e no ícone',
     'Cores e identidade visual da sua marca',
-    'Interface ajustada ao seu negocio (com ajuda de IA)',
+    'Interface ajustada ao seu negócio (com ajuda de IA)',
     'App para Android (APK) e Windows (.exe)',
     'Entrega completa e configurada por mim',
   ],
@@ -111,19 +111,19 @@ export const WHITELABEL = {
 export const PRICING_PLANS = [
   {
     id: 'free', name: 'Grátis', price: 0, period: '',
-    tagline: 'Para começar a organizar',
+    tagline: 'Organize suas finanças do zero',
     cta: 'Começar grátis',
     features: ['50 transações', '20 produtos', '10 perdas', 'Funciona offline', '1 dispositivo'],
   },
   {
     id: 'pro', name: 'Pro', price: 49.9, period: '/mês', popular: true,
-    tagline: 'Para o negócio que cresce',
+    tagline: 'Para quem decide com base em dados',
     cta: 'Assinar Pro',
     features: ['Tudo do Grátis', 'Transações ilimitadas', 'Produtos ilimitados', 'Perdas ilimitadas', 'Relatórios e exportação em PDF e Excel', 'Suporte prioritário'],
   },
   {
     id: 'premium', name: 'Premium', price: 99.9, period: '/mês',
-    tagline: 'Para quem quer escalar',
+    tagline: 'Para equipes que escalam juntas',
     cta: 'Assinar Premium',
     features: ['Tudo do Pro', 'Vários usuários na mesma conta', 'Sincronização em tempo real entre dispositivos', 'Metas e orçamento mensal', 'Marca personalizada (white-label) — requer pacote de personalização', 'Relatórios avançados', 'Suporte dedicado'],
   },

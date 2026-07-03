@@ -94,8 +94,8 @@ export default function ClientEditModal({ client, adminEmail, onSave, onClose, t
     var res = await setClientCustomPrice(client.user_id, cents, planId);
     setPriceSaving(false);
     if (!res.ok) { toast('Erro ao salvar preço: ' + res.error, 'error'); return; }
-    if (!cents) { toast('Desconto removido para ' + planId.toUpperCase() + '.'); return; }
-    toast(res.applied ? ('Preço de ' + planId.toUpperCase() + ' aplicado — vale no próximo ciclo.') : ('Preço de ' + planId.toUpperCase() + ' salvo para novas assinaturas.'));
+    if (!cents) { toast('Desconto removido para ' + planId.toUpperCase() + '.', 'success'); return; }
+    toast(res.applied ? ('Preço de ' + planId.toUpperCase() + ' aplicado — vale no próximo ciclo.') : ('Preço de ' + planId.toUpperCase() + ' salvo para novas assinaturas.'), 'success');
   };
 
   var clearCustomPrice = async function(planId) {
@@ -105,7 +105,7 @@ export default function ClientEditModal({ client, adminEmail, onSave, onClose, t
     if (!res.ok) { toast('Erro ao remover: ' + res.error, 'error'); return; }
     if (planId === 'pro') setCustomProReais('');
     if (planId === 'premium') setCustomPremiumReais('');
-    toast('Desconto removido.');
+    toast('Desconto removido.', 'success');
   };
 
   var runAI = async function() {
@@ -118,7 +118,7 @@ export default function ClientEditModal({ client, adminEmail, onSave, onClose, t
     setSecondary(res.palette.secondary || '');
     setAccent(res.palette.accent || '');
     setAiRationale(res.rationale || '');
-    toast('Paleta gerada pela IA!');
+    toast('Paleta gerada pela IA!', 'success');
   };
 
   var derived = deriveCores(color);
@@ -195,7 +195,7 @@ export default function ClientEditModal({ client, adminEmail, onSave, onClose, t
     var url = urlRes.data.publicUrl + '?t=' + Date.now();
     setLogoUrl(url);
     extractColorsFromImage(url);
-    toast('Logo enviada!');
+    toast('Logo enviada!', 'success');
     setUploading(false);
   };
 
@@ -226,7 +226,7 @@ export default function ClientEditModal({ client, adminEmail, onSave, onClose, t
         var wlRes = await setClientWhiteLabel(client.user_id, !!whiteLabel);
         if (!wlRes.ok) { toast('Erro ao atualizar cortesia do pacote.', 'error'); return; }
       }
-      toast('Atualizado!');
+      toast('Atualizado!', 'success');
       var updated = Object.assign({}, client, updateData);
       updated.white_label = !!whiteLabel;
       if (planChanged) {

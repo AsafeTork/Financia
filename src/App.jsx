@@ -225,6 +225,18 @@ export default function App() {
     setTx, setProducts, setLosses,
   });
 
+  // Registra callback global para StripeCheckout forcar recarga do plano
+  // apos pagamento confirmado. Sem isso, o plano nunca atualiza na UI.
+  useEffect(function() {
+    if (typeof window === 'undefined') return;
+    window.__financia_reload_plan = function() {
+      if (session && session.user && session.user.id && navigator.onLine) {
+        loadData(session.user.id);
+      }
+    };
+    return function() { delete window.__financia_reload_plan; };
+  }, [session, loadData]);
+
   if (appLoading) return <Loader/>;
 
   // Páginas legais — acessíveis sem autenticação

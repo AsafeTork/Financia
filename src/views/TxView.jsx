@@ -61,7 +61,7 @@ export default function TxView({ type, tx, products, onAdd, onEdit, onDelete, on
         cat: isIncome ? null : editItem.cat
       });
       if (!ok) return;
-      toast(isIncome ? 'Venda atualizada' : 'Despesa atualizada');
+      toast(isIncome ? 'Venda atualizada' : 'Despesa atualizada', 'success');
       setEditItem(null);
     } catch(_) {}
     finally { setSaving(false); }
@@ -80,7 +80,7 @@ export default function TxView({ type, tx, products, onAdd, onEdit, onDelete, on
         var row = buildRecurringRow(userId, tpl, periodOf(new Date()));
         var okR = onAddGenerated ? await onAddGenerated(row) : true;
         if (okR === false) return;
-        toast('Despesa fixa adicionada — repete todo mês.');
+        toast('Despesa fixa adicionada — repete todo mês.', 'success');
         setModal(false);
         resetForm();
         return;
@@ -95,7 +95,7 @@ export default function TxView({ type, tx, products, onAdd, onEdit, onDelete, on
         cat: isIncome ? null : form.cat
       });
       if (!ok) return;
-      toast(isIncome ? 'Venda registrada!' : 'Despesa registrada!');
+      toast(isIncome ? 'Venda registrada!' : 'Despesa registrada!', 'success');
       setModal(false);
       resetForm();
     } catch(_) {}
@@ -107,7 +107,7 @@ export default function TxView({ type, tx, products, onAdd, onEdit, onDelete, on
       return [fmtDate(t.date), t.desc || '', fmt(t.amount), isIncome ? (t.method || '') : (t.category || t.cat || '')];
     });
     var fname = (isIncome ? 'vendas' : 'despesas') + '-' + today();
-    if (kind === 'xls') { exportXLS({ filename: fname, headers: headers, rows: rows }); toast('Excel exportado!'); return; }
+    if (kind === 'xls') { exportXLS({ filename: fname, headers: headers, rows: rows }); toast('Excel exportado!', 'success'); return; }
     var ok = exportPDF({
       title: isIncome ? 'Vendas' : 'Despesas',
       brandName: (brand && brand.name) || 'Financia',
@@ -223,7 +223,7 @@ export default function TxView({ type, tx, products, onAdd, onEdit, onDelete, on
                             {(isIncome ? '+' : '-') + fmt(t.amount)}
                           </span>
                           <EditBtn onClick={function() { openEdit(t); }}/>
-                          <DelBtn onClick={function() { confirm('Excluir este registro?', async function() { var ok = await onDelete(t.id); if (ok) toast('Removido'); }); }}/>
+                          <DelBtn onClick={function() { confirm('Excluir este registro?', async function() { var ok = await onDelete(t.id); if (ok) toast('Removido', 'success'); else toast('Erro ao excluir. Tente de novo.', 'error'); }); }}/>
                         </div>
                       </div>
                     );
@@ -247,7 +247,7 @@ export default function TxView({ type, tx, products, onAdd, onEdit, onDelete, on
                   if (p && p.stock != null) onDeductStock(p.id, it.qty);
                 });
               }
-              toast('Venda registrada!');
+              toast('Venda registrada!', 'success');
               return true;
             }}
             onClose={function() { setModal(false); }}

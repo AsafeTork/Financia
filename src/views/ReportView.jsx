@@ -52,7 +52,7 @@ export default function ReportView({ tx, brand, toast, onNav, planInfo }) {
     var rows = sortedRows().map(function(t) {
       return [t.date, t.desc || '', (t.type === 'income' ? '+' : '-') + fmt(t.amount), (t.type === 'income' ? 'Entrada' : 'Saída'), (t.method || t.category || '')];
     });
-    if (kind === 'xls') { exportXLS({ filename: 'relatorio-' + month, headers: headers, rows: rows }); toast('Excel exportado!'); return; }
+    if (kind === 'xls') { exportXLS({ filename: 'relatorio-' + month, headers: headers, rows: rows }); toast('Excel exportado!', 'success'); return; }
     var ok = exportPDF({
       title: 'Relatório ' + monthLabel(month),
       brandName: (brand && brand.name) || 'Financia',

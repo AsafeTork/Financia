@@ -5,8 +5,8 @@ export default function GhTokenCard({ toast }) {
   const [tok, setTok] = useState(localStorage.getItem('nancia_gh_token') || '');
   const save = function() {
     const v = tok.trim();
-    if (v) { localStorage.setItem('nancia_gh_token', v); toast('Token salvo!'); }
-    else { localStorage.removeItem('nancia_gh_token'); toast('Token removido.'); }
+    if (v) { localStorage.setItem('nancia_gh_token', v); toast('Token salvo!', 'success'); }
+    else { localStorage.removeItem('nancia_gh_token'); toast('Token removido.', 'success'); }
   };
   return (
     <Card className="p-4 flex flex-col gap-2">

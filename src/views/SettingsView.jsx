@@ -73,7 +73,7 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
     setPwSaving(true);
     const res = await updatePassword(pwForm.newPw);
     if (res.error) toast('Erro ao alterar senha.', 'error');
-    else { toast('Senha alterada!'); setPwForm({newPw:'', confirm:''}); setPwModal(false); }
+    else { toast('Senha alterada!', 'success'); setPwForm({newPw:'', confirm:''}); setPwModal(false); }
     setPwSaving(false);
   };
 

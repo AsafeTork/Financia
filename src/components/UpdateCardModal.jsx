@@ -219,7 +219,7 @@ export default function UpdateCardModal({ brand, onClose, onChanged, toast }) {
       setConfirmRemove(false);
       onClose();
     } catch (err) {
-      if (toast) toast('Erro ao remover o cartão. Tente de novo.', 'error');
+      if (toast) toast('Erro ao remover o cartão: ' + (err && err.message ? err.message : 'tente de novo'), 'error');
       setRemoving(false);
     }
   };
