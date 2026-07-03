@@ -222,6 +222,243 @@ export default function Landing({ onEnter }) {
         </div>
       </section>
 
+      {/* PREVIEW 1: Dashboard financeiro interativo */}
+      <section ref={useScrollReveal()} className="max-w-6xl mx-auto px-5 py-14 scroll-reveal">
+        <div className="text-center mb-10">
+          <p className="text-xs font-bold uppercase tracking-widest" style={{ color: ACCENT }}>Preview ao vivo</p>
+          <h2 className="font-display font-semibold mt-2" style={{ color: INK, fontSize: 'clamp(1.75rem, 4vw, 2.75rem)', letterSpacing: '-1px', lineHeight: 1.1 }}>Seu painel financeiro em tempo real</h2>
+          <p className="mt-2 text-sm" style={{ color: MUTED }}>Passe o mouse nos cards para interagir.</p>
+        </div>
+        <div className="grid md:grid-cols-4 gap-4 mb-4">
+          {[
+            { label: 'Receita do mês', value: 'R$ 14.200', change: '+12%', color: ACCENT },
+            { label: 'Despesas', value: 'R$ 5.780', change: '-8%', color: SKY },
+            { label: 'Lucro líquido', value: 'R$ 8.420', change: '+18%', color: MINT },
+            { label: 'Meta realizada', value: '76%', change: null, color: BRAND },
+          ].map(function(m, i) {
+            return (
+              <div key={'kpi-' + i} className="preview-card rounded-2xl p-5 cursor-default" style={{ background: '#fff', border: '1px solid rgba(10,37,64,0.08)', boxShadow: '0 2px 10px rgba(10,37,64,0.04)' }}>
+                <p className="text-xs font-medium" style={{ color: MUTED }}>{m.label}</p>
+                <p className="font-display font-semibold tabular mt-1" style={{ color: INK, fontSize: '1.3rem', letterSpacing: '-0.3px' }}>{m.value}</p>
+                {m.change && (
+                  <span className="inline-block mt-1 text-xs font-bold px-2 py-0.5 rounded-full preview-chip" style={{ background: 'rgba(15,157,108,0.1)', color: m.color }}>{m.change}</span>
+                )}
+              </div>
+            );
+          })}
+        </div>
+        <div className="preview-card rounded-2xl p-6 grid md:grid-cols-3 gap-6" style={{ background: '#fff', border: '1px solid rgba(10,37,64,0.08)', boxShadow: '0 2px 10px rgba(10,37,64,0.04)' }}>
+          <div className="md:col-span-2">
+            <p className="text-xs font-semibold mb-3" style={{ color: MUTED }}>Evolução de receita (últimos 7 dias)</p>
+            <div className="flex items-end gap-2 h-36">
+              {[35, 48, 32, 62, 55, 78, 92].map(function(h, i) {
+                return (
+                  <div key={'ch-' + i} className="flex-1 flex flex-col items-center gap-1">
+                    <div className="w-full preview-bar-live rounded-t-md" style={{ height: h + '%', background: i === 6 ? ACCENT : (i % 3 === 0 ? SKY : 'rgba(0,47,89,0.12)'), animationDelay: (i * 0.3) + 's', transition: 'background 0.3s' }}
+                      onMouseEnter={function(e) { e.target.style.background = BRAND; }}
+                      onMouseLeave={function(e) { e.target.style.background = i === 6 ? ACCENT : (i % 3 === 0 ? SKY : 'rgba(0,47,89,0.12)'); }}
+                    />
+                    <span className="text-[10px] tabular" style={{ color: MUTED }}>{['Seg','Ter','Qua','Qui','Sex','Sab','Dom'][i]}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          <div className="flex flex-col gap-3">
+            <p className="text-xs font-semibold" style={{ color: MUTED }}>Resumo rápido</p>
+            <div className="flex-1 flex flex-col justify-center gap-3">
+              <div className="tx-row-shimmer rounded-xl px-4 py-3" style={{ background: WARM }}>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-semibold" style={{ color: INK }}>Vendas do dia</p>
+                    <p className="text-xs" style={{ color: MUTED }}>12 pedidos</p>
+                  </div>
+                  <span className="text-sm font-bold tabular" style={{ color: ACCENT }}>R$ 2.340</span>
+                </div>
+              </div>
+              <div className="tx-row-shimmer rounded-xl px-4 py-3" style={{ background: WARM }}>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-semibold" style={{ color: INK }}>Ticket médio</p>
+                    <p className="text-xs" style={{ color: MUTED }}>últimos 30 dias</p>
+                  </div>
+                  <span className="text-sm font-bold tabular" style={{ color: BRAND }}>R$ 195</span>
+                </div>
+              </div>
+              <div className="tx-row-shimmer rounded-xl px-4 py-3" style={{ background: WARM }}>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-semibold" style={{ color: INK }}>Clientes ativos</p>
+                    <p className="text-xs" style={{ color: MUTED }}>este mês</p>
+                  </div>
+                  <span className="text-sm font-bold tabular" style={{ color: '#0d9488' }}>47</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* PREVIEW 2: Transações e extrato */}
+      <section ref={useScrollReveal()} className="max-w-6xl mx-auto px-5 py-14 scroll-reveal">
+        <div className="text-center mb-10">
+          <p className="text-xs font-bold uppercase tracking-widest" style={{ color: ACCENT }}>Organização total</p>
+          <h2 className="font-display font-semibold mt-2" style={{ color: INK, fontSize: 'clamp(1.75rem, 4vw, 2.75rem)', letterSpacing: '-1px', lineHeight: 1.1 }}>Cada centavo registrado, cada categoria no lugar</h2>
+        </div>
+        <div className="grid md:grid-cols-2 gap-5">
+          <div className="preview-card rounded-2xl p-6" style={{ background: '#fff', border: '1px solid rgba(10,37,64,0.08)', boxShadow: '0 2px 10px rgba(10,37,64,0.04)' }}>
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-xs font-semibold" style={{ color: MUTED }}>Últimas movimentações</p>
+              <span className="text-xs font-medium preview-badge px-2.5 py-1 rounded-full" style={{ background: 'rgba(110,198,200,0.12)', color: SKY }}>Ao vivo</span>
+            </div>
+            <div className="flex flex-col gap-2">
+              {[
+                { desc: 'Venda balcão', cat: 'Vendas', val: '+R$ 450', type: 'gain' },
+                { desc: 'Compra insumos', cat: 'Custos', val: '-R$ 180', type: 'loss' },
+                { desc: 'Reposição estoque', cat: 'Custos', val: '-R$ 320', type: 'loss' },
+                { desc: 'Serviço realizado', cat: 'Serviços', val: '+R$ 890', type: 'gain' },
+                { desc: 'Venda online', cat: 'Vendas', val: '+R$ 1.200', type: 'gain', last: true },
+              ].map(function(t, i) {
+                return (
+                  <div key={'tx-' + i} className="flex items-center justify-between px-3 py-2.5 rounded-xl transition hover:-translate-y-0.5" style={{ background: t.type === 'gain' ? 'rgba(15,157,108,0.04)' : 'rgba(225,29,72,0.03)', cursor: 'default', borderBottom: i < 4 ? '1px solid rgba(10,37,64,0.04)' : 'none' }}>
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: t.type === 'gain' ? 'rgba(15,157,108,0.1)' : 'rgba(225,29,72,0.08)' }}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={t.type === 'gain' ? '#0f9d6c' : '#e11d48'} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d={t.type === 'gain' ? 'M5 15l7-7 7 7' : 'M19 9l-7 7-7-7'} /></svg>
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold truncate" style={{ color: INK }}>{t.desc}</p>
+                        <p className="text-xs truncate" style={{ color: MUTED }}>{t.cat}</p>
+                      </div>
+                    </div>
+                    <span className="text-sm font-bold tabular flex-shrink-0 ml-2" style={{ color: t.type === 'gain' ? '#0f9d6c' : '#e11d48' }}>{t.val}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          <div className="flex flex-col gap-4">
+            <div className="preview-card rounded-2xl p-5" style={{ background: '#fff', border: '1px solid rgba(10,37,64,0.08)', boxShadow: '0 2px 10px rgba(10,37,64,0.04)' }}>
+              <p className="text-xs font-semibold mb-3" style={{ color: MUTED }}>Distribuição por categoria</p>
+              {[
+                { label: 'Vendas', pct: 58, color: ACCENT },
+                { label: 'Serviços', pct: 22, color: SKY },
+                { label: 'Produtos', pct: 12, color: MINT },
+                { label: 'Outros', pct: 8, color: BRAND },
+              ].map(function(c, i) {
+                return (
+                  <div key={'cat-' + i} className="flex items-center gap-3 mb-2.5 last:mb-0">
+                    <span className="text-xs font-medium w-16" style={{ color: MUTED }}>{c.label}</span>
+                    <div className="flex-1 h-2 rounded-full" style={{ background: 'rgba(10,37,64,0.06)' }}>
+                      <div className="h-full rounded-full transition-all duration-500 preview-bar-live" style={{ width: c.pct + '%', background: c.color }} />
+                    </div>
+                    <span className="text-xs font-bold tabular" style={{ color: INK }}>{c.pct}%</span>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="preview-card rounded-2xl p-5" style={{ background: '#fff', border: '1px solid rgba(10,37,64,0.08)', boxShadow: '0 2px 10px rgba(10,37,64,0.04)' }}>
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-xs font-semibold" style={{ color: MUTED }}>Metas do mês</p>
+                <span className="text-xs font-bold" style={{ color: ACCENT }}>76%</span>
+              </div>
+              <div className="h-3 rounded-full mb-4" style={{ background: 'rgba(10,37,64,0.06)' }}>
+                <div className="h-full rounded-full preview-bar-live" style={{ width: '76%', background: 'linear-gradient(90deg, ' + ACCENT + ', ' + MINT + ')' }} />
+              </div>
+              <div className="grid grid-cols-3 gap-2 text-center">
+                {[{ v: 'R$ 14k', l: 'Receita' }, { v: 'R$ 6k', l: 'Despesas' }, { v: '47', l: 'Clientes' }].map(function(m, i) {
+                  return (
+                    <div key={'goal-' + i}>
+                      <p className="font-semibold tabular text-sm" style={{ color: INK }}>{m.v}</p>
+                      <p className="text-[10px]" style={{ color: MUTED }}>{m.l}</p>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* PREVIEW 3: Estoque, relatórios e indicadores */}
+      <section ref={useScrollReveal()} className="max-w-6xl mx-auto px-5 py-14 scroll-reveal">
+        <div className="text-center mb-10">
+          <p className="text-xs font-bold uppercase tracking-widest" style={{ color: ACCENT }}>Inteligência de negócio</p>
+          <h2 className="font-display font-semibold mt-2" style={{ color: INK, fontSize: 'clamp(1.75rem, 4vw, 2.75rem)', letterSpacing: '-1px', lineHeight: 1.1 }}>Saiba onde está ganhando e onde está perdendo</h2>
+        </div>
+        <div className="grid md:grid-cols-3 gap-4">
+          <div className="preview-card rounded-2xl p-5" style={{ background: '#fff', border: '1px solid rgba(10,37,64,0.08)' }}>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(15,157,108,0.1)' }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={ACCENT} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+              </div>
+              <div>
+                <p className="text-sm font-semibold" style={{ color: INK }}>Estoque</p>
+                <p className="text-xs" style={{ color: MUTED }}>Produtos cadastrados</p>
+              </div>
+            </div>
+            <div className="flex items-end justify-between mb-3">
+              <p className="font-display font-semibold tabular" style={{ color: INK, fontSize: '1.8rem' }}>234</p>
+              <span className="text-xs font-bold px-2 py-0.5 rounded-full preview-badge" style={{ background: 'rgba(239,68,68,0.1)', color: '#ef4444' }}>8 com estoque baixo</span>
+            </div>
+            <div className="h-2 rounded-full" style={{ background: 'rgba(10,37,64,0.06)' }}>
+              <div className="h-full rounded-full" style={{ width: '72%', background: ACCENT }} />
+            </div>
+            <p className="text-xs mt-1" style={{ color: MUTED }}>72% do estoque disponível</p>
+          </div>
+          <div className="preview-card rounded-2xl p-5" style={{ background: '#fff', border: '1px solid rgba(10,37,64,0.08)' }}>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(110,198,200,0.1)' }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={SKY} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+              </div>
+              <div>
+                <p className="text-sm font-semibold" style={{ color: INK }}>Relatórios</p>
+                <p className="text-xs" style={{ color: MUTED }}>Exporte em PDF e Excel</p>
+              </div>
+            </div>
+            <div className="flex flex-col gap-2">
+              {['Lucro líquido: R$ 8.420', 'Margem: 59%', 'Melhor dia: Sexta'].map(function(r, i) {
+                return (
+                  <div key={'rep-' + i} className="flex items-center gap-2 text-xs" style={{ color: INK }}>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={ACCENT} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+                    {r}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          <div className="preview-card rounded-2xl p-5" style={{ background: '#fff', border: '1px solid rgba(10,37,64,0.08)' }}>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(0,47,89,0.1)' }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={BRAND} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+              </div>
+              <div>
+                <p className="text-sm font-semibold" style={{ color: INK }}>Indicadores</p>
+                <p className="text-xs" style={{ color: MUTED }}>Decisões baseadas em dados</p>
+              </div>
+            </div>
+            <div className="space-y-2">
+              {[
+                { l: 'Ticket médio', v: 'R$ 195', p: 100 },
+                { l: 'Custo fixo', v: '32%', p: 32 },
+                { l: 'Inadimplência', v: '4%', p: 4 },
+              ].map(function(m, i) {
+                return (
+                  <div key={'ind-' + i}>
+                    <div className="flex justify-between text-xs mb-1">
+                      <span style={{ color: MUTED }}>{m.l}</span>
+                      <span className="font-semibold tabular" style={{ color: INK }}>{m.v}</span>
+                    </div>
+                    <div className="h-1.5 rounded-full" style={{ background: 'rgba(10,37,64,0.06)' }}>
+                      <div className="h-full rounded-full preview-bar-live" style={{ width: m.p + '%', background: i === 2 ? '#ef4444' : (i === 1 ? SKY : ACCENT) }} />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Features */}
       <section ref={featRef} className="max-w-6xl mx-auto px-5 py-14 scroll-reveal">
         <div className="max-w-xl mb-10">
