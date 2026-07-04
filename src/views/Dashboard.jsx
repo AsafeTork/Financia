@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { Card } from '../components/ui.jsx';
 import { KpiCard, BarChartSVG, UsageBar } from '../components/UsageBar.jsx';
 import { fmt, fmtDate, today, prevDays, brandAlpha } from '../lib/utils.js';
-import { PLAN_LIMITS, effectivePlan } from '../lib/constants.js';
+import { PLAN_LIMITS, effectivePlan, PLAN_THEMES } from '../lib/constants.js';
 import { askAI } from '../lib/aiClient.js';
 
 export default function Dashboard({ tx, products, brand, onNav, planInfo, lossesCount, onUpgrade }) {
@@ -217,19 +217,20 @@ export default function Dashboard({ tx, products, brand, onNav, planInfo, losses
       )}
 
       {/* ─── IA ─── */}
-      <Card className="p-5">
+      <Card className="p-5 card-plan-glow">
         <div className="flex items-center justify-between mb-3 gap-2">
           <div className="flex items-center gap-2 min-w-0">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={brand.color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={canUseAI ? 'var(--plan-accent, ' + brand.color + ')' : brand.color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0">
               <path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9L12 3z"/>
             </svg>
             <p className="text-sm font-semibold" style={{color:'var(--text-main)'}}>Insights da IA</p>
-            {!canUseAI && <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{background: brandAlpha(brand.color, 0.10), color: brand.color}}>PRO</span>}
+            {!canUseAI && <span className="text-[10px] font-bold px-2 py-0.5 rounded-full badge-plan">PRO</span>}
+            {canUseAI && plan === 'premium' && <span className="text-[10px] font-bold px-2 py-0.5 rounded-full badge-plan">PREMIUM</span>}
           </div>
           {canUseAI && (
             <button onClick={gerarInsights} disabled={aiLoading}
-              className="text-xs font-semibold px-3 py-2 rounded-lg text-white transition hover:opacity-90 disabled:opacity-50 flex-shrink-0"
-              style={{background: brand.color}}>
+              className="text-xs font-semibold px-3 py-2 rounded-lg text-white transition hover:opacity-90 disabled:opacity-50 flex-shrink-0 btn-plan-grad"
+              style={{background: 'var(--btn-grad, ' + brand.color + ')'}}>
               {aiLoading ? 'Analisando...' : (aiText ? 'Atualizar' : 'Gerar analise')}
             </button>
           )}
