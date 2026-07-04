@@ -38,7 +38,7 @@ export default function Sidebar({ view, onNav, brand, open, onClose, isAdmin }) 
       {open && <div className="fixed inset-0 z-30 bg-black bg-opacity-50 lg:hidden" onClick={onClose}/>}
       <aside
         className={'fixed top-0 left-0 h-full w-64 z-40 flex flex-col transition-transform duration-300 ' + (open ? 'translate-x-0' : '-translate-x-full') + ' lg:translate-x-0'}
-        style={{background: brand.color || '#0f1c2e'}}>
+        style={{background: 'var(--sidebar-bg, ' + (brand.color || '#0f1c2e') + ')'}}>
 
         <div className="px-5 py-5 flex items-center gap-3" style={{borderBottom:'1px solid rgba(255,255,255,0.08)'}}>
           {brand.logo_url

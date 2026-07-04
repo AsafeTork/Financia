@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect, useRef, lazy, Suspense } from 'react';
 import { flushSync } from 'react-dom';
 import { brandAlpha, deriveCores } from './lib/utils.js';
-import { INIT_BRAND, INIT_PLAN, atLimit, limitFor, planVisualDefaults, WHITE_LABEL_VISUAL_DEFAULT, PLAN_VISUAL_DEFAULTS } from './lib/constants.js';
+import { INIT_BRAND, INIT_PLAN, atLimit, limitFor, effectivePlan, planVisualDefaults, WHITE_LABEL_VISUAL_DEFAULT, PLAN_VISUAL_DEFAULTS } from './lib/constants.js';
 import { useTx } from './hooks/useTx.js';
 import { useProducts } from './hooks/useProducts.js';
 import { useLosses } from './hooks/useLosses.js';
@@ -148,6 +148,27 @@ export default function App() {
     el.style.setProperty('--brand-grad', 'linear-gradient(135deg, ' + primary + ' 0%, ' + accent + ' 100%)');
   }, []);
   useEffect(function() { applyBrandVars(appBrand); }, [appBrand]);
+
+  // Aplica data-plan no <html> para ativar as CSS vars de tema por plano.
+  // Muda instantaneamente quando o plano muda (sem refresh).
+  useEffect(function() {
+    var plan = effectivePlan(planInfo);
+    var el = document.documentElement;
+    el.setAttribute('data-plan', plan);
+    // Toast elegante quando o plano muda
+    if (plan !== 'free' && session) {
+      var prev = el.getAttribute('data-plan-prev');
+      if (prev && prev !== plan) {
+        var msg = plan === 'premium'
+          ? 'Seu plano foi atualizado para Premium. Sua experiencia executiva ja esta disponivel.'
+          : 'Seu plano foi atualizado para Pro. Sua nova experiencia ja esta disponivel.';
+        toast(msg, 'success');
+      }
+      el.setAttribute('data-plan-prev', plan);
+    } else {
+      el.setAttribute('data-plan-prev', plan);
+    }
+  }, [planInfo, session]);
 
   // Tema customizado só dentro da área logada; login/landing ficam no padrão.
   useEffect(function() {

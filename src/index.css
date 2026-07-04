@@ -174,6 +174,95 @@ input:focus, select:focus, textarea:focus {
 @keyframes slideInOver  { from { transform: translateX(100%); } to { transform: translateX(0); } }
 @keyframes slideOldUnder { from { transform: translateX(0); filter: brightness(1); } to { transform: translateX(-8%); filter: brightness(0.9); } }
 
+/* ===========================================
+   PLAN THEMES — Experiencia visual por plano
+   data-plan="free|pro|premium" no <html>
+   Controla sofisticacao, sombras, glow, badges.
+   White-label continua controlando --brand.
+   =========================================== */
+
+/* PRO — Indigo/Royal, tecnológico, Linear+Stripe */
+[data-plan="pro"] {
+  --shadow-sm:  0 1px 3px rgba(37,99,235,0.05), 0 1px 2px rgba(37,99,235,0.03);
+  --shadow-md:  0 4px 12px rgba(37,99,235,0.07), 0 2px 4px rgba(37,99,235,0.04);
+  --shadow-lg:  0 10px 30px rgba(37,99,235,0.10), 0 4px 8px rgba(37,99,235,0.05);
+  --glow-primary: rgba(37,99,235,0.12);
+  --glow-card: rgba(37,99,235,0.04);
+  --plan-badge: #2563EB;
+  --plan-badge-bg: rgba(37,99,235,0.10);
+  --plan-accent: #4F46E5;
+  --btn-grad: linear-gradient(135deg, #2563EB 0%, #4F46E5 100%);
+  --sidebar-bg: linear-gradient(180deg, #1e1b4b 0%, #172554 50%, #1e1b4b 100%);
+}
+
+/* PREMIUM — Grafite/Dourado, executivo, Apple+Amex */
+[data-plan="premium"] {
+  --bg-page:    #0a0a0a;
+  --bg-card:    #161618;
+  --bg-input:   #1c1c1f;
+  --bg-subtle:  #111113;
+  --surface:    #161618;
+
+  --text-main:  #f5f5f0;
+  --text-sub:   #a0a0a0;
+  --text-muted: #6b6b6b;
+
+  --border:     #2a2a2e;
+  --border-md:  #3a3a3e;
+
+  --shadow-sm:  0 1px 3px rgba(0,0,0,0.4), 0 1px 2px rgba(212,175,106,0.03);
+  --shadow-md:  0 4px 12px rgba(0,0,0,0.45), 0 2px 4px rgba(212,175,106,0.04);
+  --shadow-lg:  0 10px 30px rgba(0,0,0,0.55), 0 4px 8px rgba(212,175,106,0.05);
+
+  --glow-primary: rgba(212,175,106,0.10);
+  --glow-card: rgba(212,175,106,0.03);
+  --plan-badge: #D4AF6A;
+  --plan-badge-bg: rgba(212,175,106,0.12);
+  --plan-accent: #D4AF6A;
+  --btn-grad: linear-gradient(135deg, #1A1A2E 0%, #0F172A 100%);
+  --sidebar-bg: linear-gradient(180deg, #0F172A 0%, #1A1A2E 50%, #0F172A 100%);
+}
+
+/* Premium dark overrides para classes Tailwind */
+[data-plan="premium"] body        { background: #0a0a0a; }
+[data-plan="premium"] .bg-white   { background-color: #161618 !important; }
+[data-plan="premium"] .bg-gray-50 { background-color: #111113 !important; }
+[data-plan="premium"] .bg-gray-100{ background-color: #0a0a0a !important; }
+[data-plan="premium"] .border-gray-100,
+[data-plan="premium"] .border-gray-200 { border-color: #2a2a2e !important; }
+[data-plan="premium"] .divide-gray-50 > * + * { border-color: #2a2a2e !important; }
+[data-plan="premium"] .text-gray-900 { color: #f5f5f0 !important; }
+[data-plan="premium"] .text-gray-800 { color: #e0e0e0 !important; }
+[data-plan="premium"] .text-gray-700 { color: #b0b0b0 !important; }
+[data-plan="premium"] .text-gray-600 { color: #a0a0a0 !important; }
+[data-plan="premium"] .text-gray-500 { color: #7a7a7a !important; }
+[data-plan="premium"] .text-gray-400 { color: #6b6b6b !important; }
+[data-plan="premium"] input,
+[data-plan="premium"] select,
+[data-plan="premium"] textarea {
+  background-color: #1c1c1f !important;
+  color: #f5f5f0 !important;
+  border-color: #3a3a3e !important;
+}
+[data-plan="premium"] .hover\\:bg-gray-50:hover,
+[data-plan="premium"] .hover\\:bg-gray-100:hover { background-color: #111113 !important; }
+
+/* Botão com gradiente do plano (quando ativo) */
+.btn-plan-grad {
+  background: var(--btn-grad, var(--brand));
+}
+
+/* Card com glow sutil do plano */
+.card-plan-glow {
+  box-shadow: var(--shadow-sm), 0 0 0 1px var(--glow-card, transparent);
+}
+
+/* Badge do plano */
+.badge-plan {
+  color: var(--plan-badge, #6b7280);
+  background: var(--plan-badge-bg, rgba(107,114,128,0.10));
+}
+
 /* ── Botao duplo de exportacao: [PDF] vermelho | [Excel] verde ── */
 .exp-split {
   display: inline-flex;

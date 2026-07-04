@@ -92,7 +92,7 @@ export const Spin = function({ white, size }) {
 };
 
 var BTN_VARIANTS = {
-  primary:   'text-white hover:brightness-110 disabled:opacity-40',
+  primary:   'text-white hover:brightness-110 disabled:opacity-40 btn-plan-grad',
   secondary: 'border border-[var(--border)] text-[var(--text-sub)] bg-[var(--bg-card)] hover:bg-[var(--bg-subtle)] disabled:opacity-40',
   ghost:     'text-[var(--text-sub)] hover:bg-[var(--bg-subtle)] disabled:opacity-40',
   danger:    'text-white bg-[#dc2626] hover:bg-[#b91c1c] disabled:opacity-40',
