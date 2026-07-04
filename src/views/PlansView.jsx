@@ -58,7 +58,7 @@ function PlanBadge({ planId }) {
   return null;
 }
 
-function PlanCard({ plan, brand, cta, onAction, open, onToggle, planExpiresAt, currentPlanId }) {
+function PlanCard({ plan, brand, cta, onAction, planExpiresAt, currentPlanId }) {
   var popular = !!plan.popular;
   var isFree = plan.id === 'free';
   var isPro = plan.id === 'pro';
@@ -66,8 +66,6 @@ function PlanCard({ plan, brand, cta, onAction, open, onToggle, planExpiresAt, c
   var priceNote = isFree ? 'gratis para sempre, sem cartao' : 'cobrado mensalmente, cancele quando quiser';
   var current = cta.kind === 'current';
   var kind = cta.kind;
-
-  // Classe de identidade do card pelo plano
   var cardIdentity = 'card-plan-' + plan.id;
 
   return (
@@ -76,13 +74,11 @@ function PlanCard({ plan, brand, cta, onAction, open, onToggle, planExpiresAt, c
       border: '1px solid var(--border)',
       boxShadow: current ? 'var(--plan-shadow-elevated)' : 'var(--plan-shadow)'
     }}>
-      {/* Faixa superior do plano */}
       {!isFree && (
         <div className="h-1 w-full" style={{background: 'var(--plan-gradient, linear-gradient(90deg, ' + brand.color + ', ' + brand.color + '))'}}/>
       )}
 
       <div className="p-5 flex flex-col gap-4">
-        {/* Badge popular / plano atual */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             {!isFree && <PlanBadge planId={plan.id}/>}
@@ -100,30 +96,17 @@ function PlanCard({ plan, brand, cta, onAction, open, onToggle, planExpiresAt, c
           )}
         </div>
 
-        {/* Nome e tagline */}
-        <button type="button" onClick={onToggle} aria-expanded={open}
-          className="flex items-start justify-between gap-2 text-left w-full min-h-[44px]">
-          <div className="min-w-0">
-            <div className="flex items-center gap-2">
-              <p className="font-display text-xl font-bold truncate" style={{color:'var(--text-main)'}}>
-                {plan.name}
-              </p>
-              {isPremium && <CrownIcon className="w-5 h-5 flex-shrink-0" style={{color: 'var(--plan-gold, #D4AF6A)'}}/>}
-              {isPro && <SparkleIcon className="w-5 h-5 flex-shrink-0" style={{color: 'var(--plan-accent, #60A5FA)'}}/>}
-            </div>
-            <p className="text-xs mt-1" style={{color:'var(--text-sub)'}}>{plan.tagline}</p>
+        <div>
+          <div className="flex items-center gap-2">
+            <p className="font-display text-xl font-bold truncate" style={{color:'var(--text-main)'}}>
+              {plan.name}
+            </p>
+            {isPremium && <CrownIcon className="w-5 h-5 flex-shrink-0" style={{color: 'var(--plan-gold, #D4AF6A)'}}/>}
+            {isPro && <SparkleIcon className="w-5 h-5 flex-shrink-0" style={{color: 'var(--plan-accent, #60A5FA)'}}/>}
           </div>
-          <div className="flex items-center gap-2 flex-shrink-0">
-            {current && planExpiresAt && !isFree && (
-              <span className="text-[11px] font-medium px-2.5 py-1 rounded-full" style={{background:'#fef3c7', color:'#92400e'}}>
-                Expira em {fmtDate(planExpiresAt)}
-              </span>
-            )}
-            <svg className="w-4 h-4 transition-transform" style={{transform: open ? 'rotate(180deg)' : 'none', color:'var(--text-sub)'}} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7"/></svg>
-          </div>
-        </button>
+          <p className="text-xs mt-1" style={{color:'var(--text-sub)'}}>{plan.tagline}</p>
+        </div>
 
-        {/* Preco */}
         <div>
           <div className="flex items-end gap-1">
             <span className="font-display text-3xl font-bold" style={{color:'var(--text-main)'}}>
@@ -139,29 +122,26 @@ function PlanCard({ plan, brand, cta, onAction, open, onToggle, planExpiresAt, c
           <p className="text-xs mt-1.5" style={{color:'var(--text-sub)'}}>{priceNote}</p>
         </div>
 
-        {/* Features */}
-        {open && (
-          <div className="flex flex-col gap-2 pt-1">
-            {plan.features.map(function(f) {
-              var ladder = f.indexOf('Tudo do') === 0;
-              var iconColor = isPremium ? 'var(--plan-gold, #D4AF6A)' : isPro ? 'var(--plan-accent, #60A5FA)' : brand.color;
-              if (ladder) {
-                return (
-                  <div key={f} className="flex items-center gap-2 pb-1.5 mb-0.5" style={{borderBottom:'1px dashed var(--border)'}}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={iconColor} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
-                    <span className="text-sm font-bold" style={{color:'var(--text-main)'}}>{f}</span>
-                  </div>
-                );
-              }
+        <div className="flex flex-col gap-2 pt-1">
+          {plan.features.map(function(f) {
+            var ladder = f.indexOf('Tudo do') === 0;
+            var iconColor = isPremium ? 'var(--plan-gold, #D4AF6A)' : isPro ? 'var(--plan-accent, #60A5FA)' : brand.color;
+            if (ladder) {
               return (
-                <div key={f} className="flex items-start gap-2">
-                  <CheckIcon color={iconColor}/>
-                  <span className="text-sm" style={{color:'var(--text-main)'}}>{f}</span>
+                <div key={f} className="flex items-center gap-2 pb-1.5 mb-0.5" style={{borderBottom:'1px dashed var(--border)'}}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={iconColor} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+                  <span className="text-sm font-bold" style={{color:'var(--text-main)'}}>{f}</span>
                 </div>
               );
-            })}
-          </div>
-        )}
+            }
+            return (
+              <div key={f} className="flex items-start gap-2">
+                <CheckIcon color={iconColor}/>
+                <span className="text-sm" style={{color:'var(--text-main)'}}>{f}</span>
+              </div>
+            );
+          })}
+        </div>
 
         {/* Botoes de acao */}
         {current && (
@@ -207,9 +187,6 @@ export default function PlansView({ brand, planInfo, toast, onNav, isAdmin }) {
   var cancellingState = useState(false);
   var cancelling = cancellingState[0];
   var setCancelling = cancellingState[1];
-  var openState = useState(plan && plan !== 'free' ? plan : 'pro');
-  var openPlan = openState[0];
-  var setOpenPlan = openState[1];
   var customCents = planInfo && planInfo.custom_price_cents ? planInfo.custom_price_cents : 0;
   var customProCents = planInfo && planInfo.custom_price_cents_pro ? planInfo.custom_price_cents_pro : 0;
   var customPremiumCents = planInfo && planInfo.custom_price_cents_premium ? planInfo.custom_price_cents_premium : 0;
@@ -328,7 +305,6 @@ export default function PlansView({ brand, planInfo, toast, onNav, isAdmin }) {
           if (p.id === 'premium' && customPremiumCents > 0) { originalPrice = p.price; price = customPremiumCents / 100; }
           var planCard = Object.assign({}, p, { price: price, original_price: originalPrice });
           return <PlanCard key={p.id} plan={planCard} brand={brand} cta={planChangeCta(plan, p.id)} onAction={handleAction}
-            open={openPlan === p.id} onToggle={function() { setOpenPlan(openPlan === p.id ? null : p.id); }}
             planExpiresAt={planInfo && planInfo.plan_expires_at} currentPlanId={plan}/>;
         })}
       </div>
