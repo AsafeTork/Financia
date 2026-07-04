@@ -101,24 +101,35 @@ export default function Dashboard({ tx, products, brand, onNav, planInfo, losses
         <div className="rounded-[20px] p-5 sm:p-6 flex flex-col gap-5" style={{background:'var(--bg-card)', border:'1px solid var(--border)', boxShadow:'var(--shadow-sm)'}}>
           <div>
             <p className="font-display text-lg font-semibold" style={{color:'var(--text-main)'}}>Bem-vindo ao Financia</p>
-            <p className="text-sm mt-1" style={{color:'var(--text-sub)'}}>Em 3 passos o controle do seu negocio comeca a funcionar.</p>
+            <p className="text-sm mt-1" style={{color:'var(--text-sub)'}}>Siga os passos abaixo para comecar a controlar seu negocio.</p>
           </div>
-          <div className="flex flex-col gap-2.5">
+
+          {/* Barra de progresso */}
+          <div className="flex items-center gap-2">
+            <div className="flex-1 h-2 rounded-full overflow-hidden" style={{background:'var(--border)'}}>
+              <div className="h-full rounded-full transition-all duration-500" style={{width:'0%', background: brand.color}} />
+            </div>
+            <span className="text-xs font-bold tabular" style={{color:brand.color}}>0%</span>
+          </div>
+
+          <div className="flex flex-col gap-3">
             {[
-              {n:'1', t:'Cadastre seus produtos ou servicos', sub:'Defina precos, custos e controle de estoque', act:function() { onNav('inventory'); }, btn:'Cadastrar produtos'},
-              {n:'2', t:'Registre sua primeira venda', sub:'Multiplos itens, calculo automatico e baixa de estoque', act:function() { onNav('income'); }, btn:'Registrar venda'},
-              {n:'3', t:'Acompanhe o lucro aqui no painel', sub:'Graficos diarios, KPIs e relatorios para decidir melhor', act:null, btn:''}
-            ].map(function(step) {
+              {n:'1', title:'Cadastre seus produtos', sub:'Defina precos, custos e controle de estoque', nav:'inventory', btn:'Cadastrar' },
+              {n:'2', title:'Registre sua primeira venda', sub:'Multiplos itens, calculo automatico e baixa de estoque', nav:'income', btn:'Registrar' },
+              {n:'3', title:'Cadastre uma despesa', sub:'Descubra para onde vai seu dinheiro com categorias e fixos', nav:'expense', btn:'Registrar' },
+              {n:'4', title:'Veja seu primeiro relatorio', sub:'Exporte PDF e Excel com seus dados organizados', nav:'report', btn:'Ver' },
+            ].map(function(step, idx) {
+              var done = false;
               return (
-                <div key={step.n} className="flex items-start gap-3 rounded-xl px-4 py-3" style={{background:'var(--bg-subtle)'}}>
-                  <span className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0" style={{background: brand.color}}>{step.n}</span>
+                <div key={step.n} className="flex items-start gap-3 rounded-xl px-4 py-3 transition-all duration-200" style={{background: done ? 'rgba(59,191,160,0.06)' : 'var(--bg-subtle)'}}>
+                  <span className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0 transition-all duration-300" style={{background: done ? '#3bbfa0' : brand.color}}>
+                    {done ? <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"><path d="M5 13l4 4L19 7"/></svg> : step.n}
+                  </span>
                   <div className="flex-1 min-w-0">
-                    <span className="text-sm font-semibold block" style={{color:'var(--text-main)'}}>{step.t}</span>
+                    <span className="text-sm font-semibold block" style={{color:'var(--text-main)'}}>{step.title}</span>
                     <span className="text-xs block mt-0.5" style={{color:'var(--text-muted)'}}>{step.sub}</span>
                   </div>
-                  {step.act && (
-                    <button onClick={step.act} className="text-xs font-semibold px-3 py-2 rounded-lg flex-shrink-0 inline-flex items-center justify-center min-h-[44px] hover:brightness-110 transition" style={{background: brandAlpha(brand.color, 0.12), color: brand.color}}>{step.btn}</button>
-                  )}
+                  <button onClick={function() { onNav(step.nav); }} className="text-xs font-semibold px-3 py-2 rounded-lg flex-shrink-0 inline-flex items-center justify-center min-h-[44px] hover:brightness-110 transition" style={{background: brandAlpha(brand.color, 0.12), color: brand.color}}>{step.btn}</button>
                 </div>
               );
             })}
