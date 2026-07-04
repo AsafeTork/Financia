@@ -210,16 +210,33 @@ export default function InventoryView({ products, losses, onAddProduct, onEditPr
             </div>
           </div>
           {disp.length === 0 ? (
-            <div className="py-14 flex flex-col items-center gap-3 text-center px-6">
-              <div className="w-14 h-14 rounded-2xl flex items-center justify-center" style={{background: brandAlpha(brand.color, 0.08)}}>
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke={brand.color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <div className="py-12 flex flex-col items-center gap-5 text-center px-6">
+              <div className="w-16 h-16 rounded-2xl flex items-center justify-center" style={{background: brandAlpha(brand.color, 0.08)}}>
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke={brand.color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                 </svg>
               </div>
-              <p className="text-sm font-semibold text-gray-700">Nenhum produto cadastrado</p>
-              <p className="text-xs text-gray-400 max-w-xs leading-relaxed">Adicione produtos ou serviços com preço, custo e controle de estoque.</p>
+              <div>
+                <p className="text-sm font-semibold" style={{color:'var(--text-main)'}}>Nenhum produto cadastrado</p>
+                <p className="text-xs mt-1 max-w-xs" style={{color:'var(--text-muted)'}}>Adicione produtos ou servicos com preco, custo e controle de estoque.</p>
+              </div>
+              {/* Preview de como fica um produto */}
+              <div className="w-full max-w-xs rounded-2xl p-4 text-left opacity-50 select-none" style={{background:'var(--bg-subtle)', border:'1px dashed var(--border)'}}>
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <p className="text-sm font-semibold" style={{color:'var(--text-main)'}}>Caneca personalizada</p>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <span className="text-xs font-semibold tabular" style={{color:brand.color}}>R$ 35,00</span>
+                      <span className="text-xs" style={{color:'var(--text-muted)'}}>Custo R$ 18,00</span>
+                      <span className="text-xs font-semibold" style={{color:'#16a34a'}}>48% margem</span>
+                    </div>
+                  </div>
+                  <span className="text-xs font-semibold px-2 py-0.5 rounded-lg" style={{color:'#16a34a', background:'rgba(22,163,74,0.08)'}}>20 un</span>
+                </div>
+                <p className="text-[10px] mt-2" style={{color:'var(--text-muted)'}}>Exemplo de produto cadastrado com preco, custo e estoque</p>
+              </div>
               <Btn onClick={function() { dispatch({type:'OPEN_PM'}); }} className="mt-1" style={{background: brand.color}}>
-                + Adicionar produto
+                Adicionar primeiro produto
               </Btn>
             </div>
           ) : (
