@@ -109,9 +109,28 @@ export default function Login({ brand }) {
 
       {/* Painel de marca — metade esquerda (50/50 no desktop) */}
       <div className="hidden lg:flex flex-col justify-between w-1/2 p-12 relative overflow-hidden" style={{ background: brandColor }}>
-        <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(90% 70% at 80% 10%, ' + brandGlow + ', transparent 55%)' }} />
-        <div className="lp-orb" style={{ width: '320px', height: '320px', top: '-80px', right: '-60px', background: brandGlow, opacity: lightOnBrand ? 0.5 : 0.7 }} />
-        <div className="lp-orb lp-orb-2" style={{ width: '260px', height: '260px', bottom: '-70px', left: '-50px', background: brandGlow, opacity: lightOnBrand ? 0.35 : 0.5 }} />
+        {/* Glow layers */}
+        <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(80% 60% at 70% 20%, ' + brandGlow + ', transparent 60%)' }} />
+        <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(40% 50% at 20% 80%, rgba(110,198,200,0.08), transparent 60%)' }} />
+        {/* Orbes */}
+        <div className="lp-orb" style={{ width: '380px', height: '380px', top: '-100px', right: '-80px', background: brandGlow, opacity: 0.45 }} />
+        <div className="lp-orb lp-orb-2" style={{ width: '280px', height: '280px', bottom: '-80px', left: '-60px', background: 'rgba(59,191,160,0.08)', opacity: 0.4 }} />
+        {/* Dashboard desfocado no fundo */}
+        <div className="absolute inset-0 opacity-[0.06] pointer-events-none select-none" style={{ transform: 'scale(1.15)' }}>
+          <div className="p-8 pt-14">
+            <div className="rounded-2xl p-4 mb-3" style={{background:'rgba(255,255,255,0.15)'}}>
+              <div className="flex items-end gap-1.5 h-16 mb-1">
+                {[35, 48, 30, 62, 55, 78, 92].map(function(h, i) { return <div key={'lgh-' + i} className="flex-1 rounded-t-sm" style={{height:h+'%', background:'rgba(255,255,255,0.4)'}}/>; })}
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-2 mb-3">
+              {[0,1,2,3].map(function(i) { return <div key={'lkpi-' + i} className="rounded-xl h-14" style={{background:'rgba(255,255,255,0.15)'}}/>; })}
+            </div>
+            <div className="flex flex-col gap-1.5">
+              {[0,1,2].map(function(i) { return <div key={'ltx-' + i} className="rounded-xl h-8" style={{background:'rgba(255,255,255,0.12)'}}/>; })}
+            </div>
+          </div>
+        </div>
         <div className="relative anim-up">
           {brandLogo
             ? <img src={brandLogo} alt="logo" className="w-12 h-12 rounded-2xl object-cover" style={{ border: '2px solid ' + onBrandBorder }} />
@@ -150,12 +169,12 @@ export default function Login({ brand }) {
           </div>
 
           {/* Abas */}
-          <div className="flex p-1 rounded-2xl mb-7" style={{ background: '#f1efe9' }}>
+          <div className="flex p-1 rounded-2xl mb-7 anim-fade-up" style={{ background: 'rgba(10,37,64,0.06)' }}>
             {[['login', 'Entrar'], ['signup', 'Criar conta']].map(function(t) {
               var active = mode === t[0] && !resetMode;
               return (
                 <button key={t[0]} type="button" onClick={function() { switchMode(t[0]); }}
-                  className={'flex-1 min-h-[44px] rounded-xl text-sm font-semibold transition' + (active ? '' : ' hover:text-gray-600')}
+                  className={'flex-1 min-h-[44px] rounded-xl text-sm font-semibold transition-all duration-200' + (active ? '' : ' hover:text-[#002f59]')}
                   style={active ? { background: '#fff', color: brandText, boxShadow: '0 1px 4px rgba(0,0,0,0.08)' } : { color: '#7a8794' }}>
                   {t[1]}
                 </button>
