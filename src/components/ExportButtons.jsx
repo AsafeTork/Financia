@@ -1,4 +1,4 @@
-import React from 'react';
+
 
 // Exportacao padronizada em todo o app: um unico botao duplo, simetrico e
 // minimalista. Lado esquerdo vermelho [PDF], lado direito verde [Excel], com

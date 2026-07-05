@@ -10,9 +10,6 @@ var _resolvedKey = BUILD_KEY;
 var _keyPromise = null;
 var _stripePromise = null;
 
-// true quando ja temos a chave de build (sincrono). A resolucao em runtime usa getPublishableKey().
-export var stripeConfigured = !!BUILD_KEY;
-
 // Resolve a chave publicavel de forma assincrona (build primeiro, depois Supabase).
 export function getPublishableKey() {
   if (_resolvedKey) return Promise.resolve(_resolvedKey);

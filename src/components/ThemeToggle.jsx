@@ -1,4 +1,4 @@
-import React from 'react';
+
 
 // Botão de alternância de tema Dark/Light.
 // variant 'floating' = pílula sobre o conteúdo (desktop).

@@ -1,6 +1,4 @@
-import React from 'react';
 import { Card } from './ui.jsx';
-import { brandAlpha } from '../lib/utils.js';
 
 export function UsageBar({ label, used, limit, color, accentColor }) {
   var unlimited = limit === Infinity;

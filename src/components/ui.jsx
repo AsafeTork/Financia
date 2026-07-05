@@ -129,17 +129,6 @@ export const Badge = function({ color, bg, children }) {
   );
 };
 
-export const Divider = function({ label }) {
-  if (!label) return <div className="border-t border-gray-100 my-1"/>;
-  return (
-    <div className="flex items-center gap-3 my-1">
-      <div className="flex-1 border-t border-gray-100"/>
-      <span className="text-xs text-gray-400 font-medium flex-shrink-0">{label}</span>
-      <div className="flex-1 border-t border-gray-100"/>
-    </div>
-  );
-};
-
 export const Empty = function({ icon, title, sub, action, onAction, color }) {
   return (
     <div className="py-14 flex flex-col items-center gap-3 text-center px-6">

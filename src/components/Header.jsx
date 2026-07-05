@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { luminance } from '../lib/utils.js';
 import ThemeToggle from './ThemeToggle.jsx';
 

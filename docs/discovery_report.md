@@ -102,7 +102,7 @@ Cobertura de teste duplicada em dois diretórios:
 |---|---|---|
 | `supabase/migrations/20260609_fix_plan_protection.sql` (16) | Superada | CLAUDE.md: substituída pela trigger `prevent_plan_change`. **Migration aplicada — preservar histórico, não deletar.** |
 | `supabase/functions/create-checkout-session` | A aposentar | Roadmap substitui redirect por Elements. Remover só depois do novo fluxo validado (Bloco 2). |
-| `CLAUDE_HANDOFF.md` | Desatualizado | Diz "Stripe Fase 3 adiada" enquanto edge functions Stripe já existem. Tratar como histórico. |
+| ~~`CLAUDE_HANDOFF.md`~~ | Removido (P0-A) | Desatualizado — Stripe já evoluiu. Ver `docs/context_bootstrap.md` para contexto. |
 
 > Nenhum arquivo `.bak`, binário órfão ou dead-file evidente encontrado na varredura. CAN_DELETE = NENHUM nesta fase.
 

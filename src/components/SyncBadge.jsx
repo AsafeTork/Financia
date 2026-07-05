@@ -1,4 +1,4 @@
-import React from 'react';
+
 
 export default function SyncBadge({ status }) {
   if (status === 'idle') return null;

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { sb } from '../lib/supabase.js';
 import { ldb, syncAll, toLocal, setLastSync } from '../lib/db.js';
 import { now } from '../lib/utils.js';

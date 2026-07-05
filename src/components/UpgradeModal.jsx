@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { PRICING_PLANS, WHATSAPP, PLAN_KIND_LABEL } from '../lib/constants.js';
 import { brandAlpha } from '../lib/utils.js';
 

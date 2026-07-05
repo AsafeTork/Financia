@@ -1,5 +1,5 @@
-import React from 'react';
 
+import { safe } from '../lib/utils.js';
 var INK   = '#0a2540';
 var MUTED = '#5b6b7c';
 var WARM  = '#fbfaf7';

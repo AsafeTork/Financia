@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { PRICING_PLANS, WHATSAPP, waLink as makeWaLink } from '../lib/constants.js';
 import { useScrollReveal } from '../hooks/useScrollReveal.js';
 
 var NAVY = '#002f59';

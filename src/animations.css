@@ -23,39 +23,6 @@
   }
 }
 
-@keyframes fadeInLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes fadeInRight {
-  from {
-    opacity: 0;
-    transform: translateX(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes scaleUpIn {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
 /* === HOVER EFFECTS === */
 @keyframes hoverFloat {
   0%, 100% {
@@ -143,28 +110,6 @@
   }
   50% {
     text-shadow: 0 0 20px rgba(15, 157, 108, 0.8);
-  }
-}
-
-@keyframes shimmerText {
-  0% {
-    background-position: -1000px 0;
-  }
-  100% {
-    background-position: 1000px 0;
-  }
-}
-
-/* === GRADIENT ANIMATIONS === */
-@keyframes gradientShift {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
   }
 }
 
@@ -271,18 +216,6 @@
   animation: fadeInDown 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.anim-fade-left {
-  animation: fadeInLeft 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.anim-fade-right {
-  animation: fadeInRight 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.anim-scale-in {
-  animation: scaleUpIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
 /* Float suave ao hover */
 .hover-float:hover {
   animation: hoverFloat 0.6s ease-in-out infinite;
@@ -314,13 +247,6 @@
 .glow-text {
   animation: glow 2s ease-in-out infinite;
 }
-
-/* Entrada de grupos com delay (para stagger effect) */
-.stagger-item-1 { animation: fadeInUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s both; }
-.stagger-item-2 { animation: fadeInUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both; }
-.stagger-item-3 { animation: fadeInUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s both; }
-.stagger-item-4 { animation: fadeInUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.4s both; }
-.stagger-item-5 { animation: fadeInUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.5s both; }
 
 /* Scroll reveal (combinado com JS) */
 .scroll-reveal {
@@ -453,17 +379,6 @@ button:active {
 .preview-bar-live {
   transform-origin: bottom;
   animation: barPulse 2.4s ease-in-out infinite;
-}
-
-/* Transaction row shimmer */
-@keyframes txShimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-.tx-row-shimmer {
-  background: linear-gradient(90deg, transparent 0%, rgba(0,47,89,0.04) 50%, transparent 100%);
-  background-size: 200% 100%;
-  animation: txShimmer 3s ease-in-out infinite;
 }
 
 /* Preview chip pulse */

@@ -129,48 +129,6 @@ export const PRICING_PLANS = [
   },
 ];
 
-// Design Tokens por plano — controla a EXPERIENCIA visual (nao a cor da marca).
-// White-label controla --brand (cor principal). Plano controla sofisticacao.
-// Aplicado via data-plan="free|pro|premium" no <html>.
-export const PLAN_THEMES = {
-  free: {
-    name: 'Free',
-    badgeColor: '#6b7280',
-    badgeBg: 'rgba(107,114,128,0.10)',
-    btnGradient: null,
-    sidebarGlow: null,
-    cardGlow: null,
-    glowPrimary: null,
-    accent: '#1a6b5c',
-    sidebarBg: null,
-    isDark: false,
-  },
-  pro: {
-    name: 'Pro',
-    badgeColor: '#2563EB',
-    badgeBg: 'rgba(37,99,235,0.10)',
-    btnGradient: 'linear-gradient(135deg, #2563EB 0%, #4F46E5 100%)',
-    sidebarGlow: 'linear-gradient(180deg, #1e3a8a 0%, #1e1b4b 100%)',
-    cardGlow: 'rgba(37,99,235,0.06)',
-    glowPrimary: 'rgba(37,99,235,0.12)',
-    accent: '#2563EB',
-    sidebarBg: '#1e1b4b',
-    isDark: false,
-  },
-  premium: {
-    name: 'Premium',
-    badgeColor: '#D4AF6A',
-    badgeBg: 'rgba(212,175,106,0.10)',
-    btnGradient: 'linear-gradient(135deg, #1A1A2E 0%, #0F172A 100%)',
-    sidebarGlow: 'linear-gradient(180deg, #0F172A 0%, #1A1A2E 50%, #0F172A 100%)',
-    cardGlow: 'rgba(212,175,106,0.05)',
-    glowPrimary: 'rgba(212,175,106,0.10)',
-    accent: '#D4AF6A',
-    sidebarBg: '#0F172A',
-    isDark: false,
-  },
-};
-
 // Tema/base visual padrão por plano quando o cliente NÃO possui pacote white-label.
 // Sem pacote: usa identidade fixa por plano e não permite personalização manual.
 export const PLAN_VISUAL_DEFAULTS = {

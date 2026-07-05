@@ -96,9 +96,7 @@ Refactor por componente (não tudo de uma vez): **(1)** Auth/Settings, **(2)** P
 
 - `npm run lint` inexistente — não há linter configurado. QA deve usar build + verify_syntax + vitest.
 - Sem `tsconfig.json` — projeto é JS/JSX puro, sem TypeScript no front (Edge Functions são `.ts` Deno).
-- `NOTA_BLOCKED.md`: feature `isLandingPreview` nunca foi commitada (não é cache).
-- `CLAUDE_HANDOFF.md` (2026-06-15) descreve Stripe como "Fase 3 adiada", mas o repo JÁ tem 6 edge functions Stripe e deps `@stripe/*` instaladas → estado evoluiu; roadmap atual pede Stripe Elements ativo. Tratar handoff como histórico, roadmap como atual.
-
+- ~~`NOTA_BLOCKED.md`~~ + ~~`CLAUDE_HANDOFF.md`~~ + ~~`STRIPE_SETUP.md`~~: removidos (P0-A). CLAUDE_HANDOFF dizia Stripe "Fase 3 adiada" — desatualizado. Stripe já tem edge functions + deps `@stripe/*`. Roadmap atual pede Stripe Elements ativo.
 ---
 
 ```yaml
@@ -111,7 +109,7 @@ deleted_files: []
 warnings:
   - "Projeto nao tem script lint nem config eslint/prettier/biome (CLAUDE.md global cita npm run lint inexistente aqui)"
   - "Sem tsconfig.json — front e JS/JSX puro"
-  - "CLAUDE_HANDOFF.md desatualizado quanto a Stripe (diz Fase 3 adiada, mas edge functions Stripe ja existem)"
+  - "CLAUDE_HANDOFF.md + NOTA_BLOCKED.md + STRIPE_SETUP.md removidos (P0-A) — desatualizados"
 confidence: 100
 risk: Low
 next_agent: AGENT_DISCOVERY

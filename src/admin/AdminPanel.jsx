@@ -1,8 +1,8 @@
 ﻿import React, { useState, useEffect, useRef } from 'react';
-import { Card, Empty, Skeleton } from '../components/ui.jsx';
+import { Empty, Skeleton } from '../components/ui.jsx';
 import { sb } from '../lib/supabase.js';
 import { triggerApkBuild, fetchClients, deleteClient, fetchClientUsage, fetchDbStats, fetchStripeOverview } from '../lib/db.js';
-import { genPwd, luminance, lightenHex, fmtDate, formatBytes, dbUsage } from '../lib/utils.js';
+import { luminance, lightenHex, fmtDate, formatBytes, dbUsage } from '../lib/utils.js';
 import { GH_REPO, effectivePlan, PRICING_PLANS, countsAsRevenue, isAdminGranted, waLinkTo, APP_URL } from '../lib/constants.js';
 
 // Limite de armazenamento do plano Supabase (free = 500 MB). Base do alerta de uso.

@@ -127,19 +127,19 @@ describe('lightenHex bordas', function() {
 // 3) fmt + datas (property-based, anti-brittle)
 // ---------------------------------------------------------------------------
 describe('fmt formato monetario', function() {
-  var FMT_RE = /^R\$ -?[\d.]+,\d{2}$/;
+  var FMT_RE = /^R\$[ \xa0]-?[\d.]+,\d{2}$/;
   var nums = [0, 1, 5, 10, 99, 100, 1000, 1234.5, 1234.56, 9999999, 0.01, 0.1, 0.99, 50, 49.9, 99.9, 497, 12.34, 1000000, 7, 3.333, 250, 19.99, 2, 42, 8.5, 123456.78, 0.5, 33, 88.88];
   nums.forEach(function(n) {
     it('fmt(' + n + ') casa formato R$', function() {
       expect(FMT_RE.test(fmt(n))).toBe(true);
     });
   });
-  it('fmt(0) === "R$ 0,00"', function() { expect(fmt(0)).toBe('R$ 0,00'); });
-  it('fmt(null) === "R$ 0,00"', function() { expect(fmt(null)).toBe('R$ 0,00'); });
-  it('fmt(undefined) === "R$ 0,00"', function() { expect(fmt(undefined)).toBe('R$ 0,00'); });
+  it('fmt(0) === "R$ 0,00"', function() { expect(fmt(0)).toBe('R$\xa00,00'); });
+  it('fmt(null) === "R$ 0,00"', function() { expect(fmt(null)).toBe('R$\xa00,00'); });
+  it('fmt(undefined) === "R$ 0,00"', function() { expect(fmt(undefined)).toBe('R$\xa00,00'); });
   it('fmt sempre retorna string', function() { expect(typeof fmt(42)).toBe('string'); });
   it('fmt usa virgula decimal', function() { expect(fmt(1.5)).toContain(','); });
-  it('fmt(1000) agrupa milhar com ponto', function() { expect(fmt(1000)).toBe('R$ 1.000,00'); });
+  it('fmt(1000) agrupa milhar com ponto', function() { expect(fmt(1000)).toBe('R$\xa01.000,00'); });
 });
 
 describe('datas (propriedades)', function() {

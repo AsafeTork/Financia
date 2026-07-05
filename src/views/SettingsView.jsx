@@ -318,37 +318,6 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
 
             <Inp label="Nome do app" value={appForm.name} onChange={function(e) { setAppField('name', e.target.value); }} placeholder="Ex.: Minha Empresa"/>
 
-            <div className="grid grid-cols-2 gap-3">
-              {[{k:'color',l:'Cor principal'},{k:'color_secondary',l:'Cor secundária'},{k:'color_accent',l:'Cor de destaque'}].map(function(field) {
-                var val = appForm[field.k] || '#002f59';
-                return (
-                  <div key={field.k} className="flex flex-col gap-1.5">
-                    <span className="text-xs font-semibold" style={{color:'var(--text-sub)'}}>{field.l}</span>
-                    <div className="flex items-center gap-2 rounded-xl px-2 py-1.5" style={{border:'1px solid var(--border)'}}>
-                      <input type="color" value={val} onChange={function(e) { setAppField(field.k, e.target.value); }} className="w-9 h-9 rounded-lg cursor-pointer flex-shrink-0" style={{border:'none', background:'transparent'}}/>
-                      <span className="text-sm font-mono uppercase" style={{color:'var(--text-main)'}}>{val}</span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-            <div className="mt-3">
-              <label className="text-xs font-semibold" style={{color:'var(--text-sub)'}}>Tema base</label>
-              <div className="flex gap-2 mt-1.5">
-                <button type="button" onClick={function() { setAppField('theme', 'light'); }}
-                  className="flex-1 min-h-[44px] rounded-xl border text-sm font-semibold"
-                  style={appForm.theme === 'light' ? { borderColor: brand.color, color: brand.color, background:'var(--brand-soft)' } : { borderColor:'var(--border)', color:'var(--text-sub)' }}>
-                  Claro
-                </button>
-                <button type="button" onClick={function() { setAppField('theme', 'dark'); }}
-                  className="flex-1 min-h-[44px] rounded-xl border text-sm font-semibold"
-                  style={appForm.theme === 'dark' ? { borderColor: brand.color, color: brand.color, background:'var(--brand-soft)' } : { borderColor:'var(--border)', color:'var(--text-sub)' }}>
-                  Escuro
-                </button>
-              </div>
-            </div>
-          </div>
-
           <button onClick={saveAppearance} disabled={appSaving} className="w-full text-white rounded-xl py-3 text-sm font-semibold hover:opacity-90 flex items-center justify-center gap-2 disabled:opacity-40 min-h-12" style={{background: brand.color}}>
             {appSaving ? <Spin white/> : 'Salvar aparência'}
           </button>
@@ -372,6 +341,7 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg>
             Falar com o Desenvolvedor
           </a>
+        </div>
         </Card>
       )}
 

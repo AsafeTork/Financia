@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { brandAlpha } from '../lib/utils.js';
 
 var ITEMS = [

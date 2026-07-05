@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { Card } from '../components/ui.jsx';
 import { KpiCard, BarChartSVG, UsageBar } from '../components/UsageBar.jsx';
 import { fmt, fmtDate, today, prevDays, brandAlpha } from '../lib/utils.js';
-import { PLAN_LIMITS, effectivePlan, PLAN_THEMES } from '../lib/constants.js';
+import { PLAN_LIMITS, effectivePlan } from '../lib/constants.js';
 import { askAI } from '../lib/aiClient.js';
 
 export default function Dashboard({ tx, products, brand, onNav, planInfo, lossesCount, onUpgrade }) {

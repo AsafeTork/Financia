@@ -1,5 +1,5 @@
 ﻿import React, { useState, useMemo } from 'react';
-import { Card, Inp, NumInp, Sel, Modal, EditBtn, DelBtn, Spin, Btn, PageHead, Empty } from '../components/ui.jsx';
+import { Card, Inp, NumInp, Sel, Modal, EditBtn, DelBtn, Btn, PageHead } from '../components/ui.jsx';
 import { SaleForm } from '../components/SaleForm.jsx';
 import ExportButtons from '../components/ExportButtons.jsx';
 import { fmt, fmtDate, today, safe, uid, brandAlpha } from '../lib/utils.js';

@@ -18,12 +18,15 @@ export const safe = function(s) {
       return safe(s());
     } catch (e) {
       s = (e && e.message) || e || '';
+      var m = String(s || '');
+      if (m.includes('<') || m.includes('>') || m.includes('"') || m.toLowerCase().includes('javascript:')) {
+        return '';
+      }
+      return m.trim().slice(0, 200);
     }
   }
   var msg = String(s || '');
-  if (msg.includes('<') || msg.includes('>') || msg.includes('"') || msg.toLowerCase().includes('javascript:')) {
-    return '';
-  }
+  msg = msg.replace(/[<>"]/g, '').replace(/javascript:/gi, '');
   return msg.trim().slice(0, 200);
 };
 export const isUrl = function(s) { return !!(s && (s.startsWith('http') || s.startsWith('data:') || s.startsWith('/'))); };
@@ -36,9 +39,6 @@ export const luminance = function(hex) {
   var toLinear = function(v) { v = v / 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); };
   return 0.2126 * toLinear(c.r) + 0.7152 * toLinear(c.g) + 0.0722 * toLinear(c.b);
 };
-
-// Alias para compatibilidade e clareza semântica
-export const calculateLuminosity = luminance;
 
 // Cor de texto legivel SOBRE um fundo solido `hex` (branco ou tinta escura).
 export const onColor = function(hex) {

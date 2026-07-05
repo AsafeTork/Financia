@@ -87,7 +87,7 @@ export function registerSW() {
 var deferredPrompt = null;
 var installListeners = [];
 
-export function isStandalone() {
+function isStandalone() {
   if (typeof window === 'undefined') return false;
   if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) return true;
   return navigator.standalone === true;

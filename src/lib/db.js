@@ -52,7 +52,7 @@ export const setLastSync = function(ts, uid) {
   return ldb.meta.put({ key: key, val: ts });
 };
 
-export const syncTable = async function(uid, table, ldbTable, mapLocal) {
+const syncTable = async function(uid, table, ldbTable, mapLocal) {
   if (!navigator.onLine) return true;
   const lastSync = await getLastSync(uid);
   const fields = FIELD_MAP[table] || [];
@@ -122,7 +122,7 @@ export const syncTable = async function(uid, table, ldbTable, mapLocal) {
 
 const PROFILE_WRITE_FIELDS = ['user_id','name','logo','color','color_secondary','color_accent','theme','logo_url'];
 
-export const syncProfiles = async function(uid) {
+const syncProfiles = async function(uid) {
   if (!navigator.onLine) return true;
   const unsynced = await ldb.profiles.where('user_id').equals(uid).and(r => r._synced === 0).toArray();
   for (const row of unsynced) {
@@ -231,14 +231,6 @@ export const setClientWhiteLabel = async function(targetUserId, enabled) {
 export const deleteClient = async function(uid) {
   try {
     const { error } = await sb.rpc('admin_delete_client', { target_uid: uid });
-    if (error) throw error;
-    return true;
-  } catch (_) { return false; }
-};
-
-export const clearClientData = async function(uid, tables) {
-  try {
-    const { error } = await sb.rpc('admin_clear_client_data', { a_uid: uid, b_tables: tables });
     if (error) throw error;
     return true;
   } catch (_) { return false; }

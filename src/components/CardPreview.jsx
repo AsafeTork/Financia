@@ -1,4 +1,3 @@
-import React from 'react';
 import { formatCardLabel } from '../lib/stripe.js';
 import CardBrandIcon from './CardBrandIcon.jsx';
 
