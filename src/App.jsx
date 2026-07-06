@@ -186,6 +186,17 @@ export default function App() {
     return function() { delete window.__financia_reload_plan; };
   }, [session, loadData]);
 
+  // Handlers como useCallback — PRECISAM vir antes dos early returns
+  // para nao violar as regras dos hooks (React error #310).
+  const handleCloseSidebar   = useCallback(function() { setSidebarOpen(false); }, []);
+  const handleOpenSidebar    = useCallback(function() { setSidebarOpen(true); }, []);
+  const handleUpgrade        = useCallback(function() { navTo('planos'); }, [navTo]);
+  const handleDeductStock    = useCallback(function(id, qty) { adjustStock(id, -qty); }, [adjustStock]);
+  const handleConfirmOk      = useCallback(function() { confirmData.onOk(); setConfirmData(null); }, [confirmData]);
+  const handleCancel         = useCallback(function() { setConfirmData(null); }, []);
+  const handleCloseUpgrade   = useCallback(function() { setShowUpgrade(false); }, []);
+  const handleNav            = useCallback(function(v) { navTo(v); }, [navTo]);
+
   if (appLoading) return <Loader/>;
 
   // Páginas legais — acessíveis sem autenticação
@@ -249,15 +260,6 @@ export default function App() {
   }
 
   var currentView = (view === 'email' && !isAdminDB) ? 'dashboard' : view;
-
-  const handleCloseSidebar   = useCallback(function() { setSidebarOpen(false); }, []);
-  const handleOpenSidebar    = useCallback(function() { setSidebarOpen(true); }, []);
-  const handleUpgrade        = useCallback(function() { navTo('planos'); }, [navTo]);
-  const handleDeductStock    = useCallback(function(id, qty) { adjustStock(id, -qty); }, [adjustStock]);
-  const handleConfirmOk      = useCallback(function() { confirmData.onOk(); setConfirmData(null); }, [confirmData]);
-  const handleCancel         = useCallback(function() { setConfirmData(null); }, []);
-  const handleCloseUpgrade   = useCallback(function() { setShowUpgrade(false); }, []);
-  const handleNav            = useCallback(function(v) { navTo(v); }, [navTo]);
 
   const p = useMemo(function() {
     return {brand:appBrand, toast:toast, confirm:confirm};
