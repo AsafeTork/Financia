@@ -126,7 +126,7 @@ export default function AdminPanel({ toast, confirm, session }) {
       const secondary = mid || lightenHex(primary, 0.78);
       const accent = light || lightenHex(primary, 0.92);
       setForm(function(f) { return Object.assign({}, f, {primaryColor:primary, secondaryColor:secondary, accentColor:accent, colors:allHexes.slice(0,5)}); });
-    } catch(_) {}
+    } catch(_) { void _; }
   };
 
   const uploadLogo = async function(file) {

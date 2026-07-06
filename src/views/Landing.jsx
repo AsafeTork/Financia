@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useScrollReveal } from '../hooks/useScrollReveal.js';
 import { fmt } from '../lib/utils.js';
-import { waLink } from '../lib/constants.js';
+import { waLink, PRICING_PLANS } from '../lib/constants.js';
 
 var NAVY = '#002f59';
 var TEAL = '#1a6b5c';

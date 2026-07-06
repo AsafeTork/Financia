@@ -63,7 +63,7 @@ export default function TxView({ type, tx, products, onAdd, onEdit, onDelete, on
       if (!ok) return;
       toast(isIncome ? 'Venda atualizada' : 'Despesa atualizada', 'success');
       setEditItem(null);
-    } catch(_) {}
+    } catch(_) { void _; }
     finally { setSaving(false); }
   };
   var resetForm = function() { setForm({desc:'', amount:'', date:today(), cat:'Fixo', method:'PIX', fixo:false, day:'5'}); };
@@ -98,7 +98,7 @@ export default function TxView({ type, tx, products, onAdd, onEdit, onDelete, on
       toast(isIncome ? 'Venda registrada!' : 'Despesa registrada!', 'success');
       setModal(false);
       resetForm();
-    } catch(_) {}
+    } catch(_) { void _; }
     finally { setSaving(false); }
   };
   var doExport = function(kind) {

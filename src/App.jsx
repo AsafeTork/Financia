@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useRef, lazy, Suspense } from 'react';
+import React, { useState, useCallback, useEffect, useRef, useMemo, lazy, Suspense } from 'react';
 import { flushSync } from 'react-dom';
 import { INIT_BRAND, INIT_PLAN, atLimit, limitFor, effectivePlan } from './lib/constants.js';
 import { useTx } from './hooks/useTx.js';
@@ -197,6 +197,11 @@ export default function App() {
   const handleCloseUpgrade   = useCallback(function() { setShowUpgrade(false); }, []);
   const handleNav            = useCallback(function(v) { navTo(v); }, [navTo]);
 
+  // p precisa vir antes dos early returns para nao violar rules-of-hooks
+  const p = useMemo(function() {
+    return {brand:appBrand, toast:toast, confirm:confirm};
+  }, [appBrand, toast, confirm]);
+
   if (appLoading) return <Loader/>;
 
   // Páginas legais — acessíveis sem autenticação
@@ -261,9 +266,6 @@ export default function App() {
 
   var currentView = (view === 'email' && !isAdminDB) ? 'dashboard' : view;
 
-  const p = useMemo(function() {
-    return {brand:appBrand, toast:toast, confirm:confirm};
-  }, [appBrand, toast, confirm]);
   const views = {
     dashboard: React.createElement(Dashboard, {tx:tx, products:products, brand:appBrand, onNav:navTo, planInfo:planInfo, lossesCount:losses.length, onUpgrade:handleUpgrade}),
     income:    React.createElement(TxView, Object.assign({type:'income', tx:tx, products:products, onAdd:addTx, onEdit:editTx, onDelete:deleteTx, onDeductStock:handleDeductStock, planInfo:planInfo, onNav:navTo}, p)),

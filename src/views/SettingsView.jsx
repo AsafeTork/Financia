@@ -20,7 +20,7 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
         sessionStorage.removeItem('financia_settings_tab');
         if (hint === 'subscription' || hint === 'account' || hint === 'appearance') return hint;
       }
-    } catch (e) {}
+    } catch (e) { void e; }
     return isAdmin ? 'clients' : 'account';
   });
   var [pwModal, setPwModal] = useState(false);

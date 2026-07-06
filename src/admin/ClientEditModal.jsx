@@ -178,7 +178,7 @@ export default function ClientEditModal({ client, adminEmail, onSave, onClose, t
         var secondary = mid || lightenHex(primary, 0.78);
         var accent = light || lightenHex(primary, 0.92);
         setExtractedColors([primary, secondary, accent]);
-      } catch (_) {}
+      } catch (_) { void _; }
     };
     img.src = url;
   };

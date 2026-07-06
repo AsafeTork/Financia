@@ -75,7 +75,7 @@ export default function InventoryView({ products, losses, onAddProduct, onEditPr
       if (!ok) return;
       toast('Produto adicionado!', 'success');
       dispatch({type:'CLOSE_PM'});
-    } catch(_) {}
+    } catch(_) { void _; }
     finally { dispatch({type:'SET_SAVING', v:false}); }
   };
   const saveEditP = async function() {
@@ -87,7 +87,7 @@ export default function InventoryView({ products, losses, onAddProduct, onEditPr
       if (!ok) return;
       toast('Produto atualizado', 'success');
       dispatch({type:'SET_EDIT_P', v:null});
-    } catch(_) {}
+    } catch(_) { void _; }
     finally { dispatch({type:'SET_SAVING', v:false}); }
   };
   const saveLoss = async function() {
@@ -101,7 +101,7 @@ export default function InventoryView({ products, losses, onAddProduct, onEditPr
       if (p && p.stock != null) await onAdjustStock(p.id, -Number(lf.qty));
       toast(p ? 'Perda registrada e estoque abatido' : 'Perda registrada (produto nao encontrado no estoque)', 'success');
       dispatch({type:'CLOSE_LM'});
-    } catch(_) {}
+    } catch(_) { void _; }
     finally { dispatch({type:'SET_SAVING', v:false}); }
   };
   const saveEditL = async function() {
@@ -113,7 +113,7 @@ export default function InventoryView({ products, losses, onAddProduct, onEditPr
       if (!ok) return;
       toast('Perda atualizada', 'success');
       dispatch({type:'SET_EDIT_L', v:null});
-    } catch(_) {}
+    } catch(_) { void _; }
     finally { dispatch({type:'SET_SAVING', v:false}); }
   };
   const saveStock = async function() {
@@ -125,7 +125,7 @@ export default function InventoryView({ products, losses, onAddProduct, onEditPr
       if (!ok) return;
       toast('Estoque atualizado!', 'success');
       dispatch({type:'SET_SM', v:null});
-    } catch(_) {}
+    } catch(_) { void _; }
     finally { dispatch({type:'SET_SAVING', v:false}); }
   };
   const toggleCat = function(cat) {
