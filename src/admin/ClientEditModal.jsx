@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { sb } from '../lib/supabase.js';
 import { hexToRgb, luminance, deriveCores, lightenHex, fmt } from '../lib/utils.js';
 import { THEME_PRESETS, WHITELABEL, waLinkTo } from '../lib/constants.js';
+import ColorField from '../components/ColorField.jsx';
 import { setClientCustomPrice, setClientWhiteLabel } from '../lib/db.js';
 import { gerarPaleta } from '../lib/aiClient.js';
 
@@ -42,25 +43,6 @@ function PreviewPaleta({ primary, secondary, accent }) {
           <p className="text-xs text-amber-700">Cor primária muito clara — texto pode ficar ilegível no sidebar.</p>
         </div>
       )}
-    </div>
-  );
-}
-
-function ColorField({ label, desc, value, onChange }) {
-  return (
-    <div className="flex flex-col gap-1.5">
-      <div>
-        <p className="text-xs font-semibold text-gray-700">{label}</p>
-        <p className="text-xs text-gray-400">{desc}</p>
-      </div>
-      <div className="flex items-center gap-2">
-        <input type="color" value={value} onChange={function(e) { onChange(e.target.value); }}
-          className="w-9 h-9 rounded-xl border border-gray-200 cursor-pointer p-0.5 flex-shrink-0"/>
-        <input value={value} onChange={function(e) { onChange(e.target.value); }}
-          placeholder="#000000" maxLength={7}
-          className="border border-gray-200 rounded-xl px-3 py-2 text-sm font-mono flex-1 focus:outline-none focus:border-gray-400" style={{background:'var(--bg-input)', color:'var(--text-main)'}}/>
-        <div className="w-8 h-8 rounded-xl border border-gray-100 flex-shrink-0" style={{background: value}}/>
-      </div>
     </div>
   );
 }

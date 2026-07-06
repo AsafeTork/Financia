@@ -120,21 +120,29 @@ const syncTable = async function(uid, table, ldbTable, mapLocal) {
   return true;
 };
 
-const PROFILE_WRITE_FIELDS = ['user_id','name','logo','color','color_secondary','color_accent','theme','logo_url'];
+const PROFILE_WRITE_FIELDS = ['user_id','name','logo','color','color_secondary','color_accent','theme','logo_url','white_label','phone','niche','custom_palette','visual_version'];
 
 const syncProfiles = async function(uid) {
   if (!navigator.onLine) return true;
   const unsynced = await ldb.profiles.where('user_id').equals(uid).and(r => r._synced === 0).toArray();
+  var ok = true;
   for (const row of unsynced) {
     const clean = {};
     PROFILE_WRITE_FIELDS.forEach(function(k) { if (row[k] !== undefined) clean[k] = row[k]; });
     clean.updated_at = row.updated_at || now();
     const { error } = await sb.from('company_profiles').upsert(clean, { onConflict: 'user_id' });
     if (!error) await ldb.profiles.update(uid, { _synced: 1 });
+    else ok = false;
   }
+  if (!ok) return false;
   const { data, error: profPullErr } = await sb.from('company_profiles').select('*').eq('user_id', uid).maybeSingle();
   if (profPullErr) return false;
-  if (data) await ldb.profiles.put(toLocal(data));
+  if (data) {
+    var localRow = await ldb.profiles.get(uid);
+    if (!localRow || localRow._synced !== 0) {
+      await ldb.profiles.put(toLocal(data));
+    }
+  }
   return true;
 };
 

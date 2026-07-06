@@ -202,6 +202,22 @@ export default function App() {
     return {brand:appBrand, toast:toast, confirm:confirm};
   }, [appBrand, toast, confirm]);
 
+  var uid = session ? session.user.id : '';
+  var currentView = (view === 'email' && !isAdminDB) ? 'dashboard' : view;
+
+  const views = useMemo(function() {
+    return {
+      dashboard: React.createElement(Dashboard, {tx:tx, products:products, brand:appBrand, onNav:navTo, planInfo:planInfo, lossesCount:losses.length, onUpgrade:handleUpgrade}),
+      income:    React.createElement(TxView, Object.assign({type:'income', tx:tx, products:products, onAdd:addTx, onEdit:editTx, onDelete:deleteTx, onDeductStock:handleDeductStock, planInfo:planInfo, onNav:navTo}, p)),
+      expense:   React.createElement(TxView, Object.assign({type:'expense', tx:tx, products:products, onAdd:addTx, onEdit:editTx, onDelete:deleteTx, onDeductStock:noop, onAddGenerated:addGenerated, uid:uid, planInfo:planInfo, onNav:navTo}, p)),
+      inventory: React.createElement(InventoryView, Object.assign({products:products, losses:losses, onAddProduct:addProduct, onEditProduct:editProduct, onDeleteProduct:deleteProduct, onAddLoss:addLoss, onEditLoss:editLoss, onDeleteLoss:deleteLoss, onAdjustStock:adjustStock, planInfo:planInfo, onNav:navTo}, p)),
+      email:     React.createElement(EmailView, {brand:appBrand, toast:toast}),
+      report:    React.createElement(ReportView, {tx:tx, brand:appBrand, toast:toast, onNav:navTo, planInfo:planInfo}),
+      settings:  React.createElement(SettingsView, {brand:appBrand, session:session, planInfo:planInfo, onSave:saveBrand, onSavePhone:savePhone, toast:toast, confirm:confirm, isAdmin:isAdminDB, onNav:navTo}),
+      planos:    React.createElement(PlansView, {brand:appBrand, planInfo:planInfo, toast:toast, onNav:navTo, isAdmin:isAdminDB}),
+    };
+  }, [tx, products, appBrand, navTo, planInfo, losses, handleUpgrade, p, addTx, editTx, deleteTx, handleDeductStock, addGenerated, uid, addProduct, editProduct, deleteProduct, addLoss, editLoss, deleteLoss, adjustStock, toast, confirm, session, saveBrand, savePhone, isAdminDB]);
+
   if (appLoading) return <Loader/>;
 
   // Páginas legais — acessíveis sem autenticação
@@ -241,11 +257,9 @@ export default function App() {
     </div>
   );
 
-  var uid = session.user.id;
   var meta = session.user.user_metadata || {};
   var googleName = meta.full_name || meta.name || '';
   var needsName = !!googleName && brand.name === googleName;
-  // Telefone removido do onboarding bloqueante (preenchivel em Configuracoes).
   var needsPhone = false;
   if (onboardingNeeded) {
     var finishOnboarding = function(data) {
@@ -264,25 +278,12 @@ export default function App() {
     return <Onboarding brand={brand} needsName={needsName} needsPhone={needsPhone} onSave={finishOnboarding}/>;
   }
 
-  var currentView = (view === 'email' && !isAdminDB) ? 'dashboard' : view;
-
-  const views = {
-    dashboard: React.createElement(Dashboard, {tx:tx, products:products, brand:appBrand, onNav:navTo, planInfo:planInfo, lossesCount:losses.length, onUpgrade:handleUpgrade}),
-    income:    React.createElement(TxView, Object.assign({type:'income', tx:tx, products:products, onAdd:addTx, onEdit:editTx, onDelete:deleteTx, onDeductStock:handleDeductStock, planInfo:planInfo, onNav:navTo}, p)),
-    expense:   React.createElement(TxView, Object.assign({type:'expense', tx:tx, products:products, onAdd:addTx, onEdit:editTx, onDelete:deleteTx, onDeductStock:noop, onAddGenerated:addGenerated, uid:uid, planInfo:planInfo, onNav:navTo}, p)),
-    inventory: React.createElement(InventoryView, Object.assign({products:products, losses:losses, onAddProduct:addProduct, onEditProduct:editProduct, onDeleteProduct:deleteProduct, onAddLoss:addLoss, onEditLoss:editLoss, onDeleteLoss:deleteLoss, onAdjustStock:adjustStock, planInfo:planInfo, onNav:navTo}, p)),
-    email:     React.createElement(EmailView, {brand:appBrand, toast:toast}),
-    report:    React.createElement(ReportView, {tx:tx, brand:appBrand, toast:toast, onNav:navTo, planInfo:planInfo}),
-    settings:  React.createElement(SettingsView, {brand:appBrand, session:session, planInfo:planInfo, onSave:saveBrand, onSavePhone:savePhone, toast:toast, confirm:confirm, isAdmin:isAdminDB, onNav:navTo}),
-    planos:    React.createElement(PlansView, {brand:appBrand, planInfo:planInfo, toast:toast, onNav:navTo, isAdmin:isAdminDB}),
-  };
-
   return (
     <div className="min-h-screen flex overflow-x-hidden" style={{background:'var(--bg-page)'}}>
       <Offline/>
       <UpdateBanner brand={appBrand}/>
       <SyncBadge status={syncStatus}/>
-      <Sidebar view={view} onNav={navTo} brand={appBrand} open={sidebarOpen} isAdmin={isAdminDB} session={session} onClose={handleCloseSidebar}/>
+      <Sidebar view={view} onNav={navTo} brand={appBrand} open={sidebarOpen} isAdmin={isAdminDB} onClose={handleCloseSidebar}/>
       <div className="hidden lg:block fixed top-4 right-4 z-30">
         <ThemeToggle theme={effectiveTheme} onToggle={toggleTheme} variant="floating"/>
       </div>

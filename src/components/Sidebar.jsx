@@ -1,7 +1,7 @@
 import React from 'react';
 import { NAV } from '../lib/constants.js';
 
-export default function Sidebar({ view, onNav, brand, open, onClose, isAdmin }) {
+function Sidebar({ view, onNav, brand, open, onClose, isAdmin }) {
   var onlineState = React.useState(typeof navigator !== 'undefined' ? navigator.onLine : true);
   var online = onlineState[0];
   var setOnline = onlineState[1];
@@ -69,3 +69,5 @@ export default function Sidebar({ view, onNav, brand, open, onClose, isAdmin }) 
     </>
   );
 }
+
+export default React.memo(Sidebar);

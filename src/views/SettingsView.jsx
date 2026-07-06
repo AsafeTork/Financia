@@ -11,6 +11,7 @@ import CardPreview from '../components/CardPreview.jsx';
 import { sb } from '../lib/supabase.js';
 import { fmt } from '../lib/utils.js';
 import { triggerApkBuild } from '../lib/db.js';
+import ColorField from '../components/ColorField.jsx';
 
 export default function SettingsView({ brand, session, planInfo, onSave, onSavePhone, toast, confirm, isAdmin, onNav }) {
   var [tab, setTab] = useState(function() {
@@ -103,6 +104,20 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
       logo_url: brand.logo_url || '',
     };
   });
+  var appearanceTab = tab === 'appearance';
+  React.useEffect(function() {
+    if (!appearanceTab) return;
+    setAppForm(function(f) {
+      return {
+        name: brand.name || '',
+        color: brand.color || '#002f59',
+        color_secondary: brand.color_secondary || '',
+        color_accent: brand.color_accent || '',
+        theme: brand.theme || 'light',
+        logo_url: brand.logo_url || '',
+      };
+    });
+  }, [appearanceTab, brand]);
   var [appSaving, setAppSaving] = useState(false);
   var [apkBusy, setApkBusy] = useState(false);
   var onLogoFile = function(e) {
@@ -342,8 +357,35 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
             </div>
 
             <Inp label="Nome do app" value={appForm.name} onChange={function(e) { setAppField('name', e.target.value); }} placeholder="Ex.: Minha Empresa"/>
+          </div>
 
-          <button onClick={saveAppearance} disabled={appSaving} className="w-full text-white rounded-xl py-3 text-sm font-semibold hover:opacity-90 flex items-center justify-center gap-2 disabled:opacity-40 min-h-12" style={{background: brand.color}}>
+          <div>
+            <p className="text-sm font-semibold mb-1" style={{color:'var(--text-main)'}}>Cores da marca</p>
+            <p className="text-xs mb-4" style={{color:'var(--text-muted)'}}>Defina as cores primaria, secundaria e de destaque.</p>
+            <div className="flex flex-col gap-3">
+              <ColorField label="Primaria" desc="Sidebar, botoes, navegacao" value={appForm.color} onChange={function(v) { setAppField('color', v); }}/>
+              <ColorField label="Secundaria" desc="Cards, badges, tags" value={appForm.color_secondary || '#e8f0f7'} onChange={function(v) { setAppField('color_secondary', v); }}/>
+              <ColorField label="Destaque" desc="Hover, graficos, progresso" value={appForm.color_accent || '#1a6b5c'} onChange={function(v) { setAppField('color_accent', v); }}/>
+            </div>
+          </div>
+
+          <div className="rounded-xl overflow-hidden border" style={{borderColor:'var(--border)'}}>
+            <div className="px-3 py-2 flex items-center gap-2" style={{background: appForm.color || '#002f59'}}>
+              <div className="w-5 h-5 rounded flex items-center justify-center text-xs font-bold" style={{background:'rgba(255,255,255,0.2)', color:'white'}}>F</div>
+              <span className="text-xs font-semibold text-white truncate">{appForm.name || 'Preview'}</span>
+            </div>
+            <div className="p-3 flex flex-col gap-2" style={{background:'var(--bg-card)'}}>
+              <div className="flex items-center gap-2">
+                <button className="px-3 py-1.5 rounded-lg text-xs font-semibold text-white" style={{background: appForm.color || '#002f59'}}>Salvar</button>
+                <button className="px-3 py-1.5 rounded-lg text-xs font-semibold" style={{background: appForm.color_secondary || '#e8f0f7', color: appForm.color || '#002f59'}}>Cancelar</button>
+              </div>
+              <div className="h-1.5 rounded-full overflow-hidden" style={{background:'var(--bg-subtle)'}}>
+                <div className="h-full rounded-full" style={{width:'64%', background: appForm.color_accent || appForm.color || '#002f59'}}/>
+              </div>
+            </div>
+          </div>
+
+          <button onClick={saveAppearance} disabled={appSaving} className="w-full text-white rounded-xl py-3 text-sm font-semibold hover:opacity-90 flex items-center justify-center gap-2 disabled:opacity-40 min-h-12" style={{background: appForm.color || brand.color}}>
             {appSaving ? <Spin white/> : 'Salvar aparência'}
           </button>
 
@@ -366,7 +408,6 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg>
             Falar com o Desenvolvedor
           </a>
-        </div>
         </Card>
       )}
 

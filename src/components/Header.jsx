@@ -1,8 +1,8 @@
-
+import React from 'react';
 import { luminance } from '../lib/utils.js';
 import ThemeToggle from './ThemeToggle.jsx';
 
-export default function Header({ brand, onMenuOpen, syncStatus, theme, onToggleTheme }) {
+function Header({ brand, onMenuOpen, syncStatus, theme, onToggleTheme }) {
   var dotColor = syncStatus === 'ok' ? '#22c55e' : syncStatus === 'error' ? '#ef4444' : '#94a3b8';
   var lum = luminance(brand.color || '#002f59');
   var textColor = lum > 0.4 ? '#111827' : '#ffffff';
@@ -32,3 +32,5 @@ export default function Header({ brand, onMenuOpen, syncStatus, theme, onToggleT
     </header>
   );
 }
+
+export default React.memo(Header);
