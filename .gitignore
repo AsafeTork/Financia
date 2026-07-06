@@ -7,3 +7,4 @@ electron/icon.ico
 release/
 *.exe
 search.py
+supabase/.temp/

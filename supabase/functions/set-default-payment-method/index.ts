@@ -4,7 +4,7 @@
 // pelo email do usuario autenticado — so altera as proprias assinaturas.
 import Stripe from 'https://esm.sh/stripe@17.7.0?target=denonext';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { enforceRateLimit, getAdminClient, sanitizePaymentMethodId } from '../_shared/security.ts';
+import { enforceRateLimit, getAdminClient, sanitizePaymentMethodId, cacheDel } from '../_shared/security.ts';
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -94,6 +94,9 @@ Deno.serve(async function (req) {
         }
       }
     }
+
+    // Invalida cache do get-payment-method pra refletir o novo cartao.
+    await cacheDel(admin, 'stripe:get-payment-method:', user.id);
 
     return jsonResponse(200, { ok: true, subscriptions_updated: updated });
   } catch (err) {
