@@ -111,10 +111,17 @@ Deno.serve(async function (req) {
       if (subId) {
         const sub = await stripe.subscriptions.retrieve(subId);
         const m = sub.metadata ? sub.metadata : {};
-        const userId = m.user_id ? m.user_id : null;
-        const planId = m.plan_id ? m.plan_id : 'pro';
+        let userId = m.user_id ? m.user_id : null;
+        if (!userId) {
+          const item = sub.items && sub.items.data ? sub.items.data[0] : null;
+          const pm = item && item.price && item.price.metadata ? item.price.metadata : {};
+          userId = pm.custom_for || pm.user_id || null;
+        }
+        const planId = m.plan_id ? m.plan_id : planOfSubFromEvent(sub);
         if (userId) {
-          const expires = new Date(Date.now() + 31 * 24 * 60 * 60 * 1000).toISOString();
+          const expires = sub.current_period_end
+            ? new Date(Number(sub.current_period_end) * 1000).toISOString()
+            : new Date(Date.now() + 31 * 24 * 60 * 60 * 1000).toISOString();
           await supabase.rpc('stripe_activate_plan', {
             p_user: userId,
             p_plan: planId,
