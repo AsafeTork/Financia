@@ -52,7 +52,9 @@ export default function useStripeCheckoutInit(plan, brand, checkoutMode, kind, o
       setActionErr(friendlyStripeError(msg));
       setConfirming(false);
     } catch (err) {
-      setActionErr('Erro de conexão. Tente de novo.');
+      readFnErrorMessage(err, null).then(function(msg) {
+        setActionErr(friendlyStripeError(msg || '') || 'Erro ao processar pagamento. Tente de novo.');
+      });
       setConfirming(false);
     }
   };
@@ -92,7 +94,9 @@ export default function useStripeCheckoutInit(plan, brand, checkoutMode, kind, o
       setActionErr(friendlyStripeError(msg));
       setConfirming(false);
     } catch (err) {
-      setActionErr('Erro de conexão. Tente de novo.');
+      readFnErrorMessage(err, null).then(function(msg) {
+        setActionErr(friendlyStripeError(msg || '') || 'Erro ao processar pagamento. Tente de novo.');
+      });
       setConfirming(false);
     }
   };
@@ -105,9 +109,11 @@ export default function useStripeCheckoutInit(plan, brand, checkoutMode, kind, o
         if (data && data.clientSecret) { setClientSecret(data.clientSecret); setPhase('form'); return; }
         if (data && data.status === 'paid') { done(); return; }
         readFnErrorMessage(result, data).then(function(msg) { setLoadErr(friendlyStripeError(msg)); setPhase('error'); });
-      }).catch(function() {
-        setLoadErr('Erro de conexão. Verifique sua internet e tente de novo.');
-        setPhase('error');
+      }).catch(function(err) {
+        readFnErrorMessage(err, null).then(function(msg) {
+          setLoadErr(friendlyStripeError(msg || '') || 'Erro ao processar. Verifique sua internet e tente de novo.');
+          setPhase('error');
+        });
       });
       return;
     }
@@ -116,9 +122,11 @@ export default function useStripeCheckoutInit(plan, brand, checkoutMode, kind, o
       if (data && data.clientSecret) { setClientSecret(data.clientSecret); setPhase('form'); return; }
       if (data && (data.status === 'changed' || data.status === 'active' || data.status === 'unchanged')) { done(); return; }
       readFnErrorMessage(result, data).then(function(msg) { setLoadErr(friendlyStripeError(msg)); setPhase('error'); });
-    }).catch(function() {
-      setLoadErr('Erro de conexão. Verifique sua internet e tente de novo.');
-      setPhase('error');
+    }).catch(function(err) {
+      readFnErrorMessage(err, null).then(function(msg) {
+        setLoadErr(friendlyStripeError(msg || '') || 'Erro ao processar. Verifique sua internet e tente de novo.');
+        setPhase('error');
+      });
     });
   }
 
@@ -163,8 +171,10 @@ export default function useStripeCheckoutInit(plan, brand, checkoutMode, kind, o
         if (data && data.clientSecret) { toForm(data.clientSecret); return; }
         if (data && (data.status === 'changed' || data.status === 'active' || data.status === 'unchanged')) { done(); return; }
         readFnErrorMessage(result, data).then(function(msg) { fail(friendlyStripeError(msg)); });
-      }).catch(function() {
-        fail('Erro de conexão. Verifique sua internet e tente de novo.');
+      }).catch(function(err) {
+        readFnErrorMessage(err, null).then(function(msg) {
+          fail(friendlyStripeError(msg || '') || 'Erro ao processar. Verifique sua internet e tente de novo.');
+        });
       });
     };
 
@@ -175,8 +185,10 @@ export default function useStripeCheckoutInit(plan, brand, checkoutMode, kind, o
         if (data && data.clientSecret) { toForm(data.clientSecret); return; }
         if (data && data.status === 'paid') { done(); return; }
         readFnErrorMessage(result, data).then(function(msg) { fail(friendlyStripeError(msg)); });
-      }).catch(function() {
-        fail('Erro de conexão. Verifique sua internet e tente de novo.');
+      }).catch(function(err) {
+        readFnErrorMessage(err, null).then(function(msg) {
+          fail(friendlyStripeError(msg || '') || 'Erro ao processar. Verifique sua internet e tente de novo.');
+        });
       });
     };
 
@@ -209,12 +221,14 @@ export default function useStripeCheckoutInit(plan, brand, checkoutMode, kind, o
         if (isChange) { toPreview(savedCard, 'change'); return; }
         if (savedCard) { toPreview(savedCard, 'saved'); return; }
         startNewCardSubscription();
-      }).catch(function() {
+      }).catch(function(err) {
         if (!alive || settled) return;
         startNewCardSubscription();
       });
-    }).catch(function() {
-      fail('Erro de conexão. Verifique sua internet e tente de novo.');
+    }).catch(function(err) {
+      readFnErrorMessage(err, null).then(function(msg) {
+        fail(friendlyStripeError(msg || '') || 'Erro ao processar. Verifique sua internet e tente de novo.');
+      });
     });
 
     return function() { alive = false; if (timer) clearTimeout(timer); };

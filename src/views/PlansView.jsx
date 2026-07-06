@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Card, PageHead, Modal } from '../components/ui.jsx';
-import { PRICING_PLANS, WHITELABEL, waLink, effectivePlan, planChangeCta } from '../lib/constants.js';
+import { PRICING_PLANS, WHITELABEL, waLink, effectivePlan, planChangeCta, isAdminGranted } from '../lib/constants.js';
 import { fmt, fmtDate } from '../lib/utils.js';
 import { sb } from '../lib/supabase.js';
 import { friendlyStripeError, readFnErrorMessage } from '../lib/stripe.js';
@@ -58,7 +58,7 @@ function PlanBadge({ planId }) {
   return null;
 }
 
-function PlanCard({ plan, brand, cta, onAction, planExpiresAt, currentPlanId }) {
+function PlanCard({ plan, brand, cta, onAction, planExpiresAt, currentPlanId, planActivatedBy }) {
   var popular = !!plan.popular;
   var isFree = plan.id === 'free';
   var isPro = plan.id === 'pro';
@@ -93,6 +93,14 @@ function PlanCard({ plan, brand, cta, onAction, planExpiresAt, currentPlanId }) 
               background: 'var(--brand-soft)',
               color: brand.color
             }}>Seu plano</span>
+          )}
+          {current && planActivatedBy && (
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{
+              background: planActivatedBy.indexOf('@') !== -1 ? 'rgba(245,158,11,0.12)' : 'rgba(59,191,160,0.12)',
+              color: planActivatedBy.indexOf('@') !== -1 ? '#d97706' : '#16a34a'
+            }}>
+              {planActivatedBy.indexOf('@') !== -1 ? 'Cortesia' : 'Assinatura'}
+            </span>
           )}
         </div>
 
@@ -199,6 +207,7 @@ export default function PlansView({ brand, planInfo, toast, onNav, isAdmin }) {
   var hasWhiteLabel = !!(brand && brand.white_label);
   var wlMsg = 'Ola! Quero o app personalizado da minha empresa (logo, nome e cores). Pode me passar como funciona?';
   var duvidaMsg = 'Ola! Tenho uma duvida sobre o Financia.';
+  var [restoringStripe, setRestoringStripe] = useState(false);
 
   // Decide o que fazer ao clicar no botao de um plano.
   var handleAction = function(p, kind) {
@@ -305,9 +314,37 @@ export default function PlansView({ brand, planInfo, toast, onNav, isAdmin }) {
           if (p.id === 'premium' && customPremiumCents > 0) { originalPrice = p.price; price = customPremiumCents / 100; }
           var planCard = Object.assign({}, p, { price: price, original_price: originalPrice });
           return <PlanCard key={p.id} plan={planCard} brand={brand} cta={planChangeCta(plan, p.id)} onAction={handleAction}
-            planExpiresAt={planInfo && planInfo.plan_expires_at} currentPlanId={plan}/>;
+            planExpiresAt={planInfo && planInfo.plan_expires_at} currentPlanId={plan}
+            planActivatedBy={planInfo && planInfo.plan_activated_by}/>;
         })}
       </div>
+
+      {/* Restaurar assinatura Stripe — admin remove cortesia do cliente pagante */}
+      {plan !== 'free' && planInfo && isAdminGranted(planInfo) && isAdmin && (
+        <div className="flex items-center justify-between rounded-2xl p-4" style={{background:'#fffbeb', border:'1px solid #fde68a'}}>
+          <div className="min-w-0">
+            <p className="text-sm font-semibold" style={{color:'#92400e'}}>Plano concedido como cortesia</p>
+            <p className="text-xs mt-0.5" style={{color:'#b45309'}}>Se o cliente tem assinatura Stripe ativa, restaure o vínculo de pagamento.</p>
+          </div>
+          <button onClick={async function() {
+            setRestoringStripe(true);
+            try {
+              var sess = await sb.auth.getSession();
+              var uid = sess && sess.data && sess.data.session && sess.data.session.user ? sess.data.session.user.id : '';
+              if (!uid) { toast('Sessão expirada.', 'error'); setRestoringStripe(false); return; }
+              var res = await sb.rpc('restore_stripe_plan', { p_user_id: uid });
+              if (res && res.error) { toast(res.error.message || 'Erro ao restaurar.', 'error'); }
+              else if (res && res.data && res.data.ok) { toast('Assinatura Stripe restaurada!', 'success'); }
+              else { toast('Não foi possível restaurar.', 'error'); }
+            } catch (e) { toast('Erro de conexão. Tente de novo.', 'error'); }
+            setRestoringStripe(false);
+          }} disabled={restoringStripe}
+            className="flex-shrink-0 text-sm font-semibold px-4 py-2.5 min-h-[44px] rounded-xl text-white transition hover:opacity-90 disabled:opacity-50 flex items-center gap-2"
+            style={{background:'#d97706'}}>
+            {restoringStripe ? 'Restaurando...' : 'Restaurar assinatura Stripe'}
+          </button>
+        </div>
+      )}
 
       {/* Checkout */}
       {checkout && (

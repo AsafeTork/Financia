@@ -10,7 +10,8 @@ export function useBrandManager(props) {
     var userId = session.user.id;
     var existing = null;
     try { existing = await ldb.profiles.get(userId); } catch (e0) { void e0; }
-    var hasWhiteLabel = !!(existing && existing.white_label);
+    // white_label do objeto recebido (fonte mais recente) OU do Dexie local
+    var hasWhiteLabel = !!(nb && nb.white_label) || !!(existing && existing.white_label);
     var visual = hasWhiteLabel ? null : planVisualDefaults({
       plan: existing && existing.plan ? existing.plan : 'free',
       plan_expires_at: existing && existing.plan_expires_at ? existing.plan_expires_at : null,
@@ -46,7 +47,7 @@ export function useBrandManager(props) {
     }
     if (navigator.onLine) {
       try {
-        var res = await sb.from('company_profiles').upsert({user_id:userId, name:nb.name, logo:nb.logo, color:finalColor, color_secondary:finalSecondary, color_accent:finalAccent, theme:finalTheme, logo_url:nb.logo_url||null});
+        var res = await sb.from('company_profiles').upsert({user_id:userId, name:nb.name, logo:nb.logo, color:finalColor, color_secondary:finalSecondary, color_accent:finalAccent, theme:finalTheme, logo_url:nb.logo_url||null, white_label: !!nb.white_label});
         if (!res.error) await ldb.profiles.update(userId, {_synced:1});
         else toast('Não sincronizado — tentaremos em breve', 'warning');
       } catch(e) { toast('Não sincronizado — tentaremos em breve', 'warning'); }

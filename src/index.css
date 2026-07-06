@@ -121,7 +121,7 @@ input:focus, select:focus, textarea:focus {
 
   --text-main:  #e8edf2;
   --text-sub:   #8ba0b5;
-  --text-muted: #5d7187;
+  --text-muted: #8899aa;
 
   --border:     #1e3450;
   --border-md:  #274263;
@@ -193,20 +193,9 @@ input:focus, select:focus, textarea:focus {
 }
 
 /* PREMIUM — Grafite/Dourado, executivo, Apple+Amex */
+/* NOTA: Premium NAO define bg/text/border — herda de [data-theme] ou :root.
+   Apenas acentos (glow, badge, sidebar, btn-grad) sao exclusivos do plano. */
 [data-plan="premium"] {
-  --bg-page:    #0a0a0a;
-  --bg-card:    #161618;
-  --bg-input:   #1c1c1f;
-  --bg-subtle:  #111113;
-  --surface:    #161618;
-
-  --text-main:  #f5f5f0;
-  --text-sub:   #a0a0a0;
-  --text-muted: #6b6b6b;
-
-  --border:     #2a2a2e;
-  --border-md:  #3a3a3e;
-
   --shadow-sm:  0 1px 3px rgba(0,0,0,0.4), 0 1px 2px rgba(212,175,106,0.03);
   --shadow-md:  0 4px 12px rgba(0,0,0,0.45), 0 2px 4px rgba(212,175,106,0.04);
   --shadow-lg:  0 10px 30px rgba(0,0,0,0.55), 0 4px 8px rgba(212,175,106,0.05);
@@ -219,30 +208,6 @@ input:focus, select:focus, textarea:focus {
   --btn-grad: linear-gradient(135deg, #1A1A2E 0%, #0F172A 100%);
   --sidebar-bg: linear-gradient(180deg, #0F172A 0%, #1A1A2E 50%, #0F172A 100%);
 }
-
-/* Premium dark overrides para classes Tailwind */
-[data-plan="premium"] body        { background: #0a0a0a; }
-[data-plan="premium"] .bg-white   { background-color: #161618 !important; }
-[data-plan="premium"] .bg-gray-50 { background-color: #111113 !important; }
-[data-plan="premium"] .bg-gray-100{ background-color: #0a0a0a !important; }
-[data-plan="premium"] .border-gray-100,
-[data-plan="premium"] .border-gray-200 { border-color: #2a2a2e !important; }
-[data-plan="premium"] .divide-gray-50 > * + * { border-color: #2a2a2e !important; }
-[data-plan="premium"] .text-gray-900 { color: #f5f5f0 !important; }
-[data-plan="premium"] .text-gray-800 { color: #e0e0e0 !important; }
-[data-plan="premium"] .text-gray-700 { color: #b0b0b0 !important; }
-[data-plan="premium"] .text-gray-600 { color: #a0a0a0 !important; }
-[data-plan="premium"] .text-gray-500 { color: #7a7a7a !important; }
-[data-plan="premium"] .text-gray-400 { color: #6b6b6b !important; }
-[data-plan="premium"] input,
-[data-plan="premium"] select,
-[data-plan="premium"] textarea {
-  background-color: #1c1c1f !important;
-  color: #f5f5f0 !important;
-  border-color: #3a3a3e !important;
-}
-[data-plan="premium"] .hover\\:bg-gray-50:hover,
-[data-plan="premium"] .hover\\:bg-gray-100:hover { background-color: #111113 !important; }
 
 /* Plan card shadows por identidade */
 :root {

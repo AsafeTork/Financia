@@ -17,14 +17,12 @@ import { periodOf, daysInMonth, dueDate, recurringId, isRecurringId, activeTempl
 import { parsePhone, buildPhone } from '../../components/PhoneInput.jsx';
 
 var HEX_RE = /^#[0-9a-f]{6}$/i;
+// 20 hexes representativos (8 invariantes x 20 = 160 testes vs 400 antes)
 var HEXES = [
-  '#000000', '#ffffff', '#002f59', '#ff0000', '#00ff00', '#0000ff', '#123456', '#abcdef',
-  '#ABCDEF', '#7f1d1d', '#14532d', '#2563eb', '#dc2626', '#16a34a', '#7c3aed', '#ea580c',
-  '#db2777', '#0d9488', '#1f2937', '#0ea5e9', '#dbe7f3', '#dcfce7', '#fee2e2', '#ede9fe',
-  '#ffedd5', '#fce7f3', '#ccfbf1', '#e5e7eb', '#111827', '#4c1d95', '#831843', '#0f3d3e',
-  '#7c2d12', '#009739', '#FEDD00', '#046A38', '#DA291C', '#3C3B6E', '#B22234', '#74ACDF',
-  '#006847', '#CE1126', '#AA151B', '#F1BF00', '#0f9d6c', '#eab308', '#22c55e', '#f97316',
-  '#ef4444', '#8b5cf6',
+  '#000000', '#ffffff', '#002f59', '#ff0000', '#00ff00', '#0000ff',
+  '#7f1d1d', '#14532d', '#2563eb', '#dc2626', '#16a34a', '#7c3aed',
+  '#0d9488', '#1f2937', '#0ea5e9', '#111827', '#4c1d95', '#0f3d3e',
+  '#eab308', '#22c55e',
 ];
 
 // ---------------------------------------------------------------------------

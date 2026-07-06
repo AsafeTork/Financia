@@ -22,8 +22,9 @@ export default defineConfig({
     jsxImportSource: 'react',
   },
   test: {
-    environment: 'jsdom',
+    environment: 'node',
     setupFiles: ['./src/test/setup.js'],
     globals: true,
+
   },
 });

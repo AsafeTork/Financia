@@ -193,7 +193,7 @@ export default function Dashboard({ tx, products, brand, onNav, planInfo, losses
 
       <AiInsightsCard mtx={mtx} ti={ti} to={to} profitCurr={profitCurr} profVar={profVar} lowStock={lowStock} products={products} brand={brand} plan={plan} onUpgrade={onUpgrade}/>
 
-      <PlanStatusCard plan={plan} brand={brand} onUpgrade={onUpgrade} usage={usage} anyReached={anyReached} reachedCats={reachedCats}/>
+      <PlanStatusCard plan={plan} brand={brand} onUpgrade={onUpgrade} usage={usage} anyReached={anyReached} reachedCats={reachedCats} planInfo={planInfo}/>
 
       <Card className="p-5">
         <div className="flex items-center justify-between mb-4">

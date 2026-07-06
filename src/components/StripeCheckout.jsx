@@ -37,6 +37,7 @@ function PaymentForm({ plan, brand, onDone, onClose, mode }) {
         return;
       }
       onDone();
+      onClose();
     } catch (err) {
       setPayErr(friendlyStripeError(err && err.message ? err.message : 'payment_failed'));
       setSubmitting(false);
