@@ -241,6 +241,7 @@ Deno.serve(async function (req) {
       }
       // Ja esta no mesmo preco? Nada a fazer.
       if (item.price && item.price.id === priceId) {
+        await activatePlan(admin, user.id, planId);
         return jsonResponse(200, { status: 'unchanged' });
       }
       // Upgrade: cobra a diferenca proporcional AGORA e ativa o plano maior (webhook).

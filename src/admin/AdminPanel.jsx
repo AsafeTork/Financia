@@ -62,15 +62,27 @@ export default function AdminPanel({ toast, confirm, session }) {
     return function() { alive = false; };
   }, []);
 
-  const priceOf = function(id) { var p = PRICING_PLANS.find(function(x) { return x.id === id; }); return p ? p.price : 0; };
+  var realPriceOf = function(c, ep) {
+    if (ep === 'pro') {
+      var proCents = Number(c.custom_price_cents_pro);
+      if (proCents > 0) return proCents / 100;
+    }
+    if (ep === 'premium') {
+      var premCents = Number(c.custom_price_cents_premium);
+      if (premCents > 0) return premCents / 100;
+    }
+    var planDef = PRICING_PLANS.find(function(x) { return x.id === ep; });
+    return planDef ? planDef.price : 0;
+  };
   const nowMonth = new Date().toISOString().slice(0, 7);
   // Receita REAL: so planos pagos via Stripe (countsAsRevenue exclui cortesia do admin).
+  // Usa custom_price_cents se houver (preco real que o cliente paga), senao preco de tabela.
   const stats = clients.reduce(function(a, c) {
     var ep = effectivePlan(c);
     a.total += 1;
     if (ep === 'free') { a.free += 1; }
     else {
-      if (countsAsRevenue(c)) { a.pagantes += 1; a.mrr += priceOf(ep); }
+      if (countsAsRevenue(c)) { a.pagantes += 1; a.mrr += realPriceOf(c, ep); }
       else { a.cortesia += 1; }
       if (ep === 'premium') a.premium += 1;
     }
