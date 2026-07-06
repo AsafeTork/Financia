@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Editor do Logo Financia</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: #1a1a2e;
+  color: #e0e0e0;
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; padding: 20px;
+}
+h1 { font-size: 1.4rem; margin-bottom: 4px; color: #fff; }
+.sub { font-size: 0.85rem; color: #888; margin-bottom: 20px; }
+.container { display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; }
+.svg-wrap {
+  background: #fff;
+  border-radius: 12px; border: 1px solid #333; overflow: hidden; position: relative;
+}
+.svg-wrap .ref-label {
+  position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
+  font-size: 0.7rem; color: #999; background: rgba(255,255,255,0.8);
+  padding: 2px 10px; border-radius: 4px; pointer-events: none;
+}
+svg { display: block; user-select: none; }
+.element { cursor: grab; }
+.element.dragging, .element:hover { cursor: grabbing; }
+.handle {
+  fill: #fff; stroke: #333; stroke-width: 1.5;
+  cursor: nwse-resize; opacity: 0.7;
+  transition: opacity 0.12s, r 0.12s;
+}
+.element:hover .handle, .handle:hover { opacity: 1; }
+.handle:hover { fill: #0f9b8e; r: 5.5; }
+.panel {
+  background: #16213e; border-radius: 12px; padding: 20px;
+  min-width: 340px; border: 1px solid #333;
+}
+.panel h2 { font-size: 1rem; margin-bottom: 12px; color: #ccc; }
+.item {
+  background: #1a1a3e; border-radius: 8px; padding: 10px 12px;
+  margin-bottom: 6px; font-size: 0.82rem;
+  font-family: 'Consolas', 'Courier New', monospace;
+  border-left: 3px solid #555;
+}
+.item-header {
+  display: flex; align-items: center; gap: 8px;
+  cursor: pointer; user-select: none;
+}
+.item-header .arrow { transition: transform 0.2s; font-size: 0.7rem; color: #666; }
+.item-header .arrow.open { transform: rotate(90deg); }
+.item-header .swatch { width: 16px; height: 16px; border-radius: 3px; flex-shrink: 0; }
+.item-header .label { width: 50px; color: #aaa; }
+.item-header .pos { color: #fff; font-size: 0.78rem; }
+.item-header .coord { color: #7ec8e3; min-width: 26px; display: inline-block; }
+.item-body { display: none; margin-top: 8px; padding-top: 8px; border-top: 1px solid #2a2a4e; gap: 6px; flex-direction: column; }
+.item-body.open { display: flex; }
+.prop-row { display: flex; align-items: center; gap: 6px; }
+.prop-row label { color: #888; min-width: 55px; font-size: 0.78rem; }
+.prop-row input[type="range"] {
+  background: #0d0d1a; border: none; border-radius: 4px;
+  flex: 1; max-width: 100px; height: 4px;
+  -webkit-appearance: none; appearance: none;
+}
+.prop-row input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 14px; height: 14px;
+  border-radius: 50%; background: #0f9b8e; cursor: pointer;
+}
+.prop-row .val { color: #7ec8e3; min-width: 28px; text-align: right; font-size: 0.78rem; }
+.actions { margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap; }
+button {
+  padding: 10px 20px; border: none; border-radius: 8px;
+  font-size: 0.9rem; cursor: pointer; font-weight: 600;
+  transition: opacity 0.15s;
+}
+button:hover { opacity: 0.85; }
+.btn-save { background: #0f9b8e; color: #fff; flex: 1; }
+.btn-reset { background: #333; color: #ccc; }
+.output {
+  margin-top: 12px; background: #0d0d1a; border-radius: 8px; padding: 12px;
+  font-family: 'Consolas', 'Courier New', monospace; font-size: 0.75rem;
+  color: #7ec8e3; white-space: pre-wrap; word-break: break-all;
+  min-height: 100px; border: 1px solid #222; max-height: 240px; overflow-y: auto;
+}
+.hint { font-size: 0.75rem; color: #666; margin-top: 8px; }
+</style>
+</head>
+<body>
+
+<h1>Editor do Logo Financia</h1>
+<p class="sub">Arraste para mover | Puxe as bolinhas nos cantos para redimensionar</p>
+
+<div class="container">
+
+<div class="svg-wrap">
+<svg id="canvas" width="400" height="400" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="400" fill="transparent"/>
+
+  <g id="el-blue" class="element" transform="translate(34,200)">
+    <rect id="shape-blue" x="0" y="0" width="71" height="125" rx="10" fill="#002f59"/>
+  </g>
+  <g id="el-green" class="element" transform="translate(134,129)">
+    <rect id="shape-green" x="0" y="0" width="71" height="196" rx="10" fill="#1a6b5c"/>
+  </g>
+  <g id="el-teal" class="element" transform="translate(234,75)">
+    <rect id="shape-teal" x="0" y="0" width="72" height="250" rx="10" fill="#6ec6c8"/>
+  </g>
+  <g id="el-check" class="element" transform="translate(169,126)">
+    <path id="shape-check" d="" fill="#8cf2d1"/>
+  </g>
+
+  <image id="ref-image" href="/icon-192.svg" x="0" y="0" width="400" height="400" opacity="0.2" pointer-events="none"/>
+</svg>
+<div class="ref-label">Referencia: icon-192.svg original</div>
+</div>
+
+<div class="panel">
+  <h2>Elementos</h2>
+
+  <div class="item" data-id="blue" style="border-left-color:#002f59">
+    <div class="item-header" onclick="toggleBody('body-blue')">
+      <span class="arrow" id="arrow-blue">&#9654;</span>
+      <span class="swatch" style="background:#002f59"></span>
+      <span class="label">Azul</span>
+      <span class="pos">X: <span class="coord" id="px-blue">34</span> Y: <span class="coord" id="py-blue">200</span></span>
+    </div>
+    <div class="item-body" id="body-blue">
+      <div class="prop-row">
+        <label>Largura</label>
+        <input type="range" min="10" max="120" value="71" oninput="updateProp('blue','w',this)">
+        <span class="val" id="pw-blue">71</span>
+      </div>
+      <div class="prop-row">
+        <label>Altura</label>
+        <input type="range" min="10" max="350" value="125" oninput="updateProp('blue','h',this)">
+        <span class="val" id="ph-blue">125</span>
+      </div>
+      <div class="prop-row">
+        <label>Arred.</label>
+        <input type="range" min="0" max="30" value="10" oninput="updateProp('blue','rx',this)">
+        <span class="val" id="prx-blue">10</span>
+      </div>
+      <div class="prop-row">
+        <label>Cor</label>
+        <input type="color" value="#002f59" oninput="updateProp('blue','c',this)" style="width:48px;height:24px;padding:0;border:none;border-radius:4px;cursor:pointer;background:none;">
+        <span class="val" id="pc-blue" style="font-size:0.7rem;">#002f59</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="item" data-id="green" style="border-left-color:#1a6b5c">
+    <div class="item-header" onclick="toggleBody('body-green')">
+      <span class="arrow" id="arrow-green">&#9654;</span>
+      <span class="swatch" style="background:#1a6b5c"></span>
+      <span class="label">Verde</span>
+      <span class="pos">X: <span class="coord" id="px-green">134</span> Y: <span class="coord" id="py-green">129</span></span>
+    </div>
+    <div class="item-body" id="body-green">
+      <div class="prop-row">
+        <label>Largura</label>
+        <input type="range" min="10" max="120" value="71" oninput="updateProp('green','w',this)">
+        <span class="val" id="pw-green">71</span>
+      </div>
+      <div class="prop-row">
+        <label>Altura</label>
+        <input type="range" min="10" max="350" value="196" oninput="updateProp('green','h',this)">
+        <span class="val" id="ph-green">196</span>
+      </div>
+      <div class="prop-row">
+        <label>Arred.</label>
+        <input type="range" min="0" max="30" value="10" oninput="updateProp('green','rx',this)">
+        <span class="val" id="prx-green">10</span>
+      </div>
+      <div class="prop-row">
+        <label>Cor</label>
+        <input type="color" value="#1a6b5c" oninput="updateProp('green','c',this)" style="width:48px;height:24px;padding:0;border:none;border-radius:4px;cursor:pointer;background:none;">
+        <span class="val" id="pc-green" style="font-size:0.7rem;">#1a6b5c</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="item" data-id="teal" style="border-left-color:#6ec6c8">
+    <div class="item-header" onclick="toggleBody('body-teal')">
+      <span class="arrow" id="arrow-teal">&#9654;</span>
+      <span class="swatch" style="background:#6ec6c8"></span>
+      <span class="label">Ciano</span>
+      <span class="pos">X: <span class="coord" id="px-teal">234</span> Y: <span class="coord" id="py-teal">75</span></span>
+    </div>
+    <div class="item-body" id="body-teal">
+      <div class="prop-row">
+        <label>Largura</label>
+        <input type="range" min="10" max="120" value="72" oninput="updateProp('teal','w',this)">
+        <span class="val" id="pw-teal">72</span>
+      </div>
+      <div class="prop-row">
+        <label>Altura</label>
+        <input type="range" min="10" max="350" value="250" oninput="updateProp('teal','h',this)">
+        <span class="val" id="ph-teal">250</span>
+      </div>
+      <div class="prop-row">
+        <label>Arred.</label>
+        <input type="range" min="0" max="30" value="10" oninput="updateProp('teal','rx',this)">
+        <span class="val" id="prx-teal">10</span>
+      </div>
+      <div class="prop-row">
+        <label>Cor</label>
+        <input type="color" value="#6ec6c8" oninput="updateProp('teal','c',this)" style="width:48px;height:24px;padding:0;border:none;border-radius:4px;cursor:pointer;background:none;">
+        <span class="val" id="pc-teal" style="font-size:0.7rem;">#6ec6c8</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="item" data-id="check" style="border-left-color:#8cf2d1">
+    <div class="item-header" onclick="toggleBody('body-check')">
+      <span class="arrow" id="arrow-check">&#9654;</span>
+      <span class="swatch" style="background:#8cf2d1"></span>
+      <span class="label">Check</span>
+      <span class="pos">X: <span class="coord" id="px-check">169</span> Y: <span class="coord" id="py-check">126</span></span>
+    </div>
+    <div class="item-body" id="body-check">
+      <div class="prop-row">
+        <label>Largura</label>
+        <input type="range" min="30" max="350" value="197" oninput="updateProp('check','w',this)">
+        <span class="val" id="pw-check">197</span>
+      </div>
+      <div class="prop-row">
+        <label>Altura</label>
+        <input type="range" min="20" max="350" value="148" oninput="updateProp('check','h',this)">
+        <span class="val" id="ph-check">148</span>
+      </div>
+      <div class="prop-row">
+        <label>Cor</label>
+        <input type="color" value="#8cf2d1" oninput="updateProp('check','c',this)" style="width:48px;height:24px;padding:0;border:none;border-radius:4px;cursor:pointer;background:none;">
+        <span class="val" id="pc-check" style="font-size:0.7rem;">#8cf2d1</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:12px;padding-top:12px;border-top:1px solid #2a2a4e;">
+    <h2 style="font-size:0.9rem;color:#ccc;margin-bottom:8px;">Paleta do Logo (3 cores dos planos)</h2>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <div style="flex:1;min-width:80px;background:#002f59;border-radius:8px;padding:12px 8px;text-align:center;">
+        <div style="font-size:0.65rem;color:rgba(255,255,255,0.6);">Coluna 1</div>
+        <div style="font-size:0.75rem;color:#fff;font-family:monospace;margin-top:2px;">#002f59</div>
+      </div>
+      <div style="flex:1;min-width:80px;background:#1a6b5c;border-radius:8px;padding:12px 8px;text-align:center;">
+        <div style="font-size:0.65rem;color:rgba(255,255,255,0.6);">Coluna 2</div>
+        <div style="font-size:0.75rem;color:#fff;font-family:monospace;margin-top:2px;">#1a6b5c</div>
+      </div>
+      <div style="flex:1;min-width:80px;background:#6ec6c8;border-radius:8px;padding:12px 8px;text-align:center;">
+        <div style="font-size:0.65rem;color:rgba(255,255,255,0.6);">Coluna 3</div>
+        <div style="font-size:0.75rem;color:#fff;font-family:monospace;margin-top:2px;">#6ec6c8</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:12px;padding-top:12px;border-top:1px solid #2a2a4e;">
+    <label style="font-size:0.82rem;color:#888;display:flex;align-items:center;gap:8px;">
+      Referencia:
+      <input type="range" min="0" max="100" value="20" oninput="setRefOpacity(this)" style="flex:1;max-width:100px;">
+      <span class="val" id="ref-op-val" style="color:#7ec8e3;font-size:0.78rem;">20%</span>
+    </label>
+    <label style="font-size:0.82rem;color:#888;display:flex;align-items:center;gap:8px;margin-top:6px;">
+      Brilho fundo:
+      <input type="range" min="0" max="100" value="100" oninput="setBgBrightness(this)" style="flex:1;max-width:100px;">
+      <span class="val" id="bg-bright-val" style="color:#7ec8e3;font-size:0.78rem;">100%</span>
+    </label>
+  </div>
+
+  <div class="actions">
+    <button class="btn-save" onclick="savePositions()">Salvar Posicoes</button>
+    <button class="btn-reset" onclick="resetPositions()">Reset</button>
+  </div>
+
+  <div class="output" id="output">Clique em "Salvar Posicoes" para gerar o JSON.</div>
+
+  <p class="hint">NAS SETAS DO TECLADO: move 1px. SHIFT+seta: move 10px.</p>
+</div>
+
+</div>
+
+<script>
+var svg = document.getElementById('canvas');
+var refImg = document.getElementById('ref-image');
+
+// Normalized check path (fractions of w/h, relative to bbox top-left)
+var CHECK_NORM = [
+  { x: 1.0,  y: 0.17 },
+  { x: 0.87, y: 0 },
+  { x: 0.36, y: 0.66 },
+  { x: 0.13, y: 0.35 },
+  { x: 0,    y: 0.52 },
+  { x: 0.12, y: 0.68 },
+  { x: 0.24, y: 0.84 },
+  { x: 0.36, y: 1.0 }
+];
+
+function buildCheckPath(w, h) {
+  return 'M ' + (CHECK_NORM[0].x * w).toFixed(1) + ' ' + (CHECK_NORM[0].y * h).toFixed(1)
+    + ' L ' + (CHECK_NORM[1].x * w).toFixed(1) + ' ' + (CHECK_NORM[1].y * h).toFixed(1)
+    + ' L ' + (CHECK_NORM[2].x * w).toFixed(1) + ' ' + (CHECK_NORM[2].y * h).toFixed(1)
+    + ' L ' + (CHECK_NORM[3].x * w).toFixed(1) + ' ' + (CHECK_NORM[3].y * h).toFixed(1)
+    + ' L ' + (CHECK_NORM[4].x * w).toFixed(1) + ' ' + (CHECK_NORM[4].y * h).toFixed(1)
+    + ' C ' + (CHECK_NORM[5].x * w).toFixed(1) + ' ' + (CHECK_NORM[5].y * h).toFixed(1)
+    + ' ' + (CHECK_NORM[6].x * w).toFixed(1) + ' ' + (CHECK_NORM[6].y * h).toFixed(1)
+    + ' ' + (CHECK_NORM[7].x * w).toFixed(1) + ' ' + (CHECK_NORM[7].y * h).toFixed(1)
+    + ' Z';
+}
+
+var ELEMENTS = [
+  { id:'blue',  el: document.getElementById('el-blue'),  rect: document.getElementById('shape-blue'),  x:34, y:200, w:71,  h:125, rx:10, color:'#002f59', type:'rect' },
+  { id:'green', el: document.getElementById('el-green'), rect: document.getElementById('shape-green'), x:134, y:129, w:71,  h:196, rx:10, color:'#1a6b5c', type:'rect' },
+  { id:'teal',  el: document.getElementById('el-teal'),  rect: document.getElementById('shape-teal'),  x:234, y:75,  w:72,  h:250, rx:10, color:'#6ec6c8', type:'rect' },
+  { id:'check', el: document.getElementById('el-check'), rect: document.getElementById('shape-check'), x:169, y:126,  w:197, h:148, rx:0,  color:'#8cf2d1', type:'check' },
+];
+
+ELEMENTS.forEach(function(item) {
+  item.handles = [];
+  // 8 handles: 0-3 corners, 4-7 edges (top, right, bottom, left)
+  for (var i = 0; i < 8; i++) {
+    var h = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    h.setAttribute('r', i < 4 ? '4.5' : '4');
+    h.setAttribute('class', 'handle');
+    h.setAttribute('data-elem', item.id);
+    h.setAttribute('data-corner', i);
+    h.setAttribute('data-mode', i < 4 ? 'corner' : 'edge');
+    item.el.appendChild(h);
+    item.handles.push(h);
+  }
+  applyTransform(item);
+  applyShape(item);
+  updateHandles(item);
+});
+
+function toggleBody(id) {
+  var body = document.getElementById(id);
+  var isOpen = body.classList.toggle('open');
+  var arrowId = id.replace('body-', 'arrow-');
+  document.getElementById(arrowId).classList.toggle('open', isOpen);
+}
+
+function posKey(id) { return 'px-' + id; }
+function posYKey(id) { return 'py-' + id; }
+
+function updateHandles(item) {
+  var cx = [0, item.w, item.w, 0, item.w/2, item.w, item.w/2, 0];
+  var cy = [0, 0, item.h, item.h, 0, item.h/2, item.h, item.h/2];
+  var cursors = ['nwse-resize','nesw-resize','nwse-resize','nesw-resize','ns-resize','ew-resize','ns-resize','ew-resize'];
+  item.handles.forEach(function(h, i) {
+    h.setAttribute('cx', cx[i]);
+    h.setAttribute('cy', cy[i]);
+    h.setAttribute('cursor', cursors[i]);
+  });
+}
+
+function applyTransform(item) {
+  item.el.setAttribute('transform', 'translate(' + item.x + ',' + item.y + ')');
+  document.getElementById(posKey(item.id)).textContent = item.x;
+  document.getElementById(posYKey(item.id)).textContent = item.y;
+}
+
+function applyShape(item) {
+  if (item.type === 'rect') {
+    item.rect.setAttribute('width', item.w);
+    item.rect.setAttribute('height', item.h);
+    item.rect.setAttribute('rx', item.rx);
+    document.getElementById('pw-' + item.id).textContent = item.w;
+    document.getElementById('ph-' + item.id).textContent = item.h;
+    document.getElementById('prx-' + item.id).textContent = item.rx;
+  } else if (item.type === 'check') {
+    item.rect.setAttribute('d', buildCheckPath(item.w, item.h));
+    document.getElementById('pw-' + item.id).textContent = item.w;
+    document.getElementById('ph-' + item.id).textContent = item.h;
+  }
+  item.rect.setAttribute('fill', item.color);
+  document.getElementById('pc-' + item.id).textContent = item.color;
+  // update panel swatch and border
+  var panelItem = document.querySelector('.item[data-id="' + item.id + '"]');
+  if (panelItem) {
+    panelItem.style.borderLeftColor = item.color;
+    var sw = panelItem.querySelector('.swatch');
+    if (sw) sw.style.background = item.color;
+  }
+  updateHandles(item);
+}
+
+function updateProp(id, prop, input) {
+  var item = ELEMENTS.find(function(e) { return e.id === id; });
+  if (!item) return;
+  if (prop === 'c') {
+    item.color = input.value;
+  } else {
+    var val = parseInt(input.value, 10);
+    if (prop === 'w') item.w = val;
+    else if (prop === 'h') item.h = val;
+    else if (prop === 'rx') item.rx = val;
+  }
+  applyShape(item);
+}
+
+function svgPoint(clientX, clientY) {
+  var rect = svg.getBoundingClientRect();
+  return {
+    x: (clientX - rect.left) * (400 / rect.width),
+    y: (clientY - rect.top) * (400 / rect.height)
+  };
+}
+
+function nearestCorner(item, pt, threshold) {
+  threshold = threshold || 10;
+  var corners = [[item.x, item.y], [item.x + item.w, item.y], [item.x + item.w, item.y + item.h], [item.x, item.y + item.h]];
+  for (var i = 0; i < 4; i++) {
+    if (Math.abs(pt.x - corners[i][0]) < threshold && Math.abs(pt.y - corners[i][1]) < threshold) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+var dragging = null;
+var dragMode = null; // 'move' or 'resize'
+var offsetX = 0;
+var offsetY = 0;
+var cornerIdx = -1;
+var startX = 0, startY = 0, startW = 0, startH = 0;
+
+function onPointerDown(e) {
+  if (e.button !== 0) return;
+  var handle = e.target.closest('.handle');
+  var elem = e.target.closest('.element');
+
+  if (handle) {
+    var id = handle.getAttribute('data-elem');
+    var item = ELEMENTS.find(function(i) { return i.id === id; });
+    if (!item) return;
+    var pt = svgPoint(e.clientX, e.clientY);
+    cornerIdx = parseInt(handle.getAttribute('data-corner'), 10);
+    dragging = item;
+    dragMode = 'resize';
+    startX = item.x; startY = item.y;
+    startW = item.w; startH = item.h;
+    offsetX = pt.x; offsetY = pt.y;
+    svg.classList.add('dragging');
+    e.preventDefault();
+    return;
+  }
+
+  if (elem) {
+    var item = ELEMENTS.find(function(i) { return i.el === elem; });
+    if (!item) return;
+    var pt = svgPoint(e.clientX, e.clientY);
+    var ci = nearestCorner(item, pt);
+    if (ci >= 0) {
+      cornerIdx = ci;
+      dragging = item;
+      dragMode = 'resize';
+      startX = item.x; startY = item.y;
+      startW = item.w; startH = item.h;
+      offsetX = pt.x; offsetY = pt.y;
+      svg.classList.add('dragging');
+      e.preventDefault();
+      return;
+    }
+    offsetX = pt.x - item.x;
+    offsetY = pt.y - item.y;
+    dragging = item;
+    dragMode = 'move';
+    svg.classList.add('dragging');
+    e.preventDefault();
+    return;
+  }
+}
+
+function onPointerMove(e) {
+  if (!dragging) return;
+  var pt = svgPoint(e.clientX, e.clientY);
+
+  if (dragMode === 'move') {
+    dragging.x = Math.round(pt.x - offsetX);
+    dragging.y = Math.round(pt.y - offsetY);
+    applyTransform(dragging);
+  } else if (dragMode === 'resize') {
+    var dx = Math.round(pt.x - offsetX);
+    var dy = Math.round(pt.y - offsetY);
+    var nw = startW, nh = startH, nx = startX, ny = startY;
+
+    // 0=tl, 1=tr, 2=br, 3=bl, 4=t, 5=r, 6=b, 7=l
+    if (cornerIdx === 0) { nx = startX + dx; ny = startY + dy; nw = startW - dx; nh = startH - dy; }
+    else if (cornerIdx === 1) { ny = startY + dy; nw = startW + dx; nh = startH - dy; }
+    else if (cornerIdx === 2) { nw = startW + dx; nh = startH + dy; }
+    else if (cornerIdx === 3) { nx = startX + dx; nw = startW - dx; nh = startH + dy; }
+    else if (cornerIdx === 4) { ny = startY + dy; nh = startH - dy; }
+    else if (cornerIdx === 5) { nw = startW + dx; }
+    else if (cornerIdx === 6) { nh = startH + dy; }
+    else if (cornerIdx === 7) { nx = startX + dx; nw = startW - dx; }
+
+    if (dragging.type === 'rect') {
+      nw = Math.max(10, nw);
+      nh = Math.max(10, nh);
+    } else {
+      nw = Math.max(30, nw);
+      nh = Math.max(20, nh);
+    }
+    dragging.x = Math.min(Math.max(nx, 0), 400);
+    dragging.y = Math.min(Math.max(ny, 0), 400);
+    dragging.w = Math.min(nw, 400 - dragging.x);
+    dragging.h = Math.min(nh, 400 - dragging.y);
+    applyTransform(dragging);
+    applyShape(dragging);
+  }
+}
+
+function onPointerUp() {
+  if (!dragging) return;
+  svg.classList.remove('dragging');
+  dragging = null;
+  dragMode = null;
+  cornerIdx = -1;
+}
+
+svg.addEventListener('mousedown', onPointerDown);
+document.addEventListener('mousemove', onPointerMove);
+document.addEventListener('mouseup', onPointerUp);
+
+// Keyboard support
+document.addEventListener('keydown', function(e) {
+  var selected = ELEMENTS.find(function(item) {
+    return item.el.classList.contains('dragging');
+  });
+  if (!selected) return;
+  var step = e.shiftKey ? 10 : 1;
+  var moved = false;
+  if (e.key === 'ArrowLeft') { selected.x -= step; moved = true; }
+  else if (e.key === 'ArrowRight') { selected.x += step; moved = true; }
+  else if (e.key === 'ArrowUp') { selected.y -= step; moved = true; }
+  else if (e.key === 'ArrowDown') { selected.y += step; moved = true; }
+  if (moved) { e.preventDefault(); applyTransform(selected); }
+});
+
+function setRefOpacity(input) {
+  var val = parseInt(input.value, 10);
+  refImg.setAttribute('opacity', val / 100);
+  document.getElementById('ref-op-val').textContent = val + '%';
+}
+
+function setBgBrightness(input) {
+  var val = parseInt(input.value, 10);
+  var pct = val / 100;
+  var c = Math.round(255 * pct);
+  var hex = '#' + c.toString(16).padStart(2,'0').repeat(3);
+  document.querySelector('.svg-wrap').style.background = hex;
+  document.getElementById('bg-bright-val').textContent = val + '%';
+}
+
+function savePositions() {
+  var data = {};
+  ELEMENTS.forEach(function(item) {
+    data[item.id] = { x: item.x, y: item.y, width: item.w, height: item.h, rx: item.rx, fill: item.color };
+  });
+  document.getElementById('output').textContent = JSON.stringify(data, null, 2);
+}
+
+function resetPositions() {
+  var defaults = [
+    { x:34,  y:200, w:71,  h:125, rx:10, color:'#002f59' },
+    { x:134, y:129, w:71,  h:196, rx:10, color:'#1a6b5c' },
+    { x:234, y:75,  w:72,  h:250, rx:10, color:'#6ec6c8' },
+    { x:169, y:126, w:197, h:148, rx:0,  color:'#8cf2d1' },
+  ];
+  ELEMENTS.forEach(function(item, i) {
+    item.x = defaults[i].x;
+    item.y = defaults[i].y;
+    item.w = defaults[i].w;
+    item.h = defaults[i].h;
+    item.rx = defaults[i].rx;
+    item.color = defaults[i].color;
+    applyTransform(item);
+    applyShape(item);
+  });
+  document.getElementById('output').textContent = 'Posicoes resetadas para o padrao.';
+}
+</script>
+
+</body>
+</html>
