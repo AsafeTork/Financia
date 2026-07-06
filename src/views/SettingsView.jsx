@@ -31,6 +31,7 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
   var [cardLoading, setCardLoading] = useState(true);
   var [cardReload, setCardReload] = useState(0);
   var planId = effectivePlan(planInfo || {});
+  var [subStatus, setSubStatus] = useState(null);
   var planMeta = PRICING_PLANS.filter(function(p) { return p.id === planId; })[0] || PRICING_PLANS[0];
   var [phoneData, setPhoneData] = useState(function() { var p = parsePhone(brand.phone); return buildPhone(p.iso, p.digits); });
   var [phoneSaving, setPhoneSaving] = useState(false);
@@ -61,6 +62,19 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
     });
     return function() { alive = false; };
   }, [tab, cardReload]);
+
+  // Busca status da assinatura Stripe na aba Assinatura.
+  React.useEffect(function() {
+    if (tab !== 'subscription') return;
+    if (planId === 'free') { setSubStatus(null); return; }
+    var alive = true;
+    sb.functions.invoke('get-subscription-status', { body: {} }).then(function(res) {
+      if (!alive) return;
+      var d = res && res.data ? res.data : null;
+      setSubStatus(d && d.status ? d.status : null);
+    }).catch(function() { if (alive) setSubStatus(null); });
+    return function() { alive = false; };
+  }, [tab, planId]);
 
   const savePhone = async function() {
     setPhoneSaving(true);
@@ -234,8 +248,13 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
                   {planId !== 'free' && planInfo && isAdminGranted(planInfo) && (
                     <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{background:'rgba(245,158,11,0.12)', color:'#d97706'}}>Cortesia</span>
                   )}
-                  {planId !== 'free' && planInfo && !isAdminGranted(planInfo) && (
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{background:'rgba(59,191,160,0.12)', color:'#16a34a'}}>Assinante</span>
+                  {planId !== 'free' && planInfo && !isAdminGranted(planInfo) && subStatus !== 'none' && (
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{
+                      background: subStatus === 'canceled_expiring' ? 'rgba(245,158,11,0.12)' : 'rgba(59,191,160,0.12)',
+                      color: subStatus === 'canceled_expiring' ? '#d97706' : '#16a34a'
+                    }}>
+                      {subStatus === 'canceled_expiring' ? 'Cancelado' : 'Assinante'}
+                    </span>
                   )}
                 </div>
               </div>

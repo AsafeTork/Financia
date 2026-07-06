@@ -1,5 +1,6 @@
 // Edge Function: remove-payment-method
 // Remove (detach) o cartao salvo do usuario e limpa o padrao de fatura do customer.
+// Se houver assinatura ativa, cancela no fim do periodo (sem cartao = sem cobranca futura).
 // Idempotente: sem customer ou sem cartao, devolve { ok: true }.
 import Stripe from 'https://esm.sh/stripe@17.7.0?target=denonext';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
@@ -11,11 +12,21 @@ const CORS_HEADERS = {
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
+var ACTIVE_STATUSES = ['active', 'trialing', 'past_due', 'unpaid'];
+
 function jsonResponse(status, payload) {
   const headers = { 'Content-Type': 'application/json' };
   const keys = Object.keys(CORS_HEADERS);
   for (let i = 0; i < keys.length; i++) { headers[keys[i]] = CORS_HEADERS[keys[i]]; }
   return new Response(JSON.stringify(payload), { status: status, headers: headers });
+}
+
+function activeSubscriptionOf(subs) {
+  if (!subs || !subs.data) return null;
+  for (let i = 0; i < subs.data.length; i++) {
+    if (ACTIVE_STATUSES.indexOf(subs.data[i].status) !== -1) return subs.data[i];
+  }
+  return null;
 }
 
 async function findCustomer(stripe, email) {
@@ -79,6 +90,22 @@ Deno.serve(async function (req) {
 
     // Invalida cache do get-payment-method pra nao devolver cartao antigo.
     await cacheDel(admin, 'stripe:get-payment-method:', user.id);
+
+    // Se tinha cartao removido e o usuario tem assinatura ativa, cancela no fim do periodo.
+    if (removed > 0) {
+      var subs = await stripe.subscriptions.list({ customer: customer.id, status: 'all', limit: 20 });
+      var activeSub = activeSubscriptionOf(subs);
+      if (activeSub) {
+        await stripe.subscriptions.update(activeSub.id, { cancel_at_period_end: true });
+        if (activeSub.status !== 'active' && activeSub.status !== 'trialing') {
+          try {
+            if (admin) {
+              await admin.rpc('stripe_activate_plan', { p_user: user.id, p_plan: 'free', p_expires: null });
+            }
+          } catch (_) {}
+        }
+      }
+    }
 
     return jsonResponse(200, { ok: true, removed: removed });
   } catch (err) {

@@ -95,13 +95,11 @@ function PlanCard({ plan, brand, cta, onAction, planExpiresAt, currentPlanId, pl
               color: brand.color
             }}>Seu plano</span>
           )}
-          {current && planActivatedBy && (
+          {current && planActivatedBy && planActivatedBy.indexOf('@') !== -1 && (
             <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{
-              background: planActivatedBy.indexOf('@') !== -1 ? 'rgba(245,158,11,0.12)' : 'rgba(59,191,160,0.12)',
-              color: planActivatedBy.indexOf('@') !== -1 ? '#d97706' : '#16a34a'
-            }}>
-              {planActivatedBy.indexOf('@') !== -1 ? 'Cortesia' : 'Assinatura'}
-            </span>
+              background: 'rgba(245,158,11,0.12)',
+              color: '#d97706'
+            }}>Cortesia</span>
           )}
         </div>
 
