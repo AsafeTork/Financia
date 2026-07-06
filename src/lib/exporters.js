@@ -48,7 +48,7 @@ export function exportPDF(opts) {
     + '<h1>' + htmlEscape(opts.brandName || 'Financia') + '</h1><p class="sub">' + htmlEscape(opts.subtitle || '') + '</p>'
     + (kpis ? '<div class="kpis">' + kpis + '</div>' : '')
     + '<table><thead><tr>' + ths + '</tr></thead><tbody>' + trs + '</tbody></table>'
-    + '<script>window.onload=function(){window.print();}<\/script></body></html>';
+    + '<script>window.onload=function(){window.print();}</script></body></html>';
   win.document.write(doc);
   win.document.close();
   return true;

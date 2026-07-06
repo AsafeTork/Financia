@@ -39,7 +39,7 @@ export function useDataLoader(props) {
         await ldb.transactions.bulkPut(pend);
         allTx = pend.concat(txs);
       }
-    } catch (e) {}
+    } catch (e) { void e; }
     setTx(allTx.map(function(t) { return Object.assign({}, t, {desc:t.description||t.desc, cat:t.category||t.cat}); }));
     setLosses(lss.map(function(l) { return Object.assign({}, l, {desc:l.description||l.desc}); }));
     var roleVal = roleMeta ? roleMeta.val : null;

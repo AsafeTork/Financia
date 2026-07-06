@@ -9,7 +9,7 @@ export function useBrandManager(props) {
   var saveBrand = async function(nb) {
     var userId = session.user.id;
     var existing = null;
-    try { existing = await ldb.profiles.get(userId); } catch (e0) {}
+    try { existing = await ldb.profiles.get(userId); } catch (e0) { void e0; }
     var hasWhiteLabel = !!(existing && existing.white_label);
     var visual = hasWhiteLabel ? null : planVisualDefaults({
       plan: existing && existing.plan ? existing.plan : 'free',
@@ -59,14 +59,14 @@ export function useBrandManager(props) {
     try {
       var existing = await ldb.profiles.get(userId);
       if (existing) await ldb.profiles.update(userId, {phone:clean, _synced:0, _updated_at:now()});
-    } catch(e) {}
+    } catch(e) { void e; }
     setBrand(function(b) { return Object.assign({}, b, {phone:clean}); });
     if (navigator.onLine) {
       try {
         var res = await sb.from('company_profiles').update({phone:clean}).eq('user_id', userId);
         if (!res.error) { await ldb.profiles.update(userId, {_synced:1}); toast('Telefone atualizado', 'success'); }
         else toast('Não sincronizado — tentaremos em breve', 'warning');
-      } catch(e) { toast('Não sincronizado — tentaremos em breve', 'warning'); }
+      } catch(e) { void e; toast('Não sincronizado — tentaremos em breve', 'warning'); }
     } else {
       toast('Telefone salvo — sincroniza quando online', 'success');
     }

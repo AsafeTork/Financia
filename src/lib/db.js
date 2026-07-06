@@ -73,7 +73,7 @@ const syncTable = async function(uid, table, ldbTable, mapLocal) {
         const { error } = await sb.from(table).upsert(sbRow, { onConflict: 'id' });
         if (!error) toMarkSynced.push(row.id);
       }
-    } catch (_) {}
+    } catch (_) { void _; }
   }
   if (toDeleteIds.length > 0) await ldbTable.bulkDelete(toDeleteIds);
   if (toMarkSynced.length > 0) await ldbTable.where('id').anyOf(toMarkSynced).modify({ _synced: 1 });
@@ -241,12 +241,12 @@ export const triggerApkBuild = async function(clientName, logoUrl, primaryColor)
   if (!tok) return { ok: false, reason: 'no_token' };
   var last = Number(localStorage.getItem('nancia_last_build_at') || '0');
   if (Date.now() - last < 5 * 60 * 1000) return { ok: false, reason: 'rate_limited' };
-  var safeName = String(clientName || 'Financia').replace(/[^\w\s\-]/g, '').trim().slice(0, 60) || 'Financia';
+  var safeName = String(clientName || 'Financia').replace(/[^\w\s-]/g, '').trim().slice(0, 60) || 'Financia';
   var safeLogo = '';
   try {
     var parsed = new URL(String(logoUrl || '').trim());
     if (parsed.protocol === 'https:' || parsed.protocol === 'http:') safeLogo = parsed.toString().slice(0, 500);
-  } catch (e) {}
+  } catch (e) { void e; }
   var safeColor = String(primaryColor || '#002f59').replace(/[^#0-9a-fA-F]/g, '');
   if (!/^#?[0-9a-fA-F]{6}$/.test(safeColor)) safeColor = '#002f59';
   if (safeColor.charAt(0) !== '#') safeColor = '#' + safeColor;

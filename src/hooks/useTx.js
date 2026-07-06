@@ -42,13 +42,13 @@ export function useTx(session, enforceLimit, toast) {
       try {
         var res = await sb.from('transactions').upsert({id:row.id, type:row.type, description:row.description, amount:row.amount, date:row.date, method:row.method, category:row.category, items:row.items, user_id:row.user_id, registered_by:row.registered_by, updated_at:row.updated_at});
         if (!res.error) await ldb.transactions.update(row.id, {_synced:1});
-      } catch (e) {}
+      } catch (e) { void e; }
     }
     return true;
   };
 
   var deleteTx = async function(id) {
-    if (isRecurringId(id)) { try { var r = await ldb.transactions.get(id); if (r) await addSkip(r.user_id, id); } catch (e) {} }
+    if (isRecurringId(id)) { try { var r = await ldb.transactions.get(id); if (r) await addSkip(r.user_id, id); } catch (e) { void e; } }
     if (!await dexieUpdate(ldb, 'transactions', id, deletedMeta(), toast)) return false;
     setTx(function(p) { return p.filter(function(t) { return t.id !== id; }); });
     await syncDelete(sb, 'transactions', id, ldb, toast);

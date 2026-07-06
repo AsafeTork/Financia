@@ -4,7 +4,8 @@ var _memo = {};
 var _inflight = {};
 var MEMO_TTL = 2 * 60 * 1000;
 
-var clean = function(v, n) { return String(v || '').replace(/[\u0000-\u001F\u007F]/g, ' ').trim().slice(0, n); };
+// eslint-disable-next-line no-control-regex
+var clean = function(v, n) { return String(v || '').replace(/[\x00-\x1F\x7F]/g, ' ').trim().slice(0, n); };
 var keyOf = function(body) { return JSON.stringify(body); };
 var now = function() { return Date.now(); };
 var getMemo = function(k) {
@@ -83,7 +84,7 @@ export var askAI = async function(prompt, systemOrOpts, maxTokens) {
       setMemo(key, fb);
       return fb;
     } catch (e) {
-      var fb = { ok: true, text: fallbackText(mode, p) };
+      fb = { ok: true, text: fallbackText(mode, p) };
       setMemo(key, fb);
       return fb;
     } finally {

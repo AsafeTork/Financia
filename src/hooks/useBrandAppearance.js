@@ -42,7 +42,7 @@ export default function useBrandAppearance(brand, planInfo) {
     setThemePref(function(prev) {
       var current = prev || (appBrand && appBrand.theme) || 'light';
       var next = current === 'dark' ? 'light' : 'dark';
-      try { localStorage.setItem('financia_theme', next); } catch (e) {}
+      try { localStorage.setItem('financia_theme', next); } catch (e) { void e; }
       return next;
     });
   }, [appBrand]);
