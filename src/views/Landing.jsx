@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useScrollReveal } from '../hooks/useScrollReveal.js';
 import { fmt } from '../lib/utils.js';
+import { waLink } from '../lib/constants.js';
 
 var NAVY = '#002f59';
 var TEAL = '#1a6b5c';
@@ -78,7 +79,7 @@ var FAQ = [
 ];
 
 export default function Landing({ onEnter }) {
-  var waLink = makeWaLink('Quero conhecer o Financia para o meu negocio.');
+  var waLinkUrl = waLink('Quero conhecer o Financia para o meu negocio.');
   var [scrollY, setScrollY] = useState(0);
 
   useEffect(function() {
@@ -523,7 +524,7 @@ export default function Landing({ onEnter }) {
                 );
               })}
             </div>
-            <a href={waLink} target="_blank" rel="noreferrer" className="text-xs font-semibold transition hover:opacity-70" style={{ color: TEAL }}>Precisa de algo sob medida? Fale no WhatsApp</a>
+            <a href={waLinkUrl} target="_blank" rel="noreferrer" className="text-xs font-semibold transition hover:opacity-70" style={{ color: TEAL }}>Precisa de algo sob medida? Fale no WhatsApp</a>
           </div>
         </div>
       </section>
@@ -572,7 +573,7 @@ export default function Landing({ onEnter }) {
                 Criar conta gratis
                 <svg className="inline-block ml-2 w-4 h-4 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 12h14M12 5l7 7-7 7"/></svg>
               </button>
-              <a href={waLink} target="_blank" rel="noreferrer" className="text-sm font-semibold px-8 py-4 rounded-2xl transition-all duration-200 hover:bg-white/10" style={{ border: '1px solid rgba(255,255,255,0.2)', color: '#fff' }}>
+              <a href={waLinkUrl} target="_blank" rel="noreferrer" className="text-sm font-semibold px-8 py-4 rounded-2xl transition-all duration-200 hover:bg-white/10" style={{ border: '1px solid rgba(255,255,255,0.2)', color: '#fff' }}>
                 Falar no WhatsApp
               </a>
             </div>
