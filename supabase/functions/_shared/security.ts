@@ -155,6 +155,17 @@ export async function cacheGet(
   }
 }
 
+export async function cacheDel(admin: any, prefix: string, userId: string): Promise<void> {
+  if (!admin) return;
+  try {
+    await admin.from('ai_cache')
+      .update({ expires_at: new Date(0).toISOString() })
+      .eq('scope', 'cache')
+      .like('cache_key', prefix + '%')
+      .eq('user_id', userId);
+  } catch (_) {}
+}
+
 export async function cacheSet(
   admin: any,
   cacheKey: string,

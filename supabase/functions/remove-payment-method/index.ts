@@ -3,7 +3,7 @@
 // Idempotente: sem customer ou sem cartao, devolve { ok: true }.
 import Stripe from 'https://esm.sh/stripe@17.7.0?target=denonext';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { enforceRateLimit, getAdminClient } from '../_shared/security.ts';
+import { enforceRateLimit, getAdminClient, cacheDel } from '../_shared/security.ts';
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -76,6 +76,9 @@ Deno.serve(async function (req) {
     await stripe.customers.update(customer.id, {
       invoice_settings: { default_payment_method: '' },
     });
+
+    // Invalida cache do get-payment-method pra nao devolver cartao antigo.
+    await cacheDel(admin, 'stripe:get-payment-method:', user.id);
 
     return jsonResponse(200, { ok: true, removed: removed });
   } catch (err) {
