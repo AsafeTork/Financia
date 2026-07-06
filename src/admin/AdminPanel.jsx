@@ -2,7 +2,7 @@
 import { Empty, Skeleton } from '../components/ui.jsx';
 import { sb } from '../lib/supabase.js';
 import { triggerApkBuild, fetchClients, deleteClient, fetchClientUsage, fetchDbStats, fetchStripeOverview } from '../lib/db.js';
-import { luminance, lightenHex, fmtDate, formatBytes, dbUsage } from '../lib/utils.js';
+import { luminance, lightenHex, fmtDate, formatBytes, dbUsage, fmt } from '../lib/utils.js';
 import { GH_REPO, effectivePlan, PRICING_PLANS, countsAsRevenue, isAdminGranted, waLinkTo, APP_URL } from '../lib/constants.js';
 
 // Limite de armazenamento do plano Supabase (free = 500 MB). Base do alerta de uso.
@@ -79,8 +79,7 @@ export default function AdminPanel({ toast, confirm, session }) {
     return a;
   }, { total: 0, pagantes: 0, cortesia: 0, premium: 0, free: 0, addon: 0, novos: 0, mrr: 0 });
   var mrr = stats.mrr;
-  var moneyBR = function(v) { return 'R$ ' + Number(v || 0).toFixed(2).replace('.', ','); };
-  var centsBR = function(c) { return moneyBR((Number(c) || 0) / 100); };
+  var centsBR = function(c) { return fmt((Number(c) || 0) / 100); };
   const wlClients = clients.filter(function(c) { return !!c.white_label; });
 
   // Derivados do painel financeiro/infra.
@@ -328,7 +327,7 @@ export default function AdminPanel({ toast, confirm, session }) {
         <SectionHead color="#0f766e" title="Visão geral"
           icon="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-2">
-          {[['Clientes', String(stats.total), false], ['Pagantes', String(stats.pagantes), false], ['Free', String(stats.free), false], ['Receita/mês', moneyBR(mrr), true]].map(function(kv) {
+          {[['Clientes', String(stats.total), false], ['Pagantes', String(stats.pagantes), false], ['Free', String(stats.free), false], ['Receita/mês', fmt(mrr), true]].map(function(kv) {
             var hl = kv[2];
             return (
               <div key={kv[0]} className="rounded-xl p-3 relative overflow-hidden" style={{background:'var(--bg-card)', border:'1px solid var(--border)'}}>

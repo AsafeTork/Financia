@@ -4,10 +4,7 @@ import { getStripe, getPublishableKey, stripeAppearance, friendlyStripeError, fr
 import { sb } from '../lib/supabase.js';
 import { Spin } from './ui.jsx';
 import CardPreview from './CardPreview.jsx';
-
-function isDarkTheme() {
-  return document.documentElement.getAttribute('data-theme') === 'dark';
-}
+import { isDarkTheme } from '../lib/utils.js';
 
 // Formulario interno (dentro de <Elements>): salva o cartao via SetupIntent e o
 // define como padrao do customer/assinaturas. Chama onSaved() ao concluir.

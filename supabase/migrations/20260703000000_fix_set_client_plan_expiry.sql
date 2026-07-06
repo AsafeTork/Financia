@@ -1,6 +1,3 @@
--- Corrige set_client_plan para usar 31 dias (mesmo padrao do Stripe webhook)
--- em vez de 1 ano. Também ajusta stripe_activate_plan para usar current_period_end.
-
 create or replace function public.set_client_plan(a_target uuid, b_plan text, c_actor text)
   returns void
   language plpgsql

@@ -1,9 +1,10 @@
 import React, { useMemo, useState } from 'react';
 import { Card } from '../components/ui.jsx';
-import { KpiCard, BarChartSVG, UsageBar } from '../components/UsageBar.jsx';
+import { KpiCard, BarChartSVG } from '../components/UsageBar.jsx';
+import PlanStatusCard from '../components/PlanStatusCard.jsx';
+import AiInsightsCard from '../components/AiInsightsCard.jsx';
 import { fmt, fmtDate, today, prevDays, brandAlpha } from '../lib/utils.js';
 import { PLAN_LIMITS, effectivePlan } from '../lib/constants.js';
-import { askAI } from '../lib/aiClient.js';
 
 export default function Dashboard({ tx, products, brand, onNav, planInfo, lossesCount, onUpgrade }) {
   var cm = today().slice(0, 7);
@@ -14,14 +15,23 @@ export default function Dashboard({ tx, products, brand, onNav, planInfo, losses
   var mtx  = tx.filter(function(t) { return t.date.startsWith(cm); });
   var pmtx = tx.filter(function(t) { return t.date.startsWith(pm); });
 
-  var ti   = mtx.filter(function(t) { return t.type === 'income'; }).reduce(function(s, t) { return s + t.amount; }, 0);
-  var to   = mtx.filter(function(t) { return t.type === 'expense'; }).reduce(function(s, t) { return s + t.amount; }, 0);
-  var pmi  = pmtx.filter(function(t) { return t.type === 'income'; }).reduce(function(s, t) { return s + t.amount; }, 0);
-  var pmo  = pmtx.filter(function(t) { return t.type === 'expense'; }).reduce(function(s, t) { return s + t.amount; }, 0);
-
-  var dtx  = tx.filter(function(t) { return t.date === today(); });
-  var di   = dtx.filter(function(t) { return t.type === 'income'; }).reduce(function(s, t) { return s + t.amount; }, 0);
-  var dout = dtx.filter(function(t) { return t.type === 'expense'; }).reduce(function(s, t) { return s + t.amount; }, 0);
+  var sumMonth = useMemo(function() {
+    var r = { ti: 0, to: 0 };
+    mtx.forEach(function(t) { if (t.type === 'income') r.ti += t.amount; else r.to += t.amount; });
+    return r;
+  }, [mtx]);
+  var sumPrev = useMemo(function() {
+    var r = { ti: 0, to: 0 };
+    pmtx.forEach(function(t) { if (t.type === 'income') r.ti += t.amount; else r.to += t.amount; });
+    return r;
+  }, [pmtx]);
+  var sumToday = useMemo(function() {
+    var r = { ti: 0, to: 0 };
+    var dtx = tx.filter(function(t) { return t.date === today(); });
+    dtx.forEach(function(t) { if (t.type === 'income') r.ti += t.amount; else r.to += t.amount; });
+    return r;
+  }, [tx]);
+  var ti = sumMonth.ti, to = sumMonth.to, pmi = sumPrev.ti, pmo = sumPrev.to, di = sumToday.ti, dout = sumToday.to;
 
   var inVar  = pmi  > 0 ? Math.round(((ti - pmi) / pmi) * 100)   : null;
   var outVar = pmo  > 0 ? Math.round(((to - pmo) / pmo) * 100)   : null;
@@ -33,16 +43,13 @@ export default function Dashboard({ tx, products, brand, onNav, planInfo, losses
     return Array.from({length: 7}, function(_, i) {
       var d = prevDays(6 - i);
       var dt = tx.filter(function(t) { return t.date === d; });
-      return {
-        day: new Date(d + 'T12:00').toLocaleDateString('pt-BR', {weekday: 'short'}),
-        i: dt.filter(function(t) { return t.type === 'income'; }).reduce(function(s, t) { return s + t.amount; }, 0),
-        o: dt.filter(function(t) { return t.type === 'expense'; }).reduce(function(s, t) { return s + t.amount; }, 0),
-      };
+      var sums = { i: 0, o: 0 };
+      dt.forEach(function(t) { if (t.type === 'income') sums.i += t.amount; else sums.o += t.amount; });
+      return { day: new Date(d + 'T12:00').toLocaleDateString('pt-BR', {weekday: 'short'}), i: sums.i, o: sums.o };
     });
   }, [tx]);
 
   var plan     = effectivePlan(planInfo);
-  var canUseAI = plan !== 'free';
   var lowStock = products.filter(function(p) { return p.stock != null && p.stock <= 5; });
   var usage = [
     { key: 'transactions', label: 'Transacoes', used: tx.length,        limit: PLAN_LIMITS.free.transactions, color: brand.color },
@@ -54,38 +61,6 @@ export default function Dashboard({ tx, products, brand, onNav, planInfo, losses
   var recent   = tx.slice().sort(function(a, b) { return b.date.localeCompare(a.date); }).slice(0, 8);
   var hour     = new Date().getHours();
   var greeting = hour < 12 ? 'Bom dia' : hour < 18 ? 'Boa tarde' : 'Boa noite';
-
-  var [aiText, setAiText]       = useState('');
-  var [aiLoading, setAiLoading] = useState(false);
-  var [aiErr, setAiErr]         = useState('');
-
-  var gerarInsights = async function() {
-    setAiLoading(true); setAiErr(''); setAiText('');
-    var byCat = mtx.filter(function(t) { return t.type === 'expense'; }).reduce(function(a, t) {
-      var k = t.category || t.cat || 'Outros';
-      a[k] = (a[k] || 0) + t.amount;
-      return a;
-    }, {});
-    var topCats = Object.keys(byCat).map(function(k) { return [k, byCat[k]]; })
-      .sort(function(a, b) { return b[1] - a[1]; }).slice(0, 3);
-    var nSales = mtx.filter(function(t) { return t.type === 'income'; }).length;
-    var ticket = nSales > 0 ? ti / nSales : 0;
-
-    var top = topCats.map(function(c) { return c[0] + ':' + Math.round(c[1]); }).join('|');
-    var resumo = 'in=' + Math.round(ti)
-      + ';out=' + Math.round(to)
-      + ';profit=' + Math.round(profitCurr)
-      + ';profit_var=' + (profVar == null ? 'na' : String(profVar))
-      + ';sales=' + nSales
-      + ';ticket=' + Math.round(ticket)
-      + ';top_exp=' + (top || 'none')
-      + ';low_stock=' + lowStock.length
-      + ';products=' + products.length
-      + ';entries=' + mtx.length;
-    var r = await askAI(resumo, { mode: 'insights', maxTokens: 220 });
-    setAiLoading(false);
-    if (r.ok) setAiText(r.text); else setAiErr(r.error);
-  };
 
   return (
     <div className="flex flex-col gap-5">
@@ -216,164 +191,9 @@ export default function Dashboard({ tx, products, brand, onNav, planInfo, losses
         </div>
       )}
 
-      {/* ─── IA ─── */}
-      <Card className="p-5 card-plan-glow">
-        <div className="flex items-center justify-between mb-3 gap-2">
-          <div className="flex items-center gap-2 min-w-0">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={canUseAI ? 'var(--plan-accent, ' + brand.color + ')' : brand.color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0">
-              <path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9L12 3z"/>
-            </svg>
-            <p className="text-sm font-semibold" style={{color:'var(--text-main)'}}>Insights da IA</p>
-            {!canUseAI && <span className="text-[10px] font-bold px-2 py-0.5 rounded-full badge-plan">PRO</span>}
-            {canUseAI && plan === 'premium' && <span className="text-[10px] font-bold px-2 py-0.5 rounded-full badge-plan">PREMIUM</span>}
-          </div>
-          {canUseAI && (
-            <button onClick={gerarInsights} disabled={aiLoading}
-              className="text-xs font-semibold px-3 py-2 rounded-lg text-white transition hover:opacity-90 disabled:opacity-50 flex-shrink-0 btn-plan-grad"
-              style={{background: 'var(--btn-grad, ' + brand.color + ')'}}>
-              {aiLoading ? 'Analisando...' : (aiText ? 'Atualizar' : 'Gerar analise')}
-            </button>
-          )}
-        </div>
-        {!canUseAI ? (
-          <div className="flex flex-col gap-3">
-            <div className="relative rounded-xl p-4 overflow-hidden" style={{background: 'var(--bg-subtle)', filter: 'blur(2px)', opacity: 0.5, pointerEvents: 'none'}}>
-              <p className="text-xs leading-relaxed" style={{color:'var(--text-muted)'}}>"Suas despesas com estoque subiram 15%. Considere renegociar com fornecedores para melhorar sua margem."</p>
-              <p className="text-xs leading-relaxed mt-1" style={{color:'var(--text-muted)'}}>"Seu ticket medio e de R$ 195 — aumentar para R$ 220 geraria +R$ 1.200/mes."</p>
-            </div>
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{marginTop: '3rem'}}>
-              <span className="text-xs font-bold px-3 py-1 rounded-full" style={{background: brandAlpha(brand.color, 0.90), color: '#fff'}}>Disponivel no plano Pro</span>
-            </div>
-            <button onClick={onUpgrade}
-              className="self-start text-xs font-semibold px-4 py-2.5 rounded-xl text-white transition hover:opacity-90 min-h-[44px]"
-              style={{background: brand.color}}>
-              Conhecer plano Pro
-            </button>
-          </div>
-        ) : (
-          <React.Fragment>
-            {aiErr && <p className="text-xs" style={{color:'#ef4444'}}>{aiErr}</p>}
-            {!aiText && !aiErr && !aiLoading && <p className="text-xs" style={{color:'var(--text-muted)'}}>Receba dicas praticas baseadas nos seus numeros do mes.</p>}
-            {aiLoading && (
-              <div className="flex flex-col gap-2 mt-1">
-                <div className="skeleton" style={{height:10, width:'100%'}}/>
-                <div className="skeleton" style={{height:10, width:'85%'}}/>
-                <div className="skeleton" style={{height:10, width:'70%'}}/>
-              </div>
-            )}
-            {aiText && <div className="text-sm whitespace-pre-wrap leading-relaxed" style={{color:'var(--text-sub)'}}>{aiText}</div>}
-          </React.Fragment>
-        )}
-      </Card>
+      <AiInsightsCard mtx={mtx} ti={ti} to={to} profitCurr={profitCurr} profVar={profVar} lowStock={lowStock} products={products} brand={brand} plan={plan} onUpgrade={onUpgrade}/>
 
-      {/* ─── PLANO FREE ─── Upgrade card premium */}
-      {plan === 'free' && (
-        <div className="rounded-2xl overflow-hidden" style={{
-          background: 'var(--bg-card)',
-          border: '1px solid var(--border)',
-          boxShadow: 'var(--shadow-md)'
-        }}>
-          <div className="h-1 w-full" style={{background: 'var(--plan-gradient, ' + brand.color + ')'}}/>
-          <div className="p-5 flex flex-col gap-4">
-            <div className="flex items-center justify-between">
-              <p className="text-xs font-bold uppercase tracking-wide" style={{color:'var(--text-muted)'}}>Plano gratuito</p>
-              <span className="badge-plan text-xs font-bold px-2.5 py-0.5 rounded-full">FREE</span>
-            </div>
-            <div className="flex flex-col gap-3">
-              {usage.map(function(u, i) {
-                return (
-                  <div key={u.key} className={i > 0 ? 'pt-3' : ''} style={i > 0 ? {borderTop:'1px solid var(--border)'} : {}}>
-                    <UsageBar label={u.label} used={u.used} limit={u.limit} color={u.color}/>
-                  </div>
-                );
-              })}
-            </div>
-            {anyReached && (
-              <div className="flex items-start gap-2 rounded-lg px-3 py-2.5 border border-amber-200" style={{background:'rgba(245,158,11,0.07)'}}>
-                <div className="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0 mt-1"/>
-                <p className="text-xs font-semibold text-amber-700">
-                  {'Limite de ' + reachedCats.map(function(c) { return c.label.toLowerCase(); }).join(' e ') + ' atingido. As demais categorias continuam liberadas.'}
-                </p>
-              </div>
-            )}
-            <div className="rounded-xl p-4 flex flex-col gap-3" style={{background:'var(--bg-subtle)'}}>
-              <p className="text-xs font-semibold" style={{color:'var(--text-sub)'}}>Ao atualizar voce desbloqueia:</p>
-              <div className="flex flex-col gap-1.5">
-                {['IA Financeira com insights personalizados', 'Relatorios ilimitados', 'Exportacao em PDF e Excel', 'Historico ilimitado de transacoes', 'Backup prioritario'].map(function(b) {
-                  return (
-                    <div key={b} className="flex items-center gap-2">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3bbfa0" strokeWidth="2.5" strokeLinecap="round"><path d="M5 13l4 4L19 7"/></svg>
-                      <span className="text-xs" style={{color:'var(--text-sub)'}}>{b}</span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-            <button onClick={onUpgrade}
-              className="flex items-center justify-center gap-2 text-sm font-semibold text-white rounded-xl py-3 min-h-[44px] transition hover:opacity-90 btn-plan-grad"
-              style={{background: 'var(--btn-grad, ' + brand.color + ')'}}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9L12 3z"/></svg>
-              {anyReached ? 'Liberar tudo - fazer upgrade' : 'Ver planos e fazer upgrade'}
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* ─── PLANO PRO ─── Upgrade card para Premium */}
-      {plan === 'pro' && (
-        <div className="rounded-2xl overflow-hidden" style={{
-          background: 'var(--bg-card)',
-          border: '1px solid var(--border)',
-          boxShadow: 'var(--shadow-md)'
-        }}>
-          <div className="h-0.5 w-full" style={{background: 'var(--plan-gradient, ' + brand.color + ')'}}/>
-          <div className="p-4 flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{background: 'var(--plan-badge-bg, var(--brand-soft))'}}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--plan-accent, ' + brand.color + ')" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9L12 3z"/>
-              </svg>
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2">
-                <p className="text-sm font-semibold" style={{color:'var(--text-main)'}}>Plano Pro</p>
-                <span className="badge-plan text-[10px] font-bold px-2 py-0.5 rounded-full">PRO</span>
-              </div>
-              <p className="text-xs" style={{color:'var(--text-muted)'}}>Voce tem acesso a todas as ferramentas.</p>
-            </div>
-            <button onClick={onUpgrade}
-              className="text-xs font-semibold px-3 py-2 rounded-xl flex-shrink-0 min-h-[44px] transition hover:opacity-80"
-              style={{background:'var(--bg-subtle)', color:'var(--text-sub)', border:'1px solid var(--border)'}}>
-              Ver Premium
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* ─── PLANO PREMIUM ─── Badge exclusivo */}
-      {plan === 'premium' && (
-        <div className="rounded-2xl overflow-hidden" style={{
-          background: 'var(--bg-card)',
-          border: '1px solid var(--border)',
-          boxShadow: 'var(--shadow-md)'
-        }}>
-          <div className="h-0.5 w-full" style={{background: 'var(--plan-gradient, ' + brand.color + ')'}}/>
-          <div className="p-4 flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{background: 'var(--plan-badge-bg, var(--brand-soft))'}}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--plan-accent, #D4AF6A)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7z"/>
-                <path d="M5 18h14v2H5v-2z"/>
-              </svg>
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2">
-                <p className="text-sm font-semibold" style={{color:'var(--text-main)'}}>Plano Premium</p>
-                <span className="badge-plan text-[10px] font-bold px-2 py-0.5 rounded-full">PREMIUM</span>
-              </div>
-              <p className="text-xs" style={{color:'var(--text-muted)'}}>A experiencia completa do Financia.</p>
-            </div>
-          </div>
-        </div>
-      )}
+      <PlanStatusCard plan={plan} brand={brand} onUpgrade={onUpgrade} usage={usage} anyReached={anyReached} reachedCats={reachedCats}/>
 
       <Card className="p-5">
         <div className="flex items-center justify-between mb-4">

@@ -126,9 +126,6 @@ input:focus, select:focus, textarea:focus {
   --border:     #1e3450;
   --border-md:  #274263;
 
-  --brand-soft: rgba(110,198,200,0.10);
-  --brand-accent-soft: rgba(26,107,92,0.15);
-
   --shadow-sm:  0 1px 3px rgba(0,0,0,0.3);
   --shadow-md:  0 4px 12px rgba(0,0,0,0.35);
   --shadow-lg:  0 10px 30px rgba(0,0,0,0.45);

@@ -19,7 +19,7 @@ function ensureManifestLink() {
 	document.head.appendChild(link);
 }
 
-ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+createRoot(document.getElementById('root')).render(<App/>);
 
 ensureManifestLink();
 

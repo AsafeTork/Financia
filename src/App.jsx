@@ -1,11 +1,11 @@
 import React, { useState, useCallback, useEffect, useRef, lazy, Suspense } from 'react';
 import { flushSync } from 'react-dom';
-import { brandAlpha, deriveCores } from './lib/utils.js';
-import { INIT_BRAND, INIT_PLAN, atLimit, limitFor, effectivePlan, planVisualDefaults, WHITE_LABEL_VISUAL_DEFAULT, PLAN_VISUAL_DEFAULTS } from './lib/constants.js';
+import { INIT_BRAND, INIT_PLAN, atLimit, limitFor, effectivePlan } from './lib/constants.js';
 import { useTx } from './hooks/useTx.js';
 import { useProducts } from './hooks/useProducts.js';
 import { useLosses } from './hooks/useLosses.js';
 import { useSession } from './hooks/useSession.js';
+import useBrandAppearance from './hooks/useBrandAppearance.js';
 import Sidebar from './components/Sidebar.jsx';
 import BottomNav from './components/BottomNav.jsx';
 import Header from './components/Header.jsx';
@@ -36,6 +36,8 @@ const hashView = function() { const h = window.location.hash.replace('#',''); re
 const isLandingPreview = function() { return window.location.hash.replace('#','') === 'landing'; };
 const isLegalPage = function() { var h = window.location.hash.replace('#',''); return h === 'privacidade' || h === 'termos'; };
 
+var noop = function() {};
+
 function Loader({ text }) {
   return (
     <div className="min-h-screen flex items-center justify-center flex-col gap-3" style={{background:'var(--bg-page)'}}>
@@ -62,92 +64,18 @@ export default function App() {
   const [showUpgrade, setShowUpgrade]   = useState(false);
   const [onboardingNeeded, setOnboardingNeeded] = useState(false);
   const onboardingRef                   = useRef(null); // null=indeciso, true/false=decidido
-  const [themePref, setThemePref]       = useState(function() { try { return localStorage.getItem('financia_theme'); } catch (e) { return null; } });
   const toastId                         = useRef(0);
 
-  var sameHex = function(a, b) {
-    return String(a || '').toLowerCase() === String(b || '').toLowerCase();
-  };
-  var matchesPlanPalette = function(b) {
-    if (!b) return false;
-    var keys = Object.keys(PLAN_VISUAL_DEFAULTS);
-    for (var i = 0; i < keys.length; i++) {
-      var p = PLAN_VISUAL_DEFAULTS[keys[i]];
-      if (!p) continue;
-      if (sameHex(b.color, p.color)
-        && sameHex(b.color_secondary, p.color_secondary)
-        && sameHex(b.color_accent, p.color_accent)
-        && String(b.theme || 'light') === String(p.theme || 'light')) {
-        return true;
-      }
-    }
-    return false;
-  };
-  var hasWhiteLabel = !!(brand && brand.white_label);
-  var visualPreset = hasWhiteLabel ? null : planVisualDefaults(planInfo);
-  var lockedPlanVisual = hasWhiteLabel ? planVisualDefaults(planInfo) : null;
-  var missingCustomPalette = !!(hasWhiteLabel && (
-    !brand.color || !brand.color_secondary || !brand.color_accent
-  ));
-  var useWhiteLabelFallback = !!(hasWhiteLabel && lockedPlanVisual
-    && (
-      (sameHex(brand.color, lockedPlanVisual.color)
-        && sameHex(brand.color_secondary, lockedPlanVisual.color_secondary)
-        && sameHex(brand.color_accent, lockedPlanVisual.color_accent)
-        && String(brand.theme || 'light') === String(lockedPlanVisual.theme || 'light'))
-      || matchesPlanPalette(brand)
-      || missingCustomPalette
-    ));
-  var appBrand = hasWhiteLabel
-    ? (useWhiteLabelFallback
-      ? Object.assign({}, brand, {
-          color: WHITE_LABEL_VISUAL_DEFAULT.color,
-          color_secondary: WHITE_LABEL_VISUAL_DEFAULT.color_secondary,
-          color_accent: WHITE_LABEL_VISUAL_DEFAULT.color_accent,
-          theme: WHITE_LABEL_VISUAL_DEFAULT.theme,
-        })
-      : brand)
-    : Object.assign({}, brand, {
-        color: visualPreset.color,
-        color_secondary: visualPreset.color_secondary,
-        color_accent: visualPreset.color_accent,
-        theme: visualPreset.theme,
-      });
-  var effectiveTheme = themePref || (appBrand && appBrand.theme) || 'light';
-
-  const toggleTheme = useCallback(function() {
-    setThemePref(function(prev) {
-      var current = prev || (appBrand && appBrand.theme) || 'light';
-      var next = current === 'dark' ? 'light' : 'dark';
-      try { localStorage.setItem('financia_theme', next); } catch (e) {}
-      return next;
-    });
-  }, [appBrand]);
+  var { appBrand, effectiveTheme, toggleTheme } = useBrandAppearance(brand, planInfo);
 
   const navTo = useCallback(function(v) {
     var go = function() { setView(v); window.location.hash = v; };
-    // View Transitions API nativa: anima a troca de pagina quando suportado.
     if (typeof document !== 'undefined' && document.startViewTransition) {
       document.startViewTransition(function() { flushSync(go); });
     } else {
       go();
     }
   }, []);
-
-  const applyBrandVars = useCallback(function(b) {
-    var primary   = b.color || '#002f59';
-    var derived   = deriveCores(primary);
-    var secondary = b.color_secondary || derived.secondary;
-    var accent    = b.color_accent    || derived.accent;
-    var el = document.documentElement;
-    el.style.setProperty('--brand', primary);
-    el.style.setProperty('--brand-soft', brandAlpha(primary, 0.08));
-    el.style.setProperty('--brand-secondary', secondary);
-    el.style.setProperty('--brand-accent', accent);
-    el.style.setProperty('--brand-accent-soft', brandAlpha(accent, 0.12));
-    el.style.setProperty('--brand-grad', 'linear-gradient(135deg, ' + primary + ' 0%, ' + accent + ' 100%)');
-  }, []);
-  useEffect(function() { applyBrandVars(appBrand); }, [appBrand]);
 
   // Aplica data-plan no <html> para ativar as CSS vars de tema por plano.
   // Muda instantaneamente quando o plano muda (sem refresh).
@@ -322,11 +250,22 @@ export default function App() {
 
   var currentView = (view === 'email' && !isAdminDB) ? 'dashboard' : view;
 
-  const p = {brand:appBrand, toast:toast, confirm:confirm};
+  const handleCloseSidebar   = useCallback(function() { setSidebarOpen(false); }, []);
+  const handleOpenSidebar    = useCallback(function() { setSidebarOpen(true); }, []);
+  const handleUpgrade        = useCallback(function() { navTo('planos'); }, [navTo]);
+  const handleDeductStock    = useCallback(function(id, qty) { adjustStock(id, -qty); }, [adjustStock]);
+  const handleConfirmOk      = useCallback(function() { confirmData.onOk(); setConfirmData(null); }, [confirmData]);
+  const handleCancel         = useCallback(function() { setConfirmData(null); }, []);
+  const handleCloseUpgrade   = useCallback(function() { setShowUpgrade(false); }, []);
+  const handleNav            = useCallback(function(v) { navTo(v); }, [navTo]);
+
+  const p = useMemo(function() {
+    return {brand:appBrand, toast:toast, confirm:confirm};
+  }, [appBrand, toast, confirm]);
   const views = {
-    dashboard: React.createElement(Dashboard, {tx:tx, products:products, brand:appBrand, onNav:navTo, planInfo:planInfo, lossesCount:losses.length, onUpgrade:function() { navTo('planos'); }}),
-    income:    React.createElement(TxView, Object.assign({type:'income', tx:tx, products:products, onAdd:addTx, onEdit:editTx, onDelete:deleteTx, onDeductStock:function(id,qty){adjustStock(id,-qty);}, planInfo:planInfo, onNav:navTo}, p)),
-    expense:   React.createElement(TxView, Object.assign({type:'expense', tx:tx, products:products, onAdd:addTx, onEdit:editTx, onDelete:deleteTx, onDeductStock:function(){}, onAddGenerated:addGenerated, uid:uid, planInfo:planInfo, onNav:navTo}, p)),
+    dashboard: React.createElement(Dashboard, {tx:tx, products:products, brand:appBrand, onNav:navTo, planInfo:planInfo, lossesCount:losses.length, onUpgrade:handleUpgrade}),
+    income:    React.createElement(TxView, Object.assign({type:'income', tx:tx, products:products, onAdd:addTx, onEdit:editTx, onDelete:deleteTx, onDeductStock:handleDeductStock, planInfo:planInfo, onNav:navTo}, p)),
+    expense:   React.createElement(TxView, Object.assign({type:'expense', tx:tx, products:products, onAdd:addTx, onEdit:editTx, onDelete:deleteTx, onDeductStock:noop, onAddGenerated:addGenerated, uid:uid, planInfo:planInfo, onNav:navTo}, p)),
     inventory: React.createElement(InventoryView, Object.assign({products:products, losses:losses, onAddProduct:addProduct, onEditProduct:editProduct, onDeleteProduct:deleteProduct, onAddLoss:addLoss, onEditLoss:editLoss, onDeleteLoss:deleteLoss, onAdjustStock:adjustStock, planInfo:planInfo, onNav:navTo}, p)),
     email:     React.createElement(EmailView, {brand:appBrand, toast:toast}),
     report:    React.createElement(ReportView, {tx:tx, brand:appBrand, toast:toast, onNav:navTo, planInfo:planInfo}),
@@ -339,12 +278,12 @@ export default function App() {
       <Offline/>
       <UpdateBanner brand={appBrand}/>
       <SyncBadge status={syncStatus}/>
-      <Sidebar view={view} onNav={navTo} brand={appBrand} open={sidebarOpen} isAdmin={isAdminDB} session={session} onClose={function() { setSidebarOpen(false); }}/>
+      <Sidebar view={view} onNav={navTo} brand={appBrand} open={sidebarOpen} isAdmin={isAdminDB} session={session} onClose={handleCloseSidebar}/>
       <div className="hidden lg:block fixed top-4 right-4 z-30">
         <ThemeToggle theme={effectiveTheme} onToggle={toggleTheme} variant="floating"/>
       </div>
       <div className="flex-1 lg:ml-64 flex flex-col min-h-screen min-w-0 w-full">
-        <Header brand={appBrand} syncStatus={syncStatus} theme={effectiveTheme} onToggleTheme={toggleTheme} onMenuOpen={function() { setSidebarOpen(true); }}/>
+        <Header brand={appBrand} syncStatus={syncStatus} theme={effectiveTheme} onToggleTheme={toggleTheme} onMenuOpen={handleOpenSidebar}/>
         <main className="flex-1 p-4 lg:p-8 max-w-2xl w-full mx-auto pb-24 lg:pb-8 min-w-0 overflow-x-hidden">
           <Suspense fallback={<PageSkeleton/>}>
             {views[currentView]}
@@ -353,8 +292,8 @@ export default function App() {
       </div>
       <BottomNav view={view} onNav={navTo} brand={appBrand}/>
       <Toast toasts={toasts} onDismiss={dismissToast}/>
-      {confirmData && <Confirm msg={confirmData.msg} onOk={function() { confirmData.onOk(); setConfirmData(null); }} onCancel={function() { setConfirmData(null); }}/>}
-      {showUpgrade && <UpgradeModal reason={typeof showUpgrade === 'object' ? showUpgrade : null} brand={appBrand} onClose={function() { setShowUpgrade(false); }} onNav={function(v) { navTo(v); }}/>}
+      {confirmData && <Confirm msg={confirmData.msg} onOk={handleConfirmOk} onCancel={handleCancel}/>}
+      {showUpgrade && <UpgradeModal reason={typeof showUpgrade === 'object' ? showUpgrade : null} brand={appBrand} onClose={handleCloseUpgrade} onNav={handleNav}/>}
     </div>
   );
 }

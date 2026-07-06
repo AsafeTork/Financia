@@ -1,8 +1,6 @@
 
 import { PRICING_PLANS, WHATSAPP, PLAN_KIND_LABEL } from '../lib/constants.js';
-import { brandAlpha } from '../lib/utils.js';
-
-var money = function(v) { return v === 0 ? 'R$ 0' : 'R$ ' + v.toFixed(2).replace('.', ','); };
+import { brandAlpha, fmt } from '../lib/utils.js';
 
 export default function UpgradeModal({ reason, brand, onClose, onNav }) {
   var c = (brand && brand.color) || '#002f59';
@@ -48,7 +46,7 @@ export default function UpgradeModal({ reason, brand, onClose, onNav }) {
                     <span className="font-semibold" style={{ color: 'var(--text-main)' }}>{p.name}</span>
                     {popular && <span className="text-xs font-bold px-2 py-0.5 rounded-full text-white" style={{ background: c }}>Recomendado</span>}
                   </div>
-                  <span className="font-display font-semibold tabular" style={{ color: 'var(--text-main)' }}>{money(p.price)}<span className="text-xs font-normal" style={{ color: 'var(--text-muted)' }}>{p.period}</span></span>
+                  <span className="font-display font-semibold tabular" style={{ color: 'var(--text-main)' }}>{fmt(p.price)}<span className="text-xs font-normal" style={{ color: 'var(--text-muted)' }}>{p.period}</span></span>
                 </div>
                 <div className="flex flex-col gap-1.5 mb-3">
                   {p.features.slice(0, 4).map(function(f) {

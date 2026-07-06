@@ -262,3 +262,9 @@ prompts_financia/
 - Admin precisa re-logar ao abrir nova aba (sessionStorage limpa — comportamento esperado)
 - Build JS ~555 kB / ~155 kB gzip — aviso do Vite, não erro
 - Impersonação depende de `pagehide`: kill forçado do processo pode perder o evento
+
+---
+
+## Princípio Fundamental
+
+Toda funcionalidade nova deve deixar o código melhor do que encontrou.

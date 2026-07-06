@@ -1,7 +1,7 @@
 ﻿import React, { useState, useMemo } from 'react';
 import { Card, PageHead } from '../components/ui.jsx';
 import ExportButtons from '../components/ExportButtons.jsx';
-import { fmt, today, brandAlpha } from '../lib/utils.js';
+import { fmt, fmtDate, monthLabel, today, brandAlpha } from '../lib/utils.js';
 import { effectivePlan } from '../lib/constants.js';
 import { exportPDF, exportXLS } from '../lib/exporters.js';
 
@@ -32,7 +32,6 @@ export default function ReportView({ tx, brand, toast, onNav, planInfo }) {
   var expense = filtered.filter(function(t) { return t.type === 'expense'; }).reduce(function(s, t) { return s + t.amount; }, 0);
   var bycat   = filtered.filter(function(t) { return t.type === 'expense'; }).reduce(function(a, t) { var k = t.category || 'Outro'; a[k] = (a[k] || 0) + t.amount; return a; }, {});
 
-  var monthLabel = function(m) { return new Date(m + '-15').toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }); };
   var monthIdx = navMonths.indexOf(month);
   var prevDisabled = monthIdx <= 0;
   var nextDisabled = monthIdx < 0 || monthIdx >= navMonths.length - 1;
@@ -217,7 +216,7 @@ export default function ReportView({ tx, brand, toast, onNav, planInfo }) {
                         </div>
                         <div className="min-w-0">
                           <p className="text-sm font-medium truncate" style={{color:'var(--text-main)'}}>{t.desc}</p>
-                          <p className="text-xs truncate" style={{color:'var(--text-muted)'}}>{new Date(t.date + 'T12:00').toLocaleDateString('pt-BR') + ' . ' + (t.method || t.category || '') + (t.registered_by ? ' . ' + t.registered_by : '')}</p>
+                          <p className="text-xs truncate" style={{color:'var(--text-muted)'}}>{fmtDate(t.date) + ' . ' + (t.method || t.category || '') + (t.registered_by ? ' . ' + t.registered_by : '')}</p>
                         </div>
                       </div>
                       <span className="text-sm font-semibold tabular flex-shrink-0 ml-3" style={{color: isInc ? accentColor : '#ef4444'}}>

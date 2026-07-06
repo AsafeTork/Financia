@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useScrollReveal } from '../hooks/useScrollReveal.js';
+import { fmt } from '../lib/utils.js';
 
 var NAVY = '#002f59';
 var TEAL = '#1a6b5c';
@@ -14,7 +15,6 @@ var GRADIENT_PRIMARY = 'linear-gradient(135deg, #002f59, #1a6b5c)';
 var GLOW_GREEN = '0 0 40px rgba(59,191,160,0.2)';
 var GLOW_NAVY = '0 0 40px rgba(0,47,89,0.15)';
 
-var money = function(v) { return v === 0 ? 'R$ 0' : 'R$ ' + v.toFixed(2).replace('.', ','); };
 var delay = function(ms) { return { animationDelay: ms + 'ms', animationFillMode: 'both' }; };
 
 // ─── COUNTER HOOK ───
@@ -476,7 +476,7 @@ export default function Landing({ onEnter }) {
 
                   <div>
                     <div className="flex items-end gap-1">
-                      <span className="font-display font-bold tabular" style={{ color: NAVY, fontSize: '2.8rem', letterSpacing: '-1.5px', lineHeight: 1 }}>{money(p.price)}</span>
+                      <span className="font-display font-bold tabular" style={{ color: NAVY, fontSize: '2.8rem', letterSpacing: '-1.5px', lineHeight: 1 }}>{fmt(p.price)}</span>
                       {p.period && <span className="text-sm mb-1.5" style={{ color: MUTED }}>{p.period}</span>}
                     </div>
                     <p className="text-xs mt-2" style={{ color: MUTED }}>{isFree ? 'gratis para sempre, sem cartao' : 'cobrado mensalmente, cancele quando quiser'}</p>
