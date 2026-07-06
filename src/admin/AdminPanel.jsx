@@ -3,7 +3,7 @@ import { Empty, Skeleton } from '../components/ui.jsx';
 import { sb } from '../lib/supabase.js';
 import { triggerApkBuild, fetchClients, deleteClient, fetchClientUsage, fetchDbStats, fetchStripeOverview } from '../lib/db.js';
 import { luminance, lightenHex, fmtDate, formatBytes, dbUsage, fmt } from '../lib/utils.js';
-import { GH_REPO, effectivePlan, PRICING_PLANS, countsAsRevenue, isAdminGranted, waLinkTo, APP_URL } from '../lib/constants.js';
+import { GH_REPO, effectivePlan, PRICING_PLANS, waLinkTo, APP_URL } from '../lib/constants.js';
 
 // Limite de armazenamento do plano Supabase (free = 500 MB). Base do alerta de uso.
 var DB_LIMIT_BYTES = 500 * 1024 * 1024;
@@ -92,21 +92,21 @@ export default function AdminPanel({ toast, confirm, session }) {
     return planDef ? planDef.price : 0;
   };
   const nowMonth = new Date().toISOString().slice(0, 7);
-  // Receita REAL: so planos pagos via Stripe (countsAsRevenue exclui cortesia do admin).
+  // Receita REAL: planos pagos via Stripe (countsAsRevenue = todo plano nao-free).
   // Usa custom_price_cents se houver (preco real que o cliente paga), senao preco de tabela.
   const stats = clients.reduce(function(a, c) {
     var ep = effectivePlan(c);
     a.total += 1;
     if (ep === 'free') { a.free += 1; }
     else {
-      if (countsAsRevenue(c)) { a.pagantes += 1; a.mrr += realPriceOf(c, ep); }
-      else { a.cortesia += 1; }
+      a.pagantes += 1;
+      a.mrr += realPriceOf(c, ep);
       if (ep === 'premium') a.premium += 1;
     }
     if (!!c.white_label) a.addon += 1;
     if (c.created_at && String(c.created_at).slice(0, 7) === nowMonth) a.novos += 1;
     return a;
-  }, { total: 0, pagantes: 0, cortesia: 0, premium: 0, free: 0, addon: 0, novos: 0, mrr: 0 });
+  }, { total: 0, pagantes: 0, premium: 0, free: 0, addon: 0, novos: 0, mrr: 0 });
   var mrr = stats.mrr;
   var centsBR = function(c) { return fmt((Number(c) || 0) / 100); };
   const wlClients = clients.filter(function(c) { return !!c.white_label; });
@@ -368,10 +368,9 @@ export default function AdminPanel({ toast, confirm, session }) {
           })}
         </div>
         <div className="flex flex-wrap gap-1.5 mb-3">
-          {[['Premium', stats.premium], ['Cortesia', stats.cortesia], ['Add-on', stats.addon], ['Novos no mês', stats.novos]].filter(function(c) { return c[1] > 0; }).map(function(c) {
+          {[['Premium', stats.premium], ['Add-on', stats.addon], ['Novos no mês', stats.novos]].filter(function(c) { return c[1] > 0; }).map(function(c) {
             return <span key={c[0]} className="text-[11px] font-semibold px-2 py-1 rounded-md" style={{background:'var(--bg-subtle)', border:'1px solid var(--border)', color:'var(--text-sub)'}}>{c[0]}: <b style={{color:'var(--text-main)'}}>{c[1]}</b></span>;
           })}
-          {stats.cortesia > 0 && <span className="text-[11px] px-2 py-1" style={{color:'var(--text-muted)'}}>cortesias não entram na receita</span>}
         </div>
 
         {wlClients.length > 0 && (
@@ -458,7 +457,7 @@ export default function AdminPanel({ toast, confirm, session }) {
                             }()}>
                               {effectivePlan(c) === 'premium' ? 'PREMIUM' : (effectivePlan(c) === 'pro' ? 'PRO' : 'FREE')}
                             </span>
-                            {isAdminGranted(c) && effectivePlan(c) !== 'free' && <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md flex-shrink-0" style={{background:'#fef3c7', color:'#b45309'}}>cortesia</span>}
+
                             {!!c.white_label && <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md flex-shrink-0" style={{background:'var(--brand-soft)', color:'var(--brand)'}}>add-on</span>}
                           </div>
                           <p className="text-xs text-gray-400 truncate">{c.user_id.slice(0, 8)}{c.updated_at ? ' · ativo ' + fmtDate(String(c.updated_at).slice(0, 10)) : ''}</p>

@@ -211,7 +211,7 @@ export const setClientCustomPrice = async function(targetUserId, cents, planId) 
   } catch (_) { return { ok: false, error: 'rede' }; }
 };
 
-/* Ativa/desativa o pacote white-label como cortesia para um cliente (admin-only). */
+/* Ativa/desativa o pacote white-label para um cliente (admin-only). */
 export const setClientWhiteLabel = async function(targetUserId, enabled) {
   try {
     const res = await sb.functions.invoke('admin-set-white-label', {

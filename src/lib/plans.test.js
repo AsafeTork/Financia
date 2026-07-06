@@ -58,7 +58,7 @@ describe('waLinkTo', function() {
   });
 });
 
-// Preco a exibir: usa preco customizado (cortesia/desconto) se houver.
+// Preco a exibir: usa preco customizado (desconto) se houver.
 describe('displayPlanPrice', function() {
   it('sem custom usa preco do plano', function() {
     expect(displayPlanPrice(49.9, null)).toEqual({ value: 49.9, custom: false, original: 49.9 });
@@ -68,5 +68,8 @@ describe('displayPlanPrice', function() {
   });
   it('custom em centavos vira reais', function() {
     expect(displayPlanPrice(49.9, 2990)).toEqual({ value: 29.9, custom: true, original: 49.9 });
+  });
+  it('white_label custom price', function() {
+    expect(displayPlanPrice(997, 49900)).toEqual({ value: 499, custom: true, original: 997 });
   });
 });

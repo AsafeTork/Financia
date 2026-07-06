@@ -2,7 +2,7 @@
 import { Card, Inp, Spin, PageHead, Modal } from '../components/ui.jsx';
 import PhoneInput, { parsePhone, buildPhone } from '../components/PhoneInput.jsx';
 import { updatePassword, signOut as doSignOut } from '../lib/auth.js';
-import { effectivePlan, PRICING_PLANS, waLink, SUPPORT_EMAIL, isAdminGranted } from '../lib/constants.js';
+import { effectivePlan, PRICING_PLANS, waLink, SUPPORT_EMAIL } from '../lib/constants.js';
 import AdminPanel from '../admin/AdminPanel.jsx';
 import GhTokenCard from '../admin/GhTokenCard.jsx';
 import InstallButton from '../components/InstallButton.jsx';
@@ -245,10 +245,7 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
                 <p className="text-xs font-semibold uppercase tracking-wide" style={{color:'var(--text-muted)'}}>Plano atual</p>
                 <div className="flex items-center gap-2 mt-0.5">
                   <p className="text-xl font-bold truncate" style={{color: brand.color}}>{planMeta.name}</p>
-                  {planId !== 'free' && planInfo && isAdminGranted(planInfo) && (
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{background:'rgba(245,158,11,0.12)', color:'#d97706'}}>Cortesia</span>
-                  )}
-                  {planId !== 'free' && planInfo && !isAdminGranted(planInfo) && subStatus !== 'none' && (
+                  {planId !== 'free' && planInfo && subStatus !== 'none' && (
                     <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{
                       background: subStatus === 'canceled_expiring' ? 'rgba(245,158,11,0.12)' : 'rgba(59,191,160,0.12)',
                       color: subStatus === 'canceled_expiring' ? '#d97706' : '#16a34a'

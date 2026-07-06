@@ -20,16 +20,9 @@ export const effectivePlan = function(p) {
 export const limitFor = function(p, kind) { return PLAN_LIMITS[effectivePlan(p)][kind]; };
 export const atLimit = function(p, kind, count) { return count >= limitFor(p, kind); };
 
-// Plano dado MANUALMENTE pelo admin: set_client_plan grava plan_activated_by = email
-// do admin (c_actor). O webhook Stripe (stripe_activate_plan) grava 'stripe'. Ambos os
-// marcadores de pagamento (stripe/uuid) nao tem "@"; so o email do admin tem.
-// Logo: plan_activated_by com "@" => cortesia do admin (nao e receita).
-export const isAdminGranted = function(p) {
-  return !!(p && p.plan_activated_by && String(p.plan_activated_by).indexOf('@') !== -1);
-};
-// Conta como receita real apenas plano pago ATIVO que NAO seja cortesia do admin.
+// Conta como receita real apenas plano pago ATIVO (todo plano nao-free conta).
 export const countsAsRevenue = function(p) {
-  return effectivePlan(p) !== 'free' && !isAdminGranted(p);
+  return effectivePlan(p) !== 'free';
 };
 
 // Hierarquia dos planos (free < pro < premium) para decidir upgrade/downgrade.

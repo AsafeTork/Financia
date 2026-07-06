@@ -1,8 +1,6 @@
 import { UsageBar } from './UsageBar.jsx';
-import { brandAlpha } from '../lib/utils.js';
-import { isAdminGranted } from '../lib/constants.js';
 
-export default function PlanStatusCard({ plan, brand, onUpgrade, usage, anyReached, reachedCats, planInfo }) {
+export default function PlanStatusCard({ plan, brand, onUpgrade, usage, anyReached, reachedCats }) {
   if (plan === 'free') {
     return (
       <div className="rounded-2xl overflow-hidden" style={{background:'var(--bg-card)', border:'1px solid var(--border)', boxShadow:'var(--shadow-md)'}}>
@@ -67,9 +65,6 @@ export default function PlanStatusCard({ plan, brand, onUpgrade, usage, anyReach
             <div className="flex items-center gap-2">
               <p className="text-sm font-semibold" style={{color:'var(--text-main)'}}>Plano Pro</p>
               <span className="badge-plan text-[10px] font-bold px-2 py-0.5 rounded-full">PRO</span>
-              {planInfo && isAdminGranted(planInfo) && (
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{background:'rgba(245,158,11,0.12)', color:'#d97706'}}>Cortesia</span>
-              )}
             </div>
             <p className="text-xs" style={{color:'var(--text-muted)'}}>Voce tem acesso a todas as ferramentas.</p>
           </div>
@@ -96,10 +91,7 @@ export default function PlanStatusCard({ plan, brand, onUpgrade, usage, anyReach
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             <p className="text-sm font-semibold" style={{color:'var(--text-main)'}}>Plano Premium</p>
-            <span className="badge-plan text-[10px] font-bold px-2 py-0.5 rounded-full">PREMIUM</span>
-            {planInfo && isAdminGranted(planInfo) && (
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{background:'rgba(245,158,11,0.12)', color:'#d97706'}}>Cortesia</span>
-            )}
+              <span className="badge-plan text-[10px] font-bold px-2 py-0.5 rounded-full">PREMIUM</span>
           </div>
           <p className="text-xs" style={{color:'var(--text-muted)'}}>A experiencia completa do Financia.</p>
         </div>

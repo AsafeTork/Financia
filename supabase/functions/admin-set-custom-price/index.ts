@@ -13,7 +13,7 @@ const CORS_HEADERS = {
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
-const PLAN_PRICES = { pro: 4990, premium: 9990 };
+const PLAN_PRICES = { pro: 4990, premium: 9990, white_label: 99700 };
 const ACTIVE_STATUSES = ['active', 'trialing', 'past_due', 'unpaid'];
 
 function jsonResponse(status, payload) {
@@ -146,7 +146,9 @@ Deno.serve(async function (req) {
     if (!allowed) return jsonResponse(429, { error: 'rate_limited' });
 
     if (planIdInput) {
-      const col = planIdInput === 'premium' ? 'custom_price_cents_premium' : 'custom_price_cents_pro';
+      var col = 'custom_price_cents_pro';
+      if (planIdInput === 'premium') col = 'custom_price_cents_premium';
+      if (planIdInput === 'white_label') col = 'custom_price_cents_white_label';
       const updateData = {};
       updateData[col] = (cents && cents > 0) ? cents : null;
       const upd = await admin.from('company_profiles').update(updateData).eq('user_id', targetUserId);

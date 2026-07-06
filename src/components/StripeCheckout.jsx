@@ -37,7 +37,11 @@ function PaymentForm({ plan, brand, onDone, onClose, mode }) {
         setSubmitting(false);
         return;
       }
-      try { await sb.functions.invoke('create-subscription', { body: { confirm_subscription: true } }); } catch (e) { void e; }
+      if (mode === 'payment') {
+        try { await sb.functions.invoke('create-payment', { body: { kind: 'white_label', confirm_white_label: true } }); } catch (e) { void e; }
+      } else {
+        try { await sb.functions.invoke('create-subscription', { body: { confirm_subscription: true } }); } catch (e) { void e; }
+      }
       onDone();
       onClose();
     } catch (err) {

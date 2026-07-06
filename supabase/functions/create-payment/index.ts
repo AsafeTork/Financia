@@ -16,6 +16,14 @@ const CORS_HEADERS = {
 const WHITE_LABEL_PRICE = 49700;
 const ADMIN_TEST_PRICE = 1;
 
+// Ativa white_label no banco apos pagamento confirmado.
+async function activateWhiteLabel(admin, userId) {
+  if (!admin || !userId) return;
+  try {
+    await admin.from('company_profiles').update({ white_label: true }).eq('user_id', userId);
+  } catch (_) {}
+}
+
 function jsonResponse(status, payload) {
   const headers = { 'Content-Type': 'application/json' };
   const keys = Object.keys(CORS_HEADERS);
@@ -98,6 +106,7 @@ Deno.serve(async function (req) {
     let body = {};
     try { body = await req.json(); } catch (parseErr) { body = {}; }
     const kind = sanitizeKind(body && body.kind);
+    const confirmWhiteLabel = !!(body && body.confirm_white_label);
     const useSavedCard = !!(body && body.use_saved_card);
     if (!kind) {
       return jsonResponse(400, { error: 'invalid_kind' });
@@ -106,6 +115,13 @@ Deno.serve(async function (req) {
     const allowed = await enforceRateLimit(admin, user.id, 'create_payment', 60, 6);
     if (!allowed) return jsonResponse(429, { error: 'rate_limited' });
     const isAdmin = await isAdminUser(admin, user.id);
+
+    // Ativacao pos-pagamento (chamada pelo frontend apos confirmPayment).
+    if (confirmWhiteLabel) {
+      await activateWhiteLabel(admin, user.id);
+      return jsonResponse(200, { status: 'activated' });
+    }
+
     const chargeAmount = isAdmin ? ADMIN_TEST_PRICE : WHITE_LABEL_PRICE;
 
     const stripe = new Stripe(stripeKey, { apiVersion: '2025-01-27.acacia' });
@@ -139,6 +155,7 @@ Deno.serve(async function (req) {
         throw confirmErr;
       });
       if (pi.status === 'succeeded') {
+        await activateWhiteLabel(admin, user.id);
         return jsonResponse(200, { status: 'paid' });
       }
       if (pi.client_secret && (pi.status === 'requires_action' || pi.status === 'requires_confirmation')) {

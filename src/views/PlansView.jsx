@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Card, PageHead, Modal } from '../components/ui.jsx';
-import { PRICING_PLANS, WHITELABEL, waLink, effectivePlan, planChangeCta, isAdminGranted, PLAN_VISUAL_DEFAULTS } from '../lib/constants.js';
+import { PRICING_PLANS, WHITELABEL, waLink, effectivePlan, planChangeCta, PLAN_VISUAL_DEFAULTS } from '../lib/constants.js';
 import { fmt, fmtDate, brandAlpha } from '../lib/utils.js';
 import { sb } from '../lib/supabase.js';
 import { friendlyStripeError, readFnErrorMessage } from '../lib/stripe.js';
@@ -94,12 +94,6 @@ function PlanCard({ plan, brand, cta, onAction, planExpiresAt, currentPlanId, pl
               background: 'var(--brand-soft)',
               color: brand.color
             }}>Seu plano</span>
-          )}
-          {current && planActivatedBy && planActivatedBy.indexOf('@') !== -1 && (
-            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{
-              background: 'rgba(245,158,11,0.12)',
-              color: '#d97706'
-            }}>Cortesia</span>
           )}
         </div>
 
@@ -211,8 +205,11 @@ export default function PlansView({ brand, planInfo, toast, onNav, isAdmin }) {
   var customCents = planInfo && planInfo.custom_price_cents ? planInfo.custom_price_cents : 0;
   var customProCents = planInfo && planInfo.custom_price_cents_pro ? planInfo.custom_price_cents_pro : 0;
   var customPremiumCents = planInfo && planInfo.custom_price_cents_premium ? planInfo.custom_price_cents_premium : 0;
+  var customWlCents = planInfo && planInfo.custom_price_cents_white_label ? planInfo.custom_price_cents_white_label : 0;
   var isAdminTest = !!isAdmin;
-  var whiteLabelPrice = isAdminTest ? ADMIN_TEST_PRICE : WHITELABEL.price;
+  var wlDiscountReais = customWlCents > 0 ? customWlCents / 100 : 0;
+  var whiteLabelPrice = isAdminTest ? ADMIN_TEST_PRICE : (wlDiscountReais > 0 ? wlDiscountReais : WHITELABEL.price);
+  var wlOriginalPrice = (wlDiscountReais > 0 && wlDiscountReais < WHITELABEL.price) ? WHITELABEL.price : null;
   var wlPlan = { id: 'white_label', name: 'Personalizacao', price: whiteLabelPrice, period: '' };
   var wlState = useState(false);
   var wlOpen = wlState[0];
@@ -220,7 +217,8 @@ export default function PlansView({ brand, planInfo, toast, onNav, isAdmin }) {
   var hasWhiteLabel = !!(brand && brand.white_label);
   var wlMsg = 'Ola! Quero o app personalizado da minha empresa (logo, nome e cores). Pode me passar como funciona?';
   var duvidaMsg = 'Ola! Tenho uma duvida sobre o Financia.';
-  var [restoringStripe, setRestoringStripe] = useState(false);
+
+
   var [subStatus, setSubStatus] = useState(null);
 
   useEffect(function() {
@@ -346,30 +344,7 @@ export default function PlansView({ brand, planInfo, toast, onNav, isAdmin }) {
         })}
       </div>
 
-      {/* Restaurar assinatura Stripe — admin remove cortesia do cliente pagante */}
-      {plan !== 'free' && planInfo && isAdminGranted(planInfo) && isAdmin && (
-        <div className="flex items-center justify-between rounded-2xl p-4" style={{background:'#fffbeb', border:'1px solid #fde68a'}}>
-          <div className="min-w-0">
-            <p className="text-sm font-semibold" style={{color:'#92400e'}}>Plano concedido como cortesia</p>
-            <p className="text-xs mt-0.5" style={{color:'#b45309'}}>Se o cliente tem assinatura Stripe ativa, restaure o vínculo de pagamento.</p>
-          </div>
-          <button onClick={async function() {
-            setRestoringStripe(true);
-            try {
-              var res = await sb.functions.invoke('create-subscription', { body: { confirm_subscription: true } });
-              var data = res && res.data ? res.data : null;
-              if (data && data.status === 'activated') { toast('Assinatura Stripe restaurada!', 'success'); }
-              else if (data && data.error) { toast(data.error, 'error'); }
-              else { toast('Nao foi possivel restaurar. Nenhuma assinatura ativa encontrada.', 'error'); }
-            } catch (e) { toast('Erro de conexao. Tente de novo.', 'error'); }
-            setRestoringStripe(false);
-          }} disabled={restoringStripe}
-            className="flex-shrink-0 text-sm font-semibold px-4 py-2.5 min-h-[44px] rounded-xl text-white transition hover:opacity-90 disabled:opacity-50 flex items-center gap-2"
-            style={{background:'#d97706'}}>
-            {restoringStripe ? 'Restaurando...' : 'Restaurar assinatura Stripe'}
-          </button>
-        </div>
-      )}
+
 
       {/* Checkout */}
       {checkout && (
@@ -430,6 +405,7 @@ export default function PlansView({ brand, planInfo, toast, onNav, isAdmin }) {
 
           <div className="flex items-end gap-2">
             <span className="font-display text-3xl font-bold" style={{color:'var(--text-main)'}}>{fmt(whiteLabelPrice)}</span>
+            {wlOriginalPrice && <span className="text-sm mb-1 line-through" style={{color:'var(--text-muted)'}}>{fmt(wlOriginalPrice)}</span>}
             <span className="text-sm mb-1 font-semibold" style={{color: brand.color}}>pagamento unico</span>
           </div>
 

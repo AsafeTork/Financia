@@ -27,7 +27,7 @@ export function sanitizePaymentMethodId(value: unknown): string {
 
 export function sanitizePlanId(value: unknown): string {
   var plan = sanitizeText(value, 16);
-  return plan === 'pro' || plan === 'premium' ? plan : '';
+  return plan === 'pro' || plan === 'premium' || plan === 'white_label' ? plan : '';
 }
 
 export function sanitizeKind(value: unknown): string {
