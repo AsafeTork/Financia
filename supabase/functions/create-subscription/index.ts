@@ -253,6 +253,9 @@ Deno.serve(async function (req) {
         proration_behavior: isDowngrade ? 'none' : 'always_invoice',
         metadata: { user_id: user.id, plan_id: planId },
       });
+      if (!isDowngrade) {
+        await activatePlan(admin, user.id, planId);
+      }
       return jsonResponse(200, { status: 'changed', scheduled: isDowngrade });
     }
 
@@ -312,6 +315,13 @@ Deno.serve(async function (req) {
     });
     const invoice = subscription.latest_invoice;
     const paymentIntent = invoice && invoice.payment_intent ? invoice.payment_intent : null;
+
+    // Pagamento ja processado automaticamente (ex: cartao salvo faz auto-collect).
+    if (paymentIntent && paymentIntent.status === 'succeeded') {
+      await activatePlan(admin, user.id, planId);
+      return jsonResponse(200, { status: 'active' });
+    }
+
     if (!paymentIntent || !paymentIntent.client_secret) {
       return jsonResponse(500, { error: 'no_client_secret' });
     }

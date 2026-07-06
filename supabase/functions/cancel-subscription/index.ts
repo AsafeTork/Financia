@@ -91,6 +91,21 @@ Deno.serve(async function (req) {
       metadata: { user_id: user.id },
     });
 
+    // Cancela imediatamente se era subscription incompleta sem pagamento
+    // Senao, agenda pro fim do periodo — o webhook customer.subscription.deleted
+    // ativa free quando a sub expirar.
+    if (updated.status !== 'active' && updated.status !== 'trialing') {
+      try {
+        if (admin) {
+          await admin.rpc('stripe_activate_plan', {
+            p_user: user.id,
+            p_plan: 'free',
+            p_expires: null,
+          });
+        }
+      } catch (_) {}
+    }
+
     if (user.email) {
       const cancelDate = new Date(Number(updated.current_period_end) * 1000).toLocaleDateString('pt-BR');
       const txt =

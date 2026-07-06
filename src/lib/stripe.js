@@ -27,7 +27,9 @@ export function getPublishableKey() {
 export function getStripe() {
   return getPublishableKey().then(function(key) {
     if (!key) return null;
-    if (!_stripePromise) _stripePromise = loadStripe(key);
+    if (!_stripePromise) {
+      _stripePromise = loadStripe(key).catch(function() { return null; });
+    }
     return _stripePromise;
   });
 }
