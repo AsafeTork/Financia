@@ -5,26 +5,6 @@ import { triggerApkBuild, fetchClients, deleteClient, fetchClientUsage, fetchDbS
 import { luminance, lightenHex, fmtDate, formatBytes, dbUsage, fmt } from '../lib/utils.js';
 import { GH_REPO, effectivePlan, PRICING_PLANS, countsAsRevenue, isAdminGranted, waLinkTo, APP_URL } from '../lib/constants.js';
 
-// Badge de status da assinatura Stripe (ativo / cancelado expirando).
-// So carrega para clientes com plan_activated_by === 'stripe'.
-function ClientSubStatus({ uid }) {
-  var [info, setInfo] = useState(null);
-  useEffect(function() {
-    var alive = true;
-    sb.functions.invoke('get-subscription-status', { body: { user_id: uid } }).then(function(res) {
-      if (!alive) return;
-      var d = res && res.data ? res.data : null;
-      if (d && (d.status === 'active' || d.status === 'canceled_expiring')) setInfo(d);
-    }).catch(function() {});
-    return function() { alive = false; };
-  }, [uid]);
-  if (!info) return null;
-  if (info.status === 'canceled_expiring') {
-    return <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md flex-shrink-0" style={{background:'#fef3c7', color:'#d97706'}}>cancelada</span>;
-  }
-  return <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md flex-shrink-0" style={{background:'#dcfce7', color:'#16a34a'}}>ativa</span>;
-}
-
 // Limite de armazenamento do plano Supabase (free = 500 MB). Base do alerta de uso.
 var DB_LIMIT_BYTES = 500 * 1024 * 1024;
 
@@ -59,6 +39,8 @@ export default function AdminPanel({ toast, confirm, session }) {
   const [stripeOv, setStripeOv] = useState(null);
   const [dbStats, setDbStats] = useState(null);
   const [loadingFin, setLoadingFin] = useState(true);
+  var [subStatuses, setSubStatuses] = useState({});
+  var setSubFor = function(uid, s) { setSubStatuses(function(m) { var n = Object.assign({}, m); n[uid] = s; return n; }); };
   const logoRef = useRef();
 
   const reload = function() {
@@ -67,6 +49,21 @@ export default function AdminPanel({ toast, confirm, session }) {
     });
   };
   useEffect(function() { reload(); }, [done]);
+
+  // Busca status da assinatura (Stripe) dos clientes pagantes — fundo do badge muda cor.
+  useEffect(function() {
+    var stripeClients = clients.filter(function(c) { return c.plan_activated_by === 'stripe'; });
+    if (stripeClients.length === 0) return;
+    var alive = true;
+    stripeClients.forEach(function(c) {
+      sb.functions.invoke('get-subscription-status', { body: { user_id: c.user_id } }).then(function(res) {
+        if (!alive) return;
+        var d = res && res.data ? res.data : null;
+        if (d && (d.status === 'active' || d.status === 'canceled_expiring')) setSubFor(c.user_id, d.status);
+      }).catch(function() {});
+    });
+    return function() { alive = false; };
+  }, [clients]);
 
   // Painel financeiro/infra (admin): saldo real Stripe + uso do banco. Carrega uma vez.
   useEffect(function() {
@@ -454,11 +451,14 @@ export default function AdminPanel({ toast, confirm, session }) {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-1.5 min-w-0">
                             <p className="text-sm font-semibold truncate" style={{color:'var(--text-main)'}}>{c.name || 'Sem nome'}</p>
-                            <span className={'text-[10px] font-bold px-1.5 py-0.5 rounded-md flex-shrink-0 ' + (effectivePlan(c) !== 'free' ? 'text-white' : 'text-gray-600 bg-gray-100')} style={effectivePlan(c) !== 'free' ? {background:'#1a6b5c'} : {}}>
+                            <span className={'text-[10px] font-bold px-1.5 py-0.5 rounded-md flex-shrink-0 ' + (effectivePlan(c) !== 'free' ? 'text-white' : 'text-gray-600 bg-gray-100')} style={function() {
+                              if (effectivePlan(c) === 'free') return {};
+                              var subS = c.plan_activated_by === 'stripe' ? subStatuses[c.user_id] : null;
+                              return { background: subS === 'canceled_expiring' ? '#d97706' : '#1a6b5c' };
+                            }()}>
                               {effectivePlan(c) === 'premium' ? 'PREMIUM' : (effectivePlan(c) === 'pro' ? 'PRO' : 'FREE')}
                             </span>
                             {isAdminGranted(c) && effectivePlan(c) !== 'free' && <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md flex-shrink-0" style={{background:'#fef3c7', color:'#b45309'}}>cortesia</span>}
-                            {c.plan_activated_by === 'stripe' && <ClientSubStatus uid={c.user_id}/>}
                             {!!c.white_label && <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md flex-shrink-0" style={{background:'var(--brand-soft)', color:'var(--brand)'}}>add-on</span>}
                           </div>
                           <p className="text-xs text-gray-400 truncate">{c.user_id.slice(0, 8)}{c.updated_at ? ' · ativo ' + fmtDate(String(c.updated_at).slice(0, 10)) : ''}</p>
