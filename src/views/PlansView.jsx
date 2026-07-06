@@ -154,33 +154,19 @@ function PlanCard({ plan, brand, cta, onAction, planExpiresAt, currentPlanId, pl
 
         {/* Botoes de acao */}
         {current && (
-          <div className="mt-1 flex flex-col gap-2">
+          <div className="mt-1 flex flex-col gap-1.5">
             <div className="text-center text-sm font-semibold px-4 py-3 rounded-xl min-h-[44px] flex items-center justify-center" style={{background:'var(--brand-soft)', color: brand.color}}>Seu plano atual</div>
-            {!isFree && subStatus && (
-              <div className="rounded-xl px-3 py-2.5 flex flex-col gap-2" style={{background:'var(--bg-subtle)', border:'1px solid var(--border)'}}>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold" style={{color:'var(--text-sub)'}}>Assinatura:</span>
-                  {subStatus.status === 'active' && (
-                    <span className="text-[11px] font-bold px-2 py-0.5 rounded-full" style={{background:'#dcfce7', color:'#16a34a'}}>Ativa</span>
-                  )}
-                  {subStatus.status === 'canceled_expiring' && (
-                    <span className="text-[11px] font-bold px-2 py-0.5 rounded-full" style={{background:'#fef3c7', color:'#d97706'}}>Cancelada</span>
-                  )}
-                </div>
-                {subStatus.status === 'canceled_expiring' && subStatus.current_period_end && (
-                  <p className="text-xs" style={{color:'var(--text-sub)'}}>
-                    Plano ativo ate <b>{fmtDate(new Date(Number(subStatus.current_period_end) * 1000).toISOString().slice(0, 10))}</b>. Depois volta para Gratis.
-                  </p>
-                )}
-                {subStatus.status === 'active' && (
-                  <button type="button" onClick={onCancel}
-                    className="w-full text-xs font-semibold px-3 py-2 rounded-lg border transition hover:opacity-80 min-h-[44px] flex items-center justify-center gap-1.5"
-                    style={{borderColor:'#fca5a5', color:'#dc2626'}}>
-                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"/></svg>
-                    Cancelar assinatura
-                  </button>
-                )}
-              </div>
+            {!isFree && subStatus && subStatus.status === 'canceled_expiring' && subStatus.current_period_end && (
+              <p className="text-xs text-center" style={{color:'#d97706'}}>
+                Cancelada - expira em {fmtDate(new Date(Number(subStatus.current_period_end) * 1000).toISOString().slice(0, 10))}
+              </p>
+            )}
+            {!isFree && subStatus && subStatus.status === 'active' && (
+              <button type="button" onClick={onCancel}
+                className="w-full text-xs font-semibold px-3 py-2 rounded-lg border transition hover:opacity-80 min-h-[44px] flex items-center justify-center gap-1.5"
+                style={{borderColor:'#fca5a5', color:'#dc2626'}}>
+                Cancelar assinatura
+              </button>
             )}
           </div>
         )}

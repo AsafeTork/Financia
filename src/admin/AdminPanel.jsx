@@ -5,6 +5,26 @@ import { triggerApkBuild, fetchClients, deleteClient, fetchClientUsage, fetchDbS
 import { luminance, lightenHex, fmtDate, formatBytes, dbUsage, fmt } from '../lib/utils.js';
 import { GH_REPO, effectivePlan, PRICING_PLANS, countsAsRevenue, isAdminGranted, waLinkTo, APP_URL } from '../lib/constants.js';
 
+// Badge de status da assinatura Stripe (ativo / cancelado expirando).
+// So carrega para clientes com plan_activated_by === 'stripe'.
+function ClientSubStatus({ uid }) {
+  var [info, setInfo] = useState(null);
+  useEffect(function() {
+    var alive = true;
+    sb.functions.invoke('get-subscription-status', { body: { user_id: uid } }).then(function(res) {
+      if (!alive) return;
+      var d = res && res.data ? res.data : null;
+      if (d && (d.status === 'active' || d.status === 'canceled_expiring')) setInfo(d);
+    }).catch(function() {});
+    return function() { alive = false; };
+  }, [uid]);
+  if (!info) return null;
+  if (info.status === 'canceled_expiring') {
+    return <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md flex-shrink-0" style={{background:'#fef3c7', color:'#d97706'}}>cancelada</span>;
+  }
+  return <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md flex-shrink-0" style={{background:'#dcfce7', color:'#16a34a'}}>ativa</span>;
+}
+
 // Limite de armazenamento do plano Supabase (free = 500 MB). Base do alerta de uso.
 var DB_LIMIT_BYTES = 500 * 1024 * 1024;
 
@@ -438,6 +458,7 @@ export default function AdminPanel({ toast, confirm, session }) {
                               {effectivePlan(c) === 'premium' ? 'PREMIUM' : (effectivePlan(c) === 'pro' ? 'PRO' : 'FREE')}
                             </span>
                             {isAdminGranted(c) && effectivePlan(c) !== 'free' && <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md flex-shrink-0" style={{background:'#fef3c7', color:'#b45309'}}>cortesia</span>}
+                            {c.plan_activated_by === 'stripe' && <ClientSubStatus uid={c.user_id}/>}
                             {!!c.white_label && <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md flex-shrink-0" style={{background:'var(--brand-soft)', color:'var(--brand)'}}>add-on</span>}
                           </div>
                           <p className="text-xs text-gray-400 truncate">{c.user_id.slice(0, 8)}{c.updated_at ? ' · ativo ' + fmtDate(String(c.updated_at).slice(0, 10)) : ''}</p>
