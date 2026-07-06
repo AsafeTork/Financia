@@ -77,9 +77,10 @@ export default function useStripeCheckoutInit(plan, brand, checkoutMode, kind, o
       }
       if (data && data.clientSecret && (data.requiresAction || useSaved || isChange)) {
         var stripe = await stripePromise;
-        if (!stripe) { setActionErr('Não foi possível carregar o Stripe. Tente de novo.'); setConfirming(false); return; }
+        if (!stripe) { setActionErr('Nao foi possivel carregar o Stripe. Tente de novo.'); setConfirming(false); return; }
         var r = await stripe.handleNextAction({ clientSecret: data.clientSecret });
         if (r && r.error) { setActionErr(friendlyStripeClientError(r.error)); setConfirming(false); return; }
+        try { await sb.functions.invoke('create-subscription', { body: { confirm_subscription: true } }); } catch (e) { void e; }
         done();
         return;
       }

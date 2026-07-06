@@ -2,6 +2,7 @@ import React from 'react';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { friendlyStripeError, friendlyStripeClientError } from '../lib/stripe.js';
 import { fmt } from '../lib/utils.js';
+import { sb } from '../lib/supabase.js';
 import { Spin } from './ui.jsx';
 import CardPreview from './CardPreview.jsx';
 import useStripeCheckoutInit from '../hooks/useStripeCheckoutInit.js';
@@ -36,6 +37,7 @@ function PaymentForm({ plan, brand, onDone, onClose, mode }) {
         setSubmitting(false);
         return;
       }
+      try { await sb.functions.invoke('create-subscription', { body: { confirm_subscription: true } }); } catch (e) { void e; }
       onDone();
       onClose();
     } catch (err) {

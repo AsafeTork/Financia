@@ -125,6 +125,14 @@ function activeSubscriptionOf(subs) {
   return null;
 }
 
+async function activatePlan(admin, userId, planId) {
+  if (!admin) return;
+  try {
+    var expires = new Date(Date.now() + 31 * 24 * 60 * 60 * 1000).toISOString();
+    await admin.rpc('stripe_activate_plan', { p_user: userId, p_plan: planId, p_expires: expires });
+  } catch (_) {}
+}
+
 // Resolve o Price: se o cliente tem preco customizado (desconto do admin), cria/reaproveita
 // um Price especifico por (plano + valor + cliente). lookup_key inclui o valor, entao mudar
 // o desconto gera um novo Price automaticamente, sem transfer_lookup_key.
@@ -183,7 +191,22 @@ Deno.serve(async function (req) {
     if (!planId) {
       return jsonResponse(400, { error: 'invalid_plan' });
     }
+
     const admin = getAdminClient();
+    const stripe = new Stripe(stripeKey, { apiVersion: '2025-01-27.acacia' });
+    const customer = await findOrCreateCustomer(stripe, user.email, user.id);
+    const customerId = customer.id;
+
+    // Ativacao pos-pagamento: frontend chama apos confirmPayment / handleNextAction.
+    if (body && body.confirm_subscription) {
+      const subsList = await stripe.subscriptions.list({ customer: customerId, status: 'all', limit: 20 });
+      const activeSub = activeSubscriptionOf(subsList);
+      if (!activeSub) return jsonResponse(400, { error: 'no_active_subscription' });
+      const subPlanId = planOfSub(activeSub);
+      await activatePlan(admin, user.id, subPlanId);
+      return jsonResponse(200, { status: 'activated' });
+    }
+
     const allowed = await enforceRateLimit(admin, user.id, 'create_subscription', 60, 8);
     if (!allowed) return jsonResponse(429, { error: 'rate_limited' });
     const isAdmin = await isAdminUser(admin, user.id);
@@ -206,9 +229,6 @@ Deno.serve(async function (req) {
     }
     if (isAdmin) customCents = ADMIN_TEST_PRICE;
 
-    const stripe = new Stripe(stripeKey, { apiVersion: '2025-01-27.acacia' });
-    const customer = await findOrCreateCustomer(stripe, user.email, user.id);
-    const customerId = customer.id;
     const priceId = await resolvePriceId(stripe, planId, customCents, user.id);
 
     // 1) Ja existe assinatura ativa? Entao MUDA de plano (upgrade/downgrade), sem duplicar.
@@ -258,11 +278,13 @@ Deno.serve(async function (req) {
         return jsonResponse(500, { error: 'no_client_secret' });
       }
       if (pi.status === 'succeeded') {
+        await activatePlan(admin, user.id, planId);
         return jsonResponse(200, { status: 'active' });
       }
       try {
         const confirmed = await stripe.paymentIntents.confirm(pi.id, { off_session: true });
         if (confirmed.status === 'succeeded') {
+          await activatePlan(admin, user.id, planId);
           return jsonResponse(200, { status: 'active' });
         }
         if (confirmed.client_secret) {

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Card, PageHead, Modal } from '../components/ui.jsx';
-import { PRICING_PLANS, WHITELABEL, waLink, effectivePlan, planChangeCta, isAdminGranted } from '../lib/constants.js';
-import { fmt, fmtDate } from '../lib/utils.js';
+import { PRICING_PLANS, WHITELABEL, waLink, effectivePlan, planChangeCta, isAdminGranted, PLAN_VISUAL_DEFAULTS } from '../lib/constants.js';
+import { fmt, fmtDate, brandAlpha } from '../lib/utils.js';
 import { sb } from '../lib/supabase.js';
 import { friendlyStripeError, readFnErrorMessage } from '../lib/stripe.js';
 import StripeCheckout from '../components/StripeCheckout.jsx';
@@ -67,6 +67,7 @@ function PlanCard({ plan, brand, cta, onAction, planExpiresAt, currentPlanId, pl
   var current = cta.kind === 'current';
   var kind = cta.kind;
   var cardIdentity = 'card-plan-' + plan.id;
+  var planVisual = PLAN_VISUAL_DEFAULTS[plan.id] || PLAN_VISUAL_DEFAULTS.free;
 
   return (
     <div className={'relative rounded-2xl overflow-hidden transition-all ' + cardIdentity} style={{
@@ -75,7 +76,7 @@ function PlanCard({ plan, brand, cta, onAction, planExpiresAt, currentPlanId, pl
       boxShadow: current ? 'var(--plan-shadow-elevated)' : 'var(--plan-shadow)'
     }}>
       {!isFree && (
-        <div className="h-1 w-full" style={{background: 'var(--plan-gradient, linear-gradient(90deg, ' + brand.color + ', ' + brand.color + '))'}}/>
+        <div className="h-1 w-full" style={{background: planVisual.color}}/>
       )}
 
       <div className="p-5 flex flex-col gap-4">
@@ -133,7 +134,7 @@ function PlanCard({ plan, brand, cta, onAction, planExpiresAt, currentPlanId, pl
         <div className="flex flex-col gap-2 pt-1">
           {plan.features.map(function(f) {
             var ladder = f.indexOf('Tudo do') === 0;
-            var iconColor = isPremium ? 'var(--plan-gold, #D4AF6A)' : isPro ? 'var(--plan-accent, #60A5FA)' : brand.color;
+            var iconColor = isPremium ? 'var(--plan-gold, #D4AF6A)' : isPro ? 'var(--plan-accent, #60A5FA)' : planVisual.color;
             if (ladder) {
               return (
                 <div key={f} className="flex items-center gap-2 pb-1.5 mb-0.5" style={{borderBottom:'1px dashed var(--border)'}}>
@@ -158,7 +159,7 @@ function PlanCard({ plan, brand, cta, onAction, planExpiresAt, currentPlanId, pl
         {(kind === 'subscribe' || kind === 'upgrade') && (
           <button type="button" onClick={function() { onAction(plan, kind); }}
             className="mt-1 w-full text-sm font-semibold px-4 py-3 rounded-xl text-white transition hover:opacity-90 min-h-[44px] flex items-center justify-center gap-2 btn-plan-grad"
-            style={{background: 'var(--btn-grad, ' + brand.color + ')'}}>
+            style={{background: planVisual.color}}>
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
             {ctaLabel(kind, plan)}
           </button>
@@ -166,7 +167,7 @@ function PlanCard({ plan, brand, cta, onAction, planExpiresAt, currentPlanId, pl
         {kind === 'downgrade' && (
           <button type="button" onClick={function() { onAction(plan, kind); }}
             className="mt-1 w-full text-sm font-semibold px-4 py-3 rounded-xl transition hover:opacity-80 min-h-[44px] flex items-center justify-center gap-2"
-            style={{background:'var(--brand-soft)', color: brand.color}}>
+            style={{background: brandAlpha(planVisual.color, 0.08), color: planVisual.color}}>
             {ctaLabel(kind, plan)}
           </button>
         )}
@@ -329,14 +330,12 @@ export default function PlansView({ brand, planInfo, toast, onNav, isAdmin }) {
           <button onClick={async function() {
             setRestoringStripe(true);
             try {
-              var sess = await sb.auth.getSession();
-              var uid = sess && sess.data && sess.data.session && sess.data.session.user ? sess.data.session.user.id : '';
-              if (!uid) { toast('Sessão expirada.', 'error'); setRestoringStripe(false); return; }
-              var res = await sb.rpc('restore_stripe_plan', { p_user_id: uid });
-              if (res && res.error) { toast(res.error.message || 'Erro ao restaurar.', 'error'); }
-              else if (res && res.data && res.data.ok) { toast('Assinatura Stripe restaurada!', 'success'); }
-              else { toast('Não foi possível restaurar.', 'error'); }
-            } catch (e) { toast('Erro de conexão. Tente de novo.', 'error'); }
+              var res = await sb.functions.invoke('create-subscription', { body: { confirm_subscription: true } });
+              var data = res && res.data ? res.data : null;
+              if (data && data.status === 'activated') { toast('Assinatura Stripe restaurada!', 'success'); }
+              else if (data && data.error) { toast(data.error, 'error'); }
+              else { toast('Nao foi possivel restaurar. Nenhuma assinatura ativa encontrada.', 'error'); }
+            } catch (e) { toast('Erro de conexao. Tente de novo.', 'error'); }
             setRestoringStripe(false);
           }} disabled={restoringStripe}
             className="flex-shrink-0 text-sm font-semibold px-4 py-2.5 min-h-[44px] rounded-xl text-white transition hover:opacity-90 disabled:opacity-50 flex items-center gap-2"
