@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 export default function Offline() {
-  var [off, setOff] = useState(!navigator.onLine);
+  var [off, setOff] = useState(false);
   useEffect(function() {
     var on = function() { setOff(false); };
     var off2 = function() { setOff(true); };
