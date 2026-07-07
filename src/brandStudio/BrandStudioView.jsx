@@ -32,7 +32,7 @@ export default function BrandStudioView({ brand, planInfo, onSave, toast, onNav 
 
   return (
     <div className="flex flex-col gap-6">
-      <PageHead icon="M4 16l4.586-4.586a2 2 0 012.828 0L16 16" title="Brand Studio" sub="Edite a logo, cores dos planos e use IA" />
+      <PageHead icon="M4 16l4.586-4.586a2 2 0 012.828 0L16 16" title="Brand Studio" sub="Edite a logo global, personalize por plano e gerencie as cores" />
 
       <Card className="p-4">
         <p className="text-xs font-semibold uppercase tracking-wide mb-2" style={{color:'var(--text-muted)'}}>Preview do estado atual</p>
@@ -175,6 +175,22 @@ function LogoTabContent({ brand, bs, brandColor, applyLogoScheme, toast }) {
 
   return (
     <Card className="p-4 sm:p-5">
+      {bs && bs.copyPrompt && bs.copyCurrentJSON && (
+        <div className="flex gap-2 mb-3">
+          <button onClick={bs.copyPrompt}
+            className="text-xs font-semibold px-3 py-1.5 rounded-lg transition hover:opacity-80 flex items-center gap-1.5"
+            style={{background:'var(--bg-subtle)', color:'var(--text-sub)', border:'1px solid var(--border)'}}>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
+            Copiar doc
+          </button>
+          <button onClick={bs.copyCurrentJSON}
+            className="text-xs font-semibold px-3 py-1.5 rounded-lg transition hover:opacity-80 flex items-center gap-1.5"
+            style={{background:'var(--bg-subtle)', color:'var(--text-sub)', border:'1px solid var(--border)'}}>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+            Copiar JSON
+          </button>
+        </div>
+      )}
       <div className="flex flex-wrap items-center gap-1 border-b pb-1 mb-4" style={{borderColor:'var(--border)'}}>
         <button onClick={function() { setActiveTab('_global'); }}
           className={'text-xs font-semibold px-3 py-2 rounded-t-lg transition ' + (activeTab === '_global' ? 'border-b-2' : 'opacity-50')}
