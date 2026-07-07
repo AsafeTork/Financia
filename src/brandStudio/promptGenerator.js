@@ -1,8 +1,10 @@
 import { BRAND_SCHEMA_VERSION } from './schema.js';
 import { listModules } from './schemaRegistry.js';
+import { OFFICIAL_PRESETS } from './presets.js';
 
 export default function generatePrompt(opts) {
   var modules = listModules();
+  var extended = opts && opts.extended;
 
   var lines = [];
   lines.push('# FINANCIA — PERSONALIZACAO VISUAL');
@@ -21,14 +23,22 @@ export default function generatePrompt(opts) {
   lines.push('- Nao invente campos que nao estao no schema.');
   lines.push('- Se o usuario nao especificar algo, use o default ou omita.');
   lines.push('');
-
+  if (extended) {
+    lines.push('### Capacidades Avancadas');
+    lines.push('');
+    lines.push('- logoVariants: multiplas versoes de logo (primary, light, dark, monochrome, color, reduced, horizontal, vertical, commemorative)');
+    lines.push('  - colorOverrides: elementColor, textColor, gradient, opacity, shadow, outline, glow');
+    lines.push('- planThemes: configuracao visual por plano (free, pro, premium, white_label)');
+    lines.push('- eventThemes: temas sazonais com activeEventId e overrides');
+    lines.push('- preset: referencia a um preset existente (id, name)');
+    lines.push('');
+  }
   if (opts && opts.context) {
     lines.push('### Contexto da Tela');
     lines.push('');
     lines.push(opts.context);
     lines.push('');
   }
-
   lines.push('### Modulos Disponiveis');
   lines.push('');
   for (var mi = 0; mi < modules.length; mi++) {
@@ -38,27 +48,21 @@ export default function generatePrompt(opts) {
       var semanticKeys = Object.keys(mod.def.semanticMap);
       for (var si = 0; si < semanticKeys.length; si++) {
         var sk = semanticKeys[si];
-        lines.push('  - ' + sk + ': ' + mod.def.semanticMap[sk].join(', '));
+        if (mod.def.semanticMap[sk].length > 0) {
+          lines.push('  - ' + sk + ': ' + mod.def.semanticMap[sk].join(', '));
+        }
       }
     }
     lines.push('');
   }
-
-  lines.push('### Schema (Formato Compacto)');
+  lines.push('### Schema');
   lines.push('');
   lines.push('```json');
   lines.push('{');
   lines.push('  "schemaVersion": "' + BRAND_SCHEMA_VERSION + '",');
   lines.push('  "modules": {');
-  lines.push('    "palette": {');
-  lines.push('      "primary": "#hex",');
-  lines.push('      "style": "minimal|bold|elegant|fun",');
-  lines.push('      "mood": "professional|creative|warm|playful"');
-  lines.push('    },');
-  lines.push('    "typography": {');
-  lines.push('      "style": "modern|classic|minimal|playful",');
-  lines.push('      "size": "small|medium|large"');
-  lines.push('    },');
+  lines.push('    "palette": { "primary": "#hex", "style": "minimal|bold|elegant|fun", "mood": "professional|creative|warm|playful" },');
+  lines.push('    "typography": { "style": "modern|classic|minimal|playful", "size": "small|medium|large" },');
   lines.push('    "sidebar": { "style": "solid|glass|minimal|dark" },');
   lines.push('    "header": { "style": "solid|transparent|bordered" },');
   lines.push('    "cards": { "style": "flat|raised|outlined|glass" },');
@@ -67,19 +71,27 @@ export default function generatePrompt(opts) {
   lines.push('    "borderRadius": { "style": "sharp|rounded|pill" },');
   lines.push('    "spacing": { "density": "compact|comfortable|spacious" },');
   lines.push('    "shadows": { "intensity": "none|subtle|medium|strong" },');
-  lines.push('    "animations": { "speed": "slow|normal|fast", "enabled": true }');
+  lines.push('    "animations": { "speed": "slow|normal|fast", "enabled": true },');
+  lines.push('    "layout": { "sidebarPosition": "left|right", "density": "compact|comfortable|spacious" }');
+  if (extended) {
+    lines.push('    ,"logoVariants": {');
+    lines.push('      "primary": "url", "light": "url", "dark": "url", "monochrome": "url",');
+    lines.push('      "colorOverrides": { "elementColor": "#hex", "opacity": 0.8 }');
+    lines.push('    },');
+    lines.push('    "planThemes": { "free": {...}, "pro": {...}, "premium": {...} },');
+    lines.push('    "eventThemes": { "activeEventId": "natal", "overrides": { "palette": {...} } },');
+    lines.push('    "preset": { "id": "financia_classic", "name": "Financia Classic" }');
+  }
   lines.push('  }');
   lines.push('}');
   lines.push('```');
   lines.push('');
-
   if (opts && opts.limitations) {
     lines.push('### Limitacoes');
     lines.push('');
     lines.push(opts.limitations);
     lines.push('');
   }
-
   lines.push('### Exemplo');
   lines.push('');
   lines.push('```json');
@@ -93,6 +105,12 @@ export default function generatePrompt(opts) {
   lines.push('    "buttons": { "style": "rounded" },');
   lines.push('    "borderRadius": { "style": "rounded" },');
   lines.push('    "spacing": { "density": "comfortable" }');
+  if (extended) {
+    lines.push('    ,"logoVariants": {');
+    lines.push('      "primary": "https://exemplo.com/logo.png",');
+    lines.push('      "colorOverrides": { "textColor": "#ffffff", "opacity": 0.9 }');
+    lines.push('    }');
+  }
   lines.push('  }');
   lines.push('}');
   lines.push('```');

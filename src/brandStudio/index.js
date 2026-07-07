@@ -10,3 +10,6 @@ export { default as generatePrompt } from './promptGenerator.js';
 export { detectAndAdapt, registerAdapter } from './aiCompatibilityLayer.js';
 export { default as processResponse } from './responseProcessor.js';
 export { enterPreviewMode, exitPreviewMode } from '../hooks/useBrandAppearance.js';
+export { listPresets, getPreset, savePreset, deletePreset, duplicatePreset, toggleFavoritePreset, exportPreset, importPreset, getPresetCategories, OFFICIAL_PRESETS } from './presets.js';
+export { getPlanTheme, getPlanThemeConfig, listPlanThemes, resolveBrandForPlan } from './planThemes.js';
+export { getActiveEvent, getActiveEventOverride, isEventActive, saveCurrentBrandBeforeEvent, restoreBrandAfterEvent, listCustomEvents, addCustomEvent, removeCustomEvent, toggleCustomEvent, listSeasonalEvents, SEASONAL_EVENTS } from './eventsManager.js';

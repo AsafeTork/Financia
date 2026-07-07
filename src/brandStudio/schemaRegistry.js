@@ -594,6 +594,110 @@ function initBuiltinModules() {
     },
     semanticMap: { sidebarPosition: ['left', 'right'], density: ['compact', 'comfortable', 'spacious'] },
   });
+
+  registerModule('logoVariants', {
+    description: 'Multiplas versoes de logo',
+    schema: {
+      type: 'object',
+      properties: {
+        primary: { type: 'string' },
+        light: { type: 'string' },
+        dark: { type: 'string' },
+        monochrome: { type: 'string' },
+        color: { type: 'string' },
+        reduced: { type: 'string' },
+        horizontal: { type: 'string' },
+        vertical: { type: 'string' },
+        commemorative: { type: 'string' },
+        colorOverrides: {
+          type: 'object',
+          properties: {
+            elementColor: { type: 'string', pattern: '^#[0-9a-fA-F]{6}$' },
+            textColor: { type: 'string', pattern: '^#[0-9a-fA-F]{6}$' },
+            gradient: { type: 'string' },
+            opacity: { type: 'number', minimum: 0, maximum: 1 },
+            shadow: { type: 'string' },
+            outline: { type: 'string' },
+            glow: { type: 'string' },
+          },
+          additionalProperties: false,
+        },
+      },
+      additionalProperties: false,
+    },
+    defaults: {},
+    normalizer: function(v) {
+      var out = {};
+      if (v.primary) out.primary = v.primary;
+      if (v.light) out.light = v.light;
+      if (v.dark) out.dark = v.dark;
+      if (v.monochrome) out.monochrome = v.monochrome;
+      if (v.color) out.color = v.color;
+      if (v.reduced) out.reduced = v.reduced;
+      if (v.horizontal) out.horizontal = v.horizontal;
+      if (v.vertical) out.vertical = v.vertical;
+      if (v.commemorative) out.commemorative = v.commemorative;
+      if (v.colorOverrides) out.colorOverrides = v.colorOverrides;
+      return out;
+    },
+    semanticMap: {},
+  });
+
+  registerModule('planThemes', {
+    description: 'Configuracoes visuais por plano',
+    schema: {
+      type: 'object',
+      properties: {
+        free: { type: 'object' },
+        pro: { type: 'object' },
+        premium: { type: 'object' },
+        white_label: { type: 'object' },
+      },
+      additionalProperties: false,
+    },
+    defaults: {},
+    normalizer: function(v) { return v; },
+    semanticMap: {},
+  });
+
+  registerModule('eventThemes', {
+    description: 'Temas sazonais e campanhas',
+    schema: {
+      type: 'object',
+      properties: {
+        activeEventId: { type: 'string' },
+        overrides: {
+          type: 'object',
+          properties: {
+            palette: { type: 'object' },
+            cards: { type: 'object' },
+            buttons: { type: 'object' },
+            animations: { type: 'object' },
+          },
+          additionalProperties: false,
+        },
+      },
+      additionalProperties: false,
+    },
+    defaults: {},
+    normalizer: function(v) { return v; },
+    semanticMap: {},
+  });
+
+  registerModule('preset', {
+    description: 'Referencia a um preset',
+    schema: {
+      type: 'object',
+      properties: {
+        id: { type: 'string' },
+        name: { type: 'string' },
+      },
+      additionalProperties: false,
+    },
+    defaults: {},
+    normalizer: function(v) { return v; },
+    semanticMap: {},
+  });
 }
 
 initBuiltinModules();

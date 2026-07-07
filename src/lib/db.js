@@ -18,6 +18,14 @@ ldb.version(2).stores({
   profiles:     'user_id, _synced, _updated_at',
   meta:         'key',
 });
+ldb.version(3).stores({
+  transactions: 'id, user_id, date, _synced, _deleted, _updated_at, registered_by',
+  products:     'id, user_id, category, _synced, _deleted, _updated_at, registered_by',
+  losses:       'id, user_id, date, _synced, _deleted, _updated_at, registered_by',
+  profiles:     'user_id, _synced, _updated_at',
+  meta:         'key',
+  brand_presets: 'id, name, category, favorite, updated_at',
+});
 
 export const toLocal = function(row, extra) {
   if (!extra) extra = {};
