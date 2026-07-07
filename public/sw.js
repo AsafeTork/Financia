@@ -1,4 +1,4 @@
-const CACHE = 'financia-v4';
+const CACHE = 'financia-v5';
 const STATIC = ['/', '/manifest.json', '/icon-192.svg', '/icon-512.svg'];
 
 // Avisa todas as abas o progresso do cache (alimenta a barra do banner).

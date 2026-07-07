@@ -9,7 +9,6 @@ export default function PreviewGeral({ brandConfig, brandColor }) {
   var inp = (brandConfig && brandConfig.modules && brandConfig.modules.inputs) || {};
   var cardsMod = (brandConfig && brandConfig.modules && brandConfig.modules.cards) || {};
   var sidebar = (brandConfig && brandConfig.modules && brandConfig.modules.sidebar) || {};
-  var borderR = (brandConfig && brandConfig.modules && brandConfig.modules.borderRadius) || {};
 
   var pk = pal.primary || brandColor || '#002f59';
   var sc = pal.secondary || '#e8f0f7';
@@ -25,7 +24,6 @@ export default function PreviewGeral({ brandConfig, brandColor }) {
   var btnRadius = btn.radius || '12px';
   var inpRadius = inp.radius || '12px';
   var cardRadius = cardsMod.radius || '12px';
-  var smRadius = borderR.sm || '8px';
   var sidebarBg = sidebar.bg || '#1e293b';
   var sidebarText = sidebar.text || '#ffffff';
 

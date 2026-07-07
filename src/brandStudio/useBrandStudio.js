@@ -81,6 +81,27 @@ export default function useBrandStudio(brand, planInfo, onSave, toast) {
     await onSave(updated);
   }, [brand, onSave]);
 
+  var savePlanLogo = useCallback(async function(planId, logoColors) {
+    var cfg = { modules: {} };
+    try { cfg = typeof brand.brand_config === 'string' ? JSON.parse(brand.brand_config) : (brand.brand_config || { modules: {} }); } catch (_) { cfg = { modules: {} }; }
+    if (!cfg.planOverrides) cfg.planOverrides = {};
+    var existing = cfg.planOverrides[planId] || {};
+    if (logoColors) {
+      cfg.planOverrides[planId] = Object.assign({}, existing, { logoColors: logoColors });
+    } else {
+      delete existing.logoColors;
+      if (Object.keys(existing).length > 0) {
+        cfg.planOverrides[planId] = existing;
+      } else {
+        delete cfg.planOverrides[planId];
+      }
+    }
+    saveToHistory(brand);
+    var updated = Object.assign({}, brand, { brand_config: JSON.stringify(cfg) });
+    await onSave(updated);
+    if (toast) toast(logoColors ? 'Logo personalizada salva para ' + planId + '!' : 'Plano ' + planId + ' agora usa a logo global.', 'success');
+  }, [brand, onSave, toast, saveToHistory]);
+
   var saveCompletePreset = useCallback(function(name, description, category, tags) {
     var fullConfig = JSON.parse(JSON.stringify(brandConfig));
     var result = savePreset(name, description, category, fullConfig, tags);
@@ -210,6 +231,7 @@ export default function useBrandStudio(brand, planInfo, onSave, toast) {
     rejectProposed: rejectProposed,
     setProposed: setProposed,
     savePlanOverride: savePlanOverride,
+    savePlanLogo: savePlanLogo,
     saveCompletePreset: saveCompletePreset,
     applyFullPreset: applyFullPreset,
     applyPreset: applyFullPreset,

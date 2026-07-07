@@ -60,7 +60,7 @@ export default function PlanTabsEditor({ brandConfig, onSavePlan, onCopyJSON, on
     try {
       var pal = {};
       PALETTE_FIELDS.forEach(function(f) { pal[f.key] = form[f.key] || null; });
-      await onSavePlan(activePlan, { logo_url: '', modules: { palette: pal } });
+      await onSavePlan(activePlan, { modules: { palette: pal } });
       setHasChanges(false);
       if (toast) toast('Cores salvas para plano ' + activePlan, 'success');
     } catch (_) { void _; }
@@ -123,27 +123,51 @@ export default function PlanTabsEditor({ brandConfig, onSavePlan, onCopyJSON, on
       </div>
 
       <div className="border-t pt-4" style={{borderColor:'var(--border)'}}>
-        <p className="text-sm font-semibold mb-1" style={{color:'var(--text-main)'}}>Logo do plano {PLAN_META[activePlan].label}</p>
-        <p className="text-xs mb-3" style={{color:'var(--text-muted)'}}>Uma logo personalizada que aparece ao lado da logo do Financia para usuarios deste plano.</p>
-        <div className="flex items-center gap-4">
-          {form.logo_url
-            ? <img src={form.logo_url} alt="logo" className="w-14 h-14 rounded-2xl object-cover flex-shrink-0 border" style={{borderColor:'var(--border)'}} />
-            : <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-sm font-bold flex-shrink-0" style={{background:'var(--bg-subtle)', border:'1px dashed var(--border)', color:'var(--text-muted)'}}>Logo</div>
-          }
-          <label className="text-xs font-semibold px-4 py-2.5 rounded-xl cursor-pointer text-center min-h-[44px] flex items-center justify-center transition hover:opacity-80" style={{background:'var(--brand-soft)', color: brandColor}}>
-            Enviar logo
-            <input type="file" accept="image/*" onChange={function(e) {
-              var file = e.target && e.target.files && e.target.files[0];
-              if (!file) return;
-              if (file.size > 512 * 1024) { if (toast) toast('Imagem muito grande (max. 512KB)', 'error'); return; }
-              var reader = new FileReader();
-              reader.onload = function() { setForm(function(f) { var o = Object.assign({}, f); o.logo_url = String(reader.result); return o; }); setHasChanges(true); };
-              reader.readAsDataURL(file);
-            }} className="hidden" />
-          </label>
-          {form.logo_url && (
-            <button onClick={function() { setForm(function(f) { var o = Object.assign({}, f); o.logo_url = ''; return o; }); setHasChanges(true); }} className="text-xs font-medium hover:opacity-70" style={{color:'var(--text-muted)'}}>Remover</button>
-          )}
+        <p className="text-xs font-semibold uppercase tracking-wide mb-2" style={{color:'var(--text-muted)'}}>Preview — {PLAN_META[activePlan].label}</p>
+        <div className="rounded-2xl overflow-hidden" style={{background: form.bgPage || '#f5f5f0', color: form.textMain || '#0f172a'}}>
+          <div className="flex items-center justify-between px-4 py-2.5" style={{background: form.primary || '#002f59', color:'#ffffff'}}>
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold" style={{background:'rgba(255,255,255,0.2)'}}>F</div>
+              <span className="text-sm font-semibold">Financia</span>
+            </div>
+            <div className="w-6 h-6 rounded-full flex items-center justify-center text-[8px] font-bold" style={{background:'rgba(255,255,255,0.2)'}}>U</div>
+          </div>
+          <div className="flex">
+            <div className="w-16 flex-shrink-0 p-1.5 flex flex-col gap-1" style={{background: form.primary || '#1e293b'}}>
+              {[1,2,3,4].map(function(i) {
+                return (
+                  <div key={i} className="h-6 rounded-lg flex items-center justify-center" style={{background: i === 2 ? 'rgba(255,255,255,0.14)' : 'transparent'}}>
+                    <div className="w-3 h-3 rounded" style={{background: i === 2 ? '#ffffff' : 'rgba(255,255,255,0.4)'}} />
+                  </div>
+                );
+              })}
+            </div>
+            <div className="flex-1 p-3 flex flex-col gap-2.5">
+              <div className="flex items-center gap-2">
+                <div className="px-3 py-1.5 text-[10px] font-semibold text-white rounded-lg" style={{background: form.primary || '#002f59'}}>Salvar</div>
+                <div className="px-3 py-1.5 text-[10px] font-semibold rounded-lg" style={{background: form.secondary || '#e8f0f7', color: form.primary || '#002f59'}}>Cancelar</div>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div className="p-2 rounded-xl flex flex-col gap-1.5" style={{background: form.bgCard || '#ffffff', border:'1px solid ' + (form.border || '#edeae3'), borderRadius:'10px'}}>
+                  <div className="h-2 w-2/3 rounded" style={{background: form.bgSubtle || '#f5f5f0'}} />
+                  <div className="h-1.5 rounded-full" style={{background: form.bgSubtle || '#f5f5f0'}}>
+                    <div className="h-full rounded-full" style={{width:'60%', background: form.accent || '#1a6b5c'}} />
+                  </div>
+                </div>
+                <div className="p-2 rounded-xl flex flex-col gap-1.5" style={{background: form.bgCard || '#ffffff', border:'1px solid ' + (form.border || '#edeae3'), borderRadius:'10px'}}>
+                  <div className="h-2 w-1/2 rounded" style={{background: form.bgSubtle || '#f5f5f0'}} />
+                  <div className="flex items-center gap-1">
+                    <div className="w-1.5 h-1.5 rounded-full" style={{background: form.secondary || '#e8f0f7'}} />
+                    <span className="text-[7px]" style={{color: form.textSub || '#5b6b7c'}}>Tag</span>
+                  </div>
+                </div>
+              </div>
+              <div className="flex gap-1.5">
+                <div className="text-[7px] font-bold px-1.5 py-0.5 rounded-full text-white" style={{background: form.primary || '#002f59'}}>NOVO</div>
+                <div className="text-[7px] font-bold px-1.5 py-0.5 rounded-full" style={{background: form.secondary || '#e8f0f7', color: form.primary || '#002f59'}}>ATIVO</div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -158,8 +182,8 @@ export default function PlanTabsEditor({ brandConfig, onSavePlan, onCopyJSON, on
 
 function initForm(activePlan, planOverrides, palDefaults) {
   var ov = planOverrides[activePlan] || {};
-  var pal = ov.modules && ov.modules.palette ? ov.modules.palette : {};
-  var form = { logo_url: ov.logo_url || '' };
+  var pal = (ov.modules && ov.modules.palette) || {};
+  var form = {};
   PALETTE_FIELDS.forEach(function(f) { form[f.key] = pal[f.key] || palDefaults[f.key] || ''; });
   return form;
 }
