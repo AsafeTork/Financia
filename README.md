@@ -1,138 +1,123 @@
-# Financia — Gestão Financeira
+# <div align="center">
 
-App de gestão financeira white-label para pequenas empresas. Cada cliente tem sua própria identidade visual (nome, logo, cores) e o app roda como PWA, APK Android, ou instalador Windows.
+![Financia Logo](file:///C:/Users/gilma/.gemini/antigravity/brain/e2d5e85a-036a-41d9-b05c-10c2c2556b0d/financia_logo_1783388186537.jpg){: style="width:150px;"}
 
----
+# Financia
 
-## Acesso rápido
+_⚡️ White‑label financial management app for small businesses_
 
-| Recurso | Link |
-|---------|------|
-| App web (produção) | https://financia-gestao.onrender.com |
-| Painel Supabase | https://supabase.com/dashboard/project/kxeqhorxhlgwcgywovqr |
-| GitHub Actions (builds) | `.github/workflows/build.yml` |
-| Painel Render | https://dashboard.render.com |
+<div>
 
----
+[![GitHub license](https://img.shields.io/github/license/gilma/Financia)](LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/gilma/Financia?style=social)](https://github.com/gilma/Financia/stargazers)
+[![Vite](https://img.shields.io/badge/Vite-5.0-646CFF?logo=vite)](https://vitejs.dev/)
+[![React](https://img.shields.io/badge/React-18-61DAFB?logo=react)](https://reactjs.org/)
+[![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.3-38B2AC?logo=tailwindcss)](https://tailwindcss.com/)
 
-## Stack
+</div>
 
-| Camada | Tecnologia |
-|--------|-----------|
-| Frontend | React 18 + Vite 5 + Tailwind CSS v3 |
-| Backend | Supabase (PostgreSQL + Auth + RLS + Edge Functions) |
-| Offline | Dexie v3 (IndexedDB) |
-| Desktop | Electron 31 (Windows) |
-| Mobile | APK Android (WebView) |
-| Deploy web | Render (static site, auto-deploy em push para `main`) |
-| CI/CD | GitHub Actions (APK Android + EXE Windows) |
-| Pagamentos | Stripe (assinaturas + white-label one-time) |
-| Testes | Vitest (1100+ testes) |
+</div>
 
 ---
 
-## Rodar localmente
+## ✨ Overview
+
+Financia is a **offline‑first**, **white‑label** fintech solution that runs everywhere:
+- **Web** (PWA) – hosted on Render
+- **Desktop** – Electron (Windows)
+- **Mobile** – Android APK (WebView)
+
+Every client gets its own brand (logo, colors, name) without touching code. All UI colors are driven by CSS variables so the same bundle can be re‑skinned on the fly.
+
+---
+
+## 🎯 Key Features
+
+- **Multi‑platform**: PWA, Electron, Android APK
+- **Complete CRUD** for transactions, products, losses, and brand settings
+- **Robust offline‑first sync** (Dexie ↔ Supabase) with a 2‑minute sync loop
+- **White‑label branding** – dynamic CSS variables (`--brand`, `--bg-card`, …)
+- **Stripe integration** – subscription & one‑time white‑label payments
+- **Full test suite** – 1100+ Vitest tests covering edge cases
+- **Strict coding rules** – no optional chaining, no hard‑coded Tailwind colors, no emojis in strings, etc.
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| Frontend | React 18, Vite 5, Tailwind CSS v3 (CSS vars) |
+| State & Offline | Dexie.js (IndexedDB) |
+| Backend | Supabase (PostgreSQL, Auth, RLS, Edge Functions) |
+| Desktop | Electron 31 |
+| Mobile | Android WebView (APK) |
+| Payments | Stripe Elements |
+| CI/CD | GitHub Actions (APK + Windows EXE) |
+| Tests | Vitest + Testing Library |
+
+---
+
+## 🚀 Getting Started
 
 ```bash
+# Clone the repo
+git clone https://github.com/gilma/Financia.git
+cd Financia
+
+# Install dependencies
 npm install
-npm run dev          # http://localhost:5173
-npm test             # vitest run (1113 testes)
-npm run lint         # eslint src/
-npm run build        # vite build → dist/
+
+# Run locally (web)
+npm run dev          # → http://localhost:5173
+
+# Run the full test suite
+npm run test
 ```
 
-Variáveis de ambiente (`.env` na raiz, não commitado):
-
-```
-VITE_SUPABASE_URL=https://kxeqhorxhlgwcgywovqr.supabase.co
-VITE_SUPABASE_ANON_KEY=<chave anon pública>
-```
+> **Note**: Create a `.env` file in the project root with your Supabase keys (see `example.env`).
 
 ---
 
-## Estrutura de pastas
+## 📚 Documentation
 
-```
-src/
-  App.jsx              Estado global + roteamento por hash
-  main.jsx             Entry point
-  index.css            CSS vars de tema (design system)
-  animations.css       Animações globais
-  lib/                 Lógica pura e integrações
-    db.js              Dexie + sync bidirecional + admin queries
-    supabase.js        Cliente Supabase
-    auth.js            Helpers de autenticação
-    constants.js       Limites de plano, branding defaults, presets
-    utils.js           Funções utilitárias (cor, formatação, validação)
-    stripe.js          Helpers Stripe (erros amigáveis)
-    aiClient.js        Proxy para IA (paleta, insights)
-    recurring.js       Lançamentos recorrentes
-    exporters.js       Exportação CSV/PDF
-    crud.js            Operações CRUD com sync imediato
-    cleanNumeric.js    Sanitização de entrada numérica
-  hooks/               Hooks customizados React
-    useSession.js      Orquestra auth, loadData, sync, realtime
-    useBrandAppearance.js  Deriva appBrand + aplica CSS vars
-    useBrandManager.js saveBrand + savePhone (Dexie → Supabase)
-    useTx.js           CRUD de transações
-    useProducts.js     CRUD de produtos
-    useLosses.js       CRUD de perdas
-    useDataLoader.js   Carrega dados do Dexie local
-    useAuthBootstrap.js Bootstrap de sessão (getSession + onAuthChange)
-    useSyncLoop.js     Loop de sync a cada 2 min
-    useRealtime.js     Subscriptions Supabase Realtime
-    useImpersonation.js Fluxo de impersonação admin → cliente
-    useScrollReveal.js Animação de scroll
-  views/               Páginas (lazy-loaded)
-  components/           Componentes reutilizáveis
-  admin/               Painel admin
-supabase/
-  migrations/          19 migrações SQL
-  functions/           18 Edge Functions (Deno)
-electron/
-  main.cjs             Main process (CommonJS)
-scripts/               gen_icons.py, gen_icon_win.py
-docs/                  Documentação completa do projeto
-  architecture/        8 docs de arquitetura
-  agents/              5 instruction files para AI agents
-```
+- **AI Context & Rules** – `docs/AI_CONTEXT.md`
+- **Architecture Overview** – `docs/ARCHITECTURE.md`
+- **API Reference** – `src/lib/` modules
+- **Contribution Guide** – `CONTRIBUTING.md` (coming soon)
 
 ---
 
-## Documentação completa
+## 🖼️ Screenshots
 
-Toda a documentação técnica está em `docs/`. Consulte [`CLAUDE.md`](CLAUDE.md) para o entry point.
+> *Replace the placeholders below with real screenshots after customizing the brand.*
 
-| Pasta | Conteúdo |
-|-------|---------|
-| `docs/architecture/` | 8 arquivos explicando todo o código do projeto |
-| `docs/agents/` | 5 instruction files para diferentes tipos de AI agent |
-
-Para instructions de AI que vai trabalhar no projeto, leia [`CLAUDE.md`](CLAUDE.md) (entry point) e [`docs/agents/`](docs/agents/).
-
----
-
-## Planos
-
-| Plano | Transações | Produtos | Perdas | Preço |
-|-------|-----------|---------|-------|-------|
-| Free | 50 total | 20 total | 10 total | Gratuito |
-| Pro | Ilimitado | Ilimitado | Ilimitado | R$ 49,90/mês |
-| Premium | Ilimitado | Ilimitado | Ilimitado | R$ 99,90/mês |
-
-White-label (personalização visual completa): R$ 497 pagamento único.
+<div align="center">
+<img src="https://via.placeholder.com/800x450?text=Dashboard+Screen" alt="Dashboard" width="70%"/>
+<br/>
+<em>Dashboard – Overview of finances</em>
+</div>
 
 ---
 
-## Regras de código essenciais
+## 🤝 Contributing
 
-- **PROIBIDO** optional chaining (`?.`)
-- **PROIBIDO** arrow spreads iniciais (`=> ({...spread, x})`)
-- **PROIBIDO** emojis em strings JS/JSX
-- **PROIBIDO** `service_role` key no frontend
-- **PROIBIDO** classes de cor hardcoded (`bg-white`, `text-gray-400`) — usar CSS vars
-- **OBRIGATÓRIO** área de toque mínima 44x44px
-- **OBRIGATÓRIO** `truncate` em textos de lista
-- **OBRIGATÓRIO** confirmação antes de ações destrutivas
+Financia follows **the Scout Rule** – always leave the code better than you found it.
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feat/awesome-feature`)
+3. Ensure **all tests pass** (`npm run test`)
+4. Open a Pull Request – describe what you changed and why.
 
-Regras detalhadas em [`docs/agents/01-coder.md`](docs/agents/01-coder.md).
+All contributions must respect the **strict coding guidelines** listed in `docs/AI_CONTEXT.md` (no optional chaining, no hard‑coded Tailwind colors, etc.).
+
+---
+
+## 📄 License
+
+Distributed under the **MIT License**. See `LICENSE` for more information.
+
+---
+
+<div align="center">
+<sub>Built with ❤️ by the Financia team.</sub>
+</div>
