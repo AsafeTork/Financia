@@ -4,6 +4,7 @@ import PhoneInput, { parsePhone, buildPhone } from '../components/PhoneInput.jsx
 import { updatePassword, signOut as doSignOut } from '../lib/auth.js';
 import { effectivePlan, PRICING_PLANS, waLink, SUPPORT_EMAIL } from '../lib/constants.js';
 import AdminPanel from '../admin/AdminPanel.jsx';
+import BrandStudioView from '../brandStudio/BrandStudioView.jsx';
 import GhTokenCard from '../admin/GhTokenCard.jsx';
 import InstallButton from '../components/InstallButton.jsx';
 import UpdateCardModal from '../components/UpdateCardModal.jsx';
@@ -178,6 +179,7 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
 
   const allTabs = [{key:'account',label:'Conta'}, {key:'subscription',label:'Assinatura'}];
   if (hasWhiteLabel) allTabs.push({key:'appearance',label:'Aparência'});
+  allTabs.push({key:'brandstudio',label:'Brand Studio'});
   allTabs.push({key:'clients',label:'Painel admin',adminOnly:true});
   const tabs = allTabs.filter(function(t) { return !t.adminOnly || isAdmin; });
 
@@ -409,6 +411,10 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
             Falar com o Desenvolvedor
           </a>
         </Card>
+      )}
+
+      {tab === 'brandstudio' && (
+        <BrandStudioView brand={brand} planInfo={planInfo} onSave={onSave} toast={toast} onNav={onNav} />
       )}
 
       {tab === 'clients' && (
