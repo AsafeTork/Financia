@@ -122,10 +122,35 @@ export default function PlanTabsEditor({ brandConfig, onSavePlan, onCopyJSON, on
         </div>
       </div>
 
+      <div className="border-t pt-4" style={{borderColor:'var(--border)'}}>
+        <p className="text-sm font-semibold mb-1" style={{color:'var(--text-main)'}}>Logo do plano {PLAN_META[activePlan].label}</p>
+        <p className="text-xs mb-3" style={{color:'var(--text-muted)'}}>Uma logo personalizada que aparece ao lado da logo do Financia para usuarios deste plano.</p>
+        <div className="flex items-center gap-4">
+          {form.logo_url
+            ? <img src={form.logo_url} alt="logo" className="w-14 h-14 rounded-2xl object-cover flex-shrink-0 border" style={{borderColor:'var(--border)'}} />
+            : <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-sm font-bold flex-shrink-0" style={{background:'var(--bg-subtle)', border:'1px dashed var(--border)', color:'var(--text-muted)'}}>Logo</div>
+          }
+          <label className="text-xs font-semibold px-4 py-2.5 rounded-xl cursor-pointer text-center min-h-[44px] flex items-center justify-center transition hover:opacity-80" style={{background:'var(--brand-soft)', color: brandColor}}>
+            Enviar logo
+            <input type="file" accept="image/*" onChange={function(e) {
+              var file = e.target && e.target.files && e.target.files[0];
+              if (!file) return;
+              if (file.size > 512 * 1024) { if (toast) toast('Imagem muito grande (max. 512KB)', 'error'); return; }
+              var reader = new FileReader();
+              reader.onload = function() { setForm(function(f) { var o = Object.assign({}, f); o.logo_url = String(reader.result); return o; }); setHasChanges(true); };
+              reader.readAsDataURL(file);
+            }} className="hidden" />
+          </label>
+          {form.logo_url && (
+            <button onClick={function() { setForm(function(f) { var o = Object.assign({}, f); o.logo_url = ''; return o; }); setHasChanges(true); }} className="text-xs font-medium hover:opacity-70" style={{color:'var(--text-muted)'}}>Remover</button>
+          )}
+        </div>
+      </div>
+
       <button onClick={doSave} disabled={saving || !hasChanges}
         className="w-full text-white rounded-xl py-3 text-sm font-semibold hover:opacity-90 disabled:opacity-40 flex items-center justify-center gap-2 min-h-[44px] transition"
         style={{background: brandColor}}>
-        {saving ? 'Salvando...' : 'Salvar cores do plano ' + PLAN_META[activePlan].label}
+        {saving ? 'Salvando...' : 'Salvar configuracao do plano ' + PLAN_META[activePlan].label}
       </button>
     </div>
   );
@@ -134,7 +159,7 @@ export default function PlanTabsEditor({ brandConfig, onSavePlan, onCopyJSON, on
 function initForm(activePlan, planOverrides, palDefaults) {
   var ov = planOverrides[activePlan] || {};
   var pal = ov.modules && ov.modules.palette ? ov.modules.palette : {};
-  var form = {};
+  var form = { logo_url: ov.logo_url || '' };
   PALETTE_FIELDS.forEach(function(f) { form[f.key] = pal[f.key] || palDefaults[f.key] || ''; });
   return form;
 }
