@@ -14,7 +14,7 @@ const CORS_HEADERS = {
 
 // Preco do pacote de personalizacao: R$ 497,00 (centavos). Espelha WHITELABEL.price.
 const WHITE_LABEL_PRICE = 49700;
-const ADMIN_TEST_PRICE = 1;
+const ADMIN_TEST_PRICE = 50;
 
 // Ativa white_label no banco apos pagamento confirmado.
 async function activateWhiteLabel(admin, userId) {

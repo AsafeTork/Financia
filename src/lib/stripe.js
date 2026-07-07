@@ -56,6 +56,7 @@ var PAYMENT_ERROR_MESSAGES = {
   processing_error: 'Não foi possível processar o cartão agora. Tente de novo em instantes.',
   authentication_required: 'Seu banco pediu autenticação do cartão. Tente novamente e conclua a autenticação.',
   payment_intent_authentication_failure: 'Falha na autenticação do cartão. Tente novamente.',
+  amount_too_small: 'O valor mínimo para pagamento é R$ 0,50. Entre em contato com o suporte.',
 };
 
 var DEFAULT_PAYMENT_ERROR = 'Não foi possível iniciar o pagamento. Tente de novo.';
