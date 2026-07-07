@@ -4,7 +4,7 @@
 
 # Financia
 
-_⚡️ White‑label financial management app for small businesses_
+_White‑label financial management app for small businesses._
 
 <div>
 
@@ -20,14 +20,14 @@ _⚡️ White‑label financial management app for small businesses_
 
 ---
 
-## ✨ Overview
+## Overview
 
-Financia is a **offline‑first**, **white‑label** fintech solution that runs everywhere:
-- **Web** (PWA) – hosted on Render
-- **Desktop** – Electron (Windows)
-- **Mobile** – Android APK (WebView)
+Financia is an **offline‑first**, **white‑label** fintech solution that runs as:
+- **Web PWA**
+- **Electron desktop app** (Windows)
+- **Android APK** (WebView)
 
-Every client gets its own brand (logo, colors, name) without touching code. All UI colors are driven by CSS variables so the same bundle can be re‑skinned on the fly.
+For detailed technical documentation, reviewers should consult the internal analysis README (available in the repository's artifacts). This public README is intentionally concise.
 
 ---
 
