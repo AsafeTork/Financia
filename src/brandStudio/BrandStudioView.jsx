@@ -1,7 +1,7 @@
 import React from 'react';
 import useBrandStudio from './useBrandStudio.js';
 import { PageHead, Card } from '../components/ui.jsx';
-import LogoSchemes, { generateLogoSvg, logoSvgToDataUrl } from './LogoSchemes.jsx';
+import { generateLogoSvg, logoSvgToDataUrl } from './LogoSchemes.jsx';
 import PlanTabsEditor from './PlanTabsEditor.jsx';
 import PreviewGeral from './PreviewGeral.jsx';
 
@@ -147,97 +147,106 @@ function usePlanLogoSync(activePlan, brandConfig, brandColor) {
 }
 
 function LogoTabContent({ brand, bs, brandColor, applyLogoScheme, toast }) {
-  var [activePlan, setActivePlan] = React.useState('free');
-  var lps = usePlanLogoSync(activePlan, bs.brandConfig, brandColor);
+  var [activeTab, setActiveTab] = React.useState('_global');
+  var lps = usePlanLogoSync(activeTab, bs.brandConfig, brandColor);
+  var isGlobal = activeTab === '_global';
 
-  var doSavePlanLogo = async function() {
-    await bs.savePlanLogo(activePlan, lps.form);
+  var doSave = async function() {
+    if (isGlobal) {
+      var svg = generateLogoSvg(lps.form);
+      var dataUrl = logoSvgToDataUrl(svg);
+      applyLogoScheme(dataUrl, lps.form);
+    } else {
+      await bs.savePlanLogo(activeTab, lps.form);
+    }
   };
 
-  var doUseGlobal = async function() {
-    await bs.savePlanLogo(activePlan, null);
+  var doReset = async function() {
+    if (isGlobal) {
+      var orig = { blue:'#002f59', green:'#1a6b5c', teal:'#6ec6c8', check:'#8cf2d1' };
+      var svg = generateLogoSvg(orig);
+      applyLogoScheme(logoSvgToDataUrl(svg), orig);
+    } else {
+      await bs.savePlanLogo(activeTab, null);
+    }
   };
+
+  var tabLabel = isGlobal ? 'Global' : PLAN_LOGO_META[activeTab].label;
 
   return (
-    <>
-      <Card className="p-6">
-        <LogoSchemes brandColor={brandColor} toast={toast} onApply={applyLogoScheme} />
-      </Card>
+    <Card className="p-4 sm:p-5">
+      <div className="flex flex-wrap items-center gap-1 border-b pb-1 mb-4" style={{borderColor:'var(--border)'}}>
+        <button onClick={function() { setActiveTab('_global'); }}
+          className={'text-xs font-semibold px-3 py-2 rounded-t-lg transition ' + (activeTab === '_global' ? 'border-b-2' : 'opacity-50')}
+          style={activeTab === '_global' ? {borderColor:brandColor, color:brandColor} : {}}>
+          Global
+        </button>
+        {Object.keys(PLAN_LOGO_META).map(function(k) {
+          return (
+            <button key={k} onClick={function() { setActiveTab(k); }}
+              className={'text-xs font-semibold px-3 py-2 rounded-t-lg transition ' + (activeTab === k ? 'border-b-2' : 'opacity-50')}
+              style={activeTab === k ? {borderColor:brandColor, color:brandColor} : {}}>
+              {PLAN_LOGO_META[k].label}
+            </button>
+          );
+        })}
+      </div>
 
-      <Card className="p-6">
-        <p className="text-sm font-semibold mb-4" style={{color:'var(--text-main)'}}>Logo por plano</p>
-        <p className="text-xs mb-3" style={{color:'var(--text-muted)'}}>Personalize a logo para cada plano. Por padrao, cada plano usa a logo global.</p>
+      <div className="flex flex-col sm:flex-row gap-4 mb-3">
+        <div className="flex-shrink-0 flex items-center justify-center">
+          <div className="rounded-xl overflow-hidden bg-white" style={{width:120, height:120}}>
+            <svg width="120" height="120" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+              <rect width="400" height="400" fill="transparent" />
+              <g transform="translate(34,200)"><rect width="71" height="125" rx="10" fill={lps.form.blue || ORIGINAL_LOGO.blue} /></g>
+              <g transform="translate(134,129)"><rect width="71" height="196" rx="10" fill={lps.form.green || ORIGINAL_LOGO.green} /></g>
+              <g transform="translate(234,75)"><rect width="72" height="250" rx="10" fill={lps.form.teal || ORIGINAL_LOGO.teal} /></g>
+              <g transform="translate(169,126)"><path d={buildCheckPath(197, 148)} fill={lps.form.check || ORIGINAL_LOGO.check} /></g>
+            </svg>
+          </div>
+        </div>
 
-        <div className="flex border-b gap-1 mb-4" style={{borderColor:'var(--border)'}}>
-          {Object.keys(PLAN_LOGO_META).map(function(k) {
-            var active = activePlan === k;
+        <div className="flex-1 grid grid-cols-2 gap-x-3 gap-y-1.5">
+          {LOGO_ELEMENTS.map(function(el) {
             return (
-              <button key={k} onClick={function() { setActivePlan(k); }}
-                className={'flex items-center gap-2 px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors border-b-2 -mb-px ' + (active ? '' : 'text-gray-400 border-transparent hover:text-gray-600')}
-                style={active ? {borderColor: brandColor, color: brandColor} : {}}>
-                {PLAN_LOGO_META[k].label}
-              </button>
+              <div key={el.id} className="flex items-center gap-1.5">
+                <div className="w-2.5 h-2.5 rounded flex-shrink-0" style={{background: lps.form[el.id] || '#000'}} />
+                <span className="text-[10px] font-medium min-w-[44px]" style={{color:'var(--text-sub)'}}>{el.label}</span>
+                <input type="color" value={lps.form[el.id] || '#000000'} onChange={function(e) { lps.setColor(el.id, e.target.value); }}
+                  className="w-7 h-7 rounded-lg cursor-pointer border-0 p-0.5 flex-shrink-0" />
+                <input type="text" value={lps.form[el.id] || ''} onChange={function(e) { lps.setColor(el.id, e.target.value); }}
+                  className="flex-1 min-w-0 rounded-lg px-1.5 py-1 text-[10px] font-mono focus:outline-none"
+                  style={{background:'var(--bg-input)', color:'var(--text-main)', border:'1px solid var(--border)'}} />
+              </div>
             );
           })}
         </div>
+      </div>
 
-        {!lps.hasCustom && (
-          <div className="rounded-xl p-3 mb-4 text-xs" style={{background:'var(--bg-subtle)', border:'1px solid var(--border)', color:'var(--text-sub)'}}>
-            Usando a logo global. Personalize abaixo e salve para criar uma versao exclusiva para este plano.
-          </div>
-        )}
+      <div className="flex flex-col gap-1 mb-3">
+        <label className="text-[10px] font-medium" style={{color:'var(--text-sub)'}}>JSON</label>
+        <textarea value={lps.jsonInput} onChange={function(e) { lps.applyJson(e.target.value); }}
+          rows={2} className="rounded-lg px-2 py-1 text-[10px] font-mono resize-none focus:outline-none"
+          style={{background:'var(--bg-input)', color:'var(--text-main)', border:'1px solid var(--border)'}} />
+      </div>
 
-        <div className="flex flex-col sm:flex-row gap-5 mb-4">
-          <div className="flex-shrink-0">
-            <div className="rounded-2xl overflow-hidden bg-white" style={{width:140, height:140}}>
-              <svg width="140" height="140" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
-                <rect width="400" height="400" fill="transparent" />
-                <g transform="translate(34,200)"><rect width="71" height="125" rx="10" fill={lps.form.blue || ORIGINAL_LOGO.blue} /></g>
-                <g transform="translate(134,129)"><rect width="71" height="196" rx="10" fill={lps.form.green || ORIGINAL_LOGO.green} /></g>
-                <g transform="translate(234,75)"><rect width="72" height="250" rx="10" fill={lps.form.teal || ORIGINAL_LOGO.teal} /></g>
-                <g transform="translate(169,126)"><path d={buildCheckPath(197, 148)} fill={lps.form.check || ORIGINAL_LOGO.check} /></g>
-              </svg>
-            </div>
-          </div>
+      <div className="flex gap-2">
+        <button onClick={doSave}
+          className="flex-1 text-xs font-semibold px-3 py-2 rounded-xl text-white transition hover:opacity-90 min-h-[36px]"
+          style={{background: brandColor}}>
+          {isGlobal ? 'Salvar logo global' : 'Salvar logo ' + tabLabel}
+        </button>
+        <button onClick={doReset}
+          className="text-xs font-semibold px-3 py-2 rounded-xl transition hover:opacity-80 min-h-[36px]"
+          style={{background:'var(--bg-subtle)', color:'var(--text-sub)', border:'1px solid var(--border)'}}>
+          {isGlobal ? 'Original' : 'Usar global'}
+        </button>
+      </div>
 
-          <div className="flex-1 flex flex-col gap-2">
-            <p className="text-xs font-semibold" style={{color:'var(--text-main)'}}>Cores da logo — {PLAN_LOGO_META[activePlan].label}</p>
-            {LOGO_ELEMENTS.map(function(el) {
-              return (
-                <div key={el.id} className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded flex-shrink-0" style={{background: lps.form[el.id] || '#000'}} />
-                  <span className="text-[11px] font-medium min-w-[56px]" style={{color:'var(--text-sub)'}}>{el.label}</span>
-                  <input type="color" value={lps.form[el.id] || '#000000'} onChange={function(e) { lps.setColor(el.id, e.target.value); }}
-                    className="w-8 h-8 rounded-lg cursor-pointer border-0 p-0.5 flex-shrink-0" />
-                  <input type="text" value={lps.form[el.id] || ''} onChange={function(e) { lps.setColor(el.id, e.target.value); }}
-                    className="flex-1 rounded-xl px-2 py-1.5 text-[11px] font-mono focus:outline-none"
-                    style={{background:'var(--bg-input)', color:'var(--text-main)', border:'1px solid var(--border)'}} />
-                </div>
-              );
-            })}
-          </div>
+      {!isGlobal && !lps.hasCustom && (
+        <div className="mt-2 rounded-lg p-2 text-[10px]" style={{background:'var(--bg-subtle)', border:'1px solid var(--border)', color:'var(--text-sub)'}}>
+          Usando a logo global. Personalize e salve para criar uma versao propria.
         </div>
-
-        <div className="flex flex-col gap-2 mb-4">
-          <label className="text-xs font-medium" style={{color:'var(--text-sub)'}}>JSON</label>
-          <textarea value={lps.jsonInput} onChange={function(e) { lps.applyJson(e.target.value); }}
-            rows={3} className="rounded-xl px-3 py-2 text-[11px] font-mono resize-none focus:outline-none"
-            style={{background:'var(--bg-input)', color:'var(--text-main)', border:'1px solid var(--border)'}} />
-        </div>
-
-        <div className="flex gap-2">
-          <button onClick={doSavePlanLogo}
-            className="flex-1 text-xs font-semibold px-4 py-2.5 rounded-xl text-white transition hover:opacity-90 min-h-[44px]"
-            style={{background: brandColor}}>
-            Salvar logo do plano {PLAN_LOGO_META[activePlan].label}
-          </button>
-          <button onClick={doUseGlobal}
-            className="text-xs font-semibold px-4 py-2.5 rounded-xl transition hover:opacity-80 min-h-[44px]"
-            style={{background:'var(--bg-subtle)', color:'var(--text-sub)', border:'1px solid var(--border)'}}>
-            Usar logo global
-          </button>
-        </div>
-      </Card>
-    </>
+      )}
+    </Card>
   );
 }
