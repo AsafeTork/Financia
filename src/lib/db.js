@@ -130,6 +130,8 @@ const syncTable = async function(uid, table, ldbTable, mapLocal) {
 
 const PROFILE_WRITE_FIELDS = ['user_id','name','logo','color','color_secondary','color_accent','theme','logo_url','white_label','phone','niche','custom_palette','visual_version'];
 
+var validHex = function(v) { return typeof v === 'string' && /^#[0-9a-fA-F]{6}$/.test(v); };
+
 const syncProfiles = async function(uid) {
   if (!navigator.onLine) return true;
   const unsynced = await ldb.profiles.where('user_id').equals(uid).and(r => r._synced === 0).toArray();
@@ -137,6 +139,9 @@ const syncProfiles = async function(uid) {
   for (const row of unsynced) {
     const clean = {};
     PROFILE_WRITE_FIELDS.forEach(function(k) { if (row[k] !== undefined) clean[k] = row[k]; });
+    if (clean.color && !validHex(clean.color)) clean.color = '#002f59';
+    if (clean.color_secondary && !validHex(clean.color_secondary)) clean.color_secondary = null;
+    if (clean.color_accent && !validHex(clean.color_accent)) clean.color_accent = null;
     clean.updated_at = row.updated_at || now();
     var { error } = await sb.from('company_profiles').upsert(clean, { onConflict: 'user_id' });
     if (!error) await ldb.profiles.update(uid, { _synced: 1 });

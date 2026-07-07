@@ -20,6 +20,9 @@ export function useBrandManager(props) {
     var finalSecondary = hasWhiteLabel ? (nb.color_secondary || null) : visual.color_secondary;
     var finalAccent = hasWhiteLabel ? (nb.color_accent || null) : visual.color_accent;
     var finalTheme = hasWhiteLabel ? (nb.theme || 'light') : visual.theme;
+    if (!/^#[0-9a-fA-F]{6}$/.test(finalColor)) finalColor = '#002f59';
+    if (finalSecondary && !/^#[0-9a-fA-F]{6}$/.test(finalSecondary)) finalSecondary = null;
+    if (finalAccent && !/^#[0-9a-fA-F]{6}$/.test(finalAccent)) finalAccent = null;
     var brandConfig = nb.brand_config || (existing && existing.brand_config) || null;
     var row = Object.assign({}, existing || {}, {
       user_id:userId,
