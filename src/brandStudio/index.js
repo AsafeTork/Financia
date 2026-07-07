@@ -1,5 +1,6 @@
 export { default as BrandStudioView } from './BrandStudioView.jsx';
 export { default as useBrandStudio } from './useBrandStudio.js';
+export { default as LogoSchemes } from './LogoSchemes.jsx';
 export { default as PreviewGeral } from './PreviewGeral.jsx';
 export { default as BrandGlobalEditor } from './BrandGlobalEditor.jsx';
 export { default as PlanTabsEditor } from './PlanTabsEditor.jsx';
