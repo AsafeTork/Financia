@@ -38,29 +38,56 @@ export function listPlanThemes() {
 
 export function resolveBrandForPlan(brand, planInfo) {
   if (!planInfo || !planInfo.plan_id) return brand;
-  if (planInfo.white_label && brand.brand_config) return brand;
+  if (planInfo.white_label) return brand;
 
   var planId = planInfo.plan_id;
   var planConfig = getPlanThemeConfig(planId);
   if (!planConfig) return brand;
 
-  if (brand.brand_config) {
-    try {
-      var current = typeof brand.brand_config === 'string' ? JSON.parse(brand.brand_config) : brand.brand_config;
-      if (current && current.modules) {
-        return brand;
-      }
-    } catch (_) { /* JSON inválido — usa fallback do plano */ }
+  var cfg = null;
+  try { cfg = typeof brand.brand_config === 'string' ? JSON.parse(brand.brand_config) : brand.brand_config; } catch (_) { void _; }
+
+  // User-created brand_config modules take highest priority
+  var hasCustomModules = cfg && cfg.modules && Object.keys(cfg.modules).length > 0;
+  if (hasCustomModules && !planInfo.white_label) {
+    return brand;
   }
 
-  var pal = planConfig.modules && planConfig.modules.palette ? planConfig.modules.palette : {};
+  var mergedConfig = JSON.parse(JSON.stringify(planConfig));
+
+  // Apply admin plan overrides on top of plan theme defaults
+  if (cfg && cfg.planOverrides && cfg.planOverrides[planId]) {
+    var override = cfg.planOverrides[planId];
+    if (override.modules) {
+      for (var modKey in override.modules) {
+        if (!mergedConfig.modules) mergedConfig.modules = {};
+        mergedConfig.modules[modKey] = Object.assign({}, mergedConfig.modules[modKey] || {}, override.modules[modKey]);
+      }
+    }
+    if (override.logo_url) {
+      mergedConfig.logo_url = override.logo_url;
+    }
+  }
+
+  var pal = mergedConfig.modules && mergedConfig.modules.palette ? mergedConfig.modules.palette : {};
+  var overrideLogo = mergedConfig.logo_url || '';
+
   return Object.assign({}, brand, {
     color: pal.primary || brand.color || '#002f59',
     color_secondary: pal.secondary || brand.color_secondary || '#e8f0f7',
     color_accent: pal.accent || brand.color_accent || '#1a6b5c',
     theme: pal.mode || brand.theme || 'light',
-    brand_config: JSON.stringify(planConfig),
+    brand_config: JSON.stringify(mergedConfig),
     visual_version: (brand.visual_version || 0) + 1,
     custom_palette: false,
+    logo_url: overrideLogo || brand.logo_url,
   });
+}
+
+export function applyPlanOverride(brand, planId, overrideData) {
+  var cfg = { modules: {} };
+  try { cfg = typeof brand.brand_config === 'string' ? JSON.parse(brand.brand_config) : (brand.brand_config || { modules: {} }); } catch (_) { void _; }
+  if (!cfg.planOverrides) cfg.planOverrides = {};
+  cfg.planOverrides[planId] = overrideData;
+  return Object.assign({}, brand, { brand_config: JSON.stringify(cfg) });
 }
