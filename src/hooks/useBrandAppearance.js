@@ -50,9 +50,11 @@ function collectTokensFromBrand(b) {
   var cfg;
   try { cfg = typeof b.brand_config === 'string' ? JSON.parse(b.brand_config) : b.brand_config; }
   catch (e) { return tokens; }
-  if (!cfg || !cfg.palette) return tokens;
 
-  var pal = cfg.palette;
+  var pal = cfg.palette || (cfg.modules && cfg.modules.palette) || {};
+  if (!pal || Object.keys(pal).length === 0) return tokens;
+
+  var v2 = function(m) { return cfg.modules ? cfg.modules[m] : null; };
   var paletteTokens = {
     '--bg-page': pal.bgPage, '--bg-card': pal.bgCard, '--bg-subtle': pal.bgSubtle,
     '--bg-input': pal.bgInput, '--text-main': pal.textMain, '--text-sub': pal.textSub,
@@ -66,78 +68,78 @@ function collectTokensFromBrand(b) {
     if (paletteTokens[pk]) tokens[pk] = paletteTokens[pk];
   }
 
-  if (cfg.typography) {
-    var typ = cfg.typography;
-    if (typ.fontFamily) tokens['--font-family'] = typ.fontFamily;
-    if (typ.headingFont) tokens['--font-heading'] = typ.headingFont;
-    if (typ.monoFont) tokens['--font-mono'] = typ.monoFont;
-    if (typ.baseSize) tokens['--font-base'] = typ.baseSize;
-    if (typ.scale) tokens['--font-scale'] = String(typ.scale);
+  var mod = cfg.typography || v2('typography');
+  if (mod) {
+    if (mod.fontFamily) tokens['--font-family'] = mod.fontFamily;
+    if (mod.headingFont) tokens['--font-heading'] = mod.headingFont;
+    if (mod.monoFont) tokens['--font-mono'] = mod.monoFont;
+    if (mod.baseSize) tokens['--font-base'] = mod.baseSize;
+    if (mod.scale) tokens['--font-scale'] = String(mod.scale);
   }
-  if (cfg.borderRadius) {
-    var br = cfg.borderRadius;
-    if (br.sm) tokens['--radius-sm'] = br.sm;
-    if (br.md) tokens['--radius-md'] = br.md;
-    if (br.lg) tokens['--radius-lg'] = br.lg;
-    if (br.xl) tokens['--radius-xl'] = br.xl;
-    if (br.full) tokens['--radius-full'] = br.full;
+  mod = cfg.borderRadius || v2('borderRadius');
+  if (mod) {
+    if (mod.sm) tokens['--radius-sm'] = mod.sm;
+    if (mod.md) tokens['--radius-md'] = mod.md;
+    if (mod.lg) tokens['--radius-lg'] = mod.lg;
+    if (mod.xl) tokens['--radius-xl'] = mod.xl;
+    if (mod.full) tokens['--radius-full'] = mod.full;
   }
-  if (cfg.spacing) {
-    var sp = cfg.spacing;
-    if (sp.gap) tokens['--spacing-gap'] = sp.gap;
-    if (sp.section) tokens['--spacing-section'] = sp.section;
-    if (sp.card) tokens['--spacing-card'] = sp.card;
+  mod = cfg.spacing || v2('spacing');
+  if (mod) {
+    if (mod.gap) tokens['--spacing-gap'] = mod.gap;
+    if (mod.section) tokens['--spacing-section'] = mod.section;
+    if (mod.card) tokens['--spacing-card'] = mod.card;
   }
-  if (cfg.sidebar) {
-    var sb = cfg.sidebar;
-    if (sb.width) tokens['--sidebar-width'] = sb.width;
-    if (sb.collapsedWidth) tokens['--sidebar-collapsed-width'] = sb.collapsedWidth;
-    if (sb.bg) tokens['--sidebar-bg'] = sb.bg;
-    if (sb.text) tokens['--sidebar-text'] = sb.text;
-    if (sb.activeBg) tokens['--sidebar-active-bg'] = sb.activeBg;
-    if (sb.activeText) tokens['--sidebar-active-text'] = sb.activeText;
-    if (sb.hoverBg) tokens['--sidebar-hover-bg'] = sb.hoverBg;
-    if (sb.divider) tokens['--sidebar-divider'] = sb.divider;
+  mod = cfg.sidebar || v2('sidebar');
+  if (mod) {
+    if (mod.width) tokens['--sidebar-width'] = mod.width;
+    if (mod.collapsedWidth) tokens['--sidebar-collapsed-width'] = mod.collapsedWidth;
+    if (mod.bg) tokens['--sidebar-bg'] = mod.bg;
+    if (mod.text) tokens['--sidebar-text'] = mod.text;
+    if (mod.activeBg) tokens['--sidebar-active-bg'] = mod.activeBg;
+    if (mod.activeText) tokens['--sidebar-active-text'] = mod.activeText;
+    if (mod.hoverBg) tokens['--sidebar-hover-bg'] = mod.hoverBg;
+    if (mod.divider) tokens['--sidebar-divider'] = mod.divider;
   }
-  if (cfg.header) {
-    var hd = cfg.header;
-    if (hd.bg) tokens['--header-bg'] = hd.bg;
-    if (hd.text) tokens['--header-text'] = hd.text;
-    if (hd.height) tokens['--header-height'] = hd.height;
+  mod = cfg.header || v2('header');
+  if (mod) {
+    if (mod.bg) tokens['--header-bg'] = mod.bg;
+    if (mod.text) tokens['--header-text'] = mod.text;
+    if (mod.height) tokens['--header-height'] = mod.height;
   }
-  if (cfg.cards) {
-    var cd = cfg.cards;
-    if (cd.bg) tokens['--card-bg'] = cd.bg;
-    if (cd.shadow) tokens['--card-shadow'] = cd.shadow;
+  mod = cfg.cards || v2('cards');
+  if (mod) {
+    if (mod.bg) tokens['--card-bg'] = mod.bg;
+    if (mod.shadow) tokens['--card-shadow'] = mod.shadow;
   }
-  if (cfg.buttons) {
-    var btn = cfg.buttons;
-    if (btn.primaryBg) tokens['--btn-primary-bg'] = btn.primaryBg;
-    if (btn.primaryText) tokens['--btn-primary-text'] = btn.primaryText;
-    if (btn.secondaryBg) tokens['--btn-secondary-bg'] = btn.secondaryBg;
-    if (btn.secondaryText) tokens['--btn-secondary-text'] = btn.secondaryText;
-    if (btn.radius) tokens['--btn-radius'] = btn.radius;
-    if (btn.height) tokens['--btn-height'] = btn.height;
+  mod = cfg.buttons || v2('buttons');
+  if (mod) {
+    if (mod.primaryBg) tokens['--btn-primary-bg'] = mod.primaryBg;
+    if (mod.primaryText) tokens['--btn-primary-text'] = mod.primaryText;
+    if (mod.secondaryBg) tokens['--btn-secondary-bg'] = mod.secondaryBg;
+    if (mod.secondaryText) tokens['--btn-secondary-text'] = mod.secondaryText;
+    if (mod.radius) tokens['--btn-radius'] = mod.radius;
+    if (mod.height) tokens['--btn-height'] = mod.height;
   }
-  if (cfg.inputs) {
-    var inp = cfg.inputs;
-    if (inp.bg) tokens['--input-bg'] = inp.bg;
-    if (inp.text) tokens['--input-text'] = inp.text;
-    if (inp.border) tokens['--input-border'] = inp.border;
-    if (inp.focusBorder) tokens['--input-focus-border'] = inp.focusBorder;
-    if (inp.radius) tokens['--input-radius'] = inp.radius;
-    if (inp.height) tokens['--input-height'] = inp.height;
+  mod = cfg.inputs || v2('inputs');
+  if (mod) {
+    if (mod.bg) tokens['--input-bg'] = mod.bg;
+    if (mod.text) tokens['--input-text'] = mod.text;
+    if (mod.border) tokens['--input-border'] = mod.border;
+    if (mod.focusBorder) tokens['--input-focus-border'] = mod.focusBorder;
+    if (mod.radius) tokens['--input-radius'] = mod.radius;
+    if (mod.height) tokens['--input-height'] = mod.height;
   }
-  if (cfg.shadows) {
-    var sh = cfg.shadows;
-    if (sh.sm) tokens['--shadow-sm'] = sh.sm;
-    if (sh.md) tokens['--shadow-md'] = sh.md;
-    if (sh.lg) tokens['--shadow-lg'] = sh.lg;
+  mod = cfg.shadows || v2('shadows');
+  if (mod) {
+    if (mod.sm) tokens['--shadow-sm'] = mod.sm;
+    if (mod.md) tokens['--shadow-md'] = mod.md;
+    if (mod.lg) tokens['--shadow-lg'] = mod.lg;
   }
-  if (cfg.animations) {
-    var an = cfg.animations;
-    if (an.duration) tokens['--anim-duration'] = an.duration;
-    if (an.easing) tokens['--anim-easing'] = an.easing;
+  mod = cfg.animations || v2('animations');
+  if (mod) {
+    if (mod.duration) tokens['--anim-duration'] = mod.duration;
+    if (mod.easing) tokens['--anim-easing'] = mod.easing;
   }
   return tokens;
 }

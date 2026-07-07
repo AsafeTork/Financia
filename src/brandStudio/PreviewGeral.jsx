@@ -3,7 +3,7 @@ import React from 'react';
 var SWATCHES = ['primary','secondary','accent','bgPage','bgCard','bgInput','bgSubtle','surface','textMain','textSub','textMuted','border','success','warning','danger','info'];
 
 export default function PreviewGeral({ brandConfig, brandColor }) {
-  var pal = (brandConfig && brandConfig.modules && brandConfig.modules.palette) || {};
+  var pal = (brandConfig && (brandConfig.modules && brandConfig.modules.palette || brandConfig.palette)) || {};
   var typ = (brandConfig && brandConfig.modules && brandConfig.modules.typography) || {};
   var btn = (brandConfig && brandConfig.modules && brandConfig.modules.buttons) || {};
   var inp = (brandConfig && brandConfig.modules && brandConfig.modules.inputs) || {};
