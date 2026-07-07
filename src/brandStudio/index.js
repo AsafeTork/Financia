@@ -1,5 +1,9 @@
 export { default as BrandStudioView } from './BrandStudioView.jsx';
 export { default as useBrandStudio } from './useBrandStudio.js';
+export { default as PreviewGeral } from './PreviewGeral.jsx';
+export { default as BrandGlobalEditor } from './BrandGlobalEditor.jsx';
+export { default as PlanTabsEditor } from './PlanTabsEditor.jsx';
+export { default as ModuleEditor } from './ModuleEditor.jsx';
 export { validateBrandConfig } from './validateBrandConfig.js';
 export { BRAND_SCHEMA, BRAND_SCHEMA_VERSION } from './schema.js';
 export { registerModule, getModule, listModules, getSchema, validateAgainstModules, normalizeModules } from './schemaRegistry.js';
