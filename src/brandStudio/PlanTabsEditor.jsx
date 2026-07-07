@@ -44,15 +44,32 @@ export default function PlanTabsEditor({ brandConfig, onSavePlan, onCopyJSON, on
   });
   var [saving, setSaving] = React.useState(false);
   var [hasChanges, setHasChanges] = React.useState(false);
+  var [jsonInput, setJsonInput] = React.useState('');
 
   React.useEffect(function() {
-    setForm(initForm(activePlan, planOverrides, palDefaults));
+    var f = initForm(activePlan, planOverrides, palDefaults);
+    setForm(f);
     setHasChanges(false);
+    setJsonInput(JSON.stringify(f, null, 2));
   }, [activePlan]);
 
   var setColor = function(k, v) {
     setForm(function(f) { var o = Object.assign({}, f); o[k] = v; return o; });
     setHasChanges(true);
+    setJsonInput(function(prev) {
+      try { var p = JSON.parse(prev); p[k] = v; return JSON.stringify(p, null, 2); } catch (_) { return prev; }
+    });
+  };
+
+  var applyJson = function(json) {
+    setJsonInput(json);
+    try {
+      var parsed = JSON.parse(json);
+      if (parsed && typeof parsed === 'object') {
+        setForm(function(f) { return Object.assign({}, f, parsed); });
+        setHasChanges(true);
+      }
+    } catch (_) { void _; }
   };
 
   var doSave = async function() {
@@ -120,6 +137,13 @@ export default function PlanTabsEditor({ brandConfig, onSavePlan, onCopyJSON, on
             );
           })}
         </div>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <label className="text-xs font-medium" style={{color:'var(--text-sub)'}}>JSON</label>
+        <textarea value={jsonInput} onChange={function(e) { applyJson(e.target.value); }}
+          rows={4} className="rounded-xl px-3 py-2 text-[11px] font-mono resize-none focus:outline-none"
+          style={{background:'var(--bg-input)', color:'var(--text-main)', border:'1px solid var(--border)'}} />
       </div>
 
       <div className="border-t pt-4" style={{borderColor:'var(--border)'}}>

@@ -52,9 +52,23 @@ export default function LogoSchemes({ brandColor, toast, onApply }) {
   var [colors, setColors] = React.useState(Object.assign({}, ORIGINAL));
   var [schemeName, setSchemeName] = React.useState('');
   var [schemes, setSchemes] = React.useState(loadSchemes);
+  var [jsonInput, setJsonInput] = React.useState(JSON.stringify(ORIGINAL, null, 2));
 
   var setColor = function(id, val) {
     setColors(function(prev) { var o = Object.assign({}, prev); o[id] = val; return o; });
+    setJsonInput(function(prev) {
+      try { var p = JSON.parse(prev); p[id] = val; return JSON.stringify(p, null, 2); } catch (_) { return prev; }
+    });
+  };
+
+  var applyJson = function(json) {
+    setJsonInput(json);
+    try {
+      var parsed = JSON.parse(json);
+      if (parsed && typeof parsed === 'object') {
+        setColors(function(prev) { return Object.assign({}, prev, parsed); });
+      }
+    } catch (_) { void _; }
   };
 
   var saveScheme = function() {
@@ -133,6 +147,13 @@ export default function LogoSchemes({ brandColor, toast, onApply }) {
               </div>
             );
           })}
+
+          <div className="flex flex-col gap-2 mb-2">
+            <label className="text-xs font-medium" style={{color:'var(--text-sub)'}}>JSON</label>
+            <textarea value={jsonInput} onChange={function(e) { applyJson(e.target.value); }}
+              rows={3} className="rounded-xl px-3 py-2 text-[11px] font-mono resize-none focus:outline-none"
+              style={{background:'var(--bg-input)', color:'var(--text-main)', border:'1px solid var(--border)'}} />
+          </div>
 
           <div className="flex gap-2 mt-1">
             <button onClick={function() { applyColors(colors); }}
