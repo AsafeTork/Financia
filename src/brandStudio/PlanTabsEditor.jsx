@@ -25,17 +25,6 @@ var PALETTE_FIELDS = [
   { key: 'info', label: 'Info', desc: 'Indicador informativo' },
 ];
 
-var SIDEBAR_FIELDS = [
-  { key: 'bg', label: 'Fundo', pl: '#1e293b' },
-  { key: 'text', label: 'Texto', pl: '#ffffff' },
-  { key: 'activeBg', label: 'Fundo ativo', pl: 'rgba(255,255,255,0.14)' },
-];
-
-var HEADER_FIELDS = [
-  { key: 'bg', label: 'Fundo', pl: '#002f59' },
-  { key: 'text', label: 'Texto', pl: '#ffffff' },
-];
-
 function defaultPalette(planId) {
   var map = {
     free: { primary:'#002f59', secondary:'#e8f0f7', accent:'#1a6b5c', bgPage:'#f5f5f0', bgCard:'#ffffff', bgInput:'#ffffff', bgSubtle:'#f5f5f0', surface:'#ffffff', textMain:'#0f172a', textSub:'#5b6b7c', textMuted:'#94a3b8', border:'#edeae3' },
@@ -45,74 +34,44 @@ function defaultPalette(planId) {
   return map[planId] || map.free;
 }
 
-function defaultSidebar(planId) {
-  var map = { free: { bg:'#002f59', text:'#ffffff', activeBg:'rgba(255,255,255,0.14)' }, pro: { bg:'#1e3a5f', text:'#ffffff', activeBg:'rgba(255,255,255,0.14)' }, premium: { bg:'#0f172a', text:'#cbd5e1', activeBg:'rgba(255,255,255,0.1)' } };
-  return map[planId] || map.free;
-}
-
-function defaultHeader(planId) {
-  var map = { free: { bg:'#002f59', text:'#ffffff' }, pro: { bg:'#2563eb', text:'#ffffff' }, premium: { bg:'#0f172a', text:'#ffffff' } };
-  return map[planId] || map.free;
-}
-
 export default function PlanTabsEditor({ brandConfig, onSavePlan, onCopyJSON, onCopyDocs, brandColor, toast }) {
   var [activePlan, setActivePlan] = React.useState('free');
-  var [section, setSection] = React.useState('palette');
   var planOverrides = (brandConfig && brandConfig.planOverrides) || {};
   var palDefaults = defaultPalette(activePlan);
-  var sideDefaults = defaultSidebar(activePlan);
-  var headDefaults = defaultHeader(activePlan);
 
   var [form, setForm] = React.useState(function() {
-    return initForm(activePlan, planOverrides, palDefaults, sideDefaults, headDefaults);
+    return initForm(activePlan, planOverrides, palDefaults);
   });
   var [saving, setSaving] = React.useState(false);
   var [hasChanges, setHasChanges] = React.useState(false);
 
   React.useEffect(function() {
-    setForm(initForm(activePlan, planOverrides, palDefaults, sideDefaults, headDefaults));
+    setForm(initForm(activePlan, planOverrides, palDefaults));
     setHasChanges(false);
   }, [activePlan]);
 
-  var setField = function(grp, k, v) {
-    setForm(function(f) { var o = Object.assign({}, f); o[grp] = Object.assign({}, o[grp]); o[grp][k] = v; return o; });
+  var setColor = function(k, v) {
+    setForm(function(f) { var o = Object.assign({}, f); o[k] = v; return o; });
     setHasChanges(true);
-  };
-
-  var onLogoFile = function(e) {
-    var file = e.target && e.target.files && e.target.files[0];
-    if (!file) return;
-    if (file.size > 512 * 1024) { if (toast) toast('Imagem muito grande (max. 512KB)', 'error'); return; }
-    var reader = new FileReader();
-    reader.onload = function() { setForm(function(f) { var o = Object.assign({}, f); o.logo_url = String(reader.result); return o; }); setHasChanges(true); };
-    reader.readAsDataURL(file);
   };
 
   var doSave = async function() {
     setSaving(true);
     try {
-      await onSavePlan(activePlan, {
-        logo_url: form.logo_url,
-        modules: { palette: form.palette, sidebar: form.sidebar, header: form.header },
-      });
+      var pal = {};
+      PALETTE_FIELDS.forEach(function(f) { pal[f.key] = form[f.key] || null; });
+      await onSavePlan(activePlan, { logo_url: '', modules: { palette: pal } });
       setHasChanges(false);
-      if (toast) toast('Configuracao salva para plano ' + activePlan, 'success');
+      if (toast) toast('Cores salvas para plano ' + activePlan, 'success');
     } catch (_) { void _; }
     setSaving(false);
   };
 
-  var palPreview = [form.palette.primary, form.palette.secondary, form.palette.accent];
-
-  var sections = [
-    { key: 'palette', label: 'Paleta' },
-    { key: 'sidebar', label: 'Sidebar' },
-    { key: 'header', label: 'Header' },
-    { key: 'logo', label: 'Logo' },
-  ];
+  var palPreview = [form.primary, form.secondary, form.accent];
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex border-b gap-1 flex-wrap" style={{borderColor:'var(--border)'}}>
+      <div className="flex border-b gap-1" style={{borderColor:'var(--border)'}}>
         {Object.keys(PLAN_META).map(function(k) {
           var meta = PLAN_META[k];
           var active = activePlan === k;
@@ -140,130 +99,47 @@ export default function PlanTabsEditor({ brandConfig, onSavePlan, onCopyJSON, on
         </button>
       </div>
 
-      <div className="flex border-b gap-1 flex-wrap -mt-2" style={{borderColor:'var(--border)'}}>
-        {sections.map(function(s) {
-          var active = section === s.key;
-          return (
-            <button key={s.key} onClick={function() { setSection(s.key); }}
-              className={'text-xs font-medium px-3 py-1.5 rounded-lg transition ' + (active ? 'text-white' : '')}
-              style={active ? {background: brandColor} : {color:'var(--text-sub)', background:'var(--bg-input)'}}>
-              {s.label}
-            </button>
-          );
-        })}
+      <div>
+        <p className="text-sm font-semibold mb-1" style={{color:'var(--text-main)'}}>Paleta de cores — {PLAN_META[activePlan].label}</p>
+        <p className="text-xs mb-4" style={{color:'var(--text-muted)'}}>Essas cores aparecem nos elementos do sistema para usuarios do plano {PLAN_META[activePlan].label}.</p>
+        <div className="flex items-center gap-3 mb-5">
+          {palPreview.map(function(c, i) {
+            var labels = ['Primaria', 'Secundaria', 'Destaque'];
+            return (
+              <div key={i} className="flex flex-col items-center gap-1">
+                <div className="w-10 h-10 rounded-xl border-2" style={{background: c, borderColor: 'var(--border)'}} />
+                <span className="text-[9px] font-medium" style={{color:'var(--text-muted)'}}>{labels[i]}</span>
+              </div>
+            );
+          })}
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {PALETTE_FIELDS.map(function(f) {
+            return (
+              <ColorInput key={f.key} label={f.label} desc={f.desc} value={form[f.key] || ''} onChange={function(v) { setColor(f.key, v); }} />
+            );
+          })}
+        </div>
       </div>
-
-      {section === 'palette' && (
-        <div>
-          <p className="text-sm font-semibold mb-1" style={{color:'var(--text-main)'}}>Paleta de cores — {PLAN_META[activePlan].label}</p>
-          <p className="text-xs mb-4" style={{color:'var(--text-muted)'}}>Essas cores definem a aparencia do plano {PLAN_META[activePlan].label}.</p>
-          <div className="flex items-center gap-3 mb-5 flex-wrap">
-            {palPreview.map(function(c, i) {
-              var labels = ['Primaria', 'Secundaria', 'Destaque'];
-              return (
-                <div key={i} className="flex flex-col items-center gap-1">
-                  <div className="w-10 h-10 rounded-xl border-2" style={{background: c, borderColor: 'var(--border)'}} />
-                  <span className="text-[9px] font-medium" style={{color:'var(--text-muted)'}}>{labels[i]}</span>
-                </div>
-              );
-            })}
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
-            {PALETTE_FIELDS.map(function(f) {
-              return (
-                <ColorInputPlan key={f.key} label={f.label} desc={f.desc} value={form.palette[f.key] || ''} onChange={function(v) { setField('palette', f.key, v); }} />
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {section === 'sidebar' && (
-        <div>
-          <p className="text-sm font-semibold mb-1" style={{color:'var(--text-main)'}}>Barra lateral — {PLAN_META[activePlan].label}</p>
-          <p className="text-xs mb-4" style={{color:'var(--text-muted)'}}>Aparencia da navegacao lateral para este plano.</p>
-          <div className="flex flex-col gap-3">
-            {SIDEBAR_FIELDS.map(function(f) {
-              return (
-                <div key={f.key} className="flex flex-col gap-1">
-                  <label className="text-xs font-medium" style={{color:'var(--text-sub)'}}>{f.label}</label>
-                  <div className="flex items-center gap-2">
-                    <input type="color" value={form.sidebar[f.key] || f.pl} onChange={function(e) { setField('sidebar', f.key, e.target.value); }} className="w-9 h-9 rounded-lg cursor-pointer border-0 p-0.5 flex-shrink-0" />
-                    <input type="text" value={form.sidebar[f.key] || ''} onChange={function(e) { setField('sidebar', f.key, e.target.value); }} placeholder={f.pl}
-                      className="flex-1 rounded-xl px-3 py-2 text-xs font-mono focus:outline-none" style={{background:'var(--bg-input)', color:'var(--text-main)', border:'1px solid var(--border)'}} />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {section === 'header' && (
-        <div>
-          <p className="text-sm font-semibold mb-1" style={{color:'var(--text-main)'}}>Cabecalho — {PLAN_META[activePlan].label}</p>
-          <p className="text-xs mb-4" style={{color:'var(--text-muted)'}}>Aparencia da barra superior para este plano.</p>
-          <div className="flex flex-col gap-3">
-            {HEADER_FIELDS.map(function(f) {
-              return (
-                <div key={f.key} className="flex flex-col gap-1">
-                  <label className="text-xs font-medium" style={{color:'var(--text-sub)'}}>{f.label}</label>
-                  <div className="flex items-center gap-2">
-                    <input type="color" value={form.header[f.key] || f.pl} onChange={function(e) { setField('header', f.key, e.target.value); }} className="w-9 h-9 rounded-lg cursor-pointer border-0 p-0.5 flex-shrink-0" />
-                    <input type="text" value={form.header[f.key] || ''} onChange={function(e) { setField('header', f.key, e.target.value); }} placeholder={f.pl}
-                      className="flex-1 rounded-xl px-3 py-2 text-xs font-mono focus:outline-none" style={{background:'var(--bg-input)', color:'var(--text-main)', border:'1px solid var(--border)'}} />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {section === 'logo' && (
-        <div>
-          <p className="text-sm font-semibold mb-1" style={{color:'var(--text-main)'}}>Logo personalizada — {PLAN_META[activePlan].label}</p>
-          <p className="text-xs mb-3" style={{color:'var(--text-muted)'}}>Logo que aparece ao lado da logo do Financia para usuarios deste plano.</p>
-          <div className="flex items-center gap-4">
-            {form.logo_url
-              ? <img src={form.logo_url} alt="logo" className="w-14 h-14 rounded-2xl object-cover flex-shrink-0 border" style={{borderColor:'var(--border)'}} />
-              : <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-sm font-bold flex-shrink-0" style={{background:'var(--bg-subtle)', border:'1px dashed var(--border)', color:'var(--text-muted)'}}>Logo</div>
-            }
-            <label className="text-xs font-semibold px-4 py-2.5 rounded-xl cursor-pointer text-center min-h-[44px] flex items-center justify-center transition hover:opacity-80" style={{background:'var(--brand-soft)', color: brandColor}}>
-              Enviar logo
-              <input type="file" accept="image/*" onChange={onLogoFile} className="hidden" />
-            </label>
-            {form.logo_url && (
-              <button onClick={function() { setForm(function(f) { var o = Object.assign({}, f); o.logo_url = ''; return o; }); setHasChanges(true); }} className="text-xs font-medium hover:opacity-70" style={{color:'var(--text-muted)'}}>Remover</button>
-            )}
-          </div>
-        </div>
-      )}
 
       <button onClick={doSave} disabled={saving || !hasChanges}
         className="w-full text-white rounded-xl py-3 text-sm font-semibold hover:opacity-90 disabled:opacity-40 flex items-center justify-center gap-2 min-h-[44px] transition"
         style={{background: brandColor}}>
-        {saving ? 'Salvando...' : 'Salvar configuracao do plano ' + PLAN_META[activePlan].label}
+        {saving ? 'Salvando...' : 'Salvar cores do plano ' + PLAN_META[activePlan].label}
       </button>
     </div>
   );
 }
 
-function initForm(activePlan, planOverrides, palDefaults, sideDefaults, headDefaults) {
+function initForm(activePlan, planOverrides, palDefaults) {
   var ov = planOverrides[activePlan] || {};
   var pal = ov.modules && ov.modules.palette ? ov.modules.palette : {};
-  var sidebar = ov.modules && ov.modules.sidebar ? ov.modules.sidebar : {};
-  var header = ov.modules && ov.modules.header ? ov.modules.header : {};
-  var formPal = {};
-  PALETTE_FIELDS.forEach(function(f) { formPal[f.key] = pal[f.key] || palDefaults[f.key] || ''; });
-  var formSide = {};
-  SIDEBAR_FIELDS.forEach(function(f) { formSide[f.key] = sidebar[f.key] || sideDefaults[f.key] || ''; });
-  var formHead = {};
-  HEADER_FIELDS.forEach(function(f) { formHead[f.key] = header[f.key] || headDefaults[f.key] || ''; });
-  return { palette: formPal, sidebar: formSide, header: formHead, logo_url: ov.logo_url || '' };
+  var form = {};
+  PALETTE_FIELDS.forEach(function(f) { form[f.key] = pal[f.key] || palDefaults[f.key] || ''; });
+  return form;
 }
 
-function ColorInputPlan({ label, value, onChange, desc }) {
+function ColorInput({ label, value, onChange, desc }) {
   return (
     <div className="flex flex-col gap-1">
       <div className="flex items-center justify-between">
