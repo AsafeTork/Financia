@@ -189,7 +189,7 @@ function PlanCard({ plan, brand, cta, onAction, planExpiresAt, currentPlanId, pl
   );
 }
 
-var ADMIN_TEST_PRICE = 0.01;
+var ADMIN_TEST_PRICE = 0.50;
 
 export default function PlansView({ brand, planInfo, toast, onNav, isAdmin }) {
   var plan = effectivePlan(planInfo);
