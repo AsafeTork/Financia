@@ -2,7 +2,7 @@ import React from 'react';
 import { NAV } from '../lib/constants.js';
 
 function Sidebar({ view, onNav, brand, open, onClose, isAdmin }) {
-  var onlineState = React.useState(typeof navigator !== 'undefined' ? navigator.onLine : true);
+  var onlineState = React.useState(true);
   var online = onlineState[0];
   var setOnline = onlineState[1];
   React.useEffect(function() {
