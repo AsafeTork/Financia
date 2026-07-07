@@ -178,7 +178,6 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
 
   const allTabs = [{key:'account',label:'Conta'}, {key:'subscription',label:'Assinatura'}];
   if (hasWhiteLabel) allTabs.push({key:'appearance',label:'Aparência'});
-  allTabs.push({key:'brandstudio',label:'Brand Studio'});
   allTabs.push({key:'clients',label:'Painel admin',adminOnly:true});
   const tabs = allTabs.filter(function(t) { return !t.adminOnly || isAdmin; });
 
@@ -194,7 +193,7 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
         {tabs.map(function(t) {
           var active = tab === t.key;
           return (
-            <button key={t.key} onClick={function() { if (t.key === 'brandstudio') { if (onNav) onNav('brandstudio'); } else { setTab(t.key); } }}
+            <button key={t.key} onClick={function() { setTab(t.key); }}
               className={'px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors border-b-2 -mb-px ' + (active ? 'text-gray-900' : 'text-gray-400 border-transparent hover:text-gray-600')}
               style={active ? {borderColor: brand.color, color: brand.color} : {}}>
               {t.label}
