@@ -58,7 +58,7 @@ export function useBrandManager(props) {
     }
     if (navigator.onLine) {
       try {
-        var res = await sb.from('company_profiles').upsert({user_id:userId, name:nb.name, logo:nb.logo, color:finalColor, color_secondary:finalSecondary, color_accent:finalAccent, theme:finalTheme, logo_url:nb.logo_url||null, brand_config:brandConfig, white_label:hasWhiteLabel, phone:nb.phone||(existing&&existing.phone)||null, niche:nb.niche||null, visual_version:((existing&&existing.visual_version)||0)+1, custom_palette:hasWhiteLabel, updated_at:now()});
+        var res = await sb.from('company_profiles').upsert({user_id:userId, name:nb.name, logo:nb.logo, color:finalColor, color_secondary:finalSecondary, color_accent:finalAccent, theme:finalTheme, logo_url:nb.logo_url||null, white_label:hasWhiteLabel, phone:nb.phone||(existing&&existing.phone)||null, niche:nb.niche||null, visual_version:((existing&&existing.visual_version)||0)+1, custom_palette:hasWhiteLabel, updated_at:now()});
         if (!res.error) await ldb.profiles.update(userId, {_synced:1});
         else toast('Não sincronizado — tentaremos em breve', 'warning');
       } catch(e) { toast('Não sincronizado — tentaremos em breve', 'warning'); }

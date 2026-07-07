@@ -128,7 +128,7 @@ const syncTable = async function(uid, table, ldbTable, mapLocal) {
   return true;
 };
 
-const PROFILE_WRITE_FIELDS = ['user_id','name','logo','color','color_secondary','color_accent','theme','logo_url','white_label','phone','niche','custom_palette','visual_version','brand_config'];
+const PROFILE_WRITE_FIELDS = ['user_id','name','logo','color','color_secondary','color_accent','theme','logo_url','white_label','phone','niche','custom_palette','visual_version'];
 
 const syncProfiles = async function(uid) {
   if (!navigator.onLine) return true;
@@ -138,8 +138,9 @@ const syncProfiles = async function(uid) {
     const clean = {};
     PROFILE_WRITE_FIELDS.forEach(function(k) { if (row[k] !== undefined) clean[k] = row[k]; });
     clean.updated_at = row.updated_at || now();
-    const { error } = await sb.from('company_profiles').upsert(clean, { onConflict: 'user_id' });
+    var { error, status } = await sb.from('company_profiles').upsert(clean, { onConflict: 'user_id' });
     if (!error) await ldb.profiles.update(uid, { _synced: 1 });
+    else if (status === 400 || status === 404) { await ldb.profiles.update(uid, { _synced: 1 }); }
     else ok = false;
   }
   if (!ok) return false;
