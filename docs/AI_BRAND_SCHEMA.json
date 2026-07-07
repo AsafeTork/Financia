@@ -1,0 +1,425 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://financia.app/brand-schema/v1",
+  "title": "Financia Brand Configuration",
+  "description": "Contrato público de configuração visual do Financia. Qualquer IA pode gerar este JSON para personalizar a identidade visual do aplicativo.",
+  "type": "object",
+  "required": ["schemaVersion", "palette", "theme"],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "description": "Versao do schema usada para gerar este JSON. Deve ser exatamente '1.0.0'.",
+      "enum": ["1.0.0"],
+      "examples": ["1.0.0"]
+    },
+    "brandName": {
+      "type": "string",
+      "description": "Nome da empresa ou marca exibido no app.",
+      "minLength": 1,
+      "maxLength": 60,
+      "examples": ["Padaria do Joao", "Oficina Mecanica Silva"]
+    },
+    "theme": {
+      "type": "object",
+      "description": "Modo de cor do tema.",
+      "required": ["mode"],
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": ["light", "dark"],
+          "description": "'light' para fundo claro, 'dark' para fundo escuro.",
+          "examples": ["light", "dark"]
+        }
+      },
+      "examples": [{"mode": "light"}, {"mode": "dark"}]
+    },
+    "palette": {
+      "type": "object",
+      "description": "Paleta de cores principal. Todas as cores em formato hexadecimal #RRGGBB.",
+      "required": ["primary", "secondary", "accent"],
+      "properties": {
+        "primary": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "description": "Cor primaria da marca. Usada no sidebar, botoes principais, header e navegacao.",
+          "examples": ["#002f59", "#2563EB", "#14532d"]
+        },
+        "secondary": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "description": "Cor secundaria suave. Usada em badges, tags, backgrounds de cards e hover.",
+          "examples": ["#e8f0f7", "#ccfbf1", "#dcfce7"]
+        },
+        "accent": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "description": "Cor de destaque. Usada em CTAs, graficos, progresso e elementos que precisam chamar atencao.",
+          "examples": ["#1a6b5c", "#0d9488", "#16a34a"]
+        },
+        "bgPage": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "description": "Fundo da pagina (opcional). Se omitido, o sistema calcula automaticamente.",
+          "default": "#f5f5f0",
+          "examples": ["#f5f5f0", "#f8fafc", "#0a1628"]
+        },
+        "bgCard": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "default": "#ffffff",
+          "examples": ["#ffffff", "#13243d"]
+        },
+        "bgInput": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "default": "#ffffff",
+          "examples": ["#ffffff", "#13243d"]
+        },
+        "bgSubtle": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "default": "#f5f5f0",
+          "examples": ["#f5f5f0", "#0f1e33"]
+        },
+        "surface": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "default": "#ffffff"
+        },
+        "textMain": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "default": "#0f172a",
+          "examples": ["#0f172a", "#e8edf2"]
+        },
+        "textSub": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "default": "#5b6b7c"
+        },
+        "textMuted": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "default": "#94a3b8"
+        },
+        "border": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "default": "#edeae3"
+        },
+        "borderMd": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "default": "#e2ddd4"
+        }
+      },
+      "examples": [
+        {
+          "primary": "#002f59",
+          "secondary": "#e8f0f7",
+          "accent": "#1a6b5c",
+          "bgPage": "#f5f5f0",
+          "bgCard": "#ffffff",
+          "textMain": "#0f172a",
+          "border": "#edeae3"
+        }
+      ]
+    },
+    "typography": {
+      "type": "object",
+      "description": "Configuracoes tipograficas (opcional).",
+      "properties": {
+        "fontFamily": {
+          "type": "string",
+          "description": "Fonte principal do app (CSS font-family).",
+          "default": "Inter, system-ui, sans-serif",
+          "examples": ["Inter, system-ui, sans-serif", "Plus Jakarta Sans, system-ui, sans-serif"]
+        },
+        "fontDisplay": {
+          "type": "string",
+          "description": "Fonte para titulos e displays (CSS font-family).",
+          "default": "Fraunces, Georgia, Times New Roman, serif",
+          "examples": ["Fraunces, Georgia, serif", "Cabinet Grotesk, sans-serif"]
+        }
+      },
+      "examples": [
+        {
+          "fontFamily": "Inter, system-ui, sans-serif",
+          "fontDisplay": "Fraunces, Georgia, serif"
+        }
+      ]
+    },
+    "logo": {
+      "type": "object",
+      "description": "Configuracao da logo (opcional).",
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "URL publica da imagem da logo hospedada no Supabase Storage ou data URI.",
+          "examples": ["https://xxx.supabase.co/storage/v1/object/public/logos/user-123/logo.png"]
+        },
+        "fallback": {
+          "type": "string",
+          "description": "Letra unica de fallback exibida quando nao ha URL de logo.",
+          "minLength": 1,
+          "maxLength": 1,
+          "default": "F",
+          "examples": ["P", "M", "S"]
+        }
+      },
+      "examples": [
+        {"url": null, "fallback": "F"},
+        {"url": "https://exemplo.com/logo.png", "fallback": "E"}
+      ]
+    },
+    "sidebar": {
+      "type": "object",
+      "description": "Configuracoes da barra lateral (opcional).",
+      "properties": {
+        "background": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "description": "Cor de fundo do sidebar. Se omitido, usa a cor primaria da paleta."
+        },
+        "textColor": {
+          "type": "string",
+          "description": "Cor do texto no sidebar.",
+          "default": "#ffffff"
+        },
+        "textMuted": {
+          "type": "string",
+          "description": "Cor do texto secundario no sidebar.",
+          "default": "rgba(255,255,255,0.55)"
+        },
+        "activeBg": {
+          "type": "string",
+          "description": "Fundo do item ativo no sidebar.",
+          "default": "rgba(255,255,255,0.14)"
+        }
+      },
+      "examples": [
+        {
+          "background": "#002f59",
+          "textColor": "#ffffff",
+          "textMuted": "rgba(255,255,255,0.55)",
+          "activeBg": "rgba(255,255,255,0.14)"
+        }
+      ]
+    },
+    "header": {
+      "type": "object",
+      "description": "Configuracoes do cabecalho mobile (opcional).",
+      "properties": {
+        "background": {
+          "type": "string",
+          "description": "Cor de fundo do header. Se omitido, usa a cor primaria da paleta."
+        },
+        "textColor": {
+          "type": "string",
+          "description": "Cor do texto e icones no header.",
+          "default": "#ffffff"
+        }
+      },
+      "examples": [
+        {"background": "#002f59", "textColor": "#ffffff"}
+      ]
+    },
+    "cards": {
+      "type": "object",
+      "description": "Configuracoes de cartoes e modais (opcional).",
+      "properties": {
+        "background": {
+          "type": "string",
+          "description": "Fundo de cartoes. Se omitido, usa bgCard da paleta."
+        },
+        "radius": {
+          "type": "string",
+          "description": "Raio de borda dos cartoes.",
+          "default": "12px",
+          "examples": ["8px", "12px", "16px"]
+        }
+      },
+      "examples": [
+        {"background": "#ffffff", "radius": "12px"}
+      ]
+    },
+    "buttons": {
+      "type": "object",
+      "description": "Configuracoes de botoes (opcional).",
+      "properties": {
+        "radius": {
+          "type": "string",
+          "description": "Raio de borda padrao dos botoes.",
+          "default": "12px",
+          "examples": ["8px", "12px", "9999px"]
+        },
+        "primaryBg": {
+          "type": "string",
+          "description": "Fundo do botao primario. Se omitido, usa a cor primaria."
+        },
+        "primaryText": {
+          "type": "string",
+          "description": "Cor do texto do botao primario.",
+          "default": "#ffffff"
+        }
+      },
+      "examples": [
+        {"radius": "12px", "primaryBg": "#002f59", "primaryText": "#ffffff"}
+      ]
+    },
+    "inputs": {
+      "type": "object",
+      "description": "Configuracoes de campos de formulario (opcional).",
+      "properties": {
+        "background": {
+          "type": "string",
+          "description": "Fundo dos inputs. Se omitido, usa bgInput da paleta."
+        },
+        "border": {
+          "type": "string",
+          "description": "Cor da borda dos inputs. Se omitido, usa border da paleta.",
+          "examples": ["#edeae3", "#e5e7eb"]
+        },
+        "radius": {
+          "type": "string",
+          "description": "Raio de borda dos inputs.",
+          "default": "12px",
+          "examples": ["8px", "12px"]
+        }
+      },
+      "examples": [
+        {"background": "#ffffff", "border": "#edeae3", "radius": "12px"}
+      ]
+    },
+    "borderRadius": {
+      "type": "object",
+      "description": "Sistema de raios de borda (opcional).",
+      "properties": {
+        "sm": { "type": "string", "default": "8px" },
+        "md": { "type": "string", "default": "12px" },
+        "lg": { "type": "string", "default": "16px" },
+        "xl": { "type": "string", "default": "24px" },
+        "full": { "type": "string", "default": "9999px" }
+      },
+      "examples": [
+        {"sm": "6px", "md": "10px", "lg": "14px", "xl": "20px", "full": "9999px"}
+      ]
+    },
+    "shadows": {
+      "type": "object",
+      "description": "Sombras do sistema (opcional). Valores CSS box-shadow.",
+      "properties": {
+        "sm": { "type": "string", "description": "Sombra pequena para cartoes." },
+        "md": { "type": "string", "description": "Sombra media para modais." },
+        "lg": { "type": "string", "description": "Sombra grande para dialogos." }
+      },
+      "examples": [
+        {
+          "sm": "0 1px 2px rgba(0,47,89,0.04)",
+          "md": "0 2px 8px rgba(0,47,89,0.05)",
+          "lg": "0 8px 24px rgba(0,47,89,0.08)"
+        }
+      ]
+    },
+    "spacing": {
+      "type": "object",
+      "description": "Sistema de espacamento (opcional, reservado para uso futuro).",
+      "properties": {
+        "unit": {
+          "type": "integer",
+          "description": "Unidade base de espacamento em pixels.",
+          "minimum": 2,
+          "maximum": 12,
+          "default": 4
+        },
+        "cardPadding": {
+          "type": "string",
+          "description": "Padding padrao de cartoes.",
+          "default": "24px"
+        },
+        "sectionGap": {
+          "type": "string",
+          "description": "Espaco entre secoes.",
+          "default": "24px"
+        }
+      }
+    },
+    "animations": {
+      "type": "object",
+      "description": "Configuracoes de animacao (opcional, reservado para uso futuro).",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Ativar ou desativar animacoes.",
+          "default": true
+        },
+        "speed": {
+          "type": "string",
+          "enum": ["slow", "normal", "fast"],
+          "description": "Velocidade das animacoes.",
+          "default": "normal"
+        }
+      }
+    },
+    "planOverrides": {
+      "type": "object",
+      "description": "Sobrescritas visuais por plano (opcional, apenas para admin).",
+      "properties": {
+        "pro": {
+          "type": "object",
+          "description": "Override para assinantes do plano Pro.",
+          "properties": {
+            "glowPrimary": { "type": "string" },
+            "sidebarBg": { "type": "string" },
+            "btnGrad": { "type": "string" }
+          }
+        },
+        "premium": {
+          "type": "object",
+          "description": "Override para assinantes do plano Premium.",
+          "properties": {
+            "glowPrimary": { "type": "string" },
+            "sidebarBg": { "type": "string" },
+            "btnGrad": { "type": "string" },
+            "planGold": { "type": "string" }
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "schemaVersion": "1.0.0",
+      "brandName": "Minha Empresa",
+      "theme": { "mode": "light" },
+      "palette": {
+        "primary": "#002f59",
+        "secondary": "#e8f0f7",
+        "accent": "#1a6b5c",
+        "bgPage": "#f5f5f0",
+        "bgCard": "#ffffff",
+        "textMain": "#0f172a",
+        "textSub": "#5b6b7c",
+        "textMuted": "#94a3b8",
+        "border": "#edeae3"
+      },
+      "typography": {
+        "fontFamily": "Inter, system-ui, sans-serif",
+        "fontDisplay": "Fraunces, Georgia, serif"
+      },
+      "sidebar": {
+        "background": "#002f59",
+        "textColor": "#ffffff",
+        "textMuted": "rgba(255,255,255,0.55)",
+        "activeBg": "rgba(255,255,255,0.14)"
+      },
+      "borderRadius": {
+        "sm": "8px",
+        "md": "12px",
+        "lg": "16px",
+        "xl": "24px"
+      }
+    }
+  ]
+}

@@ -105,7 +105,7 @@ export function useSession(p) {
           var pr = allRes[0], pdr = allRes[1], txr = allRes[2], lr = allRes[3], roleRes = allRes[4];
           if (pr.data) {
             var prof = pr.data;
-            p.setBrand({name:prof.name, logo:prof.logo, color:prof.color, color_secondary:prof.color_secondary||null, color_accent:prof.color_accent||null, theme:prof.theme||'light', logo_url:prof.logo_url||null, phone:prof.phone||'', white_label:!!prof.white_label, niche:prof.niche||'', visual_version:prof.visual_version||0, custom_palette:!!prof.custom_palette});
+            p.setBrand({name:prof.name, logo:prof.logo, color:prof.color, color_secondary:prof.color_secondary||null, color_accent:prof.color_accent||null, theme:prof.theme||'light', logo_url:prof.logo_url||null, phone:prof.phone||'', white_label:!!prof.white_label, niche:prof.niche||'', visual_version:prof.visual_version||0, custom_palette:!!prof.custom_palette, brand_config:prof.brand_config||null});
             p.setPlanInfo({
               plan:prof.plan||'free',
               plan_expires_at:prof.plan_expires_at||null,

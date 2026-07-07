@@ -1,4 +1,4 @@
-export const INIT_BRAND = { name: 'Financia', color: '#002f59', color_secondary: '#e8f0f7', color_accent: '#1a6b5c', theme: 'light', logo: 'F', logo_url: null, phone: '', white_label: false, niche: '', visual_version: 0, custom_palette: false };
+export const INIT_BRAND = { name: 'Financia', color: '#002f59', color_secondary: '#e8f0f7', color_accent: '#1a6b5c', theme: 'light', logo: 'F', logo_url: null, phone: '', white_label: false, niche: '', visual_version: 0, custom_palette: false, brand_config: null };
 export const INIT_PLAN = { plan: 'free', plan_expires_at: null, plan_activated_by: null };
 
 export const PLAN_LIMITS = {

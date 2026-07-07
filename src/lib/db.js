@@ -120,7 +120,7 @@ const syncTable = async function(uid, table, ldbTable, mapLocal) {
   return true;
 };
 
-const PROFILE_WRITE_FIELDS = ['user_id','name','logo','color','color_secondary','color_accent','theme','logo_url','white_label','phone','niche','custom_palette','visual_version'];
+const PROFILE_WRITE_FIELDS = ['user_id','name','logo','color','color_secondary','color_accent','theme','logo_url','white_label','phone','niche','custom_palette','visual_version','brand_config'];
 
 const syncProfiles = async function(uid) {
   if (!navigator.onLine) return true;

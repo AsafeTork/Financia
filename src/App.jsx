@@ -30,8 +30,9 @@ const SettingsView  = lazy(function() { return import('./views/SettingsView.jsx'
 const PlansView      = lazy(function() { return import('./views/PlansView.jsx'); });
 const PrivacyPolicy  = lazy(function() { return import('./views/PrivacyPolicy.jsx'); });
 const TermsOfService = lazy(function() { return import('./views/TermsOfService.jsx'); });
+const BrandStudioView = lazy(function() { return import('./brandStudio/BrandStudioView.jsx'); });
 
-const VALID_VIEWS = ['dashboard','income','expense','inventory','email','report','settings','planos'];
+const VALID_VIEWS = ['dashboard','income','expense','inventory','email','report','settings','planos','brandstudio'];
 const hashView = function() { const h = window.location.hash.replace('#',''); return VALID_VIEWS.includes(h) ? h : 'dashboard'; };
 const isLandingPreview = function() { return window.location.hash.replace('#','') === 'landing'; };
 const isLegalPage = function() { var h = window.location.hash.replace('#',''); return h === 'privacidade' || h === 'termos'; };
@@ -215,6 +216,7 @@ export default function App() {
       report:    React.createElement(ReportView, {tx:tx, brand:appBrand, toast:toast, onNav:navTo, planInfo:planInfo}),
       settings:  React.createElement(SettingsView, {brand:appBrand, session:session, planInfo:planInfo, onSave:saveBrand, onSavePhone:savePhone, toast:toast, confirm:confirm, isAdmin:isAdminDB, onNav:navTo}),
       planos:    React.createElement(PlansView, {brand:appBrand, planInfo:planInfo, toast:toast, onNav:navTo, isAdmin:isAdminDB}),
+      brandstudio: React.createElement(BrandStudioView, {brand:appBrand, planInfo:planInfo, onSave:saveBrand, toast:toast, onNav:navTo}),
     };
   }, [tx, products, appBrand, navTo, planInfo, losses, handleUpgrade, p, addTx, editTx, deleteTx, handleDeductStock, addGenerated, uid, addProduct, editProduct, deleteProduct, addLoss, editLoss, deleteLoss, adjustStock, toast, confirm, session, saveBrand, savePhone, isAdminDB]);
 

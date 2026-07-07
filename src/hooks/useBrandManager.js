@@ -20,6 +20,7 @@ export function useBrandManager(props) {
     var finalSecondary = hasWhiteLabel ? (nb.color_secondary || null) : visual.color_secondary;
     var finalAccent = hasWhiteLabel ? (nb.color_accent || null) : visual.color_accent;
     var finalTheme = hasWhiteLabel ? (nb.theme || 'light') : visual.theme;
+    var brandConfig = nb.brand_config || (existing && existing.brand_config) || null;
     var row = Object.assign({}, existing || {}, {
       user_id:userId,
       name:nb.name,
@@ -33,6 +34,7 @@ export function useBrandManager(props) {
       visual_version:((existing&&existing.visual_version)||0)+1,
       custom_palette:true,
       logo_url:nb.logo_url||null,
+      brand_config:brandConfig,
       updated_at:now(),
       _synced:0,
       _updated_at:now(),
@@ -48,6 +50,7 @@ export function useBrandManager(props) {
       white_label:hasWhiteLabel,
       visual_version:((existing&&existing.visual_version)||0)+1,
       custom_palette:hasWhiteLabel,
+      brand_config:brandConfig,
     }));
     toast('Configurações salvas', 'success');
     if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
