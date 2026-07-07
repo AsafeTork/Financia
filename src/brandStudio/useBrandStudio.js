@@ -166,14 +166,27 @@ export default function useBrandStudio(brand, planInfo, onSave, toast) {
     var context = [];
     context.push('App: ' + (brand.name || 'Financia'));
     context.push('Cor primaria: ' + (brand.color || '#002f59'));
-    if (brand.brand_config) context.push('Configuracao: personalizada');
+    if (brandConfig && brandConfig.logoColors) {
+      context.push('Logo global (SVG 4 elementos): ' + brandConfig.logoColors.blue + ', ' + brandConfig.logoColors.green + ', ' + brandConfig.logoColors.teal + ', ' + brandConfig.logoColors.check);
+    }
+    if (brandConfig && brandConfig.planOverrides) {
+      Object.keys(brandConfig.planOverrides).forEach(function(k) {
+        var po = brandConfig.planOverrides[k];
+        if (po.logoColors) context.push('Logo ' + k + ' (SVG): ' + po.logoColors.blue + ', ' + po.logoColors.green + ', ' + po.logoColors.teal + ', ' + po.logoColors.check);
+        if (po.palette) context.push('Paleta ' + k + ': primary=' + (po.palette.primary||'') + ' secondary=' + (po.palette.secondary||'') + ' accent=' + (po.palette.accent||''));
+      });
+    }
+    if (brandConfig && brandConfig.modules && brandConfig.modules.palette) {
+      var pal = brandConfig.modules.palette;
+      context.push('Paleta: primary=' + (pal.primary||'') + ' secondary=' + (pal.secondary||'') + ' accent=' + (pal.accent||''));
+    }
     var prompt = generatePrompt({ context: context.join('\n'), limitations: '- Tamanho maximo do JSON: 50KB\n- Cores: formato hexadecimal (#RRGGBB)\n- Fontes: web-safe ou Google Fonts\n- Assets: max 512KB por arquivo', extended: true });
     navigator.clipboard.writeText(prompt).then(function() {
       if (toast) toast('Documentacao copiada para a area de transferencia!', 'success');
     }).catch(function() {
       if (toast) toast('Nao foi possivel copiar automaticamente.', 'warning');
     });
-  }, [brand, toast]);
+  }, [brand, brandConfig, toast]);
 
   var copyCurrentJSON = useCallback(function() {
     var json = brand && brand.brand_config ? (typeof brand.brand_config === 'string' ? brand.brand_config : JSON.stringify(brand.brand_config, null, 2)) : JSON.stringify(brandConfig, null, 2);

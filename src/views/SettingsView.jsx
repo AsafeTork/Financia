@@ -420,7 +420,7 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
       {tab === 'clients' && (
         <div className="flex flex-col gap-4">
           <GhTokenCard toast={toast}/>
-          <Card className="p-6"><AdminPanel toast={toast} confirm={confirm} session={session}/></Card>
+          <Card className="p-6"><AdminPanel toast={toast} confirm={confirm} session={session} brand={brand}/></Card>
         </div>
       )}
 

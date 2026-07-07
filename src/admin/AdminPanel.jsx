@@ -4,6 +4,7 @@ import { sb } from '../lib/supabase.js';
 import { triggerApkBuild, fetchClients, deleteClient, fetchClientUsage, fetchDbStats, fetchStripeOverview } from '../lib/db.js';
 import { luminance, lightenHex, fmtDate, formatBytes, dbUsage, fmt } from '../lib/utils.js';
 import { GH_REPO, effectivePlan, PRICING_PLANS, waLinkTo, APP_URL } from '../lib/constants.js';
+import { generateLogoSvg, logoSvgToDataUrl } from '../brandStudio/LogoSchemes.jsx';
 
 // Limite de armazenamento do plano Supabase (free = 500 MB). Base do alerta de uso.
 var DB_LIMIT_BYTES = 500 * 1024 * 1024;
@@ -21,7 +22,17 @@ function SectionHead({ color, icon, title, right }) {
 }
 import ClientEditModal from './ClientEditModal.jsx';
 
-export default function AdminPanel({ toast, confirm, session }) {
+function planLogoSvg(brand, client) {
+  if (!brand || !brand.brand_config) return null;
+  var cfg = typeof brand.brand_config === 'string' ? null : brand.brand_config;
+  if (!cfg) { try { cfg = JSON.parse(brand.brand_config); } catch (_) { return null; } }
+  var plan = effectivePlan(client);
+  var over = cfg && cfg.planOverrides && cfg.planOverrides[plan];
+  if (!over || !over.logoColors) return null;
+  return logoSvgToDataUrl(generateLogoSvg(over.logoColors));
+}
+
+export default function AdminPanel({ toast, confirm, session, brand }) {
   const adminEmail = session && session.user ? session.user.email : 'admin';
   const BLANK = {email:'', password:'', companyName:'', logoUrl:'', primaryColor:'#002f59', secondaryColor:'', accentColor:'', colors:['#002f59']};
   const [form, setForm] = useState(BLANK);
@@ -387,9 +398,11 @@ export default function AdminPanel({ toast, confirm, session }) {
                   <div key={c.user_id} className="rounded-xl p-3 flex flex-col gap-2" style={{background:'var(--bg-subtle)', border:'1px solid var(--border)'}}>
                     <div className="flex items-center gap-3 min-w-0">
                       <div className="w-10 h-10 rounded-lg flex-shrink-0 overflow-hidden flex items-center justify-center" style={{background: c.color || '#002f59'}}>
-                        {c.logo_url
+                        {function() { var planUrl = planLogoSvg(brand, c); return c.logo_url
                           ? <img src={c.logo_url} alt="" className="w-full h-full object-cover"/>
-                          : <span className="text-white text-sm font-bold">{(c.name || '?')[0]}</span>}
+                          : planUrl
+                          ? <img src={planUrl} alt="" className="w-full h-full object-cover"/>
+                          : <span className="text-white text-sm font-bold">{(c.name || '?')[0]}</span>; }()}
                       </div>
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-semibold truncate" style={{color:'var(--text-main)'}}>{c.name || 'Sem nome'}</p>
@@ -442,10 +455,11 @@ export default function AdminPanel({ toast, confirm, session }) {
                     <div key={c.user_id} className="rounded-xl p-3 flex flex-col gap-2.5" style={{background:'var(--bg-card)', border:'1px solid var(--border)'}}>
                       <div className="flex items-center gap-3 min-w-0">
                         <div className="w-9 h-9 rounded-xl flex-shrink-0 overflow-hidden" style={{background:c.color||'#002f59'}}>
-                          {c.logo_url
+                          {function() { var planUrl = planLogoSvg(brand, c); return c.logo_url
                             ? <img src={c.logo_url} className="w-full h-full object-cover" alt=""/>
-                            : <div className="w-full h-full flex items-center justify-center text-white text-xs font-bold">{(c.name || '?')[0]}</div>
-                          }
+                            : planUrl
+                            ? <img src={planUrl} className="w-full h-full object-cover" alt=""/>
+                            : <div className="w-full h-full flex items-center justify-center text-white text-xs font-bold">{(c.name || '?')[0]}</div>; }()}
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-1.5 min-w-0">
