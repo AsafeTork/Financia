@@ -10,7 +10,7 @@ var mockDelete = vi.fn(async function() {});
 var mockCount = vi.fn(async function() { return 0; });
 var whereChain = { equals: function() { return { filter: function() { return { count: function() { return mockCount.apply(this, arguments); } }; } }; } };
 
-vi.mock('../lib/db.js', function() {
+vi.mock('../../lib/dexie.js', function() {
   return {
     ldb: {
       products: {
@@ -23,7 +23,7 @@ vi.mock('../lib/db.js', function() {
   };
 });
 
-vi.mock('../lib/supabase.js', function() {
+vi.mock('../../lib/supabase.js', function() {
   var eq = vi.fn(async function() { return {error: null}; });
   return {
     sb: {

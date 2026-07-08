@@ -8,7 +8,7 @@ var mockDeriveCores = vi.fn(function() {
   return { secondary: '#mocked-secondary', accent: '#mocked-accent' };
 });
 
-vi.mock('../lib/utils.js', function() {
+vi.mock('../../lib/utils.js', function() {
   return {
     brandAlpha: function() { return mockBrandAlpha.apply(this, arguments); },
     deriveCores: function() { return mockDeriveCores.apply(this, arguments); },
