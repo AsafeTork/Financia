@@ -21,7 +21,7 @@ export default function PlanStatusCard({ plan, brand, onUpgrade, usage, anyReach
           </div>
           {anyReached && (
             <div className="flex items-start gap-2 rounded-lg px-3 py-2.5 border border-amber-200" style={{background:'rgba(245,158,11,0.07)'}}>
-              <div className="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0 mt-1"/>
+              <div className="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0 mt-1" aria-label="Limite atingido"/>
               <p className="text-xs font-semibold text-amber-700">
                 {'Limite de ' + reachedCats.map(function(c) { return c.label.toLowerCase(); }).join(' e ') + ' atingido. As demais categorias continuam liberadas.'}
               </p>

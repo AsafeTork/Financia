@@ -39,18 +39,18 @@ export default function BrandGlobalEditor({ brandGlobal, setField, onSave, brand
         <p className="text-sm font-semibold" style={{color:'var(--text-main)'}}>Informacoes da marca</p>
         <div className="flex flex-col gap-3">
           <div className="flex flex-col gap-1">
-            <label className="text-xs font-medium" style={{color:'var(--text-sub)'}}>Nome do app</label>
-            <input value={brandGlobal.name} onChange={function(e) { setField('name', e.target.value); }}
+            <label htmlFor="brand-name" className="text-xs font-medium" style={{color:'var(--text-sub)'}}>Nome do app</label>
+            <input id="brand-name" value={brandGlobal.name} onChange={function(e) { setField('name', e.target.value); }}
               className="rounded-xl px-3 py-2.5 text-sm focus:outline-none" style={{background:'var(--bg-input)', color:'var(--text-main)', border:'1px solid var(--border)'}} />
           </div>
           <div className="flex flex-col gap-1">
-            <label className="text-xs font-medium" style={{color:'var(--text-sub)'}}>Nome curto (abraviacao)</label>
-            <input value={brandGlobal.short_name} onChange={function(e) { setField('short_name', e.target.value); }}
+            <label htmlFor="brand-short-name" className="text-xs font-medium" style={{color:'var(--text-sub)'}}>Nome curto (abraviacao)</label>
+            <input id="brand-short-name" value={brandGlobal.short_name} onChange={function(e) { setField('short_name', e.target.value); }}
               className="rounded-xl px-3 py-2.5 text-sm focus:outline-none" style={{background:'var(--bg-input)', color:'var(--text-main)', border:'1px solid var(--border)'}} placeholder="Ex.: FNC" />
           </div>
           <div className="flex flex-col gap-1">
-            <label className="text-xs font-medium" style={{color:'var(--text-sub)'}}>Titulo da aplicacao (aba do navegador)</label>
-            <input value={brandGlobal.app_title} onChange={function(e) { setField('app_title', e.target.value); }}
+            <label htmlFor="brand-app-title" className="text-xs font-medium" style={{color:'var(--text-sub)'}}>Titulo da aplicacao (aba do navegador)</label>
+            <input id="brand-app-title" value={brandGlobal.app_title} onChange={function(e) { setField('app_title', e.target.value); }}
               className="rounded-xl px-3 py-2.5 text-sm focus:outline-none" style={{background:'var(--bg-input)', color:'var(--text-main)', border:'1px solid var(--border)'}} placeholder="Ex.: Financia - Gestao Financeira" />
           </div>
         </div>
@@ -78,8 +78,8 @@ export default function BrandGlobalEditor({ brandGlobal, setField, onSave, brand
             </select>
           </div>
           <div className="flex flex-col gap-1">
-            <label className="text-xs font-medium" style={{color:'var(--text-sub)'}}>Tamanho (px)</label>
-            <input type="range" min="20" max="80" value={brandGlobal.secondary_logo_size || 40} onChange={function(e) { setField('secondary_logo_size', parseInt(e.target.value, 10)); }}
+            <label htmlFor="brand-logo-size" className="text-xs font-medium" style={{color:'var(--text-sub)'}}>Tamanho (px)</label>
+            <input id="brand-logo-size" type="range" min="20" max="80" value={brandGlobal.secondary_logo_size || 40} onChange={function(e) { setField('secondary_logo_size', parseInt(e.target.value, 10)); }}
               className="w-full accent-current" style={{color: brandColor}} />
             <span className="text-[10px] font-mono" style={{color:'var(--text-muted)'}}>{brandGlobal.secondary_logo_size || 40}px</span>
           </div>

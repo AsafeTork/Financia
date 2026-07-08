@@ -246,8 +246,8 @@ export default function ClientEditModal({ client, adminEmail, onSave, onClose, t
 
           {/* Nome */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Nome da empresa</label>
-            <input value={name} onChange={function(e) { setName(e.target.value); }}
+            <label htmlFor="client-name" className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Nome da empresa</label>
+            <input id="client-name" value={name} onChange={function(e) { setName(e.target.value); }}
               className="border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-gray-400" style={{background:'var(--bg-input)', color:'var(--text-main)'}}/>
           </div>
 

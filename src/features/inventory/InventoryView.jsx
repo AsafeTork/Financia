@@ -368,7 +368,7 @@ export default function InventoryView({ products, losses, onAddProduct, onEditPr
       )}
       {lm && (
         <Modal title="Registrar Perda" onClose={function() { dispatch({type:'CLOSE_LM'}); }} onSave={saveLoss} color="#dc2626" saving={saving}>
-          <div className="flex flex-col gap-1.5"><label className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Produto</label><PSearch products={products} value={lf.desc} onSelect={function(p) { dispatch({type:'SET_LF', v:{desc:p.name}}); }} onChange={function(v) { dispatch({type:'SET_LF', v:{desc:v}}); }} placeholder="Buscar ou digitar"/></div>
+          <div className="flex flex-col gap-1.5"><label htmlFor="loss-product-search" className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Produto</label><PSearch id="loss-product-search" products={products} value={lf.desc} onSelect={function(p) { dispatch({type:'SET_LF', v:{desc:p.name}}); }} onChange={function(v) { dispatch({type:'SET_LF', v:{desc:v}}); }} placeholder="Buscar ou digitar"/></div>
           <NumInp label="Quantidade" decimals={false} maxLen={6} value={lf.qty} onChange={function(e) { dispatch({type:'SET_LF', v:{qty:e.target.value}}); }}/>
           <Inp label="Motivo (opcional)" value={lf.reason} onChange={function(e) { dispatch({type:'SET_LF', v:{reason:e.target.value}}); }} placeholder="Ex: Vencimento, Avaria..."/>
           <Inp label="Data" type="date" value={lf.date} onChange={function(e) { dispatch({type:'SET_LF', v:{date:e.target.value}}); }}/>
@@ -376,7 +376,7 @@ export default function InventoryView({ products, losses, onAddProduct, onEditPr
       )}
       {editL && (
         <Modal title="Editar Perda" onClose={function() { dispatch({type:'SET_EDIT_L', v:null}); }} onSave={saveEditL} color="#dc2626" saving={saving} saveLabel="Salvar alterações">
-          <div className="flex flex-col gap-1.5"><label className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Produto</label><PSearch products={products} value={editL.desc} onSelect={function(p) { dispatch({type:'PATCH_EDIT_L', v:{desc:p.name}}); }} onChange={function(v) { dispatch({type:'PATCH_EDIT_L', v:{desc:v}}); }} placeholder="Buscar ou digitar"/></div>
+          <div className="flex flex-col gap-1.5"><label htmlFor="edit-loss-product-search" className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Produto</label><PSearch id="edit-loss-product-search" products={products} value={editL.desc} onSelect={function(p) { dispatch({type:'PATCH_EDIT_L', v:{desc:p.name}}); }} onChange={function(v) { dispatch({type:'PATCH_EDIT_L', v:{desc:v}}); }} placeholder="Buscar ou digitar"/></div>
           <NumInp label="Quantidade" decimals={false} maxLen={6} value={editL.qty} onChange={function(e) { dispatch({type:'PATCH_EDIT_L', v:{qty:e.target.value}}); }}/>
           <Inp label="Motivo" value={editL.reason} onChange={function(e) { dispatch({type:'PATCH_EDIT_L', v:{reason:e.target.value}}); }} placeholder="Ex: Vencimento..."/>
           <Inp label="Data" type="date" value={editL.date} onChange={function(e) { dispatch({type:'PATCH_EDIT_L', v:{date:e.target.value}}); }}/>

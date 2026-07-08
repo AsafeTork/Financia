@@ -172,8 +172,8 @@ export default function LogoSchemes({ brandColor, toast, onApply }) {
 
       <div className="border-t pt-4 flex items-end gap-3" style={{borderColor:'var(--border)'}}>
         <div className="flex-1 flex flex-col gap-1">
-          <label className="text-xs font-medium" style={{color:'var(--text-sub)'}}>Nome do esquema</label>
-          <input value={schemeName} onChange={function(e) { setSchemeName(e.target.value); }}
+          <label htmlFor="scheme-name" className="text-xs font-medium" style={{color:'var(--text-sub)'}}>Nome do esquema</label>
+          <input id="scheme-name" value={schemeName} onChange={function(e) { setSchemeName(e.target.value); }}
             placeholder="Ex.: Natal, Escuro, Corporativo..."
             className="rounded-xl px-3 py-2.5 text-sm focus:outline-none"
             style={{background:'var(--bg-input)', color:'var(--text-main)', border:'1px solid var(--border)'}} />

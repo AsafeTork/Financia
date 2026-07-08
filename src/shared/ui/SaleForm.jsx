@@ -2,14 +2,16 @@
 import { Inp, NumInp, Sel, Spin } from './ui.jsx';
 import { fmt, today, safe, uid } from '../../lib/utils.js';
 
-export function PSearch({ products, value, onSelect, onChange, placeholder }) {
+export function PSearch({ products, value, onSelect, onChange, placeholder, id }) {
   const [open, setOpen] = useState(false);
   const filtered = value.length > 0
     ? products.filter(function(p) { return p.name.toLowerCase().includes(value.toLowerCase()); })
     : products;
+  const generatedId = React.useId();
+  const inputId = id || generatedId + '-psearch';
   return (
     <div className="relative flex-1">
-      <input
+      <input id={inputId}
         value={value}
         onChange={function(e) { onChange(e.target.value); setOpen(true); }}
         onFocus={function() { setOpen(true); }}

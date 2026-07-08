@@ -1,19 +1,31 @@
-import React, { useMemo, useState as _useState } from 'react';
-import { Card } from '../../shared/ui/ui.jsx';
+import React, { useMemo, useState } from 'react';
+import { Card, PageSkeleton } from '../../shared/ui/ui.jsx';
 import { KpiCard, BarChartSVG } from '../../shared/ui/UsageBar.jsx';
 import PlanStatusCard from '../../shared/ui/PlanStatusCard.jsx';
 import AiInsightsCard from '../../shared/ui/AiInsightsCard.jsx';
 import { fmt, fmtDate, today, prevDays, brandAlpha } from '../../lib/utils.js';
 import { PLAN_LIMITS, effectivePlan } from '../../lib/constants.js';
 
-export default function Dashboard({ tx, products, brand, onNav, planInfo, lossesCount, onUpgrade }) {
-  var cm = today().slice(0, 7);
+export default function Dashboard({ tx, products, brand, onNav, planInfo, lossesCount, onUpgrade, loading }) {
+  var [period, setPeriod] = useState('month');
+  var periods = [
+    { v:'month',    l:'Mês atual' },
+    { v:'3months',  l:'Últimos 3 meses' },
+    { v:'6months',  l:'Últimos 6 meses' },
+    { v:'year',     l:'Ano atual' },
+    { v:'12months', l:'Últimos 12 meses' },
+  ];
   var now_d = new Date();
-  var prevM = new Date(now_d.getFullYear(), now_d.getMonth() - 1, 1);
-  var pm = prevM.getFullYear() + '-' + String(prevM.getMonth() + 1).padStart(2, '0');
+  var pStart = period === 'year'
+    ? new Date(now_d.getFullYear(), 0, 1)
+    : new Date(now_d.getFullYear(), now_d.getMonth() - ({month:0,'3months':2,'6months':5,'12months':11})[period], 1);
+  var pMonths = period === 'year' ? 12 : ({month:1,'3months':3,'6months':6,'12months':12})[period];
+  var ppStart = new Date(pStart.getFullYear(), pStart.getMonth() - pMonths, 1);
+  var pS = pStart.getFullYear() + '-' + String(pStart.getMonth()+1).padStart(2,'0');
+  var ppS = ppStart.getFullYear() + '-' + String(ppStart.getMonth()+1).padStart(2,'0');
 
-  var mtx  = tx.filter(function(t) { return t.date.startsWith(cm); });
-  var pmtx = tx.filter(function(t) { return t.date.startsWith(pm); });
+  var mtx  = tx.filter(function(t) { return t.date >= pS; });
+  var pmtx = tx.filter(function(t) { return t.date >= ppS && t.date < pS; });
 
   var sumMonth = useMemo(function() {
     var r = { ti: 0, to: 0 };
@@ -62,14 +74,23 @@ export default function Dashboard({ tx, products, brand, onNav, planInfo, losses
   var hour     = new Date().getHours();
   var greeting = hour < 12 ? 'Bom dia' : hour < 18 ? 'Boa tarde' : 'Boa noite';
 
+  if (loading) return <PageSkeleton/>;
+
   return (
     <div className="flex flex-col gap-5">
 
-      <div>
-        <h1 className="page-header">{greeting}</h1>
-        <p className="page-sub capitalize">
-          {new Date().toLocaleDateString('pt-BR', {weekday: 'long', day: 'numeric', month: 'long'})}
-        </p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="page-header">{greeting}</h1>
+          <p className="page-sub capitalize">
+            {new Date().toLocaleDateString('pt-BR', {weekday: 'long', day: 'numeric', month: 'long'})}
+          </p>
+        </div>
+        <select value={period} onChange={function(e){setPeriod(e.target.value)}}
+          className="text-xs rounded-xl px-3 py-2 border min-h-[44px] flex-shrink-0"
+          style={{background:'var(--bg-card)', color:'var(--text-main)', borderColor:'var(--border)'}}>
+          {periods.map(function(p){return <option key={p.v} value={p.v}>{p.l}</option>})}
+        </select>
       </div>
 
       {tx.length === 0 && products.length === 0 && (
@@ -116,7 +137,7 @@ export default function Dashboard({ tx, products, brand, onNav, planInfo, losses
         <div className="rounded-xl border border-amber-200 px-4 py-3.5 flex flex-col gap-2" style={{background:'rgba(245,158,11,0.10)'}}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-amber-500"/>
+              <div className="w-1.5 h-1.5 rounded-full bg-amber-500" aria-label="Alerta: estoque baixo"/>
               <p className="text-sm font-semibold text-amber-800">Estoque baixo</p>
             </div>
             <button onClick={function() { onNav('inventory'); }} className="text-xs text-amber-600 font-semibold hover:underline inline-flex items-center min-h-[44px] -my-2.5 px-1 flex-shrink-0">
@@ -200,12 +221,12 @@ export default function Dashboard({ tx, products, brand, onNav, planInfo, losses
           <p className="text-sm font-semibold" style={{color:'var(--text-main)'}}>Ultimos 7 dias</p>
           <div className="flex gap-3 text-xs" style={{color:'var(--text-muted)'}}>
             <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-sm inline-block" style={{background: brand.color}}/>
-              Entradas
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-sm inline-block" style={{background:'#ef4444'}}/>
-              Saidas
+              <span className="w-2.5 h-2.5 rounded-sm inline-block" style={{background: brand.color}} aria-label="Entradas"/>
+               Entradas
+             </span>
+             <span className="flex items-center gap-1.5">
+               <span className="w-2.5 h-2.5 rounded-sm inline-block" style={{background:'#ef4444'}} aria-label="Saídas"/>
+               Saidas
             </span>
           </div>
         </div>

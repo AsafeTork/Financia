@@ -99,6 +99,7 @@ export default function PhoneInput(props) {
   var error = props.error;
   var disabled = props.disabled;
   var onChange = props.onChange;
+  var id = props.id;
 
   var seed = parsePhone(props.value);
   var [iso, setIso] = useState(seed.iso);
@@ -108,6 +109,8 @@ export default function PhoneInput(props) {
   var [touched, setTouched] = useState(false);
   var wrapRef = useRef(null);
   var inputRef = useRef(null);
+  var generatedId = React.useId();
+  var inputId = id || generatedId + '-phone';
 
   var country = byIso(iso);
 
@@ -152,7 +155,7 @@ export default function PhoneInput(props) {
 
   return (
     <div className="flex flex-col gap-1.5 min-w-0">
-      {label && <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{label}</label>}
+      {label && <label htmlFor={inputId} className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{label}</label>}
 
       <div ref={wrapRef} style={{ position: 'relative' }}>
         <div aria-hidden="true" style={{
@@ -179,7 +182,7 @@ export default function PhoneInput(props) {
 
           <div style={{ width: 1, background: 'var(--border)', margin: '8px 0' }} />
 
-          <input ref={inputRef} type="tel" inputMode="numeric" disabled={disabled}
+          <input ref={inputRef} id={inputId} type="tel" inputMode="numeric" disabled={disabled}
             autoFocus={props.autoFocus} value={formatLocal(iso, digits)}
             onChange={onInput}
             onFocus={function() { setFocused(true); }}

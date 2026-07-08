@@ -66,6 +66,8 @@ export default function App() {
   const [onboardingNeeded, setOnboardingNeeded] = useState(false);
   const onboardingRef                   = useRef(null); // null=indeciso, true/false=decidido
   const toastId                         = useRef(0);
+  const modalRef                        = useRef({ confirmData, showUpgrade, sidebarOpen, showLogin });
+  modalRef.current = { confirmData, showUpgrade, sidebarOpen, showLogin };
 
   var { appBrand, effectiveTheme, toggleTheme } = useBrandAppearance(brand, planInfo);
 
@@ -114,6 +116,54 @@ export default function App() {
     var onHash = function() { setView(hashView()); };
     window.addEventListener('hashchange', onHash);
     return function() { window.removeEventListener('hashchange', onHash); };
+  }, []);
+
+  // Atalhos de teclado
+  useEffect(function() {
+    var buffer = [];
+    var timer = null;
+    var routes = { d:'dashboard', t:'income', i:'inventory', s:'settings', r:'report', p:'planos' };
+
+    function help() {
+      var msg = 'Atalhos: g+d Dashboard, g+t Transações, g+i Estoque, g+s Config, g+r Relatórios, g+p Planos, ? Ajuda, Esc Fechar';
+      if (typeof window.showToast === 'function') { window.showToast(msg, 'info'); }
+      else { window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: msg, type: 'info' } })); }
+    }
+
+    function onKeyDown(e) {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT' || e.target.isContentEditable) return;
+      var key = e.key.toLowerCase();
+
+      if (key === 'escape') {
+        var m = modalRef.current;
+        if (m.confirmData) { setConfirmData(null); return; }
+        if (m.showUpgrade) { setShowUpgrade(false); return; }
+        if (m.sidebarOpen) { setSidebarOpen(false); return; }
+        if (m.showLogin) { setShowLogin(false); return; }
+        return;
+      }
+      if (key === '?') { e.preventDefault(); help(); return; }
+
+      if (key === 'g') {
+        e.preventDefault();
+        clearTimeout(timer);
+        buffer = ['g'];
+        timer = setTimeout(function() { buffer = []; }, 1000);
+        return;
+      }
+
+      if (buffer.length === 1 && buffer[0] === 'g') {
+        clearTimeout(timer);
+        buffer = [];
+        var hash = routes[key];
+        if (hash) { e.preventDefault(); window.location.hash = '#' + hash; }
+        return;
+      }
+      buffer = [];
+    }
+
+    document.addEventListener('keydown', onKeyDown);
+    return function() { document.removeEventListener('keydown', onKeyDown); };
   }, []);
 
   // Decisao de onboarding (nome/telefone). Corrige o loop telefone<->dashboard:
@@ -208,7 +258,7 @@ export default function App() {
 
   const views = useMemo(function() {
     return {
-      dashboard: React.createElement(Dashboard, {tx:tx, products:products, brand:appBrand, onNav:navTo, planInfo:planInfo, lossesCount:losses.length, onUpgrade:handleUpgrade}),
+      dashboard: React.createElement(Dashboard, {tx:tx, products:products, brand:appBrand, onNav:navTo, planInfo:planInfo, lossesCount:losses.length, onUpgrade:handleUpgrade, loading:dataLoading}),
       income:    React.createElement(TxView, Object.assign({type:'income', tx:tx, products:products, onAdd:addTx, onEdit:editTx, onDelete:deleteTx, onDeductStock:handleDeductStock, planInfo:planInfo, onNav:navTo}, p)),
       expense:   React.createElement(TxView, Object.assign({type:'expense', tx:tx, products:products, onAdd:addTx, onEdit:editTx, onDelete:deleteTx, onDeductStock:noop, onAddGenerated:addGenerated, uid:uid, planInfo:planInfo, onNav:navTo}, p)),
       inventory: React.createElement(InventoryView, Object.assign({products:products, losses:losses, onAddProduct:addProduct, onEditProduct:editProduct, onDeleteProduct:deleteProduct, onAddLoss:addLoss, onEditLoss:editLoss, onDeleteLoss:deleteLoss, onAdjustStock:adjustStock, planInfo:planInfo, onNav:navTo}, p)),
@@ -218,7 +268,7 @@ export default function App() {
       planos:    React.createElement(PlansView, {brand:appBrand, planInfo:planInfo, toast:toast, onNav:navTo, isAdmin:isAdminDB}),
       brandstudio: React.createElement(BrandStudioView, {brand:appBrand, planInfo:planInfo, onSave:saveBrand, toast:toast, onNav:navTo}),
     };
-  }, [tx, products, appBrand, navTo, planInfo, losses, handleUpgrade, p, addTx, editTx, deleteTx, handleDeductStock, addGenerated, uid, addProduct, editProduct, deleteProduct, addLoss, editLoss, deleteLoss, adjustStock, toast, confirm, session, saveBrand, savePhone, isAdminDB]);
+  }, [tx, products, appBrand, navTo, planInfo, losses, handleUpgrade, p, addTx, editTx, deleteTx, handleDeductStock, addGenerated, uid, addProduct, editProduct, deleteProduct, addLoss, editLoss, deleteLoss, adjustStock, toast, confirm, session, saveBrand, savePhone, isAdminDB, dataLoading]);
 
   if (appLoading) return <Loader/>;
 

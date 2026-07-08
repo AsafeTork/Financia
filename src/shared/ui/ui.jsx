@@ -13,17 +13,19 @@ export const Card = function({ children, className, hover, variant, accent, colo
   );
 };
 
-export const Inp = function({ label, hint, error, success, className, icon, ...p }) {
+export const Inp = function({ label, hint, error, success, className, icon, id, ...p }) {
+  var generatedId = React.useId();
+  var inputId = id || generatedId;
   var borderColor = error ? '#ef4444' : success ? '#22c55e' : '';
   return (
     <div className={'flex flex-col gap-1.5 min-w-0 ' + (className || '')}>
       {label && (
         <div className="flex items-center gap-1.5">
           {icon && <span className="text-gray-400">{icon}</span>}
-          <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{label}</label>
+          <label htmlFor={inputId} className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{label}</label>
         </div>
       )}
-      <input
+      <input id={inputId}
         className="border rounded-xl px-3.5 py-3 text-sm transition w-full focus:outline-none"
         style={Object.assign({background:'var(--bg-input)', color:'var(--text-main)', borderColor: borderColor || 'var(--border-md)'}, {})}
         {...p}
@@ -66,20 +68,24 @@ export const NumInp = function(props) {
   }));
 };
 
-export const Sel = function({ label, className, children, ...p }) {
+export const Sel = function({ label, className, children, id, ...p }) {
+  var generatedId = React.useId();
+  var selectId = id || generatedId;
   return (
     <div className={'flex flex-col gap-1.5 min-w-0 ' + (className || '')}>
-      {label && <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{label}</label>}
-      <select className="border border-gray-200 rounded-xl px-3 py-3 text-sm transition w-full" style={{background:'var(--bg-input)', color:'var(--text-main)'}} {...p}>{children}</select>
+      {label && <label htmlFor={selectId} className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{label}</label>}
+      <select id={selectId} className="border border-gray-200 rounded-xl px-3 py-3 text-sm transition w-full" style={{background:'var(--bg-input)', color:'var(--text-main)'}} {...p}>{children}</select>
     </div>
   );
 };
 
-export const Textarea = function({ label, className, ...p }) {
+export const Textarea = function({ label, className, id, ...p }) {
+  var generatedId = React.useId();
+  var textareaId = id || generatedId;
   return (
     <div className={'flex flex-col gap-1.5 ' + (className || '')}>
-      {label && <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{label}</label>}
-      <textarea className="border border-gray-200 rounded-xl px-3 py-3 text-sm transition w-full resize-none" style={{background:'var(--bg-input)', color:'var(--text-main)'}} rows={6} {...p}/>
+      {label && <label htmlFor={textareaId} className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{label}</label>}
+      <textarea id={textareaId} className="border border-gray-200 rounded-xl px-3 py-3 text-sm transition w-full resize-none" style={{background:'var(--bg-input)', color:'var(--text-main)'}} rows={6} {...p}/>
     </div>
   );
 };

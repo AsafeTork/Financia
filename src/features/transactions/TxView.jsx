@@ -1,4 +1,4 @@
-﻿import React, { useState, useMemo } from 'react';
+﻿import React, { useState, useMemo, useRef } from 'react';
 import { Card, Inp, NumInp, Sel, Modal, EditBtn, DelBtn, Btn, PageHead } from '../../shared/ui/ui.jsx';
 import { SaleForm } from '../../shared/ui/SaleForm.jsx';
 import ExportButtons from '../../shared/ui/ExportButtons.jsx';
@@ -6,6 +6,7 @@ import { fmt, fmtDate, today, safe, uid, brandAlpha } from '../../lib/utils.js';
 import { isRecurringId, getRecurring, setRecurring, buildRecurringRow, periodOf } from '../../lib/recurring.js';
 import { effectivePlan } from '../../lib/constants.js';
 import { exportPDF, exportXLS } from '../../lib/exporters.js';
+import { useVirtualizer } from '@tanstack/react-virtual';
 
 export default function TxView({ type, tx, products, onAdd, onEdit, onDelete, onDeductStock, onAddGenerated, uid: userId, brand, toast, confirm, planInfo, onNav }) {
   var isIncome = type === 'income';
@@ -37,13 +38,32 @@ export default function TxView({ type, tx, products, onAdd, onEdit, onDelete, on
       if (!grouped[t.date]) { grouped[t.date] = []; groupOrder.push(t.date); }
       grouped[t.date].push(t);
     });
-    return {filtered: f, total: total, grouped: grouped, groupOrder: groupOrder};
+    var flatRows = [];
+    groupOrder.forEach(function(date) {
+      var dayItems = grouped[date];
+      var dayTotal = dayItems.reduce(function(s, t) { return s + t.amount; }, 0);
+      flatRows.push({ type: 'header', date: date, total: dayTotal });
+      dayItems.forEach(function(t) {
+        flatRows.push({ type: 'row', data: t });
+      });
+    });
+    return {filtered: f, total: total, grouped: grouped, groupOrder: groupOrder, flatRows: flatRows};
   }, [tx, type, search, dateFrom, dateTo]);
 
   var filtered  = memo.filtered;
   var total     = memo.total;
   var grouped   = memo.grouped;
   var groupOrder = memo.groupOrder;
+  var flatRows = memo.flatRows;
+
+  var scrollRef = useRef(null);
+  var virtualizer = useVirtualizer({
+    count: flatRows.length,
+    getScrollElement: function() { return scrollRef.current; },
+    estimateSize: function(index) {
+      return flatRows[index].type === 'header' ? 44 : 60;
+    },
+  });
 
   var openEdit = function(t) {
     setEditItem({id:t.id, desc:t.desc, amount:String(t.amount), date:t.date, cat:t.category||'Fixo', method:t.method||'PIX'});
@@ -208,18 +228,24 @@ export default function TxView({ type, tx, products, onAdd, onEdit, onDelete, on
           </div>
         ) : (
           <div>
-            {groupOrder.map(function(date) {
-              var dayItems = grouped[date];
-              var dayTotal = dayItems.reduce(function(s, t) { return s + t.amount; }, 0);
-              return (
-                <div key={date}>
-                  <div className="flex items-center justify-between px-4 py-2.5 bg-gray-50 border-b border-gray-100">
-                    <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{fmtDate(date)}</span>
-                    <span className="text-xs font-semibold tabular" style={{color: accentColor}}>{fmt(dayTotal)}</span>
-                  </div>
-                  {dayItems.map(function(t) {
+            <div ref={scrollRef} className="max-h-[calc(100vh-280px)] overflow-auto">
+              <div style={{ height: virtualizer.getTotalSize() + 'px', position: 'relative' }}>
+                {virtualizer.getVirtualItems().map(function(virtualItem) {
+                  var item = flatRows[virtualItem.index];
+                  if (item.type === 'header') {
                     return (
-                      <div key={t.id} className="flex items-center justify-between px-4 py-3.5 border-b border-gray-50 last:border-0 hover:bg-gray-50 transition-colors">
+                      <div key={item.date} style={{ position: 'absolute', top: 0, left: 0, width: '100%', transform: 'translateY(' + virtualItem.start + 'px)' }}>
+                        <div className="flex items-center justify-between px-4 py-2.5 bg-gray-50 border-b border-gray-100">
+                          <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{fmtDate(item.date)}</span>
+                          <span className="text-xs font-semibold tabular" style={{color: accentColor}}>{fmt(item.total)}</span>
+                        </div>
+                      </div>
+                    );
+                  }
+                  var t = item.data;
+                  return (
+                    <div key={t.id} style={{ position: 'absolute', top: 0, left: 0, width: '100%', transform: 'translateY(' + virtualItem.start + 'px)' }}>
+                      <div className="flex items-center justify-between px-4 py-3.5 border-b border-gray-50 last:border-0 hover:bg-gray-50 transition-colors">
                         <div className="flex items-center gap-3 min-w-0 flex-1">
                           <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{background: accentBg}}>
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={accentColor} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -250,11 +276,11 @@ export default function TxView({ type, tx, products, onAdd, onEdit, onDelete, on
                           <DelBtn onClick={function() { confirm('Excluir este registro?', async function() { var ok = await onDelete(t.id); if (ok) toast('Removido', 'success'); else toast('Erro ao excluir. Tente de novo.', 'error'); }); }}/>
                         </div>
                       </div>
-                    );
-                  })}
-                </div>
-              );
-            })}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
           </div>
         )}
       </Card>
