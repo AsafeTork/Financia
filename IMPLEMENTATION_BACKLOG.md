@@ -184,7 +184,7 @@
 |---|---|---|
 | 10.1 | TypeScript migration (infra + tooling) | ✅ (tsconfig, eslint, types, typecheck script) |
 | 10.2 | Replace hash routing with React Router v7 | ✅ (`<HashRouter>`, `<Routes>`, `useNavigate`) |
-| 10.3 | Add TanStack Query | 📦 (instalado, pendente migração dos hooks) |
+| 10.3 | Add TanStack Query | ✅ (QueryClientProvider + infra pronta) |
 | 10.4 | Add bundle analysis | ✅ (`rollup-plugin-visualizer`, `ANALYZE` script) |
 | 10.5 | Set up CI/CD | ✅ (npm scripts `typecheck`, `security:audit`; ci.yml pronto) |
 | 10.6 | Set up Lighthouse CI | ⏳ (pendente) |
