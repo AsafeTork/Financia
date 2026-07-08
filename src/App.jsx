@@ -1,36 +1,36 @@
 import React, { useState, useCallback, useEffect, useRef, useMemo, lazy, Suspense } from 'react';
 import { flushSync } from 'react-dom';
 import { INIT_BRAND, INIT_PLAN, atLimit, limitFor, effectivePlan } from './lib/constants.js';
-import { useTx } from './hooks/useTx.js';
-import { useProducts } from './hooks/useProducts.js';
-import { useLosses } from './hooks/useLosses.js';
-import { useSession } from './hooks/useSession.js';
-import useBrandAppearance from './hooks/useBrandAppearance.js';
-import Sidebar from './components/Sidebar.jsx';
-import BottomNav from './components/BottomNav.jsx';
-import Header from './components/Header.jsx';
-import ThemeToggle from './components/ThemeToggle.jsx';
-import Toast from './components/Toast.jsx';
-import Offline from './components/Offline.jsx';
-import Confirm from './components/Confirm.jsx';
-import SyncBadge from './components/SyncBadge.jsx';
-import UpgradeModal from './components/UpgradeModal.jsx';
-import UpdateBanner from './components/UpdateBanner.jsx';
-import Onboarding from './components/Onboarding.jsx';
-import { PageSkeleton } from './components/ui.jsx';
-import Login from './views/Login.jsx';
+import { useTx } from './features/transactions/useTx.js';
+import { useProducts } from './features/inventory/useProducts.js';
+import { useLosses } from './features/inventory/useLosses.js';
+import { useSession } from './features/auth/useSession.js';
+import useBrandAppearance from './shared/hooks/useBrandAppearance.js';
+import Sidebar from './shared/ui/Sidebar.jsx';
+import BottomNav from './shared/ui/BottomNav.jsx';
+import Header from './shared/ui/Header.jsx';
+import ThemeToggle from './shared/ui/ThemeToggle.jsx';
+import Toast from './shared/ui/Toast.jsx';
+import Offline from './shared/ui/Offline.jsx';
+import Confirm from './shared/ui/Confirm.jsx';
+import SyncBadge from './shared/ui/SyncBadge.jsx';
+import UpgradeModal from './shared/ui/UpgradeModal.jsx';
+import UpdateBanner from './shared/ui/UpdateBanner.jsx';
+import Onboarding from './shared/ui/Onboarding.jsx';
+import { PageSkeleton } from './shared/ui/ui.jsx';
+import Login from './features/auth/Login.jsx';
 
-const Landing       = lazy(function() { return import('./views/Landing.jsx'); });
-const Dashboard     = lazy(function() { return import('./views/Dashboard.jsx'); });
-const TxView        = lazy(function() { return import('./views/TxView.jsx'); });
-const InventoryView = lazy(function() { return import('./views/InventoryView.jsx'); });
-const ReportView    = lazy(function() { return import('./views/ReportView.jsx'); });
-const EmailView     = lazy(function() { return import('./views/EmailView.jsx'); });
-const SettingsView  = lazy(function() { return import('./views/SettingsView.jsx'); });
-const PlansView      = lazy(function() { return import('./views/PlansView.jsx'); });
-const PrivacyPolicy  = lazy(function() { return import('./views/PrivacyPolicy.jsx'); });
-const TermsOfService = lazy(function() { return import('./views/TermsOfService.jsx'); });
-const BrandStudioView = lazy(function() { return import('./brandStudio/BrandStudioView.jsx'); });
+const Landing       = lazy(function() { return import('./features/landing/Landing.jsx'); });
+const Dashboard     = lazy(function() { return import('./features/dashboard/Dashboard.jsx'); });
+const TxView        = lazy(function() { return import('./features/transactions/TxView.jsx'); });
+const InventoryView = lazy(function() { return import('./features/inventory/InventoryView.jsx'); });
+const ReportView    = lazy(function() { return import('./features/reports/ReportView.jsx'); });
+const EmailView     = lazy(function() { return import('./features/email/EmailView.jsx'); });
+const SettingsView  = lazy(function() { return import('./features/settings/SettingsView.jsx'); });
+const PlansView      = lazy(function() { return import('./features/plans/PlansView.jsx'); });
+const PrivacyPolicy  = lazy(function() { return import('./features/landing/PrivacyPolicy.jsx'); });
+const TermsOfService = lazy(function() { return import('./features/landing/TermsOfService.jsx'); });
+const BrandStudioView = lazy(function() { return import('./features/branding/BrandStudioView.jsx'); });
 
 const VALID_VIEWS = ['dashboard','income','expense','inventory','email','report','settings','planos','brandstudio'];
 const hashView = function() { const h = window.location.hash.replace('#',''); return VALID_VIEWS.includes(h) ? h : 'dashboard'; };
@@ -97,7 +97,7 @@ export default function App() {
     } else {
       el.setAttribute('data-plan-prev', plan);
     }
-  }, [planInfo, session]);
+  }, [planInfo, session, toast]);
 
   // Tema customizado só dentro da área logada; login/landing ficam no padrão.
   useEffect(function() {

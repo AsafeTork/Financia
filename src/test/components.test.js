@@ -2,8 +2,8 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import React from 'react';
-import ThemeToggle from '../components/ThemeToggle.jsx';
-import Offline from '../components/Offline.jsx';
+import ThemeToggle from '../shared/ui/ThemeToggle.jsx';
+import Offline from '../shared/ui/Offline.jsx';
 
 describe('ThemeToggle', function() {
   it('renderiza botao dark qdo theme=dark', function() {

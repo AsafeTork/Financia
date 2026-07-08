@@ -43,11 +43,11 @@ function newSupabaseQuery() {
   };
 }
 
-var mockTransactions;
-var mockProducts;
-var mockLosses;
+var _mockTransactions;
+var _mockProducts;
+var _mockLosses;
 var mockProfiles;
-var mockMeta;
+var _mockMeta;
 var mockQuery;
 
 vi.mock('dexie', function() {
@@ -56,11 +56,11 @@ vi.mock('dexie', function() {
   var l = newTable();
   var pr = newTable();
   var m = newTable();
-  mockTransactions = t;
-  mockProducts = p;
-  mockLosses = l;
+  _mockTransactions = t;
+  _mockProducts = p;
+  _mockLosses = l;
   mockProfiles = pr;
-  mockMeta = m;
+  _mockMeta = m;
   var MockDexie = vi.fn(function() {
     return {
       version: vi.fn().mockReturnThis(),
@@ -87,7 +87,7 @@ vi.mock('./supabase.js', function() {
   };
 });
 
-import { ldb, syncAll } from './db.js';
+import { syncAll } from './sync.js';
 import { sb } from './supabase.js';
 
 var UID = 'test-user-id';
@@ -118,9 +118,9 @@ describe('syncProfiles (via syncAll)', function() {
       user_id: UID,
       name: 'Test Co',
       logo: 'l.png',
-      color: '#000',
-      color_secondary: '#111',
-      color_accent: '#222',
+      color: '#000000',
+      color_secondary: '#111111',
+      color_accent: '#222222',
       theme: 'dark',
       logo_url: 'https://ex.com/l.png',
       white_label: true,
@@ -135,7 +135,7 @@ describe('syncProfiles (via syncAll)', function() {
     mockProfiles.collection.toArray.mockResolvedValue([localRow]);
     mockQuery.maybeSingle.mockResolvedValue({ data: null, error: null });
 
-    var result = await syncAll(UID);
+    var _result = await syncAll(UID);
 
     expect(sb.from).toHaveBeenCalledWith('company_profiles');
     expect(mockQuery.upsert).toHaveBeenCalledTimes(1);
@@ -143,9 +143,9 @@ describe('syncProfiles (via syncAll)', function() {
     expect(payload.white_label).toBe(true);
     expect(payload.user_id).toBe(UID);
     expect(payload.name).toBe('Test Co');
-    expect(payload.color).toBe('#000');
-    expect(payload.color_secondary).toBe('#111');
-    expect(payload.color_accent).toBe('#222');
+    expect(payload.color).toBe('#000000');
+    expect(payload.color_secondary).toBe('#111111');
+    expect(payload.color_accent).toBe('#222222');
     expect(payload.theme).toBe('dark');
     expect(payload.logo_url).toBe('https://ex.com/l.png');
     expect(payload.phone).toBe('11999999999');

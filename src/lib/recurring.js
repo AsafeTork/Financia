@@ -1,4 +1,4 @@
-import { ldb } from './db.js';
+import { ldb } from './dexie.js';
 import { now } from './utils.js';
 
 // Despesas recorrentes fixas (aluguel, contas mensais).

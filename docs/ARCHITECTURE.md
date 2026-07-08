@@ -26,7 +26,8 @@ O Financia é um aplicativo *white-label* de gestão financeira para pequenas em
   - `src/main.jsx`: Ponto de entrada do React.
   - `src/index.css` & `animations.css`: Folha de estilo global com variáveis CSS (tokens) e animações.
   - `src/lib/`: Código JS puro (integrações de APIs, banco local e funções utilitárias).
-    - `db.js`: Dexie + sincronização bidirecional offline-remoto + consultas de administração.
+    - `dexie.js`: Schema Dexie (IndexedDB), instância `ldb`, helpers `toLocal`/`getLastSync`/`setLastSync`.
+    - `sync.js`: Sincronização bidirecional offline-remoto + consultas de administração (`syncAll`, `fetchClients`, etc.).
     - `supabase.js`: Inicialização do cliente Supabase.
     - `auth.js`: Funções de login, logout e reset de senha.
     - `constants.js`: Valores iniciais, limites de plano, presets de cores e objetos de menu.
@@ -216,4 +217,4 @@ Definido no arquivo `.github/workflows/build.yml`. Esse fluxo suporta geração 
 2. **Windows Desktop**: Compila o frontend React do projeto, gera o ícone do instalador com a cor primária do cliente através do script `gen_icon_win.py` e executa o `electron-builder` para criar um executável do instalador NSIS.
 3. **Releases**: Anexa o APK e o EXE compilados na seção de Releases do repositório no GitHub para o cliente baixar.
 
-O frontend dispara esse fluxo de compilação chamando a função `triggerApkBuild` em `src/lib/db.js`, que faz uma requisição autenticada diretamente para a API de workflows do GitHub. Um limitador local de 5 minutos impede requisições consecutivas duplicadas.
+O frontend dispara esse fluxo de compilação chamando a função `triggerApkBuild` em `src/lib/sync.js`, que faz uma requisição autenticada diretamente para a API de workflows do GitHub. Um limitador local de 5 minutos impede requisições consecutivas duplicadas.

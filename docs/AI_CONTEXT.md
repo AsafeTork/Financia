@@ -117,7 +117,7 @@ A sincronização de dados funciona de forma bidirecional e é crucial para mant
                      │
                      ├──> useDataLoader.loadFromLocal(uid) ──> [Lê dados do Dexie e carrega no React State]
                      │
-                     ├──> db.syncAll(uid) ───────────────────> [Push local para Supabase + Pull do Supabase para local]
+                      ├──> syncAll(uid) (lib/sync.js) ────────> [Push local para Supabase + Pull do Supabase para local]
                      │
                      └──> useDataLoader.loadFromLocal(uid) ──> [Re-lê o Dexie atualizado e recarrega na UI]
 ```
@@ -125,7 +125,7 @@ A sincronização de dados funciona de forma bidirecional e é crucial para mant
 ### O Loop de Sincronização (`useSyncLoop.js`)
 Ocorre a cada **2 minutos** ou sempre que o usuário altera o foco da aba (`visibilitychange`). 
 
-> ⚠️ **IMPORTANTE:** Se você adicionar um campo na tabela `company_profiles`, você DEVE adicioná-lo no array `PROFILE_WRITE_FIELDS` em `src/lib/db.js`. Caso contrário, o processo de sincronização irá ignorar o campo e ele sumirá após o refresh da página.
+> ⚠️ **IMPORTANTE:** Se você adicionar um campo na tabela `company_profiles`, você DEVE adicioná-lo no array `PROFILE_WRITE_FIELDS` em `src/lib/sync.js`. Caso contrário, o processo de sincronização irá ignorar o campo e ele sumirá após o refresh da página.
 
 ---
 
@@ -157,7 +157,7 @@ Siga este passo-a-passo exato para não quebrar a sincronização:
    ALTER TABLE company_profiles ADD COLUMN meu_novo_campo TIPO DEFAULT padrao;
    ```
 2. **Constantes do Frontend**: Adicione o campo e seu valor padrão em `INIT_BRAND` dentro de `src/lib/constants.js`.
-3. **Escrita do Banco Local (Dexie)**: Adicione o nome do campo como string no array `PROFILE_WRITE_FIELDS` em `src/lib/db.js`.
+3. **Escrita do Banco Local (Dexie)**: Adicione o nome do campo como string no array `PROFILE_WRITE_FIELDS` em `src/lib/sync.js`.
 4. **Loaders e Estados**:
    - Atualize a chamada `setBrand` dentro de `useDataLoader.js` (no método `loadFromLocal`) para incluir a leitura do novo campo.
    - Atualize o `setBrand` no hook `useSession.js`.

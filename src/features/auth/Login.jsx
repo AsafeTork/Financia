@@ -1,0 +1,285 @@
+import React, { useState } from 'react';
+import { Inp, Spin } from '../../shared/ui/ui.jsx';
+import { signIn, sendPasswordReset, signUp, signInWithGoogle } from '../../lib/auth.js';
+import { passwordStrength, safe, onColor, readableBrand } from '../../lib/utils.js';
+import { SUPPORT_EMAIL } from '../../lib/constants.js';
+import PhoneInput from '../../shared/ui/PhoneInput.jsx';
+
+var ACCENT = '#0f9d6c';
+
+function GoogleBtn({ onClick, loading, label }) {
+  return (
+    <button type="button" onClick={onClick} disabled={loading}
+      className="w-full flex items-center justify-center gap-3 py-3 rounded-xl text-sm font-semibold transition hover:bg-gray-50 disabled:opacity-50"
+      style={{ border: '1px solid #e2e8f0', color: '#1f2937', background: '#fff' }}>
+      <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0012 23z"/><path fill="#FBBC05" d="M5.84 14.1a6.6 6.6 0 010-4.2V7.06H2.18a11 11 0 000 9.88l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1A11 11 0 002.18 7.06l3.66 2.84C6.71 7.31 9.14 5.38 12 5.38z"/></svg>
+      {label}
+    </button>
+  );
+}
+
+export default function Login({ brand }) {
+  var [mode, setMode] = useState('login');
+  var [email, setEmail] = useState('');
+  var [pass, setPass] = useState('');
+  var [suName, setSuName] = useState('');
+  var [suEmail, setSuEmail] = useState('');
+  var [suPhone, setSuPhone] = useState({ e164: '', national: '', valid: false });
+  var [suPass, setSuPass] = useState('');
+  var [accept, setAccept] = useState(false);
+  var [err, setErr] = useState('');
+  var [loading, setLoading] = useState(false);
+  var [signupDone, setSignupDone] = useState(false);
+  var [resetMode, setResetMode] = useState(false);
+  var [resetEmail, setResetEmail] = useState('');
+  var [resetSent, setResetSent] = useState(false);
+
+  var brandColor = (brand && brand.color) || '#002f59';
+  var brandName = (brand && brand.name) || 'Financia';
+  var brandLogo = (brand && brand.logo_url) || null;
+  var pwSt = passwordStrength(suPass);
+
+  // Contraste acessível: o painel da marca pode ter qualquer cor (white-label).
+  var onBrand = onColor(brandColor);                 // texto sobre o painel da marca
+  var lightOnBrand = onBrand === '#ffffff';
+  var onBrandSoft = lightOnBrand ? 'rgba(255,255,255,0.86)' : 'rgba(10,37,64,0.74)';
+  var onBrandFaint = lightOnBrand ? 'rgba(255,255,255,0.46)' : 'rgba(10,37,64,0.5)';
+  var onBrandChip = lightOnBrand ? 'rgba(255,255,255,0.15)' : 'rgba(10,37,64,0.1)';
+  var onBrandBorder = lightOnBrand ? 'rgba(255,255,255,0.25)' : 'rgba(10,37,64,0.18)';
+  var brandGlow = lightOnBrand ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.5)';
+  var brandText = readableBrand(brandColor);          // cor da marca legível sobre fundo claro
+  var revealDelay = function(ms) { return { animationDelay: ms + 'ms', animationFillMode: 'both' }; };
+
+  var switchMode = function(m) { setMode(m); setErr(''); setResetMode(false); setResetSent(false); setSignupDone(false); };
+
+  var login = async function() {
+    if (!email || !pass) return;
+    setLoading(true); setErr('');
+    try {
+      var res = await signIn(email, pass);
+      if (res.error) setErr(res.error.message.indexOf('Invalid') !== -1 ? 'E-mail ou senha incorretos.' : 'Erro ao entrar. Tente novamente.');
+    } catch (e) { setErr('Erro de conexão. Verifique sua internet.'); }
+    finally { setLoading(false); }
+  };
+
+  var doSignup = async function() {
+    if (!suName.trim()) { setErr('Informe o nome da empresa ou o seu nome.'); return; }
+    if (!suEmail.trim()) { setErr('Informe o e-mail.'); return; }
+    if (!suPhone.valid) { setErr('Informe um telefone válido com DDD e código do país.'); return; }
+    if (pwSt.score < 2) { setErr('Escolha uma senha mais forte (8+ caracteres, com números e letras).'); return; }
+    if (!accept) { setErr('Você precisa aceitar as Políticas e os Termos de Uso para criar a conta.'); return; }
+    setLoading(true); setErr('');
+    try {
+      var res = await signUp(suEmail.trim(), suPass, { name: safe(suName), phone: (suPhone.e164 || '').replace(/\D/g, '') });
+      if (res.error) {
+        setErr(res.error.message.indexOf('already') !== -1 ? 'Já existe uma conta com este e-mail.' : 'Não foi possível criar a conta. Tente novamente.');
+      } else if (!(res.data && res.data.session)) {
+        setSignupDone(true);
+      }
+    } catch (e) { setErr('Erro de conexão. Verifique sua internet.'); }
+    finally { setLoading(false); }
+  };
+
+  var doGoogle = async function() {
+    if (mode === 'signup' && !accept) { setErr('Aceite as Políticas e os Termos de Uso para continuar.'); return; }
+    setErr('');
+    try {
+      var res = await signInWithGoogle();
+      if (res && res.error) setErr('Login com Google indisponível no momento.');
+    } catch (e) { setErr('Login com Google indisponível no momento.'); }
+  };
+
+  var resetPassword = async function() {
+    if (!resetEmail) return;
+    setLoading(true); setErr('');
+    var res = await sendPasswordReset(resetEmail);
+    setLoading(false);
+    if (res.error) setErr('Erro ao enviar. Verifique o e-mail.');
+    else setResetSent(true);
+  };
+
+  var onSubmit = function(e) {
+    e.preventDefault();
+    if (resetMode) { if (!resetSent) resetPassword(); return; }
+    if (mode === 'login') login(); else doSignup();
+  };
+
+  return (
+    <div className="min-h-screen flex" style={{ background: '#fbfaf7' }}>
+
+      {/* Painel de marca — metade esquerda (50/50 no desktop) */}
+      <div className="hidden lg:flex flex-col justify-between w-1/2 p-12 relative overflow-hidden" style={{ background: brandColor }}>
+        {/* Glow layers */}
+        <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(80% 60% at 70% 20%, ' + brandGlow + ', transparent 60%)' }} />
+        <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(40% 50% at 20% 80%, rgba(110,198,200,0.08), transparent 60%)' }} />
+        {/* Orbes */}
+        <div className="lp-orb" style={{ width: '380px', height: '380px', top: '-100px', right: '-80px', background: brandGlow, opacity: 0.45 }} />
+        <div className="lp-orb lp-orb-2" style={{ width: '280px', height: '280px', bottom: '-80px', left: '-60px', background: 'rgba(59,191,160,0.08)', opacity: 0.4 }} />
+        {/* Dashboard desfocado no fundo */}
+        <div className="absolute inset-0 opacity-[0.06] pointer-events-none select-none" style={{ transform: 'scale(1.15)' }}>
+          <div className="p-8 pt-14">
+            <div className="rounded-2xl p-4 mb-3" style={{background:'rgba(255,255,255,0.15)'}}>
+              <div className="flex items-end gap-1.5 h-16 mb-1">
+                {[35, 48, 30, 62, 55, 78, 92].map(function(h, i) { return <div key={'lgh-' + i} className="flex-1 rounded-t-sm" style={{height:h+'%', background:'rgba(255,255,255,0.4)'}}/>; })}
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-2 mb-3">
+              {[0,1,2,3].map(function(i) { return <div key={'lkpi-' + i} className="rounded-xl h-14" style={{background:'rgba(255,255,255,0.15)'}}/>; })}
+            </div>
+            <div className="flex flex-col gap-1.5">
+              {[0,1,2].map(function(i) { return <div key={'ltx-' + i} className="rounded-xl h-8" style={{background:'rgba(255,255,255,0.12)'}}/>; })}
+            </div>
+          </div>
+        </div>
+        <div className="relative anim-up">
+          {brandLogo
+            ? <img src={brandLogo} alt="logo" className="w-12 h-12 rounded-2xl object-cover" style={{ border: '2px solid ' + onBrandBorder }} />
+            : <img src="/icon-192.svg" alt="" className="w-12 h-12" />}
+          <p className="font-display font-semibold text-2xl mt-4" style={{ color: onBrand, letterSpacing: '-0.3px' }}>{brandName}</p>
+        </div>
+        <div className="relative">
+          <p className="font-display font-semibold anim-up" style={Object.assign({ color: onBrand, fontSize: '2.25rem', lineHeight: 1.1, letterSpacing: '-1px' }, revealDelay(80))}>
+            O controle do seu negócio começa aqui.
+          </p>
+          <div className="mt-7 flex flex-col gap-3">
+            {['Vendas, despesas e estoque num app só', 'Funciona offline, sincroniza sozinho', 'Relatórios que mostram o seu lucro'].map(function(t, i) {
+              return (
+                <div key={t} className="flex items-center gap-3 anim-up" style={revealDelay(180 + i * 90)}>
+                  <span className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: onBrandChip }}>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={onBrand} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 13l4 4L19 7" /></svg>
+                  </span>
+                  <span className="text-sm" style={{ color: onBrandSoft }}>{t}</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+        <p className="relative text-xs" style={{ color: onBrandFaint }}>Gestão financeira para pequenos negócios</p>
+      </div>
+
+      {/* Formulário */}
+      <div className="flex-1 flex flex-col items-center justify-center p-6 lg:p-12">
+        <div className="w-full max-w-sm">
+
+          <div className="lg:hidden text-center mb-8">
+            {brandLogo
+              ? <img src={brandLogo} alt="logo" className="w-16 h-16 rounded-2xl object-cover mx-auto" style={{ border: '3px solid rgba(0,0,0,0.06)' }} />
+              : <img src="/icon-192.svg" alt="" className="w-16 h-16 mx-auto" />}
+            <p className="font-display font-semibold text-2xl mt-3" style={{ color: brandText, letterSpacing: '-0.3px' }}>{brandName}</p>
+          </div>
+
+          {/* Abas */}
+          <div className="flex p-1 rounded-2xl mb-7 anim-fade-up" style={{ background: 'rgba(10,37,64,0.06)' }}>
+            {[['login', 'Entrar'], ['signup', 'Criar conta']].map(function(t) {
+              var active = mode === t[0] && !resetMode;
+              return (
+                <button key={t[0]} type="button" onClick={function() { switchMode(t[0]); }}
+                  className={'flex-1 min-h-[44px] rounded-xl text-sm font-semibold transition-all duration-200' + (active ? '' : ' hover:text-[#002f59]')}
+                  style={active ? { background: '#fff', color: brandText, boxShadow: '0 1px 4px rgba(0,0,0,0.08)' } : { color: '#7a8794' }}>
+                  {t[1]}
+                </button>
+              );
+            })}
+          </div>
+
+          {signupDone ? (
+            <div className="anim-scale p-5 rounded-2xl text-center flex flex-col gap-2" style={{ background: 'rgba(15,157,108,0.08)', border: '1px solid rgba(15,157,108,0.25)' }}>
+              <p className="font-display text-lg font-semibold" style={{ color: ACCENT }}>Conta criada!</p>
+              <p className="text-sm" style={{ color: '#4b5563' }}>Enviamos um e-mail de confirmação para <b>{suEmail}</b>. Confirme para entrar.</p>
+              <button type="button" onClick={function() { switchMode('login'); }} className="text-xs underline mt-1 min-h-[44px] inline-flex items-center justify-center self-center hover:text-gray-800" style={{ color: '#6b7280' }}>Voltar para entrar</button>
+            </div>
+          ) : resetMode ? (
+            resetSent ? (
+              <div className="anim-scale p-5 rounded-2xl text-center flex flex-col gap-2" style={{ background: 'rgba(15,157,108,0.08)', border: '1px solid rgba(15,157,108,0.25)' }}>
+                <p className="font-semibold text-sm" style={{ color: ACCENT }}>Link enviado!</p>
+                <p className="text-xs" style={{ color: '#4b5563' }}>Verifique seu e-mail para redefinir a senha.</p>
+                <p className="text-xs" style={{ color: '#6b7280' }}>Não recebeu? Veja o spam ou fale com <a href={'mailto:' + SUPPORT_EMAIL} className="underline font-medium" style={{ color: brandText }}>{SUPPORT_EMAIL}</a>.</p>
+                <button type="button" onClick={function() { switchMode('login'); }} className="text-xs underline mt-1 min-h-[44px] inline-flex items-center justify-center self-center hover:text-gray-800" style={{ color: '#6b7280' }}>Voltar ao login</button>
+              </div>
+            ) : (
+              <form onSubmit={onSubmit} className="flex flex-col gap-4">
+                <h2 className="font-display text-2xl font-semibold" style={{ color: '#111827', letterSpacing: '-0.5px' }}>Recuperar senha</h2>
+                <Inp label="E-mail" type="email" value={resetEmail} onChange={function(e) { setResetEmail(e.target.value); }} placeholder="seu@email.com" />
+                {err && <p className="text-xs text-red-500">{err}</p>}
+                <div className="flex gap-2">
+                  <button type="button" onClick={function() { switchMode('login'); }} className="flex-1 min-h-[44px] py-3 rounded-xl border text-sm text-gray-600 flex items-center justify-center gap-1.5 transition hover:bg-gray-50" style={{ borderColor: '#e2e8f0' }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 19l-7-7 7-7" /></svg>
+                    Voltar
+                  </button>
+                  <button disabled={loading || !resetEmail} className="flex-1 min-h-[44px] py-3 rounded-xl text-sm font-semibold disabled:opacity-40 transition hover:opacity-90" style={{ background: brandColor, color: onBrand }}>{loading ? 'Enviando...' : 'Enviar link'}</button>
+                </div>
+              </form>
+            )
+          ) : (
+            <form onSubmit={onSubmit} className="flex flex-col gap-4">
+              <h2 className="font-display text-2xl font-semibold" style={{ color: '#111827', letterSpacing: '-0.5px' }}>
+                {mode === 'login' ? 'Bem-vindo de volta' : 'Crie sua conta grátis'}
+              </h2>
+
+              <GoogleBtn onClick={doGoogle} loading={loading} label={mode === 'login' ? 'Entrar com Google' : 'Cadastrar com Google'} />
+
+              <div className="flex items-center gap-3 my-1">
+                <div className="flex-1 h-px" style={{ background: '#e8e4db' }} />
+                <span className="text-xs" style={{ color: '#9aa5b1' }}>ou</span>
+                <div className="flex-1 h-px" style={{ background: '#e8e4db' }} />
+              </div>
+
+              {mode === 'signup' && (
+                <Inp label="Nome da empresa ou seu nome" value={suName} onChange={function(e) { setSuName(e.target.value); }} placeholder="Ex: Padaria do João" />
+              )}
+
+              <Inp label="E-mail" type="email"
+                value={mode === 'login' ? email : suEmail}
+                onChange={function(e) { (mode === 'login' ? setEmail : setSuEmail)(e.target.value); }}
+                placeholder="seu@email.com" />
+
+              {mode === 'signup' && (
+                <PhoneInput label="Telefone (com código do país)" value={suPhone.e164 || ''} onChange={setSuPhone} />
+              )}
+
+              <div>
+                <Inp label="Senha" type="password"
+                  value={mode === 'login' ? pass : suPass}
+                  onChange={function(e) { (mode === 'login' ? setPass : setSuPass)(e.target.value); }}
+                  placeholder={mode === 'login' ? 'Sua senha' : 'Crie uma senha forte'} />
+                {mode === 'signup' && suPass.length > 0 && (
+                  <div className="mt-2">
+                    <div className="h-1.5 rounded-full overflow-hidden" style={{ background: '#eceae3' }}>
+                      <div className="h-full rounded-full transition-all" style={{ width: pwSt.pct + '%', background: pwSt.color }} />
+                    </div>
+                    <p className="text-xs mt-1 font-medium" style={{ color: pwSt.color }}>Senha {pwSt.label.toLowerCase()}</p>
+                  </div>
+                )}
+              </div>
+
+              {err && (
+                <div className="anim-up flex items-center gap-2 px-3 py-2.5 rounded-xl" style={{ background: '#fef2f2', border: '1px solid #fecaca' }}>
+                  <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="#ef4444" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" /></svg>
+                  <p className="text-xs font-medium text-red-600">{err}</p>
+                </div>
+              )}
+
+              {mode === 'login' && (
+                <button type="button" onClick={function() { setResetMode(true); setErr(''); }} className="text-xs self-end -mt-1 min-h-[44px] inline-flex items-center hover:text-gray-700" style={{ color: '#7a8794' }}>Esqueceu a senha?</button>
+              )}
+
+              {mode === 'signup' && (
+                <label className="flex items-start gap-2.5 cursor-pointer select-none py-1">
+                  <input type="checkbox" checked={accept} onChange={function(e) { setAccept(e.target.checked); setErr(''); }}
+                    className="mt-0.5 w-4 h-4 flex-shrink-0 cursor-pointer" style={{ accentColor: brandColor }} />
+                  <span className="text-xs leading-relaxed" style={{ color: '#5b6b7c' }}>
+                    Li e aceito as <a href="#privacidade" className="underline font-medium" style={{ color: brandText }}>Políticas de Privacidade</a> e os <a href="#termos" className="underline font-medium" style={{ color: brandText }}>Termos de Uso</a>.
+                  </span>
+                </label>
+              )}
+
+              <button disabled={loading || (mode === 'signup' && !accept)} className="w-full rounded-xl py-3.5 text-sm font-semibold flex items-center justify-center gap-2 disabled:opacity-50 transition hover:opacity-90" style={{ background: brandColor, color: onBrand }}>
+                {loading ? <Spin white={lightOnBrand} /> : (mode === 'login' ? 'Entrar' : 'Criar conta grátis')}
+              </button>
+            </form>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

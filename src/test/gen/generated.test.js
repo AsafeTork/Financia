@@ -14,7 +14,7 @@ import {
 } from '../../lib/constants.js';
 import { friendlyStripeError, stripeAppearance } from '../../lib/stripe.js';
 import { periodOf, daysInMonth, dueDate, recurringId, isRecurringId, activeTemplates, buildRecurringRow } from '../../lib/recurring.js';
-import { parsePhone, buildPhone } from '../../components/PhoneInput.jsx';
+import { parsePhone, buildPhone } from '../../shared/ui/PhoneInput.jsx';
 
 var HEX_RE = /^#[0-9a-f]{6}$/i;
 // 20 hexes representativos (8 invariantes x 20 = 160 testes vs 400 antes)
