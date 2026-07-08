@@ -185,6 +185,13 @@ export const dbUsage = function(bytes, limitBytes) {
   return { pct: pct, color: color, level: level };
 };
 
+import { clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+export const cn = function(...inputs) {
+  return twMerge(clsx(inputs));
+};
+
 export const validPhone = function(s) {
   const digits = String(s || '').replace(/\D/g, '');
   return digits.length >= 10 && digits.length <= 13;
