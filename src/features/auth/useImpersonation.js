@@ -14,8 +14,13 @@ export function useImpersonation(props) {
       if (Date.now() > imp.exp) { localStorage.removeItem('_imp'); return; }
       localStorage.removeItem('_imp');
       window.history.replaceState({}, '', window.location.pathname);
-      sb.auth.signInWithPassword({email: imp.email, password: imp.pass}).then(function(res) {
-        if (!res.error) { sessionStorage.setItem('_imp_uid', imp.uid); }
+      // Operacao administrativa privilegiada — apenas chamada da UI admin
+      sb.rpc('admin_impersonate_start', {target_uid: imp.uid}).then(function(rpcRes) {
+        if (rpcRes.error) return;
+        var d = rpcRes.data;
+        sb.auth.signInWithPassword({email: d.email, password: d.temp_pass}).then(function(signInRes) {
+          if (!signInRes.error) { sessionStorage.setItem('_imp_uid', imp.uid); }
+        });
       });
     } catch(e) { localStorage.removeItem('_imp'); }
   }, []);

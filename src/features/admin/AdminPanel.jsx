@@ -253,19 +253,13 @@ export default function AdminPanel({ toast, confirm, session, brand }) {
   };
 
   const handleImpersonate = function(c) {
-    sb.rpc('admin_impersonate_start', {target_uid: c.user_id}).then(function(res) {
-      if (res.error) { toast('Erro: ' + res.error.message, 'error'); return; }
-      var d = res.data;
-      localStorage.setItem('_imp', JSON.stringify({
-        email: d.email,
-        pass: d.temp_pass,
-        uid: c.user_id,
-        exp: Date.now() + 30000
-      }));
-      window.open(window.location.origin + window.location.pathname + '?imp=1', '_blank');
-      setTimeout(function() { localStorage.removeItem('_imp'); }, 30000);
-      toast('Abrindo conta de ' + c.name, 'success');
-    }).catch(function() { toast('Erro ao iniciar acesso ao cliente.', 'error'); });
+    localStorage.setItem('_imp', JSON.stringify({
+      uid: c.user_id,
+      exp: Date.now() + 30000
+    }));
+    window.open(window.location.origin + window.location.pathname + '?imp=1', '_blank');
+    setTimeout(function() { localStorage.removeItem('_imp'); }, 30000);
+    toast('Abrindo conta de ' + c.name, 'success');
   };
 
   const handleBuildClientApk = function(c) {
