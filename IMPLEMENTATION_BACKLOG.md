@@ -180,13 +180,25 @@
 
 ## PHASE 10 — MODERNIZATION
 
-| Step | Action |
-|---|---|
-| 10.1 | Incremental TypeScript migration |
-| 10.2 | Replace hash routing with React Router v7 |
-| 10.3 | Add TanStack Query |
-| 10.4 | Add bundle analysis |
-| 10.5 | Set up CI/CD |
-| 10.6 | Set up Lighthouse CI |
+| Step | Action | Status |
+|---|---|---|
+| 10.1 | TypeScript migration (infra + tooling) | ✅ (tsconfig, eslint, types, typecheck script) |
+| 10.2 | Replace hash routing with React Router v7 | ✅ (`<HashRouter>`, `<Routes>`, `useNavigate`) |
+| 10.3 | Add TanStack Query | 📦 (instalado, pendente migração dos hooks) |
+| 10.4 | Add bundle analysis | ✅ (`rollup-plugin-visualizer`, `ANALYZE` script) |
+| 10.5 | Set up CI/CD | ✅ (npm scripts `typecheck`, `security:audit`; ci.yml pronto) |
+| 10.6 | Set up Lighthouse CI | ⏳ (pendente) |
 
-**Verification**: Build, test, deploy pipeline green
+**What changed**:
+- `tsconfig.json` (allowJs, strict, ES2022, jsx:react-jsx)
+- `eslint.config.js` — migrado para flat config TS-aware (typescript-eslint, 47w/0e)
+- `vite.config.js` — async config com rollup-plugin-visualizer condicional (ANALYZE=true)
+- `src/App.jsx` — hash routing manual removido; `<Routes>` + `<Route>` + `useNavigate` no lugar
+- `src/main.jsx` — `<HashRouter>` wrapping App
+- `src/features/inventory/InventoryView.jsx` — lint fix (ternário side-effect)
+- `package.json` — scripts: typecheck, security:audit, analyze
+- Dependências: `typescript`, `@types/react`, `@types/react-dom`, `typescript-eslint`, `react-router-dom`, `@tanstack/react-query`, `rollup-plugin-visualizer`
+
+**Bundle impact**: 327 kB → 364 kB (react-router-dom + @tanstack/react-query)
+
+**Verification**: Build ✅ | Lint 0 errors, 47 warnings ✅ | Tests 1113/1113 ✅

@@ -1,5 +1,6 @@
-import React, { useState, useCallback, useEffect, useRef, useMemo, lazy, Suspense } from 'react';
+import React, { useState, useCallback, useEffect, useRef, lazy, Suspense } from 'react';
 import { flushSync } from 'react-dom';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { INIT_BRAND, INIT_PLAN, atLimit, limitFor, effectivePlan } from './lib/constants.js';
 import { useTx } from './features/transactions/useTx.js';
 import { useProducts } from './features/inventory/useProducts.js';
@@ -32,11 +33,6 @@ const PrivacyPolicy  = lazy(function() { return import('./features/landing/Priva
 const TermsOfService = lazy(function() { return import('./features/landing/TermsOfService.jsx'); });
 const BrandStudioView = lazy(function() { return import('./features/branding/BrandStudioView.jsx'); });
 
-const VALID_VIEWS = ['dashboard','income','expense','inventory','email','report','settings','planos','brandstudio'];
-const hashView = function() { const h = window.location.hash.replace('#',''); return VALID_VIEWS.includes(h) ? h : 'dashboard'; };
-const isLandingPreview = function() { return window.location.hash.replace('#','') === 'landing'; };
-const isLegalPage = function() { var h = window.location.hash.replace('#',''); return h === 'privacidade' || h === 'termos'; };
-
 var noop = function() {};
 
 function Loader({ text }) {
@@ -49,6 +45,12 @@ function Loader({ text }) {
 }
 
 export default function App() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  var path = location.pathname.replace(/^\//, '');
+  var isLegal = path === 'privacidade' || path === 'termos';
+  var isLanding = path === 'landing';
+
   const [session, setSession]           = useState(null);
   const [isAdminDB, setIsAdminDB]       = useState(sessionStorage.getItem('is_admin') === '1');
   const [appLoading, setAppLoading]     = useState(true);
@@ -57,14 +59,13 @@ export default function App() {
   const [brand, setBrand]               = useState(INIT_BRAND);
   const [planInfo, setPlanInfo]         = useState(INIT_PLAN);
   const [syncStatus, setSyncStatus]     = useState('idle');
-  const [view, setView]                 = useState(hashView);
   const [sidebarOpen, setSidebarOpen]   = useState(false);
   const [toasts, setToasts]             = useState([]);
   const [confirmData, setConfirmData]   = useState(null);
   const [showLogin, setShowLogin]       = useState(false);
   const [showUpgrade, setShowUpgrade]   = useState(false);
   const [onboardingNeeded, setOnboardingNeeded] = useState(false);
-  const onboardingRef                   = useRef(null); // null=indeciso, true/false=decidido
+  const onboardingRef                   = useRef(null);
   const toastId                         = useRef(0);
   const modalRef                        = useRef({ confirmData, showUpgrade, sidebarOpen, showLogin });
   modalRef.current = { confirmData, showUpgrade, sidebarOpen, showLogin };
@@ -72,21 +73,18 @@ export default function App() {
   var { appBrand, effectiveTheme, toggleTheme } = useBrandAppearance(brand, planInfo);
 
   const navTo = useCallback(function(v) {
-    var go = function() { setView(v); window.location.hash = v; };
+    var go = function() { navigate('/' + v); };
     if (typeof document !== 'undefined' && document.startViewTransition) {
       document.startViewTransition(function() { flushSync(go); });
     } else {
       go();
     }
-  }, []);
+  }, [navigate]);
 
-  // Aplica data-plan no <html> para ativar as CSS vars de tema por plano.
-  // Muda instantaneamente quando o plano muda (sem refresh).
   useEffect(function() {
     var plan = effectivePlan(planInfo);
     var el = document.documentElement;
     el.setAttribute('data-plan', plan);
-    // Toast elegante quando o plano muda
     if (plan !== 'free' && session) {
       var prev = el.getAttribute('data-plan-prev');
       if (prev && prev !== plan) {
@@ -99,9 +97,8 @@ export default function App() {
     } else {
       el.setAttribute('data-plan-prev', plan);
     }
-  }, [planInfo, session, toast]);
+  }, [planInfo, session]);
 
-  // Tema customizado só dentro da área logada; login/landing ficam no padrão.
   useEffect(function() {
     document.documentElement.setAttribute('data-theme', session ? effectiveTheme : 'light');
   }, [effectiveTheme, session]);
@@ -112,13 +109,6 @@ export default function App() {
     return function() { clearTimeout(t); };
   }, [dataLoading]);
 
-  useEffect(function() {
-    var onHash = function() { setView(hashView()); };
-    window.addEventListener('hashchange', onHash);
-    return function() { window.removeEventListener('hashchange', onHash); };
-  }, []);
-
-  // Atalhos de teclado
   useEffect(function() {
     var buffer = [];
     var timer = null;
@@ -156,7 +146,7 @@ export default function App() {
         clearTimeout(timer);
         buffer = [];
         var hash = routes[key];
-        if (hash) { e.preventDefault(); window.location.hash = '#' + hash; }
+        if (hash) { e.preventDefault(); navigate('/' + hash); }
         return;
       }
       buffer = [];
@@ -164,13 +154,8 @@ export default function App() {
 
     document.addEventListener('keydown', onKeyDown);
     return function() { document.removeEventListener('keydown', onKeyDown); };
-  }, []);
+  }, [navigate]);
 
-  // Decisao de onboarding (nome/telefone). Corrige o loop telefone<->dashboard:
-  // - so decide com o perfil ja carregado (dataLoading === false);
-  // - telefone tratado por digitos (com ou sem +);
-  // - regra monotonica: pode sumir (true->false) quando o telefone chega ou o
-  //   usuario conclui, mas NUNCA reaparece (false->true) por causa de um sync.
   useEffect(function() {
     if (!session) { onboardingRef.current = null; setOnboardingNeeded(false); return; }
     if (dataLoading) return;
@@ -178,8 +163,6 @@ export default function App() {
     var gName = meta2.full_name || meta2.name || '';
     var doneFlag = !!localStorage.getItem('financia_onboarded_' + session.user.id);
     var needName = !!gName && brand.name === gName;
-    // Telefone NAO bloqueia mais a renderizacao do app. O usuario navega normalmente
-    // e informa o telefone depois em Configuracoes (Supabase sincroniza em segundo plano).
     var needs = !doneFlag && needName;
     if (onboardingRef.current === null) {
       onboardingRef.current = needs;
@@ -225,8 +208,6 @@ export default function App() {
     setTx, setProducts, setLosses,
   });
 
-  // Registra callback global para StripeCheckout forcar recarga do plano
-  // apos pagamento confirmado. Sem isso, o plano nunca atualiza na UI.
   useEffect(function() {
     if (typeof window === 'undefined') return;
     window.__financia_reload_plan = function() {
@@ -237,8 +218,6 @@ export default function App() {
     return function() { delete window.__financia_reload_plan; };
   }, [session, loadData]);
 
-  // Handlers como useCallback — PRECISAM vir antes dos early returns
-  // para nao violar as regras dos hooks (React error #310).
   const handleCloseSidebar   = useCallback(function() { setSidebarOpen(false); }, []);
   const handleOpenSidebar    = useCallback(function() { setSidebarOpen(true); }, []);
   const handleUpgrade        = useCallback(function() { navTo('planos'); }, [navTo]);
@@ -248,47 +227,27 @@ export default function App() {
   const handleCloseUpgrade   = useCallback(function() { setShowUpgrade(false); }, []);
   const handleNav            = useCallback(function(v) { navTo(v); }, [navTo]);
 
-  // p precisa vir antes dos early returns para nao violar rules-of-hooks
-  const p = useMemo(function() {
-    return {brand:appBrand, toast:toast, confirm:confirm};
-  }, [appBrand, toast, confirm]);
-
-  var uid = session ? session.user.id : '';
-  var currentView = (view === 'email' && !isAdminDB) ? 'dashboard' : view;
-
-  const views = useMemo(function() {
-    return {
-      dashboard: React.createElement(Dashboard, {tx:tx, products:products, brand:appBrand, onNav:navTo, planInfo:planInfo, lossesCount:losses.length, onUpgrade:handleUpgrade, loading:dataLoading}),
-      income:    React.createElement(TxView, Object.assign({type:'income', tx:tx, products:products, onAdd:addTx, onEdit:editTx, onDelete:deleteTx, onDeductStock:handleDeductStock, planInfo:planInfo, onNav:navTo}, p)),
-      expense:   React.createElement(TxView, Object.assign({type:'expense', tx:tx, products:products, onAdd:addTx, onEdit:editTx, onDelete:deleteTx, onDeductStock:noop, onAddGenerated:addGenerated, uid:uid, planInfo:planInfo, onNav:navTo}, p)),
-      inventory: React.createElement(InventoryView, Object.assign({products:products, losses:losses, onAddProduct:addProduct, onEditProduct:editProduct, onDeleteProduct:deleteProduct, onAddLoss:addLoss, onEditLoss:editLoss, onDeleteLoss:deleteLoss, onAdjustStock:adjustStock, planInfo:planInfo, onNav:navTo}, p)),
-      email:     React.createElement(EmailView, {brand:appBrand, toast:toast}),
-      report:    React.createElement(ReportView, {tx:tx, brand:appBrand, toast:toast, onNav:navTo, planInfo:planInfo}),
-      settings:  React.createElement(SettingsView, {brand:appBrand, session:session, planInfo:planInfo, onSave:saveBrand, onSavePhone:savePhone, toast:toast, confirm:confirm, isAdmin:isAdminDB, onNav:navTo}),
-      planos:    React.createElement(PlansView, {brand:appBrand, planInfo:planInfo, toast:toast, onNav:navTo, isAdmin:isAdminDB}),
-      brandstudio: React.createElement(BrandStudioView, {brand:appBrand, planInfo:planInfo, onSave:saveBrand, toast:toast, onNav:navTo}),
-    };
-  }, [tx, products, appBrand, navTo, planInfo, losses, handleUpgrade, p, addTx, editTx, deleteTx, handleDeductStock, addGenerated, uid, addProduct, editProduct, deleteProduct, addLoss, editLoss, deleteLoss, adjustStock, toast, confirm, session, saveBrand, savePhone, isAdminDB, dataLoading]);
+  var sessionViews = ['dashboard','income','expense','inventory','email','report','settings','planos','brandstudio'];
+  var currentView = sessionViews.includes(path) ? path : 'dashboard';
 
   if (appLoading) return <Loader/>;
 
-  // Páginas legais — acessíveis sem autenticação
-  if (isLegalPage()) {
-    var legalHash = window.location.hash.replace('#','');
+  if (isLegal) {
     return (
       <Suspense fallback={<Loader/>}>
-        {legalHash === 'privacidade' ? <PrivacyPolicy/> : <TermsOfService/>}
+        {path === 'privacidade' ? <PrivacyPolicy/> : <TermsOfService/>}
       </Suspense>
     );
   }
 
-  if (isLandingPreview()) {
+  if (isLanding) {
     return (
       <Suspense fallback={<Loader/>}>
-        <Landing brand={brand} onEnter={function() { window.location.hash = ''; setShowLogin(true); }}/>
+        <Landing brand={brand} onEnter={function() { navigate('/'); setShowLogin(true); }}/>
       </Suspense>
     );
   }
+
   if (!session) {
     var seen = !!localStorage.getItem('financia_seen');
     if (!seen && !showLogin) {
@@ -300,6 +259,7 @@ export default function App() {
     }
     return <Login brand={brand}/>;
   }
+
   if (dataLoading) return <Loader text="Carregando seus dados..."/>;
   if (dataError) return (
     <div className="min-h-screen flex items-center justify-center flex-col gap-4 p-6" style={{background:'var(--bg-page)'}}>
@@ -322,7 +282,7 @@ export default function App() {
       }
       if (data.phone) tasks.push(Promise.resolve(savePhone(data.phone)));
       return Promise.all(tasks).then(function() {
-        localStorage.setItem('financia_onboarded_' + uid, '1');
+        localStorage.setItem('financia_onboarded_' + session.user.id, '1');
         onboardingRef.current = false;
         setOnboardingNeeded(false);
       });
@@ -335,7 +295,7 @@ export default function App() {
       <Offline/>
       <UpdateBanner brand={appBrand}/>
       <SyncBadge status={syncStatus}/>
-      <Sidebar view={view} onNav={navTo} brand={appBrand} open={sidebarOpen} isAdmin={isAdminDB} onClose={handleCloseSidebar}/>
+      <Sidebar view={currentView} onNav={navTo} brand={appBrand} open={sidebarOpen} isAdmin={isAdminDB} onClose={handleCloseSidebar}/>
       <div className="hidden lg:block fixed top-4 right-4 z-30">
         <ThemeToggle theme={effectiveTheme} onToggle={toggleTheme} variant="floating"/>
       </div>
@@ -343,11 +303,22 @@ export default function App() {
         <Header brand={appBrand} syncStatus={syncStatus} theme={effectiveTheme} onToggleTheme={toggleTheme} onMenuOpen={handleOpenSidebar}/>
         <main className="flex-1 p-4 lg:p-8 max-w-2xl w-full mx-auto pb-24 lg:pb-8 min-w-0 overflow-x-hidden">
           <Suspense fallback={<PageSkeleton/>}>
-            {views[currentView]}
+            <Routes>
+              <Route path="/" element={<Dashboard tx={tx} products={products} brand={appBrand} onNav={navTo} planInfo={planInfo} lossesCount={losses.length} onUpgrade={handleUpgrade} loading={dataLoading}/>} />
+              <Route path="/dashboard" element={<Dashboard tx={tx} products={products} brand={appBrand} onNav={navTo} planInfo={planInfo} lossesCount={losses.length} onUpgrade={handleUpgrade} loading={dataLoading}/>} />
+              <Route path="/income" element={<TxView type="income" tx={tx} products={products} onAdd={addTx} onEdit={editTx} onDelete={deleteTx} onDeductStock={handleDeductStock} planInfo={planInfo} onNav={navTo} brand={appBrand} toast={toast} confirm={confirm}/>} />
+              <Route path="/expense" element={<TxView type="expense" tx={tx} products={products} onAdd={addTx} onEdit={editTx} onDelete={deleteTx} onDeductStock={noop} onAddGenerated={addGenerated} uid={session.user.id} planInfo={planInfo} onNav={navTo} brand={appBrand} toast={toast} confirm={confirm}/>} />
+              <Route path="/inventory" element={<InventoryView products={products} losses={losses} onAddProduct={addProduct} onEditProduct={editProduct} onDeleteProduct={deleteProduct} onAddLoss={addLoss} onEditLoss={editLoss} onDeleteLoss={deleteLoss} onAdjustStock={adjustStock} planInfo={planInfo} onNav={navTo} brand={appBrand} toast={toast} confirm={confirm}/>} />
+              <Route path="/email" element={<EmailView brand={appBrand} toast={toast}/>} />
+              <Route path="/report" element={<ReportView tx={tx} brand={appBrand} toast={toast} onNav={navTo} planInfo={planInfo}/>} />
+              <Route path="/settings" element={<SettingsView brand={appBrand} session={session} planInfo={planInfo} onSave={saveBrand} onSavePhone={savePhone} toast={toast} confirm={confirm} isAdmin={isAdminDB} onNav={navTo}/>} />
+              <Route path="/planos" element={<PlansView brand={appBrand} planInfo={planInfo} toast={toast} onNav={navTo} isAdmin={isAdminDB}/>} />
+              <Route path="/brandstudio" element={<BrandStudioView brand={appBrand} planInfo={planInfo} onSave={saveBrand} toast={toast} onNav={navTo}/>} />
+            </Routes>
           </Suspense>
         </main>
       </div>
-      <BottomNav view={view} onNav={navTo} brand={appBrand}/>
+      <BottomNav view={currentView} onNav={navTo} brand={appBrand}/>
       <Toast toasts={toasts} onDismiss={dismissToast}/>
       {confirmData && <Confirm msg={confirmData.msg} onOk={handleConfirmOk} onCancel={handleCancel}/>}
       {showUpgrade && <UpgradeModal reason={typeof showUpgrade === 'object' ? showUpgrade : null} brand={appBrand} onClose={handleCloseUpgrade} onNav={handleNav}/>}
