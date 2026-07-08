@@ -187,7 +187,7 @@
 | 10.3 | Add TanStack Query | ✅ (QueryClientProvider + infra pronta) |
 | 10.4 | Add bundle analysis | ✅ (`rollup-plugin-visualizer`, `ANALYZE` script) |
 | 10.5 | Set up CI/CD | ✅ (npm scripts `typecheck`, `security:audit`; ci.yml pronto) |
-| 10.6 | Set up Lighthouse CI | ⏳ (pendente) |
+| 10.6 | Set up Lighthouse CI | ✅ (.lighthouseci.config.js configurado) |
 
 **What changed**:
 - `tsconfig.json` (allowJs, strict, ES2022, jsx:react-jsx)
