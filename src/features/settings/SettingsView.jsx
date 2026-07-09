@@ -149,7 +149,8 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
     if (!hasWhiteLabel) return;
     setApkBusy(true);
     try {
-      var res = await triggerApkBuild(appForm.name || brand.name, appForm.logo_url || brand.logo_url, appForm.color || brand.color);
+      var ghToken = localStorage.getItem('nancia_gh_token') || '';
+      var res = await triggerApkBuild(appForm.name || brand.name, appForm.logo_url || brand.logo_url, appForm.color || brand.color, ghToken);
       if (res && res.ok) {
         toast('Build do APK personalizado iniciado! Em alguns minutos, abra o botão de download.', 'success');
       } else if (res && res.reason === 'no_token') {

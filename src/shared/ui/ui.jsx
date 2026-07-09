@@ -1,46 +1,51 @@
+// DEPRECATED — migrate to individual shadcn components
 import React from 'react';
 import { cleanNumeric } from '../../lib/utils.js';
+import { Card as ShadcnCard } from './card.jsx';
+import { Input } from './input.jsx';
+import { Badge as ShadcnBadge } from './badge.jsx';
+import { Button } from './button.jsx';
+import { Textarea as ShadcnTextarea } from './textarea.jsx';
+import { Spinner } from './spinner.jsx';
+import { Label } from './label.jsx';
 
 export const Card = function({ children, className, hover, variant, accent, color }) {
-  var base = 'rounded-2xl ';
-  if (hover) base += 'card-hover ';
-  var shadow = variant === 'flat' ? 'none' : variant === 'raised' ? 'var(--shadow-md)' : 'var(--shadow-sm)';
+  var cls = (className || '');
+  if (hover) cls += ' card-hover';
+  if (variant === 'flat') cls += ' shadow-none';
+  if (variant === 'raised') cls += ' shadow-md';
   return (
-    <div className={base + (className || '')} style={{position:'relative', overflow:'hidden', background:'var(--bg-card)', border:'1px solid var(--border)', boxShadow: shadow, borderRadius: '16px'}}>
-      {accent && <div style={{position:'absolute', top:0, left:0, right:0, height:3, background: color || 'var(--brand-grad, var(--brand))'}}/>}
+    <ShadcnCard className={'overflow-hidden ' + cls}>
+      {accent && <div style={{position:'absolute', top:0, left:0, right:0, height:3, background: color || 'var(--brand-grad, var(--brand))', zIndex:1}}/>}
       {children}
-    </div>
+    </ShadcnCard>
   );
 };
 
 export const Inp = function({ label, hint, error, success, className, icon, id, ...p }) {
   var generatedId = React.useId();
   var inputId = id || generatedId;
-  var borderColor = error ? '#ef4444' : success ? '#22c55e' : '';
   return (
     <div className={'flex flex-col gap-1.5 min-w-0 ' + (className || '')}>
       {label && (
         <div className="flex items-center gap-1.5">
-          {icon && <span className="text-gray-400">{icon}</span>}
-          <label htmlFor={inputId} className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{label}</label>
+          {icon && <span className="text-muted-foreground">{icon}</span>}
+          <Label htmlFor={inputId} className="text-xs font-semibold uppercase tracking-wide">{label}</Label>
         </div>
       )}
-      <input id={inputId}
-        className="border rounded-xl px-3.5 py-3 text-sm transition w-full focus:outline-none"
-        style={Object.assign({background:'var(--bg-input)', color:'var(--text-main)', borderColor: borderColor || 'var(--border-md)'}, {})}
+      <Input id={inputId}
+        className={'h-auto py-3 px-3.5 ' + (error ? 'border-destructive focus-visible:ring-destructive' : success ? 'border-green-500' : '')}
+        aria-invalid={error ? 'true' : undefined}
+        aria-describedby={error ? inputId + '-error' : undefined}
         {...p}
       />
       {(hint || error) && (
-        <p className={'text-xs mt-0.5 ' + (error ? 'text-red-500' : 'text-gray-400')}>{error || hint}</p>
+        <p id={error ? inputId + '-error' : undefined} className={'text-xs mt-0.5 ' + (error ? 'text-destructive font-medium' : 'text-muted-foreground')}>{error || hint}</p>
       )}
     </div>
   );
 };
 
-// Input numerico com tratamento estrito:
-// - bloqueia caracteres invalidos (so digitos + 1 separador decimal quando decimals)
-// - limita o comprimento (maxLen) para evitar estouro de layout
-// - ao digitar simbolo invalido, exibe "Caracteres nao permitidos" em vez do erro de valor
 export const NumInp = function(props) {
   var decimals = props.decimals !== false;
   var maxLen = props.maxLen || (decimals ? 12 : 7);
@@ -73,8 +78,11 @@ export const Sel = function({ label, className, children, id, ...p }) {
   var selectId = id || generatedId;
   return (
     <div className={'flex flex-col gap-1.5 min-w-0 ' + (className || '')}>
-      {label && <label htmlFor={selectId} className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{label}</label>}
-      <select id={selectId} className="border border-gray-200 rounded-xl px-3 py-3 text-sm transition w-full" style={{background:'var(--bg-input)', color:'var(--text-main)'}} {...p}>{children}</select>
+      {label && <Label htmlFor={selectId} className="text-xs font-semibold uppercase tracking-wide">{label}</Label>}
+      <select id={selectId}
+        className="flex h-10 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+        {...p}
+      >{children}</select>
     </div>
   );
 };
@@ -84,47 +92,31 @@ export const Textarea = function({ label, className, id, ...p }) {
   var textareaId = id || generatedId;
   return (
     <div className={'flex flex-col gap-1.5 ' + (className || '')}>
-      {label && <label htmlFor={textareaId} className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{label}</label>}
-      <textarea id={textareaId} className="border border-gray-200 rounded-xl px-3 py-3 text-sm transition w-full resize-none" style={{background:'var(--bg-input)', color:'var(--text-main)'}} rows={6} {...p}/>
+      {label && <Label htmlFor={textareaId} className="text-xs font-semibold uppercase tracking-wide">{label}</Label>}
+      <ShadcnTextarea id={textareaId} className="resize-none min-h-[120px]" rows={6} {...p}/>
     </div>
   );
 };
 
 export const Spin = function({ white, size }) {
-  var sz = size === 'sm' ? 'w-4 h-4' : 'w-5 h-5';
-  return (
-    <div className={sz + ' border-2 rounded-full animate-spin flex-shrink-0 ' + (white ? 'border-white border-t-transparent' : 'border-gray-300 border-t-gray-700')}/>
-  );
-};
-
-var BTN_VARIANTS = {
-  primary:   'text-white hover:brightness-110 disabled:opacity-40 btn-plan-grad',
-  secondary: 'border border-[var(--border)] text-[var(--text-sub)] bg-[var(--bg-card)] hover:bg-[var(--bg-subtle)] disabled:opacity-40',
-  ghost:     'text-[var(--text-sub)] hover:bg-[var(--bg-subtle)] disabled:opacity-40',
-  danger:    'text-white bg-[#dc2626] hover:bg-[#b91c1c] disabled:opacity-40',
-};
-var BTN_SIZES = {
-  sm: 'px-3.5 py-2 text-xs rounded-xl',
-  md: 'px-4 py-2.5 text-sm rounded-xl',
-  lg: 'px-6 py-3 text-sm rounded-2xl',
+  return <Spinner className={white ? 'text-white' : 'text-muted-foreground'} size={size}/>
 };
 
 export const Btn = function({ variant, size, loading, children, style, className, ...p }) {
-  var v = variant || 'primary';
-  var s = size || 'md';
+  var v = variant === 'danger' ? 'destructive' : variant === 'secondary' ? 'outline' : variant || 'default';
+  var s = size || 'default';
+  if (s === 'md') s = 'default';
   return (
-    <button
-      className={'font-semibold flex items-center justify-center gap-2 transition ' + BTN_VARIANTS[v] + ' ' + BTN_SIZES[s] + ' ' + (className || '')}
-      style={style}
-      disabled={loading || p.disabled}
-      {...p}
-    >
-      {loading ? <Spin white={v === 'primary' || v === 'danger'} size="sm"/> : children}
-    </button>
+    <Button variant={v} size={s} disabled={loading || p.disabled} className={className} style={style} {...p}>
+      {loading ? <Spinner size="sm" className={v === 'default' || v === 'destructive' ? 'text-white' : ''}/> : children}
+    </Button>
   );
 };
 
-export const Badge = function({ color, bg, children }) {
+export const Badge = function({ color, bg, children, variant, className }) {
+  if (variant) {
+    return <ShadcnBadge variant={variant} className={className}>{children}</ShadcnBadge>;
+  }
   return (
     <span
       className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold"
@@ -138,20 +130,20 @@ export const Badge = function({ color, bg, children }) {
 export const Empty = function({ icon, title, sub, action, onAction, color }) {
   return (
     <div className="py-14 flex flex-col items-center gap-3 text-center px-6">
-      <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-1" style={{background: color ? 'rgba(0,0,0,0.04)' : '#f1f5f9'}}>
+      <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-1" style={{background: 'var(--brand-soft)'}}>
         {icon && typeof icon === 'string' && icon.length <= 2
           ? <span className="text-2xl">{icon}</span>
           : icon
           ? icon
           : (
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke={color || '#94a3b8'} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--brand)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
             </svg>
           )
         }
       </div>
-      <p className="text-sm font-semibold text-gray-700">{title}</p>
-      <p className="text-xs text-gray-400 max-w-xs leading-relaxed">{sub}</p>
+      <p className="text-sm font-semibold text-foreground">{title}</p>
+      <p className="text-xs text-muted-foreground max-w-xs leading-relaxed">{sub}</p>
       {action && (
         <button onClick={onAction}
           className="mt-1 text-xs font-semibold px-5 py-2.5 rounded-xl text-white transition hover:opacity-90"
@@ -167,16 +159,16 @@ export const Modal = function({ title, onClose, onSave, color, saving, children,
   var bg = color || 'var(--brand)';
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 anim-fade" style={{background:'rgba(15,23,42,0.55)', backdropFilter:'blur(3px)', WebkitBackdropFilter:'blur(3px)'}}>
-      <div role="dialog" aria-modal="true" aria-label={title} className={'rounded-3xl flex flex-col w-full anim-scale ' + (wide ? 'max-w-lg' : 'max-w-sm')} style={{background:'var(--bg-card)', boxShadow:'var(--shadow-lg)', maxHeight:'90vh', border:'1px solid var(--border)'}}>
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 flex-shrink-0">
-          <span className="font-semibold text-gray-900">{title}</span>
-          <button onClick={onClose} aria-label="Fechar" className="text-gray-400 hover:text-gray-600 p-1 rounded-lg hover:bg-gray-100">
+      <div role="dialog" aria-modal="true" aria-label={title} className={'rounded-xl flex flex-col w-full anim-scale ' + (wide ? 'max-w-lg' : 'max-w-sm')} style={{background:'var(--bg-card)', boxShadow:'var(--shadow-lg)', maxHeight:'90vh', border:'1px solid var(--border)'}}>
+        <div className="flex items-center justify-between px-6 py-4 border-b border-border flex-shrink-0">
+          <span className="font-semibold text-foreground">{title}</span>
+          <button onClick={onClose} aria-label="Fechar" className="text-muted-foreground hover:text-foreground p-1 rounded-lg hover:bg-muted">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"/></svg>
           </button>
         </div>
         <div className="px-6 py-4 flex flex-col gap-3 overflow-y-auto flex-1">{children}</div>
         <div className="flex gap-2 px-6 pb-5 flex-shrink-0 pt-2">
-          <button onClick={onClose} className="flex-1 border border-gray-200 text-gray-600 rounded-xl py-2.5 text-sm font-medium hover:bg-gray-50">Cancelar</button>
+          <button onClick={onClose} className="flex-1 border border-input text-muted-foreground rounded-xl py-2.5 text-sm font-medium hover:bg-muted">Cancelar</button>
           <button onClick={onSave} disabled={saving} className="flex-1 text-white rounded-xl py-2.5 text-sm font-semibold hover:opacity-90 flex items-center justify-center gap-2 disabled:opacity-40 transition" style={{background: bg}}>
             {saving ? <Spin white/> : (saveLabel || 'Salvar')}
           </button>
@@ -188,7 +180,7 @@ export const Modal = function({ title, onClose, onSave, color, saving, children,
 
 export const EditBtn = function({ onClick }) {
   return (
-    <button onClick={onClick} title="Editar" aria-label="Editar" className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl text-gray-300 hover:text-blue-500 hover:bg-blue-50 transition flex-shrink-0">
+    <button onClick={onClick} title="Editar" aria-label="Editar" type="button" className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl text-muted hover:text-primary hover:bg-primary/10 transition flex-shrink-0">
       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
     </button>
   );
@@ -196,14 +188,12 @@ export const EditBtn = function({ onClick }) {
 
 export const DelBtn = function({ onClick }) {
   return (
-    <button onClick={onClick} title="Excluir" aria-label="Excluir" className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl text-gray-300 hover:text-red-500 hover:bg-red-50 transition flex-shrink-0">
+    <button onClick={onClick} title="Excluir" aria-label="Excluir" type="button" className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl text-muted hover:text-destructive hover:bg-destructive/10 transition flex-shrink-0">
       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
     </button>
   );
 };
 
-// Cabecalho padrao de aba: icone identificador + titulo (Fraunces) + subtitulo de contexto.
-// Da identidade visual consistente a todas as telas e orienta o usuario sobre o que cada aba faz.
 export const PageHead = function({ icon, title, sub, right, color }) {
   var c = color || 'var(--brand)';
   return (
@@ -228,7 +218,6 @@ export const Skeleton = function({ w, h, r, className }) {
   return <div className={'skeleton ' + (className || '')} style={{ width: w || '100%', height: h || 12, borderRadius: r || 8 }} />;
 };
 
-// Esqueleto de pagina mostrado enquanto a view carrega (sensacao de velocidade).
 export const PageSkeleton = function() {
   return (
     <div className="flex flex-col gap-5" aria-hidden="true">

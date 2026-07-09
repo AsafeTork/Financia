@@ -224,10 +224,10 @@ export default function AdminPanel({ toast, confirm, session, brand }) {
     if (data.profile_error) {
       toast('Cliente criado, mas o perfil falhou: ' + data.profile_error, 'error');
     }
-    const tok = localStorage.getItem('nancia_gh_token') || '';
-    if (!tok) { toast('Cliente criado! Configure o token GitHub.', 'error'); setDone(Object.assign({}, form, {buildOk:false, newUid:newUid})); setForm(BLANK); setCreating(false); return; }
+    var ghToken = localStorage.getItem('nancia_gh_token') || '';
+    if (!ghToken) { toast('Cliente criado! Configure o token GitHub.', 'error'); setDone(Object.assign({}, form, {buildOk:false, newUid:newUid})); setForm(BLANK); setCreating(false); return; }
     setBuilding(true);
-    const built = await triggerApkBuild(form.companyName, form.logoUrl, form.primaryColor);
+    var built = await triggerApkBuild(form.companyName, form.logoUrl, form.primaryColor, ghToken);
     setBuilding(false);
     setDone(Object.assign({}, form, {buildOk:built.ok, newUid:newUid}));
     setForm(BLANK);
@@ -263,7 +263,8 @@ export default function AdminPanel({ toast, confirm, session, brand }) {
   };
 
   const handleBuildClientApk = function(c) {
-    triggerApkBuild(c.name, c.logo_url, c.color).then(function(r) {
+    var ghToken = localStorage.getItem('nancia_gh_token') || '';
+    triggerApkBuild(c.name, c.logo_url, c.color, ghToken).then(function(r) {
       if (r.ok) { toast('Build iniciado! Veja em Actions no GitHub.', 'success'); return; }
       if (r.reason === 'no_token') { toast('Configure o token GitHub antes.', 'error'); return; }
       if (r.reason === 'api_error' && r.status === 401) { toast('Token invalido ou expirado.', 'error'); return; }

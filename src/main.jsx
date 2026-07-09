@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import './index.css';
 import './animations.css';
 import App from './App.jsx';
+import { GlobalErrorBoundary } from './shared/GlobalErrorBoundary.jsx';
 import { registerSW } from './lib/pwa.js';
 
 var queryClient = new QueryClient({
@@ -31,7 +32,9 @@ function ensureManifestLink() {
 createRoot(document.getElementById('root')).render(
   <HashRouter>
     <QueryClientProvider client={queryClient}>
-      <App/>
+      <GlobalErrorBoundary>
+        <App/>
+      </GlobalErrorBoundary>
     </QueryClientProvider>
   </HashRouter>
 );

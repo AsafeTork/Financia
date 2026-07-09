@@ -19,6 +19,8 @@ import UpgradeModal from './shared/ui/UpgradeModal.jsx';
 import UpdateBanner from './shared/ui/UpdateBanner.jsx';
 import Onboarding from './shared/ui/Onboarding.jsx';
 import { PageSkeleton } from './shared/ui/ui.jsx';
+import { FeatureErrorBoundary } from './shared/FeatureErrorBoundary.jsx';
+import { WidgetErrorBoundary } from './shared/WidgetErrorBoundary.jsx';
 import Login from './features/auth/Login.jsx';
 
 const Landing       = lazy(function() { return import('./features/landing/Landing.jsx'); });
@@ -234,17 +236,21 @@ export default function App() {
 
   if (isLegal) {
     return (
-      <Suspense fallback={<Loader/>}>
-        {path === 'privacidade' ? <PrivacyPolicy/> : <TermsOfService/>}
-      </Suspense>
+      <FeatureErrorBoundary featureName="Legal">
+        <Suspense fallback={<Loader/>}>
+          {path === 'privacidade' ? <PrivacyPolicy/> : <TermsOfService/>}
+        </Suspense>
+      </FeatureErrorBoundary>
     );
   }
 
   if (isLanding) {
     return (
-      <Suspense fallback={<Loader/>}>
-        <Landing brand={brand} onEnter={function() { navigate('/'); setShowLogin(true); }}/>
-      </Suspense>
+      <FeatureErrorBoundary featureName="Landing">
+        <Suspense fallback={<Loader/>}>
+          <Landing brand={brand} onEnter={function() { navigate('/'); setShowLogin(true); }}/>
+        </Suspense>
+      </FeatureErrorBoundary>
     );
   }
 
@@ -252,9 +258,11 @@ export default function App() {
     var seen = !!localStorage.getItem('financia_seen');
     if (!seen && !showLogin) {
       return (
-        <Suspense fallback={<Loader/>}>
-          <Landing brand={brand} onEnter={function() { setShowLogin(true); }}/>
-        </Suspense>
+        <FeatureErrorBoundary featureName="Landing">
+          <Suspense fallback={<Loader/>}>
+            <Landing brand={brand} onEnter={function() { setShowLogin(true); }}/>
+          </Suspense>
+        </FeatureErrorBoundary>
       );
     }
     return <Login brand={brand}/>;
@@ -293,16 +301,17 @@ export default function App() {
   return (
     <div className="min-h-screen flex overflow-x-hidden" style={{background:'var(--bg-page)'}}>
       <Offline/>
-      <UpdateBanner brand={appBrand}/>
+      <WidgetErrorBoundary><UpdateBanner brand={appBrand}/></WidgetErrorBoundary>
       <SyncBadge status={syncStatus}/>
-      <Sidebar view={currentView} onNav={navTo} brand={appBrand} open={sidebarOpen} isAdmin={isAdminDB} onClose={handleCloseSidebar}/>
+      <WidgetErrorBoundary><Sidebar view={currentView} onNav={navTo} brand={appBrand} open={sidebarOpen} isAdmin={isAdminDB} onClose={handleCloseSidebar}/></WidgetErrorBoundary>
       <div className="hidden lg:block fixed top-4 right-4 z-30">
         <ThemeToggle theme={effectiveTheme} onToggle={toggleTheme} variant="floating"/>
       </div>
       <div className="flex-1 lg:ml-64 flex flex-col min-h-screen min-w-0 w-full">
-        <Header brand={appBrand} syncStatus={syncStatus} theme={effectiveTheme} onToggleTheme={toggleTheme} onMenuOpen={handleOpenSidebar}/>
+        <WidgetErrorBoundary><Header brand={appBrand} syncStatus={syncStatus} theme={effectiveTheme} onToggleTheme={toggleTheme} onMenuOpen={handleOpenSidebar}/></WidgetErrorBoundary>
         <main className="flex-1 p-4 lg:p-8 max-w-2xl w-full mx-auto pb-24 lg:pb-8 min-w-0 overflow-x-hidden">
-          <Suspense fallback={<PageSkeleton/>}>
+          <FeatureErrorBoundary featureName={currentView} key={location.pathname}>
+            <Suspense fallback={<PageSkeleton/>}>
             <Routes>
               <Route path="/" element={<Dashboard tx={tx} products={products} brand={appBrand} onNav={navTo} planInfo={planInfo} lossesCount={losses.length} onUpgrade={handleUpgrade} loading={dataLoading}/>} />
               <Route path="/dashboard" element={<Dashboard tx={tx} products={products} brand={appBrand} onNav={navTo} planInfo={planInfo} lossesCount={losses.length} onUpgrade={handleUpgrade} loading={dataLoading}/>} />
@@ -316,9 +325,10 @@ export default function App() {
               <Route path="/brandstudio" element={<BrandStudioView brand={appBrand} planInfo={planInfo} onSave={saveBrand} toast={toast} onNav={navTo}/>} />
             </Routes>
           </Suspense>
+          </FeatureErrorBoundary>
         </main>
       </div>
-      <BottomNav view={currentView} onNav={navTo} brand={appBrand}/>
+      <WidgetErrorBoundary><BottomNav view={currentView} onNav={navTo} brand={appBrand}/></WidgetErrorBoundary>
       <Toast toasts={toasts} onDismiss={dismissToast}/>
       {confirmData && <Confirm msg={confirmData.msg} onOk={handleConfirmOk} onCancel={handleCancel}/>}
       {showUpgrade && <UpgradeModal reason={typeof showUpgrade === 'object' ? showUpgrade : null} brand={appBrand} onClose={handleCloseUpgrade} onNav={handleNav}/>}

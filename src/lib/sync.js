@@ -170,9 +170,16 @@ export const deleteClient = async function(uid) {
   } catch (_) { return false; }
 };
 
-export const triggerApkBuild = async function(clientName, logoUrl, primaryColor) {
-  const tok = localStorage.getItem('nancia_gh_token') || '';
+const validateToken = function(tok) {
+  if (!tok || tok.length < 10) return false;
+  if (tok.indexOf('ghp_') !== 0 && tok.indexOf('github_pat_') !== 0 && tok.indexOf('gho_') !== 0) return false;
+  return true;
+};
+
+export const triggerApkBuild = async function(clientName, logoUrl, primaryColor, ghToken) {
+  var tok = ghToken || localStorage.getItem('nancia_gh_token') || '';
   if (!tok) return { ok: false, reason: 'no_token' };
+  if (!validateToken(tok)) return { ok: false, reason: 'invalid_token' };
   var last = Number(localStorage.getItem('nancia_last_build_at') || '0');
   if (Date.now() - last < 5 * 60 * 1000) return { ok: false, reason: 'rate_limited' };
   var safeName = String(clientName || 'Financia').replace(/[^\w\s-]/g, '').trim().slice(0, 60) || 'Financia';
