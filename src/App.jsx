@@ -59,6 +59,7 @@ export default function App() {
   const [onboardingNeeded, setOnboardingNeeded] = useState(false);
   const onboardingRef                   = useRef(null);
   const toastId                         = useRef(0);
+  const toastTimeoutsRef                = useRef([]);
   const modalRef                        = useRef({ confirmData, showUpgrade, sidebarOpen, showLogin });
   modalRef.current = { confirmData, showUpgrade, sidebarOpen, showLogin };
 
@@ -173,9 +174,18 @@ export default function App() {
     if (!type) type = 'success';
     var id = ++toastId.current;
     setToasts(function(list) { return list.concat([{id:id, msg:msg, type:type}]); });
-    setTimeout(function() {
+    var tid = setTimeout(function() {
+      toastTimeoutsRef.current = toastTimeoutsRef.current.filter(function(t) { return t !== tid; });
       setToasts(function(list) { return list.filter(function(t) { return t.id !== id; }); });
     }, type === 'error' ? 4000 : 3000);
+    toastTimeoutsRef.current.push(tid);
+  }, []);
+
+  useEffect(function() {
+    return function() {
+      toastTimeoutsRef.current.forEach(function(tid) { clearTimeout(tid); });
+      toastTimeoutsRef.current = [];
+    };
   }, []);
 
   const confirm = useCallback(function(msg, onOk) { setConfirmData({msg:msg, onOk:onOk}); }, []);
@@ -200,15 +210,18 @@ export default function App() {
     setTx, setProducts, setLosses,
   });
 
+  var loadDataRef = useRef(loadData);
+  loadDataRef.current = loadData;
+
   useEffect(function() {
     if (typeof window === 'undefined') return;
     window.__financia_reload_plan = function() {
       if (session && session.user && session.user.id && navigator.onLine) {
-        loadData(session.user.id);
+        loadDataRef.current(session.user.id);
       }
     };
     return function() { delete window.__financia_reload_plan; };
-  }, [session, loadData]);
+  }, [session]);
 
   const handleCloseSidebar   = useCallback(function() { setSidebarOpen(false); }, []);
   const handleOpenSidebar    = useCallback(function() { setSidebarOpen(true); }, []);

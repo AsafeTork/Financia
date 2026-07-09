@@ -25,7 +25,7 @@ import ClientEditModal from './ClientEditModal.jsx';
 function planLogoSvg(brand, client) {
   if (!brand || !brand.brand_config) return null;
   var cfg = typeof brand.brand_config === 'string' ? null : brand.brand_config;
-  if (!cfg) { try { cfg = JSON.parse(brand.brand_config); } catch (_) { return null; } }
+  if (!cfg) { try { cfg = JSON.parse(brand.brand_config); } catch { return null; } }
   var plan = effectivePlan(client);
   var over = cfg && cfg.planOverrides && cfg.planOverrides[plan];
   if (!over || !over.logoColors) return null;
@@ -57,6 +57,9 @@ export default function AdminPanel({ toast, confirm, session, brand }) {
   const reload = function() {
     Promise.all([fetchClients(), fetchClientUsage()]).then(function(res) {
       setClients(res[0]); setUsage(res[1] || {}); setLoadingCli(false);
+    }).catch(function() {
+      setLoadingCli(false);
+      if (toast) toast('Erro ao carregar dados de clientes.', 'error');
     });
   };
   useEffect(function() { reload(); }, [done]);
@@ -66,14 +69,20 @@ export default function AdminPanel({ toast, confirm, session, brand }) {
     var stripeClients = clients.filter(function(c) { return c.plan_activated_by === 'stripe'; });
     if (stripeClients.length === 0) return;
     var alive = true;
-    stripeClients.forEach(function(c) {
-      sb.functions.invoke('get-subscription-status', { body: { user_id: c.user_id } }).then(function(res) {
-        if (!alive) return;
-        var d = res && res.data ? res.data : null;
-        if (d && (d.status === 'active' || d.status === 'canceled_expiring')) setSubFor(c.user_id, d.status);
-      }).catch(function() {});
-    });
-    return function() { alive = false; };
+    var controller = new AbortController();
+    var batchSize = 5;
+    for (var i = 0; i < stripeClients.length; i += batchSize) {
+      var batch = stripeClients.slice(i, i + batchSize);
+      batch.forEach(function(c) {
+        if (controller.signal.aborted) return;
+        sb.functions.invoke('get-subscription-status', { body: { user_id: c.user_id } }).then(function(res) {
+          if (!alive || controller.signal.aborted) return;
+          var d = res && res.data ? res.data : null;
+          if (d && (d.status === 'active' || d.status === 'canceled_expiring')) setSubFor(c.user_id, d.status);
+        }).catch(function() {});
+      });
+    }
+    return function() { alive = false; controller.abort(); };
   }, [clients]);
 
   // Painel financeiro/infra (admin): saldo real Stripe + uso do banco. Carrega uma vez.
@@ -86,6 +95,7 @@ export default function AdminPanel({ toast, confirm, session, brand }) {
     }).catch(function() {
       if (!alive) return;
       setLoadingFin(false);
+      if (toast) toast('Erro ao carregar dados financeiros.', 'error');
     });
     return function() { alive = false; };
   }, []);
@@ -207,7 +217,7 @@ export default function AdminPanel({ toast, confirm, session, brand }) {
         theme:form.theme || 'light',
         logo_url:form.logoUrl || null
       }});
-    } catch (invokeErr) {
+    } catch {
       toast('Erro de rede ao criar cliente.', 'error'); setCreating(false); return;
     }
     if (invokeRes.error) {
@@ -224,10 +234,8 @@ export default function AdminPanel({ toast, confirm, session, brand }) {
     if (data.profile_error) {
       toast('Cliente criado, mas o perfil falhou: ' + data.profile_error, 'error');
     }
-    var ghToken = localStorage.getItem('nancia_gh_token') || '';
-    if (!ghToken) { toast('Cliente criado! Configure o token GitHub.', 'error'); setDone(Object.assign({}, form, {buildOk:false, newUid:newUid})); setForm(BLANK); setCreating(false); return; }
     setBuilding(true);
-    var built = await triggerApkBuild(form.companyName, form.logoUrl, form.primaryColor, ghToken);
+    var built = await triggerApkBuild(form.companyName, form.logoUrl, form.primaryColor);
     setBuilding(false);
     setDone(Object.assign({}, form, {buildOk:built.ok, newUid:newUid}));
     setForm(BLANK);
@@ -237,7 +245,7 @@ export default function AdminPanel({ toast, confirm, session, brand }) {
 
   const _copyWpp = async function(c, done_) {
       const d = done_ || c;
-      const msg = (d.companyName || d.name || 'Financia') + '\n\nLink: ' + APP_URL + '\nEmail: ' + d.email + '\nSenha: ' + d.password + (d.buildOk ? '\nAPK: github.com/' + GH_REPO + '/actions' : '');
+      const msg = (d.companyName || d.name || 'Financia') + '\n\nLink: ' + APP_URL + '\nEmail: ' + d.email + (d.buildOk ? '\nAPK: github.com/' + GH_REPO + '/actions' : '');
       await navigator.clipboard.writeText(msg);
       setCopied(d.email || d.user_id);
       setTimeout(function() { setCopied(null); }, 2000);
@@ -253,24 +261,23 @@ export default function AdminPanel({ toast, confirm, session, brand }) {
   };
 
   const handleImpersonate = function(c) {
-    localStorage.setItem('_imp', JSON.stringify({
+    sessionStorage.setItem('_imp', JSON.stringify({
       uid: c.user_id,
       exp: Date.now() + 30000
     }));
     window.open(window.location.origin + window.location.pathname + '?imp=1', '_blank');
-    setTimeout(function() { localStorage.removeItem('_imp'); }, 30000);
+    setTimeout(function() { sessionStorage.removeItem('_imp'); }, 30000);
     toast('Abrindo conta de ' + c.name, 'success');
   };
 
   const handleBuildClientApk = function(c) {
-    var ghToken = localStorage.getItem('nancia_gh_token') || '';
-    triggerApkBuild(c.name, c.logo_url, c.color, ghToken).then(function(r) {
+    triggerApkBuild(c.name, c.logo_url, c.color).then(function(r) {
       if (r.ok) { toast('Build iniciado! Veja em Actions no GitHub.', 'success'); return; }
       if (r.reason === 'no_token') { toast('Configure o token GitHub antes.', 'error'); return; }
       if (r.reason === 'api_error' && r.status === 401) { toast('Token invalido ou expirado.', 'error'); return; }
       if (r.reason === 'api_error' && r.status === 404) { toast('Repositorio ou workflow nao encontrado.', 'error'); return; }
       toast('Erro ao acionar build (status ' + (r.status || 'rede') + ').', 'error');
-    });
+    }).catch(function() { toast('Erro de rede ao acionar build.', 'error'); });
   };
 
   return (
@@ -426,7 +433,7 @@ export default function AdminPanel({ toast, confirm, session, brand }) {
             right={<span className="text-xs" style={{color:'var(--text-muted)'}}>{visibleClients.length} de {clients.length}</span>}/>
           <div className="relative mb-2">
             <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-            <input value={search} onChange={function(e) { setSearch(e.target.value); }} placeholder="Buscar por nome, email ou ID..." className="w-full pl-9 pr-3 py-2.5 text-sm border border-gray-200 rounded-xl" style={{background:'var(--bg-input)', color:'var(--text-main)'}}/>
+            <input aria-label="Buscar clientes" value={search} onChange={function(e) { setSearch(e.target.value); }} placeholder="Buscar por nome, email ou ID..." className="w-full pl-9 pr-3 py-2.5 text-sm border border-gray-200 rounded-xl" style={{background:'var(--bg-input)', color:'var(--text-main)'}}/>
           </div>
           <div className="flex gap-1.5">
             {[['all','Todos'],['pro','Pro'],['premium','Premium'],['free','Free']].map(function(f) {

@@ -7,7 +7,7 @@ import { enterPreviewMode, exitPreviewMode } from '../../shared/hooks/useBrandAp
 export default function useBrandStudio(brand, planInfo, onSave, toast) {
   const brandConfig = useMemo(function() {
     const bc = brand && brand.brand_config;
-    if (typeof bc === 'string') { try { return JSON.parse(bc); } catch (_) { return { modules: {} }; } }
+    if (typeof bc === 'string') { try { return JSON.parse(bc); } catch { return { modules: {} }; } }
     return bc || { modules: {} };
   }, [brand]);
 
@@ -73,7 +73,7 @@ export default function useBrandStudio(brand, planInfo, onSave, toast) {
 
   const savePlanLogo = useCallback(async function(planId, logoColors) {
     let cfg;
-    try { cfg = typeof brand.brand_config === 'string' ? JSON.parse(brand.brand_config) : (brand.brand_config || { modules: {} }); } catch (_) { cfg = { modules: {} }; }
+    try { cfg = typeof brand.brand_config === 'string' ? JSON.parse(brand.brand_config) : (brand.brand_config || { modules: {} }); } catch { cfg = { modules: {} }; }
     if (!cfg.planOverrides) cfg.planOverrides = {};
     const existing = cfg.planOverrides[planId] || {};
     if (logoColors) {

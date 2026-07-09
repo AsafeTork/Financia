@@ -1,0 +1,20 @@
+{
+  "timestamp": "2026-07-09T15:13:04.458Z",
+  "totalIssues": 1,
+  "consoleErrors": 0,
+  "consoleWarnings": 0,
+  "networkErrors": [],
+  "issues": [
+    {
+      "title": "Landing page não renderizou conteúdo",
+      "severity": "P0",
+      "steps": "Acessar http://localhost:5173",
+      "console": [],
+      "request": [],
+      "response": null,
+      "file": "src/App.jsx, src/features/landing/Landing.jsx",
+      "rootCause": "Erro no lazy loading ou Suspense",
+      "fix": "Verificar se o Landing.jsx compila e o lazy import está correto"
+    }
+  ]
+}

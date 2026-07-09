@@ -41,7 +41,7 @@ export async function syncUpsert(sb, table, payload, ldb, id, toast) {
     var res = await sb.from(table).upsert(payload);
     if (!res.error) await ldb[table].update(id, { _synced: 1 });
     else toast('Salvo no aparelho — sincroniza ao reconectar', 'warning');
-  } catch (e) { toast('Salvo no aparelho — sincroniza ao reconectar', 'warning'); }
+  } catch { toast('Salvo no aparelho — sincroniza ao reconectar', 'warning'); }
 }
 
 export async function syncUpdate(sb, table, payload, id, ldb, toast) {
@@ -50,7 +50,7 @@ export async function syncUpdate(sb, table, payload, id, ldb, toast) {
     var res = await sb.from(table).update(payload).eq('id', id);
     if (!res.error) await ldb[table].update(id, { _synced: 1 });
     else toast('Salvo no aparelho — sincroniza ao reconectar', 'warning');
-  } catch (e) { toast('Salvo no aparelho — sincroniza ao reconectar', 'warning'); }
+  } catch { toast('Salvo no aparelho — sincroniza ao reconectar', 'warning'); }
 }
 
 export async function syncDelete(sb, table, id, ldb, toast) {
@@ -58,5 +58,5 @@ export async function syncDelete(sb, table, id, ldb, toast) {
   try {
     var res = await sb.from(table).delete().eq('id', id);
     if (!res.error) await ldb[table].delete(id);
-  } catch (e) { toast('Removido do aparelho — sincroniza ao reconectar', 'warning'); }
+  } catch { toast('Removido do aparelho — sincroniza ao reconectar', 'warning'); }
 }

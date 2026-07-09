@@ -1,5 +1,6 @@
 import React from 'react';
 import { NAV } from '../../lib/constants.js';
+function isValidUrl(str) { if (!str) return false; try { var u = new URL(str); return u.protocol === 'https:' || u.protocol === 'http:'; } catch { return false; } }
 
 function Sidebar({ view, onNav, brand, open, onClose, isAdmin }) {
   var onlineState = React.useState(true);
@@ -41,7 +42,7 @@ function Sidebar({ view, onNav, brand, open, onClose, isAdmin }) {
         style={{background: 'var(--sidebar-bg, ' + (brand.color || '#0f1c2e') + ')'}}>
 
         <div className="px-5 py-5 flex items-center gap-3" style={{borderBottom:'1px solid rgba(255,255,255,0.08)'}}>
-          {brand.logo_url
+          {isValidUrl(brand.logo_url)
             ? <img src={brand.logo_url} alt="logo" className="w-10 h-10 rounded-xl object-cover flex-shrink-0"/>
             : <div className="w-10 h-10 rounded-xl flex items-center justify-center text-base flex-shrink-0" style={{background:'rgba(255,255,255,0.15)'}}>
                 <span className="text-white font-bold">{(brand.logo || 'F')[0]}</span>

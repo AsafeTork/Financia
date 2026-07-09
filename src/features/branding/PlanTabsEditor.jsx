@@ -57,7 +57,7 @@ export default function PlanTabsEditor({ brandConfig, onSavePlan, onCopyJSON, on
     setForm(function(f) { var o = Object.assign({}, f); o[k] = v; return o; });
     setHasChanges(true);
     setJsonInput(function(prev) {
-      try { var p = JSON.parse(prev); p[k] = v; return JSON.stringify(p, null, 2); } catch (_) { return prev; }
+      try { var p = JSON.parse(prev); p[k] = v; return JSON.stringify(p, null, 2);       } catch { return prev; }
     });
   };
 
@@ -66,7 +66,9 @@ export default function PlanTabsEditor({ brandConfig, onSavePlan, onCopyJSON, on
     try {
       var parsed = JSON.parse(json);
       if (parsed && typeof parsed === 'object') {
-        setForm(function(f) { return Object.assign({}, f, parsed); });
+        var safe = {}; var allowedKeys = PALETTE_FIELDS.map(function(f) { return f.key; });
+        allowedKeys.forEach(function(k) { if (parsed[k] !== undefined) safe[k] = String(parsed[k]).slice(0, 100); });
+        setForm(function(f) { return Object.assign({}, f, safe); });
         setHasChanges(true);
       }
     } catch (_) { void _; }

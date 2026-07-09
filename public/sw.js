@@ -1,4 +1,6 @@
-const CACHE = 'financia-v5';
+const CACHE_VER = '5';
+const CACHE_DATE = '20260709';
+const CACHE = 'financia-' + CACHE_VER + '-' + CACHE_DATE;
 const STATIC = ['/', '/manifest.json', '/icon-192.svg', '/icon-512.svg'];
 
 // Avisa todas as abas o progresso do cache (alimenta a barra do banner).
@@ -21,7 +23,25 @@ self.addEventListener('install', function(e) {
           return postProgress(Math.round((done / STATIC.length) * 100)).then(function() { return next(i + 1); });
         });
       }
-      return next(0);
+      // Depois dos itens estaticos, descobrir e precachear os bundles JS/CSS
+      return next(0).then(function() {
+        return fetch('/').then(function(r) {
+          if (!r.ok) return;
+          return r.text().then(function(html) {
+            var urls = [];
+            var re = /(?:src|href)="(\/assets\/[^"]+\.(?:js|css))"/g;
+            var m;
+            while ((m = re.exec(html))) {
+              if (urls.indexOf(m[1]) === -1) urls.push(m[1]);
+            }
+            function add(j) {
+              if (j >= urls.length) return Promise.resolve();
+              return c.add(urls[j]).catch(function() {}).then(function() { return add(j + 1); });
+            }
+            return add(0);
+          });
+        }).catch(function() {});
+      });
     })
   );
 });
@@ -35,7 +55,27 @@ self.addEventListener('activate', function(e) {
 });
 
 self.addEventListener('message', function(e) {
-  if (e.data && e.data.type === 'SKIP_WAITING') self.skipWaiting();
+  if (!e.data) return;
+  switch (e.data.type) {
+    case 'SKIP_WAITING':
+      self.skipWaiting();
+      break;
+    case 'REFRESH_CACHE':
+      e.waitUntil(
+        caches.open(CACHE).then(function(cache) {
+          return Promise.all(
+            e.data.urls.map(function(url) {
+              return fetch(url).then(function(res) {
+                if (res.ok) cache.put(url, res);
+              }).catch(function() {});
+            })
+          ).then(function() {
+            if (e.ports && e.ports[0]) e.ports[0].postMessage({ ok: true });
+          });
+        })
+      );
+      break;
+  }
 });
 
 self.addEventListener('fetch', function(e) {
@@ -47,12 +87,32 @@ self.addEventListener('fetch', function(e) {
   // Navegacoes (HTML): network-first para sempre pegar a versao nova; cache no offline
   if (req.mode === 'navigate') {
     e.respondWith(
-      fetch(req).then(function(res) {
-        var clone = res.clone();
-        caches.open(CACHE).then(function(c) { c.put('/', clone); });
-        return res;
-      }).catch(function() {
-        return caches.match('/').then(function(c) { return c || caches.match(req); });
+      caches.match('/').then(function(cached) {
+        var fetchPromise = fetch(req).then(function(res) {
+          if (res.ok) {
+            var clone = res.clone();
+            caches.open(CACHE).then(function(c) { c.put('/', clone); });
+          }
+          return res;
+        }).catch(function() { return cached; });
+        return cached || fetchPromise;
+      })
+    );
+    return;
+  }
+
+  // Font files: cache-first
+  if (url.pathname.match(/\.(woff2?|ttf|otf|eot)$/)) {
+    e.respondWith(
+      caches.match(req).then(function(cached) {
+        if (cached) return cached;
+        return fetch(req).then(function(res) {
+          if (res && res.status === 200) {
+            var clone = res.clone();
+            caches.open(CACHE).then(function(c) { c.put(req, clone); });
+          }
+          return res;
+        });
       })
     );
     return;

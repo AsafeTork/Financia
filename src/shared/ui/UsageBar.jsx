@@ -38,6 +38,11 @@ export function KpiCard({ label, value, variation, sub, color, accentBar, onClic
   return (
     <Card className={'p-4 overflow-hidden' + (hasClick ? ' cursor-pointer card-hover transition-transform duration-150 active:scale-[0.98]' : '')}
       onClick={hasClick ? onClick : undefined}
+      tabIndex={hasClick ? 0 : undefined}
+      role={hasClick ? 'button' : undefined}
+      onKeyDown={hasClick ? function(e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(e); }
+      } : undefined}
       accent={true}
       color={barColor}>
       <p className="text-xs font-semibold uppercase tracking-wider mt-2" style={{color:'var(--text-muted)'}}>{label}</p>
@@ -60,7 +65,7 @@ export function KpiCard({ label, value, variation, sub, color, accentBar, onClic
   );
 }
 
-export function BarChartSVG({ data, color }) {
+export function BarChartSVG({ data, color, ...rest }) {
   var barColor = color || 'var(--brand, #1a6b5c)';
   var nums = data.reduce(function(acc, d) { acc.push(d.i, d.o); return acc; }, []);
   var max = Math.max.apply(null, nums);
@@ -74,7 +79,7 @@ export function BarChartSVG({ data, color }) {
   };
 
   return (
-    <svg width="100%" height={H + 20} viewBox={'0 0 ' + (data.length * W + 40) + ' ' + (H + 20)} preserveAspectRatio="xMidYMid meet">
+    <svg width="100%" height={H + 20} viewBox={'0 0 ' + (data.length * W + 40) + ' ' + (H + 20)} preserveAspectRatio="xMidYMid meet" {...rest}>
       {gridVals.map(function(gv, gi) {
         var y = H - 28 - Math.round((gv / maxVal) * (H - 40));
         return (

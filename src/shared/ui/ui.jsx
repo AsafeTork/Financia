@@ -1,13 +1,22 @@
 // DEPRECATED — migrate to individual shadcn components
 import React from 'react';
-import { cleanNumeric } from '../../lib/utils.js';
-import { Card as ShadcnCard } from './card.jsx';
+import { cleanNumeric, cn } from '../../lib/utils.js';
 import { Input } from './input.jsx';
-import { Badge as ShadcnBadge } from './badge.jsx';
 import { Button } from './button.jsx';
 import { Textarea as ShadcnTextarea } from './textarea.jsx';
 import { Spinner } from './spinner.jsx';
 import { Label } from './label.jsx';
+
+var ShadcnCard = function({ className, children, ...p }) {
+  return <div className={cn('rounded-xl border bg-card text-card-foreground shadow', className)} {...p}>{children}</div>;
+};
+var ShadcnBadge = function({ className, variant, children, ...p }) {
+  var v = variant === 'default' ? 'border-transparent bg-primary text-primary-foreground shadow'
+    : variant === 'secondary' ? 'border-transparent bg-secondary text-secondary-foreground'
+    : variant === 'destructive' ? 'border-transparent bg-destructive text-destructive-foreground shadow'
+    : variant === 'outline' ? 'text-foreground' : '';
+  return <div className={cn('inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors', v, className)} {...p}>{children}</div>;
+};
 
 export const Card = function({ children, className, hover, variant, accent, color }) {
   var cls = (className || '');

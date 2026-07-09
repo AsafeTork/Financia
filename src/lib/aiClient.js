@@ -83,7 +83,7 @@ export var askAI = async function(prompt, systemOrOpts, maxTokens) {
       var fb = { ok: true, text: fallbackText(mode, p) };
       setMemo(key, fb);
       return fb;
-    } catch (e) {
+    } catch {
       fb = { ok: true, text: fallbackText(mode, p) };
       setMemo(key, fb);
       return fb;
@@ -112,7 +112,7 @@ export var gerarPaleta = async function(opts) {
     var end = txt.lastIndexOf('}');
     if (start === -1 || end === -1) throw new Error('no json');
     data = JSON.parse(txt.slice(start, end + 1));
-  } catch (e) {
+  } catch {
     return {
       ok: true,
       palette: { primary: '#002f59', secondary: '#dbe7f3', accent: '#2563eb', theme: 'light' },

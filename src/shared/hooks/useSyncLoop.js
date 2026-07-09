@@ -35,7 +35,7 @@ export function useSyncLoop(props, ctx) {
       if (document.visibilityState !== 'visible') return;
       var userId = uidRef.current;
       if (!userId || !navigator.onLine) return;
-      syncAll(userId).then(function(ok) { if (ok) loadFromLocal(userId); });
+      syncAll(userId).then(function(ok) { if (ok) loadFromLocal(userId); }).catch(function() { /* silent fail — session already handles retry */ });
     };
     document.addEventListener('visibilitychange', onVisible);
 
@@ -43,7 +43,7 @@ export function useSyncLoop(props, ctx) {
       var userId = uidRef.current;
       if (!userId) return;
       if (reconnectRef && reconnectRef.current) reconnectRef.current(userId);
-      syncAll(userId).then(function(ok) { if (ok) loadFromLocal(userId); });
+      syncAll(userId).then(function(ok) { if (ok) loadFromLocal(userId); }).catch(function() { /* silent fail — session already handles retry */ });
     };
     window.addEventListener('online', onOnline);
 

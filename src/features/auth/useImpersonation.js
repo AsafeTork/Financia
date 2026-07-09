@@ -7,22 +7,21 @@ export function useImpersonation(props) {
   useEffect(function() {
     var params = new URLSearchParams(window.location.search);
     if (!params.get('imp')) return;
-    var raw = localStorage.getItem('_imp');
+    var raw = sessionStorage.getItem('_imp');
     if (!raw) return;
     try {
       var imp = JSON.parse(raw);
-      if (Date.now() > imp.exp) { localStorage.removeItem('_imp'); return; }
-      localStorage.removeItem('_imp');
+      if (Date.now() > imp.exp) { sessionStorage.removeItem('_imp'); return; }
+      sessionStorage.removeItem('_imp');
       window.history.replaceState({}, '', window.location.pathname);
-      // Operacao administrativa privilegiada — apenas chamada da UI admin
-      sb.rpc('admin_impersonate_start', {target_uid: imp.uid}).then(function(rpcRes) {
-        if (rpcRes.error) return;
-        var d = rpcRes.data;
-        sb.auth.signInWithPassword({email: d.email, password: d.temp_pass}).then(function(signInRes) {
-          if (!signInRes.error) { sessionStorage.setItem('_imp_uid', imp.uid); }
-        });
-      });
-    } catch(e) { localStorage.removeItem('_imp'); }
+      // Operacao administrativa privilegiada — via Edge Function (sem expor senha)
+      sb.functions.invoke('admin-impersonate', { body: { target_uid: imp.uid } }).then(function(res) {
+        if (res && res.data && res.data.magic_link) {
+          sessionStorage.setItem('_imp_uid', imp.uid);
+          window.location.href = res.data.magic_link;
+        }
+      }).catch(function() {});
+    } catch { sessionStorage.removeItem('_imp'); }
   }, []);
 
   useEffect(function() {

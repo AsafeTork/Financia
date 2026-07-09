@@ -19,7 +19,7 @@ function initState() {
     editL: null,
     sm: null,
     pf: {name:'', category:'', price:'', cost:'', stock:''},
-    lf: {desc:'', qty:'1', reason:'', date:today()},
+    lf: {desc:'', qty:'1', reason:'', date:today(), pId:''},
     sq: '1',
     saving: false
   };
@@ -38,7 +38,7 @@ function reducer(state, action) {
     case 'CLOSE_PM':      return Object.assign({}, state, {pm: false});
     case 'SET_EDIT_P':    return Object.assign({}, state, {editP: action.v});
     case 'PATCH_EDIT_P':  return Object.assign({}, state, {editP: Object.assign({}, state.editP, action.v)});
-    case 'OPEN_LM':       return Object.assign({}, state, {lm: true, lf: {desc:'', qty:'1', reason:'', date:today()}});
+    case 'OPEN_LM':       return Object.assign({}, state, {lm: true, lf: {desc:'', qty:'1', reason:'', date:today(), pId:''}});
     case 'CLOSE_LM':      return Object.assign({}, state, {lm: false});
     case 'SET_EDIT_L':    return Object.assign({}, state, {editL: action.v});
     case 'PATCH_EDIT_L':  return Object.assign({}, state, {editL: Object.assign({}, state.editL, action.v)});
@@ -95,10 +95,13 @@ export default function InventoryView({ products, losses, onAddProduct, onEditPr
     if (Number(lf.qty) <= 0) { toast('Quantidade deve ser maior que zero', 'error'); return; }
     dispatch({type:'SET_SAVING', v:true});
     try {
+      const p = lf.pId ? products.find(function(px) { return px.id === lf.pId; }) : products.find(function(px) { return px.name.toLowerCase() === lf.desc.toLowerCase(); });
+      if (p && p.stock != null) {
+        var stockResult = await onAdjustStock(p.id, -Number(lf.qty));
+        if (!stockResult) { toast('Erro ao ajustar estoque. Perda nao registrada.', 'error'); return; }
+      }
       var ok = await onAddLoss({id:uid(), desc:safe(lf.desc), qty:Number(lf.qty), reason:lf.reason, date:lf.date});
       if (!ok) return;
-      const p = products.find(function(p) { return p.name.toLowerCase() === lf.desc.toLowerCase(); });
-      if (p && p.stock != null) await onAdjustStock(p.id, -Number(lf.qty));
       toast(p ? 'Perda registrada e estoque abatido' : 'Perda registrada (produto nao encontrado no estoque)', 'success');
       dispatch({type:'CLOSE_LM'});
     } catch(_) { void _; }
@@ -244,7 +247,7 @@ export default function InventoryView({ products, losses, onAddProduct, onEditPr
               var cat = pair[0], items = pair[1];
               return (
                 <div key={cat}>
-                  <button onClick={function() { toggleCat(cat); }}
+                  <button onClick={function() { toggleCat(cat); }} aria-expanded={!collapsed.has(cat)}
                     className="w-full flex items-center justify-between px-4 py-2.5 min-h-[44px] bg-gray-50 hover:bg-gray-100 transition border-b border-t border-gray-100">
                     <div className="flex items-center gap-2">
                       <svg className={'w-3.5 h-3.5 text-gray-400 transition-transform ' + (collapsed.has(cat) ? '-rotate-90' : '')} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7"/></svg>
@@ -368,7 +371,7 @@ export default function InventoryView({ products, losses, onAddProduct, onEditPr
       )}
       {lm && (
         <Modal title="Registrar Perda" onClose={function() { dispatch({type:'CLOSE_LM'}); }} onSave={saveLoss} color="#dc2626" saving={saving}>
-          <div className="flex flex-col gap-1.5"><label htmlFor="loss-product-search" className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Produto</label><PSearch id="loss-product-search" products={products} value={lf.desc} onSelect={function(p) { dispatch({type:'SET_LF', v:{desc:p.name}}); }} onChange={function(v) { dispatch({type:'SET_LF', v:{desc:v}}); }} placeholder="Buscar ou digitar"/></div>
+          <div className="flex flex-col gap-1.5"><label htmlFor="loss-product-search" className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Produto</label><PSearch id="loss-product-search" products={products} value={lf.desc} onSelect={function(p) { dispatch({type:'SET_LF', v:{desc:p.name, pId:p.id}}); }} onChange={function(v) { dispatch({type:'SET_LF', v:{desc:v, pId:''}}); }} placeholder="Buscar ou digitar"/></div>
           <NumInp label="Quantidade" decimals={false} maxLen={6} value={lf.qty} onChange={function(e) { dispatch({type:'SET_LF', v:{qty:e.target.value}}); }}/>
           <Inp label="Motivo (opcional)" value={lf.reason} onChange={function(e) { dispatch({type:'SET_LF', v:{reason:e.target.value}}); }} placeholder="Ex: Vencimento, Avaria..."/>
           <Inp label="Data" type="date" value={lf.date} onChange={function(e) { dispatch({type:'SET_LF', v:{date:e.target.value}}); }}/>

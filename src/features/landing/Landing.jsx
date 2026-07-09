@@ -21,6 +21,7 @@ var delay = function(ms) { return { animationDelay: ms + 'ms', animationFillMode
 // ─── COUNTER HOOK ───
 function useCountUp(end, duration) {
   var ref = useRef(null);
+  var intervalRef = useRef(null);
   var [val, setVal] = useState(0);
   useEffect(function() {
     var el = ref.current;
@@ -30,16 +31,19 @@ function useCountUp(end, duration) {
         if (!e.isIntersecting) return;
         var start = 0;
         var step = Math.ceil(end / (duration / 16));
-        var timer = setInterval(function() {
+        intervalRef.current = setInterval(function() {
           start += step;
-          if (start >= end) { start = end; clearInterval(timer); }
+          if (start >= end) { start = end; clearInterval(intervalRef.current); intervalRef.current = null; }
           setVal(start);
         }, 16);
         obs.disconnect();
       });
     }, { threshold: 0.3 });
     obs.observe(el);
-    return function() { obs.disconnect(); };
+    return function() {
+      obs.disconnect();
+      if (intervalRef.current) { clearInterval(intervalRef.current); intervalRef.current = null; }
+    };
   }, [end, duration]);
   return [val, ref];
 }

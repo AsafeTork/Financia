@@ -20,7 +20,7 @@ export default function Onboarding({ brand, needsName, needsPhone, onSave }) {
     setLoading(true); setErr(''); setPhoneErr('');
     try {
       await onSave({ name: cleanName, phone: phoneData.e164 });
-    } catch (e2) {
+    } catch {
       setErr('Erro ao salvar. Tente novamente.');
       setLoading(false);
     }

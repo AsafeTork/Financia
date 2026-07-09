@@ -129,7 +129,7 @@ function usePlanLogoSync(activePlan, brandConfig, brandColor) {
   var setColor = function(id, val) {
     setForm(function(prev) { var o = Object.assign({}, prev); o[id] = val; return o; });
     setJsonInput(function(prev) {
-      try { var p = JSON.parse(prev); p[id] = val; return JSON.stringify(p, null, 2); } catch (_) { return prev; }
+      try { var p = JSON.parse(prev); p[id] = val; return JSON.stringify(p, null, 2); } catch { return prev; }
     });
   };
 
@@ -138,7 +138,9 @@ function usePlanLogoSync(activePlan, brandConfig, brandColor) {
     try {
       var parsed = JSON.parse(json);
       if (parsed && typeof parsed === 'object') {
-        setForm(Object.assign({}, form, parsed));
+        var safe = {}; var allowedKeys = ['blue', 'green', 'teal', 'check'];
+        allowedKeys.forEach(function(k) { if (parsed[k] !== undefined) safe[k] = String(parsed[k]).slice(0, 100); });
+        setForm(Object.assign({}, form, safe));
       }
     } catch (_) { void _; }
   };

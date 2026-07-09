@@ -110,6 +110,8 @@ function renderField(path, prop, label, value, onChange) {
     var handleUpload = function(e) {
       var file = e.target && e.target.files && e.target.files[0];
       if (!file) return;
+      var allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+      if (allowedTypes.indexOf(file.type) === -1) return;
       if (file.size > 512 * 1024) return;
       var reader = new FileReader();
       reader.onload = function() { onChange(String(reader.result)); };

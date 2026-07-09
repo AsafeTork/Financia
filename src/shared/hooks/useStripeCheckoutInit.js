@@ -135,6 +135,7 @@ export default function useStripeCheckoutInit(plan, brand, checkoutMode, kind, o
     var alive = true;
     var settled = false;
     var timer = null;
+    var abort = new AbortController();
     setPhase('loading');
     setLoadErr('');
     setClientSecret('');
@@ -232,7 +233,7 @@ export default function useStripeCheckoutInit(plan, brand, checkoutMode, kind, o
       });
     });
 
-    return function() { alive = false; if (timer) clearTimeout(timer); };
+    return function() { alive = false; if (timer) clearTimeout(timer); abort.abort(); };
     // eslint-disable-next-line
   }, [plan.id, attempt]);
 

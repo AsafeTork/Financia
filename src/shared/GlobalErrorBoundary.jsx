@@ -19,13 +19,13 @@ export class GlobalErrorBoundary extends React.Component {
       return (
         <div className="min-h-screen flex items-center justify-center flex-col gap-4 p-6" style={{background:'var(--bg-page)'}}>
           <span className="text-4xl font-bold text-gray-700">(!)</span>
-          <p className="text-lg font-semibold text-gray-700">Something went wrong</p>
-          <p className="text-sm text-gray-500">An unexpected error occurred. Please reload the app.</p>
+          <p className="text-lg font-semibold text-gray-700">Algo deu errado</p>
+          <p className="text-sm text-gray-500">Ocorreu um erro inesperado. Recarregue o app.</p>
           <button
             onClick={function() { window.location.reload(); }}
             className="px-6 py-2.5 text-white rounded-xl text-sm font-semibold bg-green-600"
           >
-            Reload App
+            Recarregar App
           </button>
         </div>
       );

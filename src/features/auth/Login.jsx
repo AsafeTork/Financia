@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Inp, Spin } from '../../shared/ui/ui.jsx';
 import { signIn, sendPasswordReset, signUp, signInWithGoogle } from '../../lib/auth.js';
 import { passwordStrength, safe, onColor, readableBrand } from '../../lib/utils.js';
@@ -9,7 +9,7 @@ var ACCENT = '#0f9d6c';
 
 function GoogleBtn({ onClick, loading, label }) {
   return (
-    <button type="button" onClick={onClick} disabled={loading}
+    <button type="button" onClick={onClick} disabled={loading} aria-label="Entrar com Google"
       className="w-full flex items-center justify-center gap-3 py-3 rounded-xl text-sm font-semibold transition hover:bg-gray-50 disabled:opacity-50"
       style={{ border: '1px solid #e2e8f0', color: '#1f2937', background: '#fff' }}>
       <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0012 23z"/><path fill="#FBBC05" d="M5.84 14.1a6.6 6.6 0 010-4.2V7.06H2.18a11 11 0 000 9.88l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1A11 11 0 002.18 7.06l3.66 2.84C6.71 7.31 9.14 5.38 12 5.38z"/></svg>
@@ -34,9 +34,23 @@ export default function Login({ brand }) {
   var [resetEmail, setResetEmail] = useState('');
   var [resetSent, setResetSent] = useState(false);
 
+  var emailRef = useRef(null);
+  var suNameRef = useRef(null);
+  var resetEmailRef = useRef(null);
+
+  useEffect(function() {
+    if (err) {
+      setTimeout(function() {
+        if (resetMode && resetEmailRef.current) resetEmailRef.current.focus();
+        else if (mode === 'signup' && suNameRef.current) suNameRef.current.focus();
+        else if (mode === 'login' && emailRef.current) emailRef.current.focus();
+      }, 50);
+    }
+  }, [err, mode, resetMode]);
+
   var brandColor = (brand && brand.color) || '#002f59';
   var brandName = (brand && brand.name) || 'Financia';
-  var brandLogo = (brand && brand.logo_url) || null;
+  var brandLogo = (brand && function(u) { if (!u) return null; try { var x = new URL(u); return x.protocol === 'https:' || x.protocol === 'http:' ? u : null; } catch { return null; } }(brand.logo_url)) || null;
   var pwSt = passwordStrength(suPass);
 
   // Contraste acessível: o painel da marca pode ter qualquer cor (white-label).
@@ -50,7 +64,12 @@ export default function Login({ brand }) {
   var brandText = readableBrand(brandColor);          // cor da marca legível sobre fundo claro
   var revealDelay = function(ms) { return { animationDelay: ms + 'ms', animationFillMode: 'both' }; };
 
-  var switchMode = function(m) { setMode(m); setErr(''); setResetMode(false); setResetSent(false); setSignupDone(false); };
+  var switchMode = function(m) { setMode(m); setErr(''); setResetMode(false); setResetSent(false); setSignupDone(false);
+    setTimeout(function() {
+      if (m === 'login' && emailRef.current) emailRef.current.focus();
+      else if (m === 'signup' && suNameRef.current) suNameRef.current.focus();
+    }, 50);
+  };
 
   var login = async function() {
     if (!email || !pass) return;
@@ -58,7 +77,7 @@ export default function Login({ brand }) {
     try {
       var res = await signIn(email, pass);
       if (res.error) setErr(res.error.message.indexOf('Invalid') !== -1 ? 'E-mail ou senha incorretos.' : 'Erro ao entrar. Tente novamente.');
-    } catch (e) { setErr('Erro de conexão. Verifique sua internet.'); }
+    } catch { setErr('Erro de conexão. Verifique sua internet.'); }
     finally { setLoading(false); }
   };
 
@@ -76,7 +95,7 @@ export default function Login({ brand }) {
       } else if (!(res.data && res.data.session)) {
         setSignupDone(true);
       }
-    } catch (e) { setErr('Erro de conexão. Verifique sua internet.'); }
+    } catch { setErr('Erro de conexão. Verifique sua internet.'); }
     finally { setLoading(false); }
   };
 
@@ -86,7 +105,7 @@ export default function Login({ brand }) {
     try {
       var res = await signInWithGoogle();
       if (res && res.error) setErr('Login com Google indisponível no momento.');
-    } catch (e) { setErr('Login com Google indisponível no momento.'); }
+    } catch { setErr('Login com Google indisponível no momento.'); }
   };
 
   var resetPassword = async function() {
@@ -169,11 +188,11 @@ export default function Login({ brand }) {
           </div>
 
           {/* Abas */}
-          <div className="flex p-1 rounded-2xl mb-7 anim-fade-up" style={{ background: 'rgba(10,37,64,0.06)' }}>
+          <div className="flex p-1 rounded-2xl mb-7 anim-fade-up" role="tablist" style={{ background: 'rgba(10,37,64,0.06)' }}>
             {[['login', 'Entrar'], ['signup', 'Criar conta']].map(function(t) {
               var active = mode === t[0] && !resetMode;
               return (
-                <button key={t[0]} type="button" onClick={function() { switchMode(t[0]); }}
+                <button key={t[0]} type="button" role="tab" aria-selected={active} onClick={function() { switchMode(t[0]); }}
                   className={'flex-1 min-h-[44px] rounded-xl text-sm font-semibold transition-all duration-200' + (active ? '' : ' hover:text-[#002f59]')}
                   style={active ? { background: '#fff', color: brandText, boxShadow: '0 1px 4px rgba(0,0,0,0.08)' } : { color: '#7a8794' }}>
                   {t[1]}
@@ -199,7 +218,7 @@ export default function Login({ brand }) {
             ) : (
               <form onSubmit={onSubmit} className="flex flex-col gap-4">
                 <h2 className="font-display text-2xl font-semibold" style={{ color: '#111827', letterSpacing: '-0.5px' }}>Recuperar senha</h2>
-                <Inp label="E-mail" type="email" value={resetEmail} onChange={function(e) { setResetEmail(e.target.value); }} placeholder="seu@email.com" />
+                <Inp ref={resetEmailRef} label="E-mail" type="email" value={resetEmail} onChange={function(e) { setResetEmail(e.target.value); }} placeholder="seu@email.com" />
                 {err && <p className="text-xs text-red-500">{err}</p>}
                 <div className="flex gap-2">
                   <button type="button" onClick={function() { switchMode('login'); }} className="flex-1 min-h-[44px] py-3 rounded-xl border text-sm text-gray-600 flex items-center justify-center gap-1.5 transition hover:bg-gray-50" style={{ borderColor: '#e2e8f0' }}>
@@ -225,10 +244,10 @@ export default function Login({ brand }) {
               </div>
 
               {mode === 'signup' && (
-                <Inp label="Nome da empresa ou seu nome" value={suName} onChange={function(e) { setSuName(e.target.value); }} placeholder="Ex: Padaria do João" />
+                <Inp ref={suNameRef} label="Nome da empresa ou seu nome" value={suName} onChange={function(e) { setSuName(e.target.value); }} placeholder="Ex: Padaria do João" />
               )}
 
-              <Inp label="E-mail" type="email"
+              <Inp ref={emailRef} label="E-mail" type="email"
                 value={mode === 'login' ? email : suEmail}
                 onChange={function(e) { (mode === 'login' ? setEmail : setSuEmail)(e.target.value); }}
                 placeholder="seu@email.com" />

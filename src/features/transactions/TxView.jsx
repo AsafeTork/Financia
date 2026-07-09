@@ -52,8 +52,6 @@ export default function TxView({ type, tx, products, onAdd, onEdit, onDelete, on
 
   var filtered  = memo.filtered;
   var total     = memo.total;
-  var grouped   = memo.grouped;
-  var groupOrder = memo.groupOrder;
   var flatRows = memo.flatRows;
 
   var scrollRef = useRef(null);
@@ -229,22 +227,26 @@ export default function TxView({ type, tx, products, onAdd, onEdit, onDelete, on
         ) : (
           <div>
             <div ref={scrollRef} className="max-h-[calc(100vh-280px)] overflow-auto">
-              <div style={{ height: virtualizer.getTotalSize() + 'px', position: 'relative' }}>
-                {virtualizer.getVirtualItems().map(function(virtualItem) {
-                  var item = flatRows[virtualItem.index];
-                  if (item.type === 'header') {
-                    return (
-                      <div key={item.date} style={{ position: 'absolute', top: 0, left: 0, width: '100%', transform: 'translateY(' + virtualItem.start + 'px)' }}>
-                        <div className="flex items-center justify-between px-4 py-2.5 bg-gray-50 border-b border-gray-100">
-                          <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{fmtDate(item.date)}</span>
-                          <span className="text-xs font-semibold tabular" style={{color: accentColor}}>{fmt(item.total)}</span>
+              <div role="list" style={{ height: virtualizer.getTotalSize() + 'px', position: 'relative' }}>
+                {function() {
+                  var rowItems = flatRows.filter(function(r) { return r.type === 'row'; });
+                  var totalRowCount = rowItems.length;
+                  return virtualizer.getVirtualItems().map(function(virtualItem) {
+                    var item = flatRows[virtualItem.index];
+                    if (item.type === 'header') {
+                      return (
+                        <div key={item.date} style={{ position: 'absolute', top: 0, left: 0, width: '100%', transform: 'translateY(' + virtualItem.start + 'px)' }}>
+                          <div className="flex items-center justify-between px-4 py-2.5 bg-gray-50 border-b border-gray-100">
+                            <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{fmtDate(item.date)}</span>
+                            <span className="text-xs font-semibold tabular" style={{color: accentColor}}>{fmt(item.total)}</span>
+                          </div>
                         </div>
-                      </div>
-                    );
-                  }
-                  var t = item.data;
-                  return (
-                    <div key={t.id} style={{ position: 'absolute', top: 0, left: 0, width: '100%', transform: 'translateY(' + virtualItem.start + 'px)' }}>
+                      );
+                    }
+                    var t = item.data;
+                    var rowIndex = flatRows.slice(0, virtualItem.index).filter(function(r) { return r.type === 'row'; }).length + 1;
+                    return (
+                      <div key={t.id} role="listitem" aria-setsize={totalRowCount} aria-posinset={rowIndex} style={{ position: 'absolute', top: 0, left: 0, width: '100%', transform: 'translateY(' + virtualItem.start + 'px)' }}>
                       <div className="flex items-center justify-between px-4 py-3.5 border-b border-gray-50 last:border-0 hover:bg-gray-50 transition-colors">
                         <div className="flex items-center gap-3 min-w-0 flex-1">
                           <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{background: accentBg}}>
@@ -278,7 +280,8 @@ export default function TxView({ type, tx, products, onAdd, onEdit, onDelete, on
                       </div>
                     </div>
                   );
-                })}
+                });
+              }()}
               </div>
             </div>
           </div>

@@ -49,7 +49,7 @@ function collectTokensFromBrand(b) {
   if (!b || !b.brand_config) return tokens;
   var cfg;
   try { cfg = typeof b.brand_config === 'string' ? JSON.parse(b.brand_config) : b.brand_config; }
-  catch (e) { return tokens; }
+  catch { return tokens; }
 
   var pal = cfg.palette || (cfg.modules && cfg.modules.palette) || {};
   if (!pal || Object.keys(pal).length === 0) return tokens;

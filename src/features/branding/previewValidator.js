@@ -64,7 +64,7 @@ export default function previewValidate(proposedBrand, currentBrand) {
 
 function parseConfig(cfg) {
   try { return typeof cfg === 'string' ? JSON.parse(cfg) : cfg; }
-  catch (_) { return null; }
+  catch { return null; }
 }
 
 function hexToRgb(hex) {

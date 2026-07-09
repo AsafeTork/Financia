@@ -169,6 +169,8 @@ export default function ClientEditModal({ client, adminEmail, onSave, onClose, t
 
   var uploadLogo = async function(rawFile) {
     if (!rawFile) return;
+    var allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+    if (allowedTypes.indexOf(rawFile.type) === -1) { toast('Formato não suportado. Use JPEG, PNG, WebP ou GIF.', 'error'); return; }
     if (rawFile.size > 2 * 1024 * 1024) { toast('Imagem deve ter menos de 2MB.', 'error'); return; }
     setUploading(true);
     var ext = rawFile.name.split('.').pop();
@@ -224,7 +226,7 @@ export default function ClientEditModal({ client, adminEmail, onSave, onClose, t
         updated.plan_activated_by = plan !== 'free' ? (adminEmail || 'admin') : null;
       }
       onSave(updated);
-    } catch (e) {
+    } catch {
       toast('Erro inesperado.', 'error');
     } finally {
       setSaving(false);
@@ -232,11 +234,11 @@ export default function ClientEditModal({ client, adminEmail, onSave, onClose, t
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 anim-fade" style={{background:'rgba(15,23,42,0.55)', backdropFilter:'blur(3px)', WebkitBackdropFilter:'blur(3px)'}}>
+    <div role="dialog" aria-modal="true" aria-labelledby="client-edit-title" className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 anim-fade" style={{background:'rgba(15,23,42,0.55)', backdropFilter:'blur(3px)', WebkitBackdropFilter:'blur(3px)'}}>
       <div className="rounded-t-2xl sm:rounded-2xl w-full sm:max-w-md flex flex-col anim-scale" style={{background:'var(--bg-card)', maxHeight:'92vh', overflowY:'auto', boxShadow:'var(--shadow-lg)'}}>
 
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 flex-shrink-0">
-          <p className="font-bold" style={{color:'var(--text-main)'}}>Editar cliente</p>
+          <p id="client-edit-title" className="font-bold" style={{color:'var(--text-main)'}}>Editar cliente</p>
           <button onClick={onClose} aria-label="Fechar" className="text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-1 rounded-lg transition flex items-center justify-center w-9 h-9 flex-shrink-0">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"/></svg>
           </button>

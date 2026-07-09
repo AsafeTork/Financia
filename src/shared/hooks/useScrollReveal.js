@@ -46,14 +46,16 @@ export function useScrollRevealMultiple(containerRef, selector) {
     if (!containerRef.current) return;
 
     const items = containerRef.current.querySelectorAll(selector);
+    const timeouts = [];
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry, index) => {
           if (entry.isIntersecting) {
-            // Adiciona delay progressivo (stagger effect)
-            setTimeout(() => {
+            var tid = setTimeout(() => {
               entry.target.classList.add('visible');
-            }, index * 100); // 100ms de delay entre cada item
+            }, index * 100);
+            timeouts.push(tid);
             
             observer.unobserve(entry.target);
           }
@@ -69,6 +71,7 @@ export function useScrollRevealMultiple(containerRef, selector) {
 
     return () => {
       items.forEach((item) => observer.unobserve(item));
+      timeouts.forEach(function(tid) { clearTimeout(tid); });
     };
   }, [containerRef, selector]);
 }

@@ -41,7 +41,7 @@ function loadSchemes() {
   try {
     var raw = localStorage.getItem('financia_logo_schemes');
     return raw ? JSON.parse(raw) : [];
-  } catch (_) { return []; }
+  } catch { return []; }
 }
 
 function saveSchemes(schemes) {
@@ -57,7 +57,7 @@ export default function LogoSchemes({ brandColor, toast, onApply }) {
   var setColor = function(id, val) {
     setColors(function(prev) { var o = Object.assign({}, prev); o[id] = val; return o; });
     setJsonInput(function(prev) {
-      try { var p = JSON.parse(prev); p[id] = val; return JSON.stringify(p, null, 2); } catch (_) { return prev; }
+      try { var p = JSON.parse(prev); p[id] = val; return JSON.stringify(p, null, 2);       } catch { return prev; }
     });
   };
 
@@ -66,7 +66,9 @@ export default function LogoSchemes({ brandColor, toast, onApply }) {
     try {
       var parsed = JSON.parse(json);
       if (parsed && typeof parsed === 'object') {
-        setColors(function(prev) { return Object.assign({}, prev, parsed); });
+        var safe = {}; var allowedKeys = ELEMENTS_CONFIG.map(function(el) { return el.id; });
+        allowedKeys.forEach(function(k) { if (parsed[k] !== undefined) safe[k] = String(parsed[k]).slice(0, 100); });
+        setColors(function(prev) { return Object.assign({}, prev, safe); });
       }
     } catch (_) { void _; }
   };
