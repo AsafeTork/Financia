@@ -20,14 +20,29 @@ O Financia é um aplicativo *white-label* de gestão financeira para pequenas em
 | **Cobrança** | Stripe | — | Stripe Elements + Assinaturas + Venda de White-label |
 | **Testes** | Vitest + Testing Library | — | 1100+ testes unitários e de integração |
 
-### Estrutura de Diretórios
+### Estrutura de Diretórios (Organização por Domínio — Feature-First)
+
+O projeto adota uma estrutura **feature-first**: cada domínio de negócio é auto-contido em `src/features/`, com componentes compartilhados em `src/shared/` e infraestrutura em `src/lib/`.
+
 - `src/`: Todo o código-fonte frontend React do projeto.
   - `src/App.jsx`: Estado global centralizado, tratamento de rotas por hash e integração dos hooks customizados.
   - `src/main.jsx`: Ponto de entrada do React.
   - `src/index.css` & `animations.css`: Folha de estilo global com variáveis CSS (tokens) e animações.
+  - `src/features/`: Código organizado por domínio de negócio.
+    - `features/auth/`: Login, sessão, impersonação.
+    - `features/transactions/`: CRUD de receitas e despesas.
+    - `features/inventory/`: Produtos e perdas.
+    - `features/dashboard/`: Visão geral financeira.
+    - `features/reports/`: Relatórios e exportações.
+    - `features/settings/`: Configurações do usuário.
+    - `features/admin/`: Painel de administração.
+    - `features/plans/`: Assinaturas e planos.
+    - `features/branding/`: Editor de identidade visual (white-label).
+    - `features/landing/`: Páginas públicas (landing, privacidade, termos).
+  - `src/shared/`: Componentes reutilizáveis de interface (Sidebar, Header, BottomNav, UI primitives).
   - `src/lib/`: Código JS puro (integrações de APIs, banco local e funções utilitárias).
-    - `dexie.js`: Schema Dexie (IndexedDB), instância `ldb`, helpers `toLocal`/`getLastSync`/`setLastSync`.
-    - `sync.js`: Sincronização bidirecional offline-remoto + consultas de administração (`syncAll`, `fetchClients`, etc.).
+    - `db.js`: Schema Dexie (IndexedDB) + engine de sincronização push-based.
+    - `sync.js`: Sincronização bidirecional offline-remoto + consultas de administração.
     - `supabase.js`: Inicialização do cliente Supabase.
     - `auth.js`: Funções de login, logout e reset de senha.
     - `constants.js`: Valores iniciais, limites de plano, presets de cores e objetos de menu.
@@ -39,20 +54,8 @@ O Financia é um aplicativo *white-label* de gestão financeira para pequenas em
     - `crud.js`: Métodos auxiliares de banco local com disparo imediato de sincronização.
     - `pwa.js`: Utilitário de registro e atualização do Service Worker.
   - `src/hooks/`: Hooks customizados de gerenciamento de estado e controle de sessões.
-    - `useSession.js`: Carrega os dados, controla sessões, assinaturas e impersonação de administrador.
-    - `useBrandAppearance.js`: Deriva e aplica variáveis de cores CSS dinamicamente no `<html>`.
-    - `useBrandManager.js`: Atualiza o perfil da marca e telefone localmente e envia para a nuvem.
-    - `useTx.js` / `useProducts.js` / `useLosses.js`: Hooks de CRUD para as transações, inventário de produtos e perdas.
-    - `useDataLoader.js`: Carrega registros das tabelas Dexie no estado global do React.
-    - `useAuthBootstrap.js`: Escuta o status de autenticação (onAuthStateChange).
-    - `useSyncLoop.js`: Executa o loop periódico de sincronização a cada 2 minutos.
-    - `useRealtime.js`: Escuta atualizações do Supabase em tempo real.
-    - `useImpersonation.js`: Fluxo de impersonação cruzado (cross-tab) admin-cliente.
-    - `useStripeCheckoutInit.js`: Carrega e inicializa o formulário de cartão do Stripe.
-  - `src/views/`: Telas e páginas do aplicativo (carregadas sob demanda via `React.lazy`).
-  - `src/components/`: Componentes reutilizáveis de interface (menus, tabelas, modais, etc.).
-  - `src/admin/`: Componentes específicos do painel de controle do administrador.
   - `src/context/` & `src/test/`: Configuração de contextos e testes do frontend.
+  - `src/design-system/`: Tokens visuais CSS (colors, typography, spacing, shadows, borderRadius).
 - `supabase/`: Migrações SQL e Deno Edge Functions.
 - `electron/`: Script do processo principal (`main.cjs`) para carregar o app em janela Windows nativa.
 - `scripts/`: Scripts utilitários de desenvolvimento (geração de ícones, verificação de sintaxe).

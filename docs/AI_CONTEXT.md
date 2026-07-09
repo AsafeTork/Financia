@@ -1,6 +1,6 @@
-# INSTRUÇÕES DO SISTEMA E CONTEXTO DO PROJETO (FINANCIA)
+# INSTRUÇÕES DO SISTEMA E CONTEXTO DO PROJETO (FINANCIA) — DEPRECATED
 
-> **ATENÇÃO IA:** Este arquivo é a Fonte Única de Verdade (*Source of Truth*) do projeto Financia. Você deve ler e seguir TODAS as diretivas, regras sintáticas e estruturas de dados descritas aqui. Não ignore nenhuma regra sob risco de quebrar o build ou introduzir bugs críticos.
+> **⚠️ DEPRECIADO:** Este arquivo foi substituído por `CLAUDE.md` (raiz do projeto), que é agora a Fonte Única de Verdade. Mantido apenas para referência histórica. Consulte `CLAUDE.md` para regras sintáticas, schema e data flow atuais.
 
 ---
 

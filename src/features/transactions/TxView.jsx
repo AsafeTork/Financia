@@ -167,14 +167,14 @@ export default function TxView({ type, tx, products, onAdd, onEdit, onDelete, on
           <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
           </svg>
-          <input value={search} onChange={function(e) { setSearch(e.target.value); }}
+          <input aria-label="Buscar transacoes" value={search} onChange={function(e) { setSearch(e.target.value); }}
             placeholder={'Buscar ' + (isIncome ? 'vendas' : 'despesas') + '...'}
             className="w-full pl-9 pr-3 py-2.5 text-sm border border-gray-200 rounded-xl transition"
             style={{background:'var(--bg-input)', color:'var(--text-main)'}}/>
         </div>
         <div className="grid grid-cols-2 gap-2">
-          <Inp type="date" value={dateFrom} onChange={function(e) { setDateFrom(e.target.value); }} placeholder="De"/>
-          <Inp type="date" value={dateTo}   onChange={function(e) { setDateTo(e.target.value); }}   placeholder="Ate"/>
+          <Inp label="De" type="date" value={dateFrom} onChange={function(e) { setDateFrom(e.target.value); }} placeholder="De"/>
+          <Inp label="Ate" type="date" value={dateTo}   onChange={function(e) { setDateTo(e.target.value); }}   placeholder="Ate"/>
         </div>
         {dateFrom && dateTo && dateFrom > dateTo && (
           <p className="text-xs text-red-500 mt-1">Data inicial deve ser anterior ou igual a data final.</p>

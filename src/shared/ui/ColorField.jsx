@@ -12,9 +12,9 @@ export default function ColorField({ label, desc, value, onChange }) {
         <p className="text-xs" style={{color:'var(--text-sub)'}}>{desc}</p>
       </div>
       <div className="flex items-center gap-2">
-        <input type="color" value={isValidHex(value) ? value : '#002f59'} onChange={function(e) { onChange(e.target.value); }}
+        <input type="color" aria-label={label + ' (seletor)'} value={isValidHex(value) ? value : '#002f59'} onChange={function(e) { onChange(e.target.value); }}
           className="w-9 h-9 rounded-xl cursor-pointer p-0.5 flex-shrink-0" style={{border:'1px solid var(--border)'}}/>
-        <input value={value} onChange={function(e) {
+        <input aria-label={label + ' (hex)'} value={value} onChange={function(e) {
           var raw = e.target.value;
           if (/^#[0-9a-fA-F]{0,6}$/.test(raw)) onChange(raw);
         }}
