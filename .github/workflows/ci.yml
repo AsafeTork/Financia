@@ -1,248 +1,61 @@
-# .github/workflows/ci.yml
-name: CI/CD Pipeline
+name: CI
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main]
   pull_request:
-    branches: [main, develop]
-  workflow_dispatch:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_OPTIONS: --max-old-space-size=6144
 
 jobs:
+  lint:
+    name: Lint & TypeCheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+
   test:
+    name: Tests
     runs-on: ubuntu-latest
-    timeout-minutes: 15
-    strategy:
-      matrix:
-        node-version: [18, 20]
-
+    timeout-minutes: 10
     steps:
-      - name: Checkout código
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: '22'
           cache: 'npm'
+      - run: npm ci
+      - run: npm test
 
-      - name: Instalar dependências
-        run: npm ci
-
-      - name: Executar lint
-        run: npm run lint
-
-      - name: Executar type check
-        run: npm run typecheck
-
-      - name: Executar testes unitários
-        run: npm run test
-        env:
-          CI: true
-
-      - name: Testes E2E (chromium only, CI)
-        if: matrix.node-version == 18
-        run: npx playwright test
-        env:
-          CI: true
-
-      - name: Upload report de testes
-        if: always()
+  coverage:
+    name: Coverage
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run test:coverage
+      - name: Upload coverage
         uses: actions/upload-artifact@v4
         with:
-          name: test-results-${{ matrix.node-version }}
-          path: |
-            test-results/
-            playwright-report/
-          retention-days: 7
-
-  security:
-    runs-on: ubuntu-latest
-    needs: test
-    if: github.event_name == 'push'
-
-    steps:
-      - name: Checkout código
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-          cache: 'npm'
-
-      - name: Instalar dependências
-        run: npm ci
-
-      - name: Executar audit de segurança
-        run: npm run security:audit
-
-      - name: Submissão SARIF do GitHub
-        uses: github/codeql-action/upload-sarif@v3
-        if: always()
-
-  build:
-    runs-on: ubuntu-latest
-    needs: [test, security]
-    outputs:
-      build-status: ${{ steps.build.outputs.status }}
-
-    steps:
-      - name: Checkout código
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-          cache: 'npm'
-
-      - name: Instalar dependências
-        run: npm ci
-
-      - name: Executar build de produção
-        run: npm run build
-        id: build
-        continue-on-error: true
-
-      - name: Upload artefato de build
-        if: success()
-        uses: actions/upload-artifact@v4
-        with:
-          name: production-build
-          path: dist/
+          name: coverage
+          path: coverage/
           retention-days: 30
-
-      - name: Registrar sucesso do build
-        if: success()
-        id: build
-        run: echo "status=success" >> $GITHUB_OUTPUT
-
-      - name: Registrar falha do build
-        if: failure()
-        id: build
-        run: echo "status=failed" >> $GITHUB_OUTPUT
-
-  deploy-staging:
-    runs-on: ubuntu-latest
-    needs: build
-    if: github.ref == 'refs/heads/develop'
-
-    steps:
-      - name: Checkout código
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-          cache: 'npm'
-
-      - name: Instalar dependências
-        run: npm ci
-
-      - name: Executar build de produção
-        run: npm run build
-
-      - name: Deploy para GitHub Pages (Staging)
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
-          keep_files: true
-          destination_dir: staging
-
-  deploy-production:
-    runs-on: ubuntu-latest
-    needs: [test, security, build]
-    if: github.ref == 'refs/heads/main'
-
-    steps:
-      - name: Checkout código
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-          cache: 'npm'
-
-      - name: Instalar dependências
-        run: npm ci
-
-      - name: Executar build de produção
-        run: npm run build
-
-      - name: Executar testes E2E embutidos
-        run: npx playwright test
-        env:
-          CI: true
-
-      - name: Deploy para GitHub Pages (Production)
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
-          cname: finanpetto.app
-
-      - name: Invalidar cache CDN
-        run: |
-          curl -X POST "https://api.cloudflare.com/client/v4/zones/${{ secrets.CDN_ZONE_ID }}/purge_cache" \
-            -H "Authorization: Bearer ${{ secrets.CDN_API_TOKEN }}" \
-            -H "Content-Type: application/json" \
-            --data '{"purge": ["/"]}'
-
-  lighthouse:
-    runs-on: ubuntu-latest
-    needs: build
-    if: github.event_name == 'pull_request'
-
-    steps:
-      - name: Checkout código
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-          cache: 'npm'
-
-      - name: Instalar dependências
-        run: npm ci
-
-      - name: Executar build de produção
-        run: npm run build
-
-      - name: Rodar Lighthouse CI
-        uses: foo-software/lighthouse-ci-github-action@v3
-        with:
-          configPath: .lighthouseci.config.js
-          urls: |
-            https://preview-pr-${{ github.event.pull_request.number }}-financia.vercel.app
-          uploadArtifacts: true
-          claimUrl: ${{ secrets.CLAIM_URL }}
-          uploadUrl: ${{ secrets.UPLOAD_URL }}
-
-  notify:
-    runs-on: ubuntu-latest
-    needs: [deploy-staging, deploy-production]
-    if: always()
-
-    steps:
-      - name: Enviar notificação de sucesso
-        if: needs.deploy-staging.result == 'success' && needs.deploy-production.result == 'success'
-        uses: 8398nc/actions-slack@v3
-        with:
-          status: success
-          slack_webhook_url: ${{ secrets.SLACK_WEBHOOK }}
-          channel: '#deployments'
-          text: 'Deploy concluído com sucesso!'
-
-      - name: Enviar notificação de falha
-        if: failure()
-        uses: 8398nc/actions-slack@v3
-        with:
-          status: failure
-          slack_webhook_url: ${{ secrets.SLACK_WEBHOOK }}
-          channel: '#deployments'
-          text: 'Falha no deploy! Investigate.'

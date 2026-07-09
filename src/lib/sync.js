@@ -96,14 +96,14 @@ export const syncAll = async function(uid) {
     ]);
     await setLastSync(ts, uid);
     return results.every(Boolean);
-  } catch (_) { return false; }
+  } catch { return false; }
 };
 
 export const fetchClients = async function() {
   try {
     const { data } = await sb.from('company_profiles').select('*').order('user_id');
     return data || [];
-  } catch (_) { return []; }
+  } catch { return []; }
 };
 
 export const fetchClientUsage = async function() {
@@ -113,7 +113,7 @@ export const fetchClientUsage = async function() {
     const map = {};
     (data || []).forEach(function(r) { map[r.user_id] = r; });
     return map;
-  } catch (_) { return {}; }
+  } catch { return {}; }
 };
 
 export const fetchDbStats = async function() {
@@ -121,7 +121,7 @@ export const fetchDbStats = async function() {
     const { data, error } = await sb.rpc('admin_db_stats');
     if (error) return null;
     return data || null;
-  } catch (_) { return null; }
+  } catch { return null; }
 };
 
 export const fetchStripeOverview = async function() {
@@ -129,7 +129,7 @@ export const fetchStripeOverview = async function() {
     const res = await sb.functions.invoke('admin-stripe-overview', { body: {} });
     if (res && res.error) return null;
     return res && res.data && !res.data.error ? res.data : null;
-  } catch (_) { return null; }
+  } catch { return null; }
 };
 
 export const setClientCustomPrice = async function(targetUserId, cents, planId) {
@@ -144,7 +144,7 @@ export const setClientCustomPrice = async function(targetUserId, cents, planId) 
     var d = res && res.data ? res.data : {};
     if (d.error) return { ok: false, error: d.error };
     return { ok: true, applied: !!d.applied };
-  } catch (_) { return { ok: false, error: 'rede' }; }
+  } catch { return { ok: false, error: 'rede' }; }
 };
 
 export const setClientWhiteLabel = async function(targetUserId, enabled) {
@@ -159,7 +159,7 @@ export const setClientWhiteLabel = async function(targetUserId, enabled) {
     var d = res && res.data ? res.data : {};
     if (d.error) return { ok: false, error: d.error };
     return { ok: true };
-  } catch (_) { return { ok: false, error: 'rede' }; }
+  } catch { return { ok: false, error: 'rede' }; }
 };
 
 export const deleteClient = async function(uid) {
@@ -167,12 +167,19 @@ export const deleteClient = async function(uid) {
     const { error } = await sb.rpc('admin_delete_client', { target_uid: uid });
     if (error) throw error;
     return true;
-  } catch (_) { return false; }
+  } catch { return false; }
 };
 
-export const triggerApkBuild = async function(clientName, logoUrl, primaryColor) {
-  const tok = localStorage.getItem('nancia_gh_token') || '';
+const validateToken = function(tok) {
+  if (!tok || tok.length < 10) return false;
+  if (tok.indexOf('ghp_') !== 0 && tok.indexOf('github_pat_') !== 0 && tok.indexOf('gho_') !== 0) return false;
+  return true;
+};
+
+export const triggerApkBuild = async function(clientName, logoUrl, primaryColor, ghToken) {
+  var tok = ghToken || localStorage.getItem('nancia_gh_token') || '';
   if (!tok) return { ok: false, reason: 'no_token' };
+  if (!validateToken(tok)) return { ok: false, reason: 'invalid_token' };
   var last = Number(localStorage.getItem('nancia_last_build_at') || '0');
   if (Date.now() - last < 5 * 60 * 1000) return { ok: false, reason: 'rate_limited' };
   var safeName = String(clientName || 'Financia').replace(/[^\w\s-]/g, '').trim().slice(0, 60) || 'Financia';
@@ -180,7 +187,7 @@ export const triggerApkBuild = async function(clientName, logoUrl, primaryColor)
   try {
     var parsed = new URL(String(logoUrl || '').trim());
     if (parsed.protocol === 'https:' || parsed.protocol === 'http:') safeLogo = parsed.toString().slice(0, 500);
-  } catch (e) { void e; }
+  } catch { void 0; }
   var safeColor = String(primaryColor || '#002f59').replace(/[^#0-9a-fA-F]/g, '');
   if (!/^#?[0-9a-fA-F]{6}$/.test(safeColor)) safeColor = '#002f59';
   if (safeColor.charAt(0) !== '#') safeColor = '#' + safeColor;
@@ -202,7 +209,7 @@ export const triggerApkBuild = async function(clientName, logoUrl, primaryColor)
       return { ok: true };
     }
     return { ok: false, reason: 'api_error', status: res.status };
-  } catch(e) {
+  } catch {
     return { ok: false, reason: 'network_error' };
   }
 };

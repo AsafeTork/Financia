@@ -12,14 +12,14 @@ var SKIPdata = function(uid) { return 'recurring_skip_' + uid; };
 
 export async function getRecurring(uid) {
   try { var r = await ldb.meta.get(METdata(uid)); return (r && r.val) || []; }
-  catch (e) { return []; }
+  catch { return []; }
 }
 export async function setRecurring(uid, list) {
   return ldb.meta.put({ key: METdata(uid), val: list || [] });
 }
 export async function getSkips(uid) {
   try { var r = await ldb.meta.get(SKIPdata(uid)); return (r && r.val) || []; }
-  catch (e) { return []; }
+  catch { return []; }
 }
 export async function addSkip(uid, id) {
   var s = await getSkips(uid);

@@ -57,6 +57,7 @@ export function useSession(p) {
 
   var loadData = useCallback(async function(userId) {
     var token = ++loadingRef.current;
+    var syncStatusToken = {};
     uidRef.current = userId;
     p.setDataError(null);
     var localDone = false;
@@ -69,7 +70,7 @@ export function useSession(p) {
       clearTimeout(loadTimeout);
       if (loadingRef.current !== token) return;
       p.setDataLoading(false);
-      if (reconnectRef.current) reconnectRef.current(userId);
+      if (typeof reconnectRef.current === 'function') reconnectRef.current(userId);
       if (navigator.onLine) {
         p.setSyncStatus('syncing');
         var res = await Promise.all([syncAll(userId), fetchRole(userId)]);
@@ -81,19 +82,25 @@ export function useSession(p) {
           await loadFromLocal(userId);
           if (loadingRef.current !== token) return;
           p.setSyncStatus('ok');
-          setTimeout(function() { p.setSyncStatus('idle'); }, 3000);
+          var st1 = {};
+          syncStatusToken = st1;
+          setTimeout(function() { if (syncStatusToken === st1) p.setSyncStatus('idle'); }, 3000);
         } else {
           p.setSyncStatus('error');
-          setTimeout(function() { p.setSyncStatus('idle'); }, 5000);
+          var st2 = {};
+          syncStatusToken = st2;
+          setTimeout(function() { if (syncStatusToken === st2) p.setSyncStatus('idle'); }, 5000);
         }
       }
-    } catch(e) {
+    } catch {
       localDone = true;
       clearTimeout(loadTimeout);
       if (loadingRef.current !== token) return;
       p.setDataLoading(false);
       p.setSyncStatus('error');
-      setTimeout(function() { p.setSyncStatus('idle'); }, 5000);
+      var st3 = {};
+      syncStatusToken = st3;
+      setTimeout(function() { if (syncStatusToken === st3) p.setSyncStatus('idle'); }, 5000);
       if (navigator.onLine) {
         try {
           var allRes = await Promise.all([
@@ -134,7 +141,7 @@ export function useSession(p) {
           var roleData = roleRes && roleRes.data ? roleRes.data : null;
           p.setIsAdminDB(roleData && roleData.role === 'admin');
           await setLastSync(now(), userId);
-        } catch(e2) { p.setDataError('Erro ao carregar dados.'); }
+        } catch { p.setDataError('Erro ao carregar dados.'); }
       } else {
         p.setDataError('Sem conexão e sem dados locais. Conecte-se pelo menos uma vez.');
       }

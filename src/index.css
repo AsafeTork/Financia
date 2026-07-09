@@ -20,6 +20,9 @@ body { background: var(--bg-page, #f8fafc); color: var(--text-main, #0f172a); }
 .anim-scale { animation: scaleIn .2s cubic-bezier(.16,1,.3,1); }
 .anim-down  { animation: slideDown .25s cubic-bezier(.16,1,.3,1); }
 
+@keyframes toastFadeOut { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-8px) scale(.96); } }
+.anim-out   { animation: toastFadeOut .25s cubic-bezier(.16,1,.3,1) forwards; }
+
 /* Transicoes globais */
 a, button { transition: opacity .15s ease, background-color .15s ease, color .15s ease, box-shadow .15s ease, transform .12s ease; }
 

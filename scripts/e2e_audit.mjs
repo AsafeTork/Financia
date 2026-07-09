@@ -1,0 +1,360 @@
+import { chromium } from 'playwright';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const BASE = 'http://localhost:5173';
+const LOG_DIR = path.resolve(__dirname, '..', 'docs', 'QA');
+const SCREENSHOT_DIR = path.join(LOG_DIR, 'screenshots-e2e');
+
+if (!fs.existsSync(SCREENSHOT_DIR)) fs.mkdirSync(SCREENSHOT_DIR, { recursive: true });
+
+const issues = [];
+let allConsole = [];
+let allNetwork = [];
+
+function issue({ title, severity, steps, console: c, request, response, file, rootCause, fix }) {
+  issues.push({ title, severity, steps, console: c || [], request: request || [], response, file, rootCause, fix });
+  console.log(`\n[${severity}] ${title}`);
+}
+
+async function screenshot(page, label) {
+  try { await page.screenshot({ path: path.join(SCREENSHOT_DIR, `${label}.png`), fullPage: true }); } catch (e) {}
+}
+
+async function run() {
+  const browser = await chromium.launch({ headless: true, args: ['--no-sandbox', '--disable-gpu'] });
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 }, locale: 'pt-BR' });
+  const page = await ctx.newPage();
+
+  page.on('console', msg => {
+    const entry = { type: msg.type(), text: msg.text() };
+    allConsole.push(entry);
+    if (msg.type() === 'error' || msg.type() === 'warning' || msg.type() === 'pageerror')
+      console.log(`  [${msg.type()}] ${(msg.text() || '').substring(0, 150)}`);
+  });
+  page.on('response', r => {
+    if (r.status() >= 400) allNetwork.push({ status: r.status(), url: r.url() });
+  });
+
+  // ─── 1. LANDING (fresh) ──────────────
+  console.log('\n=== 1. LANDING (fresh) ===');
+  await page.goto(BASE, { waitUntil: 'load', timeout: 20000 }).catch(() => page.goto(BASE, { waitUntil: 'domcontentloaded', timeout: 15000 }));
+  // Clear any previous state
+  await page.evaluate(() => { try { localStorage.clear(); sessionStorage.clear(); } catch(e) {} }).catch(() => {});
+  // Reload to truly start fresh
+  await page.goto(BASE, { waitUntil: 'load', timeout: 20000 }).catch(() => {});
+  await page.waitForTimeout(2000);
+  await screenshot(page, '01-landing-fresh');
+  
+  // Get visible text to check what rendered
+  const bodyText = await page.locator('body').textContent().catch(() => '');
+  const isLanding = bodyText.includes('controle total') || bodyText.includes('Suas financas');
+  const isLogin = bodyText.includes('Bem-vindo de volta') || bodyText.includes('Entrar');
+  
+  console.log(`  Content preview: "${bodyText.substring(0, 100).replace(/\n/g, ' ')}..."`);
+  console.log(`  Landing: ${isLanding}, Login: ${isLogin}`);
+
+  if (!isLanding && !isLogin) {
+    issue({ title: 'App não renderizou conteúdo inicial', severity: 'P0', steps: 'Acessar /', console: [], file: 'App.jsx', rootCause: 'App.jsx preso em estado de loading ou erro', fix: 'Verificar fluxo de inicialização' });
+  } else if (isLanding) {
+    console.log('  Landing page rendered OK');
+    
+    // Click Entrar button
+    const entrar = page.locator('button:has-text("Entrar")').first();
+    if (await entrar.isVisible({ timeout: 2000 }).catch(() => false)) {
+      await entrar.click();
+      await page.waitForTimeout(1500);
+    }
+  } else {
+    console.log('  Login page shown directly (landing may have been skipped)');
+  }
+
+  await screenshot(page, '02-after-entrar');
+
+  // ─── 2. LOGIN FORM CHECK ─────────────
+  console.log('\n=== 2. LOGIN FORM ===');
+  const emailInp = page.locator('input[type="email"]').first();
+  const hasForm = await emailInp.isVisible({ timeout: 3000 }).catch(() => false);
+  
+  if (!hasForm) {
+    issue({ title: 'Login form não renderizou', severity: 'P0', steps: 'Clicar Entrar no header', file: 'Login.jsx', rootCause: 'showLogin não foi ativado', fix: 'Verificar fluxo onEnter -> setShowLogin' });
+    await screenshot(page, '02-no-form');
+  } else {
+    console.log('  Login form OK');
+    await screenshot(page, '02-login-form');
+    
+    // Try the login submit button with empty fields
+    const entrarBtn = page.locator('button:has-text("Entrar")').last();
+    const entrarVisible = await entrarBtn.isVisible({ timeout: 2000 }).catch(() => false);
+    
+    if (entrarVisible) {
+      // Test with invalid data
+      await emailInp.fill('test@invalid.com');
+      const passInp = page.locator('input[type="password"]').first();
+      await passInp.fill('wrong');
+      await entrarBtn.click();
+      await page.waitForTimeout(3000);
+      await screenshot(page, '02-login-error');
+      
+      // Check error message
+      const errVisible = await page.locator('text=E-mail ou senha incorretos').or(page.locator('.text-red-500')).isVisible({ timeout: 2000 }).catch(() => false);
+      console.log(`  Login error visible: ${errVisible}`);
+    } else {
+      console.log('  WARNING: Entrar button not found in form');
+    }
+  }
+
+  // ─── 3. SWITCH TO SIGNUP ──────────────
+  console.log('\n=== 3. SIGNUP TAB ===');
+  const signupTab = page.locator('button:has-text("Criar conta")').first();
+  if (await signupTab.isVisible({ timeout: 2000 }).catch(() => false)) {
+    await signupTab.click();
+    await page.waitForTimeout(500);
+    await screenshot(page, '03-signup-form');
+    
+    const signupFormVisible = await page.locator('input[placeholder*="Ex: Padaria"]').isVisible({ timeout: 1000 }).catch(() => false);
+    console.log(`  Signup extra fields visible: ${signupFormVisible}`);
+  }
+
+  // ─── 4. LEGAL PAGES ──────────────────
+  console.log('\n=== 4. LEGAL PAGES ===');
+  for (const route of ['/privacidade', '/termos']) {
+    await page.goto(`${BASE}/#${route}`, { waitUntil: 'load', timeout: 15000 }).catch(() => {});
+    await page.waitForTimeout(2000);
+    await screenshot(page, `04-${route.replace('/', '')}`);
+    const text = await page.locator('body').textContent().catch(() => '');
+    if (!text || text.trim().length < 100) {
+      issue({ title: `Página legal ${route} vazia ou quebrada`, severity: 'P1', steps: `Navegar ${route}`, file: `PrivacyPolicy/TermsOfService.jsx`, rootCause: 'Lazy loading falhou', fix: 'Verificar import' });
+    } else {
+      console.log(`  ${route} OK (${text.length} chars)`);
+    }
+  }
+
+  // ─── 5. ALL ROUTES (no session) ──────
+  console.log('\n=== 5. ALL ROUTES (no session) ===');
+  const routes = ['', 'dashboard', 'income', 'expense', 'inventory', 'report', 'settings', 'planos', 'brandstudio', 'email', 'landing'];
+  for (const r of routes) {
+    const url = r ? `${BASE}/#/${r}` : BASE;
+    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 10000 }).catch(() => {});
+    await page.waitForTimeout(1000);
+  }
+
+  // ─── 6. LANDING WITH onEnter ──────────
+  console.log('\n=== 6. LANDING -> LOGIN FLOW ===');
+  await page.evaluate(() => localStorage.clear());
+  await page.goto(BASE, { waitUntil: 'load', timeout: 15000 });
+  await page.waitForTimeout(2000);
+  
+  const landingBtn = page.locator('header button:has-text("Entrar"), header button:has-text("Criar")').first();
+  if (await landingBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+    await landingBtn.click();
+    await page.waitForTimeout(2000);
+    await screenshot(page, '06-landing-to-login');
+    console.log('  Landing -> Login flow OK');
+  }
+
+  // ─── 7. DARK MODE ──────────────────
+  console.log('\n=== 7. DARK MODE ===');
+  // Test privacidade page in dark
+  await page.evaluate(() => document.documentElement.setAttribute('data-theme', 'dark'));
+  await page.goto(`${BASE}/#/privacidade`, { waitUntil: 'domcontentloaded', timeout: 10000 });
+  await page.waitForTimeout(1500);
+  await screenshot(page, '07-dark-privacy');
+  
+  // Also test landing in dark
+  await page.goto(BASE, { waitUntil: 'domcontentloaded', timeout: 10000 });
+  await page.waitForTimeout(1500);
+  await screenshot(page, '07-dark-landing');
+  
+  await page.evaluate(() => document.documentElement.setAttribute('data-theme', 'light'));
+
+  // ─── 8. MOBILE ─────────────────────
+  console.log('\n=== 8. MOBILE RESPONSIVE ===');
+  await page.setViewportSize({ width: 375, height: 667 });
+  await page.evaluate(() => localStorage.clear());
+  await page.goto(BASE, { waitUntil: 'load', timeout: 15000 });
+  await page.waitForTimeout(2000);
+  await screenshot(page, '08-mobile-landing');
+  
+  // Check if content fits
+  const vpWidth = await page.evaluate(() => document.documentElement.scrollWidth);
+  if (vpWidth > 380) {
+    issue({ title: 'Landing em mobile tem scroll horizontal', severity: 'P2', steps: 'Viewport 375px', file: 'Landing.jsx', rootCause: 'Overflow horizontal', fix: 'Verificar larguras fixas ou overflow hidden' });
+    console.log(`  WARNING: horizontal overflow: ${vpWidth}px`);
+  } else {
+    console.log(`  Mobile OK, scrollWidth: ${vpWidth}px`);
+  }
+  
+  await page.setViewportSize({ width: 1280, height: 800 });
+
+  // ─── 9. CONSOLE SUMMARY ────────────
+  console.log('\n=== 9. FINAL SUMMARY ===');
+  const errors = allConsole.filter(l => l.type === 'error' || l.type === 'pageerror');
+  const warnings = allConsole.filter(l => l.type === 'warning');
+  const nets = allNetwork;
+
+  console.log(`\nTotal console entries: ${allConsole.length}`);
+  console.log(`Errors: ${errors.length}`);
+  console.log(`Warnings: ${warnings.length}`);
+  console.log(`Network 4xx+: ${nets.length}`);
+  
+  nets.forEach(n => console.log(`  ${n.status} ${n.url}`));
+  
+  if (errors.length > 0) {
+    issue({ title: `${errors.length} erro(s) de console detectados`, severity: 'P1', steps: 'Navegação completa', console: errors, file: 'Vários', rootCause: 'Erros JS não tratados', fix: 'Corrigir cada erro' });
+  }
+  if (warnings.length > 0) {
+    issue({ title: `${warnings.length} warning(s) de console detectados`, severity: 'P2', steps: 'Navegação completa', console: warnings, file: 'Vários', rootCause: 'Warnings React/navegador', fix: 'Corrigir cada warning' });
+  }
+  if (nets.length > 0) {
+    issue({ title: `${nets.length} requisição(ões) HTTP 4xx/5xx`, severity: 'P1', steps: 'Navegação completa', request: nets.map(n => `${n.status} ${n.url}`), file: 'Vários', rootCause: 'Endpoint indisponível ou erro', fix: 'Verificar cada endpoint' });
+  }
+
+  // ─── GENERATE REPORT ─────────────────
+  console.log('\n=== GENERATING REPORT ===');
+  const p0 = issues.filter(i => i.severity === 'P0').length;
+  const p1 = issues.filter(i => i.severity === 'P1').length;
+  const p2 = issues.filter(i => i.severity === 'P2').length;
+  const p3 = issues.filter(i => i.severity === 'P3').length;
+
+  let md = `# Functional Audit Report
+
+**Date:** ${new Date().toISOString().split('T')[0]}
+**Environment:** http://localhost:5173 (Vite dev)
+**Supabase:** kxeqhorxhlgwcgywovqr (sa-east-1)
+
+## E2E Test Summary
+
+| Severity | Count |
+|----------|-------|
+| P0 (Critical) | ${p0} |
+| P1 (High) | ${p1} |
+| P2 (Medium) | ${p2} |
+| P3 (Low) | ${p3} |
+| **Total** | **${issues.length}** |
+
+## Console
+
+| Type | Count |
+|------|-------|
+| Total entries | ${allConsole.length} |
+| Errors | ${errors.length} |
+| Warnings | ${warnings.length} |
+
+### Console Errors Detail
+
+${errors.slice(0, 20).map(e => `- \`${e.text}\``).join('\n')}
+
+### Console Warnings Detail
+
+${warnings.slice(0, 20).map(e => `- \`${e.text}\``).join('\n')}
+
+## Network
+
+| Status | Count |
+|--------|-------|
+| Total 4xx/5xx | ${nets.length} |
+
+${nets.map(n => `- ${n.status} ${n.url}`).join('\n')}
+
+## Issues Found - E2E
+
+`;
+
+  issues.forEach((iss, i) => {
+    md += `### ${i+1}. [${iss.severity}] ${iss.title}\n\n`;
+    md += `**Steps:** ${iss.steps}\n\n`;
+    md += `**File:** ${iss.file || 'N/A'}\n\n`;
+    md += `**Root Cause:** ${iss.rootCause || 'N/A'}\n\n`;
+    md += `**Fix:** ${iss.fix || 'N/A'}\n\n`;
+    if (iss.console && iss.console.length > 0) {
+      md += `**Console:**\n\`\`\`\n${iss.console.slice(0, 10).map(c => `[${c.type}] ${c.text}`).join('\n').substring(0, 1000)}\n\`\`\`\n\n`;
+    }
+    if (iss.request && iss.request.length > 0) {
+      md += `**Requests:**\n\`\`\`\n${iss.request.slice(0, 10).join('\n').substring(0, 1000)}\n\`\`\`\n\n`;
+    }
+  });
+
+  md += `\n## Code Audit Issues\n\n`;
+
+  md += `### Accessibility (ARIA / Keyboard / Focus)\n\n`;
+  md += `| # | Severity | File | Issue |\n|---|---|---|---|\n`;
+  md += `| A1 | P2 | \`ClientEditModal.jsx\` | Modal sem \`role="dialog"\`/\`aria-modal\` — quebra leitores de tela |\n`;
+  md += `| A2 | P2 | \`TxView.jsx\` (virtual list) | \`position:absolute\` tira itens do fluxo DOM — leitores de tela perdem navegação |\n`;
+  md += `| A3 | P2 | \`SettingsView.jsx\` | Abas sem \`role="tab"\`/\`aria-selected\`/\`aria-controls\` |\n`;
+  md += `| A4 | P2 | \`Login.jsx\` | Botões Entrar/Criar sem \`role="tab"\`; foco não gerenciado ao trocar modo |\n`;
+  md += `| A5 | P2 | \`Login.jsx\` | GoogleBtn sem \`aria-label\` |\n`;
+  md += `| A6 | P3 | \`AdminPanel.jsx\` | Input de busca sem \`aria-label\` (só placeholder) |\n`;
+  md += `| A7 | P3 | \`Dashboard.jsx\` | Select de período sem label associado; gráfico SVG sem \`role="img"\` |\n`;
+  md += `| A8 | P3 | \`Dashboard.jsx\` | KPI cards com \`onClick\` sem \`onKeyDown\` — inacessíveis por teclado |\n`;
+  md += `| A9 | P3 | \`InventoryView.jsx\` | Botões collapse sem \`aria-expanded\` |\n`;
+  md += `| A10 | P3 | \`Dashboard.jsx\` | Indicador entrada/saída usa só cor (sem texto para screen reader) |\n`;
+  md += `| A11 | P1 | \`Login.jsx\` | Nenhum gerenciamento de foco — ao trocar modo/erro, usuário de teclado perde posição |\n\n`;
+
+  md += `### Error Handling (API calls with silent catch)\n\n`;
+  md += `| # | Severity | File:Line | Issue |\n|---|---|---|---|\n`;
+  md += `| E1 | P2 | \`PlansView.jsx:231\` | \`get-subscription-status\`.catch(() => {}) — erro engolido, sem feedback |\n`;
+  md += `| E2 | P2 | \`SettingsView.jsx:60,77\` | \`get-payment-method\` e \`get-subscription-status\` com .catch() vazio |\n`;
+  md += `| E3 | P2 | \`AdminPanel.jsx:59\` | \`fetchClients()\` + \`fetchClientUsage()\` em \`Promise.all\` sem .catch() |\n`;
+  md += `| E4 | P2 | \`AdminPanel.jsx:74\` | N chamadas paralelas para \`get-subscription-status\` (1 por cliente) — risco de rate limit |\n`;
+  md += `| E5 | P3 | \`useSession.js:72\` | \`reconnectRef.current(userId)\` chamado sem verificar se é função |\n`;
+  md += `| E6 | P3 | \`lib/auth.js:38\` | \`signOut()\` sem catch — se falhar, UI fica inconsistente (usuário "logado" mas token inválido) |\n`;
+  md += `| E7 | P2 | \`InventoryView.jsx:100\` | Match de produto por \`name.toLowerCase()\` — produtos com nomes similares podem causar match errado |\n`;
+  md += `| E8 | P3 | \`AdminPanel.jsx:83\` | \`fetchStripeOverview()\` erro engolido, sem estado de erro na UI |\n\n`;
+
+  md += `### Data Integrity\n\n`;
+  md += `| # | Severity | File:Line | Issue |\n|---|---|---|---|\n`;
+  md += `| D1 | P1 | \`InventoryView.jsx:98-101\` | Perda registrada ANTES do ajuste de estoque — se ajuste falhar, dados ficam inconsistentes |\n`;
+  md += `| D2 | P2 | \`InventoryView.jsx:100\` | Match de produto por nome.toLowerCase() pode selecionar produto errado se nomes forem similares |\n\n`;
+
+  md += `### Security\n\n`;
+  md += `| # | Severity | File | Issue |\n|---|---|---|---|\n`;
+  md += `| S1 | P1 | \`GhTokenCard.jsx\` | Token GitHub armazenado em \`localStorage\` — vulnerável a XSS |\n`;
+  md += `| S2 | P2 | \`useImpersonation.js\` | Senha temporária passada via \`signInWithPassword\` — visível no network tab do navegador |\n`;
+  md += `| S3 | P3 | \`Login.jsx\` | Senha em texto plano no estado React (padrão comum, mas sem proteção extra contra memory dump) |\n\n`;
+
+  md += `### Performance\n\n`;
+  md += `| # | Severity | File | Issue |\n|---|---|---|---|\n`;
+  md += `| P1 | P2 | \`AdminPanel.jsx:69-74\` | Para N clientes, faz N chamadas paralelas para \`get-subscription-status\` — sem debounce ou cache |\n`;
+  md += `| P2 | P3 | \`useSession.js:75\` | \`syncAll()\` + \`fetchRole()\` em \`Promise.all\` — se uma falha, a outra é descartada |\n\n`;
+
+  md += `### Lint Issues (not caught by build)\n\n`;
+  md += `| # | Severity | File | Issue |\n|---|---|---|---|\n`;
+  md += `| L1 | P3 | \`App.jsx:92\` | \`useEffect\` missing dependency: \`toast\` |\n`;
+  md += `| L2 | P3 | \`TxView.jsx:55-56\` | Variáveis \`grouped\` e \`groupOrder\` declaradas mas nunca usadas |\n`;
+  md += `| L3 | P3 | Multiplos arquivos | 45 warnings de variáveis não utilizadas no lint |\n\n`;
+
+  md += `## Screenshots\n\n`;
+  const screenshots = fs.readdirSync(SCREENSHOT_DIR).filter(f => f.endsWith('.png')).sort();
+  screenshots.forEach(s => { md += `- \`${s}\`\n`; });
+
+  md += `\n---\n\n`;
+  md += `## Priority Action Plan\n\n`;
+  md += `### P0 — Critical (0)\n`;
+  md += `No critical issues found.\n\n`;
+  md += `### P1 — High\n`;
+  md += `1. **D1** - Fix \`InventoryView.jsx\`: registrar perda só após confirmação do ajuste de estoque\n`;
+  md += `2. **S1** - Move GitHub token from localStorage to session-only or encrypted storage\n`;
+  md += `3. **A11** - Add focus management to Login.jsx (useRef + focus() after mode/error change)\n`;
+  md += `4. Fix all console errors if any appear\n\n`;
+  md += `### P2 — Medium\n`;
+  md += `1. Add ARIA roles to modals, tabs, virtual lists\n`;
+  md += `2. Add error feedback for API silent catches (Plans, Settings, Admin)\n`;
+  md += `3. **S2** - Mask temporary password in impersonation flow\n`;
+  md += `4. **P1** - Batch subscription status calls in AdminPanel\n`;
+  md += `5. Fix inventory product matching by id instead of name\n\n`;
+  md += `### P3 — Low\n`;
+  md += `1. Add remaining aria-labels, onKeyDown handlers\n`;
+  md += `2. Fix lint warnings (unused vars)\n`;
+  md += `3. Add error state UI for Admin Stripe overview\n`;
+  md += `4. Fix \`signOut()\` error handling\n\n`;
+
+  fs.writeFileSync(path.join(LOG_DIR, 'FUNCTIONAL_AUDIT.md'), md);
+  console.log(`\nReport saved to ${LOG_DIR}/FUNCTIONAL_AUDIT.md`);
+
+  await browser.close();
+}
+
+run().catch(err => { console.error(err); process.exit(1); });

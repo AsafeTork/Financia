@@ -4,6 +4,7 @@
 
 var listeners = [];
 var waitingSW = null;
+var swCleanup = null;
 
 function shouldEnablePwa() {
   if (typeof window === 'undefined') return false;
@@ -38,22 +39,29 @@ function watchInstall(nw, reg) {
 }
 
 export function registerSW() {
+  if (typeof swCleanup === 'function') { swCleanup(); swCleanup = null; }
   if (!shouldEnablePwa() || !('serviceWorker' in navigator)) return;
+
+  var cleanups = [];
 
   // Troca de controlador = atualizacao aplicada -> recarrega uma unica vez.
   var refreshing = false;
-  navigator.serviceWorker.addEventListener('controllerchange', function() {
+  var onControllerChange = function() {
     if (refreshing) return;
     refreshing = true;
     window.location.reload();
-  });
+  };
+  navigator.serviceWorker.addEventListener('controllerchange', onControllerChange);
+  cleanups.push(function() { navigator.serviceWorker.removeEventListener('controllerchange', onControllerChange); });
 
   // Progresso de cache reportado pelo proprio SW durante a instalacao.
-  navigator.serviceWorker.addEventListener('message', function(e) {
+  var onMessage = function(e) {
     if (e.data && e.data.type === 'CACHE_PROGRESS') {
       emit({ status: 'downloading', pct: e.data.pct });
     }
-  });
+  };
+  navigator.serviceWorker.addEventListener('message', onMessage);
+  cleanups.push(function() { navigator.serviceWorker.removeEventListener('message', onMessage); });
 
   navigator.serviceWorker.register('/sw.js').then(function(reg) {
     reg.update();
@@ -64,21 +72,32 @@ export function registerSW() {
       emit({ status: 'ready' });
     }
 
-    reg.addEventListener('updatefound', function() {
+    var onUpdateFound = function() {
       // So mostra banner se ja havia um SW controlando (e atualizacao, nao 1a instalacao).
       if (!navigator.serviceWorker.controller) return;
       watchInstall(reg.installing, reg);
-    });
+    };
+    reg.addEventListener('updatefound', onUpdateFound);
+    cleanups.push(function() { reg.removeEventListener('updatefound', onUpdateFound); });
 
-    setInterval(function() { reg.update(); }, 30 * 60 * 1000);
+    var swInterval = setInterval(function() { reg.update(); }, 30 * 60 * 1000);
+    cleanups.push(function() { clearInterval(swInterval); });
   }).catch(function() {});
 
-  document.addEventListener('visibilitychange', function() {
-    if (document.visibilityState !== 'visible') return;
+  var onVisibilityChange = function() {
+    if (document.visibilityState !== 'visible') { return; }
     navigator.serviceWorker.getRegistration().then(function(reg) {
       if (reg) reg.update();
     });
-  });
+  };
+  document.addEventListener('visibilitychange', onVisibilityChange);
+  cleanups.push(function() { document.removeEventListener('visibilitychange', onVisibilityChange); });
+
+  swCleanup = function() {
+    for (var i = 0; i < cleanups.length; i++) cleanups[i]();
+    cleanups = [];
+  };
+  return swCleanup;
 }
 
 // ── Instalacao do PWA (beforeinstallprompt) ──

@@ -19,14 +19,14 @@ export const safe = function(s) {
     } catch (e) {
       s = (e && e.message) || e || '';
       var m = String(s || '');
-      if (m.includes('<') || m.includes('>') || m.includes('"') || m.toLowerCase().includes('javascript:')) {
+      if (m.includes('<') || m.includes('>') || m.includes('"') || m.includes('`') || m.includes('$') || m.toLowerCase().includes('javascript:')) {
         return '';
       }
       return m.trim().slice(0, 200);
     }
   }
   var msg = String(s || '');
-  msg = msg.replace(/[<>"]/g, '').replace(/javascript:/gi, '');
+  msg = msg.replace(/[<>"`$]/g, '').replace(/javascript:/gi, '');
   return msg.trim().slice(0, 200);
 };
 export const isDarkTheme = function() { return document.documentElement.getAttribute('data-theme') === 'dark'; };

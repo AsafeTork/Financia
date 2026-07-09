@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect, useRef, lazy, Suspense } from 'react';
 import { flushSync } from 'react-dom';
-import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { INIT_BRAND, INIT_PLAN, atLimit, limitFor, effectivePlan } from './lib/constants.js';
 import { useTx } from './features/transactions/useTx.js';
 import { useProducts } from './features/inventory/useProducts.js';
@@ -18,22 +18,14 @@ import SyncBadge from './shared/ui/SyncBadge.jsx';
 import UpgradeModal from './shared/ui/UpgradeModal.jsx';
 import UpdateBanner from './shared/ui/UpdateBanner.jsx';
 import Onboarding from './shared/ui/Onboarding.jsx';
-import { PageSkeleton } from './shared/ui/ui.jsx';
+import { FeatureErrorBoundary } from './shared/FeatureErrorBoundary.jsx';
+import { WidgetErrorBoundary } from './shared/WidgetErrorBoundary.jsx';
 import Login from './features/auth/Login.jsx';
+import AppRoutes from './routes/routes.jsx';
 
 const Landing       = lazy(function() { return import('./features/landing/Landing.jsx'); });
-const Dashboard     = lazy(function() { return import('./features/dashboard/Dashboard.jsx'); });
-const TxView        = lazy(function() { return import('./features/transactions/TxView.jsx'); });
-const InventoryView = lazy(function() { return import('./features/inventory/InventoryView.jsx'); });
-const ReportView    = lazy(function() { return import('./features/reports/ReportView.jsx'); });
-const EmailView     = lazy(function() { return import('./features/email/EmailView.jsx'); });
-const SettingsView  = lazy(function() { return import('./features/settings/SettingsView.jsx'); });
-const PlansView      = lazy(function() { return import('./features/plans/PlansView.jsx'); });
 const PrivacyPolicy  = lazy(function() { return import('./features/landing/PrivacyPolicy.jsx'); });
 const TermsOfService = lazy(function() { return import('./features/landing/TermsOfService.jsx'); });
-const BrandStudioView = lazy(function() { return import('./features/branding/BrandStudioView.jsx'); });
-
-var noop = function() {};
 
 function Loader({ text }) {
   return (
@@ -67,6 +59,7 @@ export default function App() {
   const [onboardingNeeded, setOnboardingNeeded] = useState(false);
   const onboardingRef                   = useRef(null);
   const toastId                         = useRef(0);
+  const toastTimeoutsRef                = useRef([]);
   const modalRef                        = useRef({ confirmData, showUpgrade, sidebarOpen, showLogin });
   modalRef.current = { confirmData, showUpgrade, sidebarOpen, showLogin };
 
@@ -181,9 +174,18 @@ export default function App() {
     if (!type) type = 'success';
     var id = ++toastId.current;
     setToasts(function(list) { return list.concat([{id:id, msg:msg, type:type}]); });
-    setTimeout(function() {
+    var tid = setTimeout(function() {
+      toastTimeoutsRef.current = toastTimeoutsRef.current.filter(function(t) { return t !== tid; });
       setToasts(function(list) { return list.filter(function(t) { return t.id !== id; }); });
     }, type === 'error' ? 4000 : 3000);
+    toastTimeoutsRef.current.push(tid);
+  }, []);
+
+  useEffect(function() {
+    return function() {
+      toastTimeoutsRef.current.forEach(function(tid) { clearTimeout(tid); });
+      toastTimeoutsRef.current = [];
+    };
   }, []);
 
   const confirm = useCallback(function(msg, onOk) { setConfirmData({msg:msg, onOk:onOk}); }, []);
@@ -208,19 +210,21 @@ export default function App() {
     setTx, setProducts, setLosses,
   });
 
+  var loadDataRef = useRef(loadData);
+  loadDataRef.current = loadData;
+
   useEffect(function() {
     if (typeof window === 'undefined') return;
     window.__financia_reload_plan = function() {
       if (session && session.user && session.user.id && navigator.onLine) {
-        loadData(session.user.id);
+        loadDataRef.current(session.user.id);
       }
     };
     return function() { delete window.__financia_reload_plan; };
-  }, [session, loadData]);
+  }, [session]);
 
   const handleCloseSidebar   = useCallback(function() { setSidebarOpen(false); }, []);
   const handleOpenSidebar    = useCallback(function() { setSidebarOpen(true); }, []);
-  const handleUpgrade        = useCallback(function() { navTo('planos'); }, [navTo]);
   const handleDeductStock    = useCallback(function(id, qty) { adjustStock(id, -qty); }, [adjustStock]);
   const handleConfirmOk      = useCallback(function() { confirmData.onOk(); setConfirmData(null); }, [confirmData]);
   const handleCancel         = useCallback(function() { setConfirmData(null); }, []);
@@ -234,17 +238,21 @@ export default function App() {
 
   if (isLegal) {
     return (
-      <Suspense fallback={<Loader/>}>
-        {path === 'privacidade' ? <PrivacyPolicy/> : <TermsOfService/>}
-      </Suspense>
+      <FeatureErrorBoundary featureName="Legal">
+        <Suspense fallback={<Loader/>}>
+          {path === 'privacidade' ? <PrivacyPolicy/> : <TermsOfService/>}
+        </Suspense>
+      </FeatureErrorBoundary>
     );
   }
 
   if (isLanding) {
     return (
-      <Suspense fallback={<Loader/>}>
-        <Landing brand={brand} onEnter={function() { navigate('/'); setShowLogin(true); }}/>
-      </Suspense>
+      <FeatureErrorBoundary featureName="Landing">
+        <Suspense fallback={<Loader/>}>
+          <Landing brand={brand} onEnter={function() { navigate('/'); setShowLogin(true); }}/>
+        </Suspense>
+      </FeatureErrorBoundary>
     );
   }
 
@@ -252,9 +260,11 @@ export default function App() {
     var seen = !!localStorage.getItem('financia_seen');
     if (!seen && !showLogin) {
       return (
-        <Suspense fallback={<Loader/>}>
-          <Landing brand={brand} onEnter={function() { setShowLogin(true); }}/>
-        </Suspense>
+        <FeatureErrorBoundary featureName="Landing">
+          <Suspense fallback={<Loader/>}>
+            <Landing brand={brand} onEnter={function() { setShowLogin(true); }}/>
+          </Suspense>
+        </FeatureErrorBoundary>
       );
     }
     return <Login brand={brand}/>;
@@ -293,32 +303,28 @@ export default function App() {
   return (
     <div className="min-h-screen flex overflow-x-hidden" style={{background:'var(--bg-page)'}}>
       <Offline/>
-      <UpdateBanner brand={appBrand}/>
+      <WidgetErrorBoundary><UpdateBanner brand={appBrand}/></WidgetErrorBoundary>
       <SyncBadge status={syncStatus}/>
-      <Sidebar view={currentView} onNav={navTo} brand={appBrand} open={sidebarOpen} isAdmin={isAdminDB} onClose={handleCloseSidebar}/>
+      <WidgetErrorBoundary><Sidebar view={currentView} onNav={navTo} brand={appBrand} open={sidebarOpen} isAdmin={isAdminDB} onClose={handleCloseSidebar}/></WidgetErrorBoundary>
       <div className="hidden lg:block fixed top-4 right-4 z-30">
         <ThemeToggle theme={effectiveTheme} onToggle={toggleTheme} variant="floating"/>
       </div>
       <div className="flex-1 lg:ml-64 flex flex-col min-h-screen min-w-0 w-full">
-        <Header brand={appBrand} syncStatus={syncStatus} theme={effectiveTheme} onToggleTheme={toggleTheme} onMenuOpen={handleOpenSidebar}/>
+        <WidgetErrorBoundary><Header brand={appBrand} syncStatus={syncStatus} theme={effectiveTheme} onToggleTheme={toggleTheme} onMenuOpen={handleOpenSidebar}/></WidgetErrorBoundary>
         <main className="flex-1 p-4 lg:p-8 max-w-2xl w-full mx-auto pb-24 lg:pb-8 min-w-0 overflow-x-hidden">
-          <Suspense fallback={<PageSkeleton/>}>
-            <Routes>
-              <Route path="/" element={<Dashboard tx={tx} products={products} brand={appBrand} onNav={navTo} planInfo={planInfo} lossesCount={losses.length} onUpgrade={handleUpgrade} loading={dataLoading}/>} />
-              <Route path="/dashboard" element={<Dashboard tx={tx} products={products} brand={appBrand} onNav={navTo} planInfo={planInfo} lossesCount={losses.length} onUpgrade={handleUpgrade} loading={dataLoading}/>} />
-              <Route path="/income" element={<TxView type="income" tx={tx} products={products} onAdd={addTx} onEdit={editTx} onDelete={deleteTx} onDeductStock={handleDeductStock} planInfo={planInfo} onNav={navTo} brand={appBrand} toast={toast} confirm={confirm}/>} />
-              <Route path="/expense" element={<TxView type="expense" tx={tx} products={products} onAdd={addTx} onEdit={editTx} onDelete={deleteTx} onDeductStock={noop} onAddGenerated={addGenerated} uid={session.user.id} planInfo={planInfo} onNav={navTo} brand={appBrand} toast={toast} confirm={confirm}/>} />
-              <Route path="/inventory" element={<InventoryView products={products} losses={losses} onAddProduct={addProduct} onEditProduct={editProduct} onDeleteProduct={deleteProduct} onAddLoss={addLoss} onEditLoss={editLoss} onDeleteLoss={deleteLoss} onAdjustStock={adjustStock} planInfo={planInfo} onNav={navTo} brand={appBrand} toast={toast} confirm={confirm}/>} />
-              <Route path="/email" element={<EmailView brand={appBrand} toast={toast}/>} />
-              <Route path="/report" element={<ReportView tx={tx} brand={appBrand} toast={toast} onNav={navTo} planInfo={planInfo}/>} />
-              <Route path="/settings" element={<SettingsView brand={appBrand} session={session} planInfo={planInfo} onSave={saveBrand} onSavePhone={savePhone} toast={toast} confirm={confirm} isAdmin={isAdminDB} onNav={navTo}/>} />
-              <Route path="/planos" element={<PlansView brand={appBrand} planInfo={planInfo} toast={toast} onNav={navTo} isAdmin={isAdminDB}/>} />
-              <Route path="/brandstudio" element={<BrandStudioView brand={appBrand} planInfo={planInfo} onSave={saveBrand} toast={toast} onNav={navTo}/>} />
-            </Routes>
-          </Suspense>
+          <FeatureErrorBoundary featureName={currentView} key={location.pathname}>
+            <AppRoutes tx={tx} products={products} losses={losses} brand={appBrand} planInfo={planInfo}
+              onNav={navTo} toast={toast} confirm={confirm} uid={session.user.id}
+              addTx={addTx} editTx={editTx} deleteTx={deleteTx} addGenerated={addGenerated}
+              onDeductStock={handleDeductStock}
+              addProduct={addProduct} editProduct={editProduct} deleteProduct={deleteProduct}
+              addLoss={addLoss} editLoss={editLoss} deleteLoss={deleteLoss} adjustStock={adjustStock}
+              saveBrand={saveBrand} savePhone={savePhone} session={session} isAdmin={isAdminDB}
+              dataLoading={dataLoading}/>
+          </FeatureErrorBoundary>
         </main>
       </div>
-      <BottomNav view={currentView} onNav={navTo} brand={appBrand}/>
+      <WidgetErrorBoundary><BottomNav view={currentView} onNav={navTo} brand={appBrand}/></WidgetErrorBoundary>
       <Toast toasts={toasts} onDismiss={dismissToast}/>
       {confirmData && <Confirm msg={confirmData.msg} onOk={handleConfirmOk} onCancel={handleCancel}/>}
       {showUpgrade && <UpgradeModal reason={typeof showUpgrade === 'object' ? showUpgrade : null} brand={appBrand} onClose={handleCloseUpgrade} onNav={handleNav}/>}

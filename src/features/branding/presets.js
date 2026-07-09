@@ -23,7 +23,7 @@ export async function loadPresetsFromDb() {
       if (match) { var n = parseInt(match[1], 10); if (n > maxId) maxId = n; }
     }
     _presetIdCounter = maxId;
-  } catch (_) { _userPresets = []; }
+  } catch { _userPresets = []; }
   if (_onChange) _onChange();
 }
 
@@ -170,7 +170,7 @@ export function importPreset(jsonStr) {
     var cat = meta.category || 'imported';
     var tags = meta.tags || [];
     return savePreset(name, desc, cat, config, tags);
-  } catch (e) {
+  } catch {
     return null;
   }
 }

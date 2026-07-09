@@ -22,7 +22,5 @@ Se a minha solicitação não incluir os arquivos dessas outras áreas, pergunte
 
 ## Contexto adicional
 
-- `docs/AI_CONTEXT.md` — regras sintáticas, schema, data flow
 - `docs/ARCHITECTURE.md` — arquitetura geral
-- `docs/FINANCIA_CTX.md` — memória arquitetural completa
-- `.cursorrules` — instruções específicas Cursor
+- `docs/AI_CONTEXT.md` — regras sintáticas, schema, data flow (depreciado)

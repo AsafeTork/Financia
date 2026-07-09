@@ -57,7 +57,7 @@ export default function EmailView({ brand, toast }) {
         return;
       }
       toast('E-mail enviado automaticamente.', 'success');
-    } catch (e) {
+    } catch {
       toast('Erro de conexão ao enviar e-mail.', 'error');
     }
     setSending(false);

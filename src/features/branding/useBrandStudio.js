@@ -1,34 +1,29 @@
 import { useState, useCallback, useMemo, useEffect } from 'react';
-import generatePrompt from './promptGenerator.js';
 import processResponse from './responseProcessor.js';
-import { listPresets, getPreset, savePreset, deletePreset, duplicatePreset, toggleFavoritePreset, exportPreset, importPreset, getPresetCategories, loadPresetsFromDb, setOnChange } from './presets.js';
+import { listPresets, getPreset, savePreset, deletePreset, duplicatePreset, toggleFavoritePreset, getPresetCategories, loadPresetsFromDb, setOnChange } from './presets.js';
 import { applyPlanOverride } from './planThemes.js';
 import { enterPreviewMode, exitPreviewMode } from '../../shared/hooks/useBrandAppearance.js';
 
 export default function useBrandStudio(brand, planInfo, onSave, toast) {
-  var brandConfig = useMemo(function() {
-    var bc = brand && brand.brand_config;
-    if (typeof bc === 'string') { try { return JSON.parse(bc); } catch (_) { return { modules: {} }; } }
+  const brandConfig = useMemo(function() {
+    const bc = brand && brand.brand_config;
+    if (typeof bc === 'string') { try { return JSON.parse(bc); } catch { return { modules: {} }; } }
     return bc || { modules: {} };
   }, [brand]);
 
-  var [allPresets, setAllPresets] = useState([]);
-  var [history, setHistory] = useState([]);
-  var [historyIndex, setHistoryIndex] = useState(-1);
-  var [proposed, setProposed] = useState(null);
-  var [brandGlobal, setBrandGlobalState] = useState(function() {
+  const [allPresets, setAllPresets] = useState([]);
+  const [history, setHistory] = useState([]);
+  const [historyIndex, setHistoryIndex] = useState(-1);
+  const [proposed, setProposed] = useState(null);
+  const [brandGlobal, setBrandGlobalState] = useState(function() {
+    const b = brand || {};
     return {
-      logo_url: (brand && brand.logo_url) || '',
-      favicon_url: (brand && brand.favicon_url) || '',
-      name: (brand && brand.name) || '',
-      short_name: (brand && brand.short_name) || '',
-      app_title: (brand && brand.app_title) || '',
-      login_logo_url: (brand && brand.login_logo_url) || '',
-      login_bg: (brand && brand.login_bg) || '',
-      login_text: (brand && brand.login_text) || '',
-      secondary_logo_url: (brand && brand.secondary_logo_url) || '',
-      secondary_logo_position: (brand && brand.secondary_logo_position) || 'right',
-      secondary_logo_size: (brand && brand.secondary_logo_size) || 40,
+      logo_url: b.logo_url || '', favicon_url: b.favicon_url || '',
+      name: b.name || '', short_name: b.short_name || '', app_title: b.app_title || '',
+      login_logo_url: b.login_logo_url || '', login_bg: b.login_bg || '', login_text: b.login_text || '',
+      secondary_logo_url: b.secondary_logo_url || '',
+      secondary_logo_position: b.secondary_logo_position || 'right',
+      secondary_logo_size: b.secondary_logo_size || 40,
     };
   });
 
@@ -39,18 +34,16 @@ export default function useBrandStudio(brand, planInfo, onSave, toast) {
   }, []);
 
   useEffect(function() {
-    if (historyIndex >= 0 && history[historyIndex]) {
-      enterPreviewMode(history[historyIndex]);
-    }
+    if (historyIndex >= 0 && history[historyIndex]) enterPreviewMode(history[historyIndex]);
     return function() { exitPreviewMode(); };
   }, [historyIndex, history]);
 
-  var presetCats = useMemo(function() { return getPresetCategories(); }, []);
+  const presetCats = useMemo(function() { return getPresetCategories(); }, []);
 
-  var saveToHistory = useCallback(function(b) {
-    var entry = JSON.parse(JSON.stringify(b || brand));
+  const saveToHistory = useCallback(function(b) {
+    const entry = JSON.parse(JSON.stringify(b || brand));
     setHistory(function(prev) {
-      var truncated = prev.slice(0, historyIndex + 1);
+      const truncated = prev.slice(0, historyIndex + 1);
       truncated.push(entry);
       if (truncated.length > 20) truncated.shift();
       return truncated;
@@ -58,76 +51,65 @@ export default function useBrandStudio(brand, planInfo, onSave, toast) {
     setHistoryIndex(function(i) { return Math.min(i + 1, 19); });
   }, [brand, historyIndex]);
 
-  var undo = useCallback(function() {
-    if (historyIndex <= 0) return;
-    setHistoryIndex(function(i) { return i - 1; });
+  const undo = useCallback(function() {
+    if (historyIndex > 0) setHistoryIndex(function(i) { return i - 1; });
   }, [historyIndex]);
 
-  var redo = useCallback(function() {
-    if (historyIndex >= history.length - 1) return;
-    setHistoryIndex(function(i) { return i + 1; });
+  const redo = useCallback(function() {
+    if (historyIndex < history.length - 1) setHistoryIndex(function(i) { return i + 1; });
   }, [historyIndex, history]);
 
-  var restoreFromHistory = useCallback(async function(idx) {
-    var entry = history[idx];
+  const restoreFromHistory = useCallback(async function(idx) {
+    const entry = history[idx];
     if (!entry) return;
     await onSave(entry);
     setHistoryIndex(idx);
     if (toast) toast('Versao restaurada.', 'success');
   }, [history, onSave, toast]);
 
-  var savePlanOverride = useCallback(async function(planId, overrideData) {
-    var updated = applyPlanOverride(brand, planId, overrideData);
-    await onSave(updated);
+  const savePlanOverride = useCallback(async function(planId, overrideData) {
+    await onSave(applyPlanOverride(brand, planId, overrideData));
   }, [brand, onSave]);
 
-  var savePlanLogo = useCallback(async function(planId, logoColors) {
-    var cfg = { modules: {} };
-    try { cfg = typeof brand.brand_config === 'string' ? JSON.parse(brand.brand_config) : (brand.brand_config || { modules: {} }); } catch (_) { cfg = { modules: {} }; }
+  const savePlanLogo = useCallback(async function(planId, logoColors) {
+    let cfg;
+    try { cfg = typeof brand.brand_config === 'string' ? JSON.parse(brand.brand_config) : (brand.brand_config || { modules: {} }); } catch { cfg = { modules: {} }; }
     if (!cfg.planOverrides) cfg.planOverrides = {};
-    var existing = cfg.planOverrides[planId] || {};
+    const existing = cfg.planOverrides[planId] || {};
     if (logoColors) {
       cfg.planOverrides[planId] = Object.assign({}, existing, { logoColors: logoColors });
     } else {
       delete existing.logoColors;
-      if (Object.keys(existing).length > 0) {
-        cfg.planOverrides[planId] = existing;
-      } else {
-        delete cfg.planOverrides[planId];
-      }
+      if (Object.keys(existing).length > 0) { cfg.planOverrides[planId] = existing; } else { delete cfg.planOverrides[planId]; }
     }
     saveToHistory(brand);
-    var updated = Object.assign({}, brand, { brand_config: JSON.stringify(cfg) });
+    const updated = Object.assign({}, brand, { brand_config: JSON.stringify(cfg) });
     await onSave(updated);
     if (toast) toast(logoColors ? 'Logo personalizada salva para ' + planId + '!' : 'Plano ' + planId + ' agora usa a logo global.', 'success');
   }, [brand, onSave, toast, saveToHistory]);
 
-  var saveCompletePreset = useCallback(function(name, description, category, tags) {
-    var fullConfig = JSON.parse(JSON.stringify(brandConfig));
-    var result = savePreset(name, description, category, fullConfig, tags);
+  const saveCompletePreset = useCallback(function(name, description, category, tags) {
+    const result = savePreset(name, description, category, JSON.parse(JSON.stringify(brandConfig)), tags);
     if (toast) toast('Preset "' + name + '" salvo com sucesso!', 'success');
     return result;
   }, [brandConfig, toast]);
 
-  var applyFullPreset = useCallback(async function(presetId) {
-    var preset = getPreset(presetId);
+  const applyFullPreset = useCallback(async function(presetId) {
+    const preset = getPreset(presetId);
     if (!preset) { if (toast) toast('Preset nao encontrado.', 'error'); return; }
-    var cfg = typeof preset.config === 'string' ? JSON.parse(preset.config) : preset.config;
+    const cfg = typeof preset.config === 'string' ? JSON.parse(preset.config) : preset.config;
     saveToHistory(brand);
-    var updated = Object.assign({}, brand, { brand_config: JSON.stringify(cfg) });
-    await onSave(updated);
+    await onSave(Object.assign({}, brand, { brand_config: JSON.stringify(cfg) }));
     if (toast) toast('Preset aplicado com sucesso!', 'success');
   }, [brand, onSave, toast, saveToHistory]);
 
-  var parseAndValidate = useCallback(function(jsonStr) {
-    var result = processResponse(jsonStr, brand);
-    if (result.success) {
-      setProposed(result);
-    }
+  const parseAndValidate = useCallback(function(jsonStr) {
+    const result = processResponse(jsonStr, brand);
+    if (result.success) setProposed(result);
     return result;
   }, [brand]);
 
-  var approveProposed = useCallback(async function() {
+  const approveProposed = useCallback(async function() {
     if (!proposed || !proposed.success || !proposed.proposedBrand) return;
     saveToHistory(brand);
     await onSave(proposed.proposedBrand);
@@ -135,25 +117,19 @@ export default function useBrandStudio(brand, planInfo, onSave, toast) {
     if (toast) toast('Alteracoes aprovadas e aplicadas!', 'success');
   }, [proposed, brand, onSave, toast, saveToHistory]);
 
-  var rejectProposed = useCallback(function() {
-    setProposed(null);
+  const rejectProposed = useCallback(function() { setProposed(null); }, []);
+
+  const setBrandGlobalField = useCallback(function(key, value) {
+    setBrandGlobalState(function(prev) { const o = Object.assign({}, prev); o[key] = value; return o; });
   }, []);
 
-  var setBrandGlobalField = useCallback(function(key, value) {
-    setBrandGlobalState(function(prev) { var o = Object.assign({}, prev); o[key] = value; return o; });
-  }, []);
-
-  var saveBrandGlobal = useCallback(async function() {
+  const saveBrandGlobal = useCallback(async function() {
     saveToHistory(brand);
-    var updated = Object.assign({}, brand, {
-      logo_url: brandGlobal.logo_url || null,
-      favicon_url: brandGlobal.favicon_url || null,
-      name: brandGlobal.name || brand.name,
-      short_name: brandGlobal.short_name || null,
-      app_title: brandGlobal.app_title || null,
-      login_logo_url: brandGlobal.login_logo_url || null,
-      login_bg: brandGlobal.login_bg || null,
-      login_text: brandGlobal.login_text || null,
+    const updated = Object.assign({}, brand, {
+      logo_url: brandGlobal.logo_url || null, favicon_url: brandGlobal.favicon_url || null,
+      name: brandGlobal.name || brand.name, short_name: brandGlobal.short_name || null,
+      app_title: brandGlobal.app_title || null, login_logo_url: brandGlobal.login_logo_url || null,
+      login_bg: brandGlobal.login_bg || null, login_text: brandGlobal.login_text || null,
       secondary_logo_url: brandGlobal.secondary_logo_url || null,
       secondary_logo_position: brandGlobal.secondary_logo_position || 'right',
       secondary_logo_size: brandGlobal.secondary_logo_size || 40,
@@ -162,101 +138,22 @@ export default function useBrandStudio(brand, planInfo, onSave, toast) {
     if (toast) toast('Identidade global salva!', 'success');
   }, [brand, brandGlobal, onSave, toast, saveToHistory]);
 
-  var copyPrompt = useCallback(function() {
-    var context = [];
-    context.push('App: ' + (brand.name || 'Financia'));
-    context.push('Cor primaria: ' + (brand.color || '#002f59'));
-    if (brandConfig && brandConfig.logoColors) {
-      context.push('Logo global (SVG 4 elementos): ' + brandConfig.logoColors.blue + ', ' + brandConfig.logoColors.green + ', ' + brandConfig.logoColors.teal + ', ' + brandConfig.logoColors.check);
-    }
-    if (brandConfig && brandConfig.planOverrides) {
-      Object.keys(brandConfig.planOverrides).forEach(function(k) {
-        var po = brandConfig.planOverrides[k];
-        if (po.logoColors) context.push('Logo ' + k + ' (SVG): ' + po.logoColors.blue + ', ' + po.logoColors.green + ', ' + po.logoColors.teal + ', ' + po.logoColors.check);
-        if (po.palette) context.push('Paleta ' + k + ': primary=' + (po.palette.primary||'') + ' secondary=' + (po.palette.secondary||'') + ' accent=' + (po.palette.accent||''));
-      });
-    }
-    if (brandConfig && brandConfig.modules && brandConfig.modules.palette) {
-      var pal = brandConfig.modules.palette;
-      context.push('Paleta: primary=' + (pal.primary||'') + ' secondary=' + (pal.secondary||'') + ' accent=' + (pal.accent||''));
-    }
-    var prompt = generatePrompt({ context: context.join('\n'), limitations: '- Tamanho maximo do JSON: 50KB\n- Cores: formato hexadecimal (#RRGGBB)\n- Fontes: web-safe ou Google Fonts\n- Assets: max 512KB por arquivo', extended: true });
-    navigator.clipboard.writeText(prompt).then(function() {
-      if (toast) toast('Documentacao copiada para a area de transferencia!', 'success');
-    }).catch(function() {
-      if (toast) toast('Nao foi possivel copiar automaticamente.', 'warning');
-    });
-  }, [brand, brandConfig, toast]);
-
-  var copyCurrentJSON = useCallback(function() {
-    var json = brand && brand.brand_config ? (typeof brand.brand_config === 'string' ? brand.brand_config : JSON.stringify(brand.brand_config, null, 2)) : JSON.stringify(brandConfig, null, 2);
-    navigator.clipboard.writeText(json).then(function() {
-      if (toast) toast('JSON atual copiado para a area de transferencia!', 'success');
-    }).catch(function() {
-      if (toast) toast('Nao foi possivel copiar automaticamente.', 'warning');
-    });
-  }, [brand, brandConfig, toast]);
-
-  var handleDeletePreset = useCallback(function(id) {
-    var ok = deletePreset(id);
+  const handleDeletePreset = useCallback(function(id) {
+    const ok = deletePreset(id);
     if (ok && toast) toast('Preset removido.', 'success');
     return ok;
   }, [toast]);
 
-  var handleDuplicatePreset = useCallback(function(id) {
-    return duplicatePreset(id);
-  }, []);
-
-  var handleToggleFavorite = useCallback(function(id) {
-    return toggleFavoritePreset(id);
-  }, []);
-
-  var handleExportPreset = useCallback(function(id) {
-    var data = exportPreset(id);
-    if (!data) { if (toast) toast('Erro ao exportar preset.', 'error'); return; }
-    var blob = new Blob([data], { type: 'application/json' });
-    var url = URL.createObjectURL(blob);
-    var a = document.createElement('a');
-    a.href = url; a.download = 'preset_' + id + '.json'; a.click();
-    URL.revokeObjectURL(url);
-  }, [toast]);
-
-  var handleImportPreset = useCallback(function(jsonStr) {
-    var p = importPreset(jsonStr);
-    if (!p) { if (toast) toast('JSON de preset invalido.', 'error'); return null; }
-    if (toast) toast('Preset importado: ' + p.name, 'success');
-    return p;
-  }, [toast]);
+  const handleDuplicatePreset = useCallback(function(id) { return duplicatePreset(id); }, []);
+  const handleToggleFavorite = useCallback(function(id) { return toggleFavoritePreset(id); }, []);
 
   return {
-    brandConfig: brandConfig,
-    allPresets: allPresets,
-    presetCats: presetCats,
-    history: history,
-    historyIndex: historyIndex,
-    undo: undo,
-    redo: redo,
-    restoreFromHistory: restoreFromHistory,
-    saveToHistory: saveToHistory,
-    proposed: proposed,
-    parseAndValidate: parseAndValidate,
-    approveProposed: approveProposed,
-    rejectProposed: rejectProposed,
-    setProposed: setProposed,
-    savePlanOverride: savePlanOverride,
-    savePlanLogo: savePlanLogo,
-    saveCompletePreset: saveCompletePreset,
-    applyFullPreset: applyFullPreset,
-    applyPreset: applyFullPreset,
-    deletePreset: handleDeletePreset,
-    duplicatePreset: handleDuplicatePreset,
-    toggleFavorite: handleToggleFavorite,
-    exportPreset: handleExportPreset,
-    importPreset: handleImportPreset,
-    copyPrompt: copyPrompt,
-    copyCurrentJSON: copyCurrentJSON,
-    brandGlobal: brandGlobal,
-    setBrandGlobalField: setBrandGlobalField,
-    saveBrandGlobal: saveBrandGlobal,
+    brandConfig, allPresets, presetCats, history, historyIndex,
+    undo, redo, restoreFromHistory, saveToHistory,
+    proposed, parseAndValidate, approveProposed, rejectProposed, setProposed,
+    savePlanOverride, savePlanLogo, saveCompletePreset,
+    applyFullPreset, applyPreset: applyFullPreset,
+    deletePreset: handleDeletePreset, duplicatePreset: handleDuplicatePreset, toggleFavorite: handleToggleFavorite,
+    brandGlobal, setBrandGlobalField, saveBrandGlobal,
   };
 }

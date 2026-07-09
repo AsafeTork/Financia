@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, PageHead, Modal } from '../../shared/ui/ui.jsx';
+import { Card, PageHead, Modal, Spin } from '../../shared/ui/ui.jsx';
 import { PRICING_PLANS, WHITELABEL, waLink, effectivePlan, planChangeCta, PLAN_VISUAL_DEFAULTS } from '../../lib/constants.js';
 import { fmt, fmtDate, brandAlpha } from '../../lib/utils.js';
 import { sb } from '../../lib/supabase.js';
@@ -220,15 +220,26 @@ export default function PlansView({ brand, planInfo, toast, onNav, isAdmin }) {
 
 
   var [subStatus, setSubStatus] = useState(null);
+  var [subError, setSubError] = useState(null);
+  var subLoadingState = useState(false);
+  var subLoading = subLoadingState[0], setSubLoading = subLoadingState[1];
 
   useEffect(function() {
     if (plan === 'free') return;
     var alive = true;
+    setSubError(null);
+    setSubLoading(true);
     sb.functions.invoke('get-subscription-status', { body: {} }).then(function(res) {
       if (!alive) return;
       var d = res && res.data ? res.data : null;
       if (d && d.status) setSubStatus(d);
-    }).catch(function() {});
+    }).catch(function(err) {
+      if (!alive) return;
+      setSubError('Erro ao carregar status da assinatura');
+      if (toast) toast('Erro ao carregar status da assinatura.', 'error');
+    }).finally(function() {
+      if (alive) setSubLoading(false);
+    });
     return function() { alive = false; };
   }, [plan]);
 
@@ -272,7 +283,7 @@ export default function PlansView({ brand, planInfo, toast, onNav, isAdmin }) {
       if (toast) toast(msg, 'success');
       setCancelling(false);
       setCancelOpen(false);
-    } catch (e) {
+    } catch {
       if (toast) toast('Erro ao cancelar. Tente de novo.', 'error');
       setCancelling(false);
     }
@@ -327,6 +338,14 @@ export default function PlansView({ brand, planInfo, toast, onNav, isAdmin }) {
           </div>
         </div>
       )}
+
+      {subError && (
+        <div className="rounded-2xl p-4 flex items-center gap-3" style={{background:'#fef2f2', border:'1px solid #fecaca'}}>
+          <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="#dc2626" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <p className="text-sm" style={{color:'#991b1b'}}>{subError}. Tente recarregar a pagina.</p>
+        </div>
+      )}
+      {subLoading && <div className="flex items-center gap-2"><Spin size="sm"/> <span className="text-sm" style={{color:'var(--text-sub)'}}>Verificando assinatura...</span></div>}
 
       {/* Cards de planos */}
       <div className="flex flex-col gap-4">

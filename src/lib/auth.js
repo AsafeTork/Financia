@@ -35,5 +35,5 @@ export var uploadLogo = async function(path, file) {
 };
 
 export var signOut = function() {
-  return sb.auth.signOut();
+  return sb.auth.signOut().catch(function(err) { console.warn('signOut error', err); });
 };

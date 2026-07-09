@@ -86,7 +86,7 @@ export default function Dashboard({ tx, products, brand, onNav, planInfo, losses
             {new Date().toLocaleDateString('pt-BR', {weekday: 'long', day: 'numeric', month: 'long'})}
           </p>
         </div>
-        <select value={period} onChange={function(e){setPeriod(e.target.value)}}
+        <select aria-label="Periodo" value={period} onChange={function(e){setPeriod(e.target.value)}}
           className="text-xs rounded-xl px-3 py-2 border min-h-[44px] flex-shrink-0"
           style={{background:'var(--bg-card)', color:'var(--text-main)', borderColor:'var(--border)'}}>
           {periods.map(function(p){return <option key={p.v} value={p.v}>{p.l}</option>})}
@@ -222,10 +222,12 @@ export default function Dashboard({ tx, products, brand, onNav, planInfo, losses
           <div className="flex gap-3 text-xs" style={{color:'var(--text-muted)'}}>
             <span className="flex items-center gap-1.5">
               <span className="w-2.5 h-2.5 rounded-sm inline-block" style={{background: brand.color}} aria-label="Entradas"/>
+              <span className="sr-only">Entrada</span>
                Entradas
              </span>
              <span className="flex items-center gap-1.5">
                <span className="w-2.5 h-2.5 rounded-sm inline-block" style={{background:'#ef4444'}} aria-label="Saídas"/>
+              <span className="sr-only">Saída</span>
                Saidas
             </span>
           </div>
@@ -248,7 +250,7 @@ export default function Dashboard({ tx, products, brand, onNav, planInfo, losses
               </button>
             </div>
           )
-          : <BarChartSVG data={chartData} color={brand.color}/>
+          : <BarChartSVG role="img" aria-label="Gráfico de receitas e despesas" data={chartData} color={brand.color}/>
         }
       </Card>
 

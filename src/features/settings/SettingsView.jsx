@@ -14,6 +14,8 @@ import { fmt } from '../../lib/utils.js';
 import { triggerApkBuild } from '../../lib/sync.js';
 import ColorField from '../../shared/ui/ColorField.jsx';
 
+function isValidUrl(str) { if (!str) return false; try { var u = new URL(str); return u.protocol === 'https:' || u.protocol === 'http:'; } catch { return false; } }
+
 export default function SettingsView({ brand, session, planInfo, onSave, onSavePhone, toast, confirm, isAdmin, onNav }) {
   var [tab, setTab] = useState(function() {
     try {
@@ -34,6 +36,10 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
   var [cardReload, setCardReload] = useState(0);
   var planId = effectivePlan(planInfo || {});
   var [subStatus, setSubStatus] = useState(null);
+  var subLoadingState = useState(false);
+  var subLoading = subLoadingState[0], setSubLoading = subLoadingState[1];
+  var paymentLoadingState = useState(false);
+  var paymentLoading = paymentLoadingState[0], setPaymentLoading = paymentLoadingState[1];
   var planMeta = PRICING_PLANS.filter(function(p) { return p.id === planId; })[0] || PRICING_PLANS[0];
   var [phoneData, setPhoneData] = useState(function() { var p = parsePhone(brand.phone); return buildPhone(p.iso, p.digits); });
   var [phoneSaving, setPhoneSaving] = useState(false);
@@ -52,15 +58,19 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
     if (tab !== 'subscription') return;
     var alive = true;
     setCardLoading(true);
+    setPaymentLoading(true);
     sb.functions.invoke('get-payment-method', { body: {} }).then(function(result) {
       if (!alive) return;
       var data = result && result.data ? result.data : null;
       setSavedCard(data && data.card ? data.card : null);
       setCardLoading(false);
+      setPaymentLoading(false);
     }).catch(function() {
       if (!alive) return;
       setSavedCard(null);
       setCardLoading(false);
+      setPaymentLoading(false);
+      if (toast) toast('Erro ao carregar forma de pagamento.', 'error');
     });
     return function() { alive = false; };
   }, [tab, cardReload]);
@@ -68,13 +78,15 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
   // Busca status da assinatura Stripe na aba Assinatura.
   React.useEffect(function() {
     if (tab !== 'subscription') return;
-    if (planId === 'free') { setSubStatus(null); return; }
+    if (planId === 'free') { setSubStatus(null); setSubLoading(false); return; }
     var alive = true;
+    setSubLoading(true);
     sb.functions.invoke('get-subscription-status', { body: {} }).then(function(res) {
       if (!alive) return;
       var d = res && res.data ? res.data : null;
       setSubStatus(d && d.status ? d.status : null);
-    }).catch(function() { if (alive) setSubStatus(null); });
+      if (alive) setSubLoading(false);
+    }).catch(function() { if (alive) { setSubStatus(null); setSubLoading(false); if (toast) toast('Erro ao carregar status da assinatura.', 'error'); } });
     return function() { alive = false; };
   }, [tab, planId]);
 
@@ -124,6 +136,8 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
   var onLogoFile = function(e) {
     var file = e.target.files && e.target.files[0];
     if (!file) return;
+    var allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+    if (allowedTypes.indexOf(file.type) === -1) { toast('Formato não suportado. Use JPEG, PNG, WebP ou GIF.', 'error'); return; }
     if (file.size > 512 * 1024) { toast('Imagem muito grande (máx. 512KB).', 'error'); return; }
     var reader = new FileReader();
     reader.onload = function() { setAppForm(function(f) { return Object.assign({}, f, { logo_url: String(reader.result) }); }); };
@@ -159,7 +173,7 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
       } else {
         toast('Não foi possível iniciar o build do APK agora.', 'error');
       }
-    } catch (e) {
+    } catch {
       toast('Erro ao iniciar build do APK personalizado.', 'error');
     }
     setApkBusy(false);
@@ -191,11 +205,12 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
         sub="Conta, assinatura e preferências"
       />
 
-      <div className="flex border-b overflow-x-auto" style={{borderColor:'var(--border)'}}>
+      <div className="flex border-b overflow-x-auto" role="tablist" style={{borderColor:'var(--border)'}}>
         {tabs.map(function(t) {
           var active = tab === t.key;
           return (
-            <button key={t.key} onClick={function() { setTab(t.key); }}
+            <button key={t.key} role="tab" aria-selected={active} aria-controls={'tabpanel-' + t.key} id={'tab-' + t.key}
+              onClick={function() { setTab(t.key); }}
               className={'px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors border-b-2 -mb-px ' + (active ? 'text-gray-900' : 'text-gray-400 border-transparent hover:text-gray-600')}
               style={active ? {borderColor: brand.color, color: brand.color} : {}}>
               {t.label}
@@ -204,10 +219,10 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
         })}
       </div>
 {tab === 'account' && (
-        <Card className="p-6 flex flex-col gap-4">
+        <Card id="tabpanel-account" role="tabpanel" aria-labelledby="tab-account" className="p-6 flex flex-col gap-4">
           <div className="flex items-center gap-3 p-4 rounded-xl" style={{background:'var(--bg-subtle)'}}>
             <div className="w-10 h-10 rounded-xl flex-shrink-0 overflow-hidden" style={{background:brand.color}}>
-              {brand.logo_url
+              {isValidUrl(brand.logo_url)
                 ? <img src={brand.logo_url} alt="logo" className="w-full h-full object-cover"/>
                 : <div className="w-full h-full flex items-center justify-center text-white text-sm font-bold">{hasWhiteLabel && brand.name ? brand.name[0].toUpperCase() : 'F'}</div>
               }
@@ -255,7 +270,7 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
       )}
 
       {tab === 'subscription' && (
-        <Card className="p-6 flex flex-col gap-4">
+        <Card id="tabpanel-subscription" role="tabpanel" aria-labelledby="tab-subscription" className="p-6 flex flex-col gap-4">
           <div className="rounded-2xl p-5" style={{background:'var(--brand-soft)', border:'1px solid var(--border)'}}>
             <div className="flex items-center justify-between gap-3">
               <div className="min-w-0">
@@ -275,6 +290,7 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
               <span className="text-sm font-bold tabular flex-shrink-0" style={{color:'var(--text-main)'}}>{planPriceLabel}</span>
             </div>
             {planExpiry && <p className="text-xs mt-2" style={{color:'var(--text-sub)'}}>Válido até {planExpiry}</p>}
+            {subLoading && <div className="flex items-center gap-2 mt-2"><Spin size="sm"/> <span className="text-xs" style={{color:'var(--text-sub)'}}>Verificando status...</span></div>}
           </div>
 
           <div className="flex flex-col gap-2">
@@ -304,8 +320,8 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
                   No plano grátis, adicionar cartão é opcional. Você pode cadastrar agora ou ao assinar um plano.
                 </p>
               )}
-              {cardLoading ? (
-                <div className="skeleton" style={{height:56}}/>
+              {cardLoading || paymentLoading ? (
+                <div className="flex items-center gap-2" style={{height:56}}><Spin size="sm"/> <span className="text-xs" style={{color:'var(--text-sub)'}}>Carregando forma de pagamento...</span></div>
               ) : savedCard ? (
                 <div className="flex flex-col gap-2">
                   <CardPreview card={savedCard} brand={brand}/>
@@ -336,7 +352,7 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
       )}
 
       {tab === 'appearance' && hasWhiteLabel && (
-        <Card className="p-6 flex flex-col gap-5">
+        <Card id="tabpanel-appearance" role="tabpanel" aria-labelledby="tab-appearance" className="p-6 flex flex-col gap-5">
           <div>
             <p className="text-sm font-semibold mb-1" style={{color:'var(--text-main)'}}>Identidade visual</p>
             <p className="text-xs mb-4" style={{color:'var(--text-muted)'}}>Defina nome, logo, cores e tema. Você pode alterar quando quiser.</p>
@@ -414,11 +430,11 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
       )}
 
       {tab === 'brandstudio' && (
-        <BrandStudioView brand={brand} planInfo={planInfo} onSave={onSave} toast={toast} onNav={onNav} />
+        <div id="tabpanel-brandstudio" role="tabpanel" aria-labelledby="tab-brandstudio"><BrandStudioView brand={brand} planInfo={planInfo} onSave={onSave} toast={toast} onNav={onNav} /></div>
       )}
 
       {tab === 'clients' && (
-        <div className="flex flex-col gap-4">
+        <div id="tabpanel-clients" role="tabpanel" aria-labelledby="tab-clients" className="flex flex-col gap-4">
           <GhTokenCard toast={toast}/>
           <Card className="p-6"><AdminPanel toast={toast} confirm={confirm} session={session} brand={brand}/></Card>
         </div>
