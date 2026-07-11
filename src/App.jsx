@@ -39,9 +39,9 @@ function Loader({ text }) {
 export default function App() {
   const navigate = useNavigate();
   const location = useLocation();
-  var path = location.pathname.replace(/^\//, '');
-  var isLegal = path === 'privacidade' || path === 'termos';
-  var isLanding = path === 'landing';
+  const path = location.pathname.replace(/^\//, '');
+  const isLegal = path === 'privacidade' || path === 'termos';
+  const isLanding = path === 'landing';
 
   const [session, setSession]           = useState(null);
   const [isAdminDB, setIsAdminDB]       = useState(sessionStorage.getItem('is_admin') === '1');
@@ -63,10 +63,10 @@ export default function App() {
   const modalRef                        = useRef({ confirmData, showUpgrade, sidebarOpen, showLogin });
   modalRef.current = { confirmData, showUpgrade, sidebarOpen, showLogin };
 
-  var { appBrand, effectiveTheme, toggleTheme } = useBrandAppearance(brand, planInfo);
+  const { appBrand, effectiveTheme, toggleTheme } = useBrandAppearance(brand, planInfo);
 
   const navTo = useCallback(function(v) {
-    var go = function() { navigate('/' + v); };
+    const go = function() { navigate('/' + v); };
     if (typeof document !== 'undefined' && document.startViewTransition) {
       document.startViewTransition(function() { flushSync(go); });
     } else {
@@ -75,13 +75,13 @@ export default function App() {
   }, [navigate]);
 
   useEffect(function() {
-    var plan = effectivePlan(planInfo);
-    var el = document.documentElement;
+    const plan = effectivePlan(planInfo);
+    const el = document.documentElement;
     el.setAttribute('data-plan', plan);
     if (plan !== 'free' && session) {
-      var prev = el.getAttribute('data-plan-prev');
+      const prev = el.getAttribute('data-plan-prev');
       if (prev && prev !== plan) {
-        var msg = plan === 'premium'
+        const msg = plan === 'premium'
           ? 'Seu plano foi atualizado para Premium. Sua experiencia executiva ja esta disponivel.'
           : 'Seu plano foi atualizado para Pro. Sua nova experiencia ja esta disponivel.';
         toast(msg, 'success');
@@ -90,7 +90,7 @@ export default function App() {
     } else {
       el.setAttribute('data-plan-prev', plan);
     }
-  }, [planInfo, session]);
+  }, [planInfo, session, toast]);
 
   useEffect(function() {
     document.documentElement.setAttribute('data-theme', session ? effectiveTheme : 'light');
@@ -103,22 +103,22 @@ export default function App() {
   }, [dataLoading]);
 
   useEffect(function() {
-    var buffer = [];
-    var timer = null;
-    var routes = { d:'dashboard', t:'income', i:'inventory', s:'settings', r:'report', p:'planos' };
+    let buffer = [];
+    let timer = null;
+    const routes = { d:'dashboard', t:'income', i:'inventory', s:'settings', r:'report', p:'planos' };
 
     function help() {
-      var msg = 'Atalhos: g+d Dashboard, g+t Transações, g+i Estoque, g+s Config, g+r Relatórios, g+p Planos, ? Ajuda, Esc Fechar';
+      const msg = 'Atalhos: g+d Dashboard, g+t Transações, g+i Estoque, g+s Config, g+r Relatórios, g+p Planos, ? Ajuda, Esc Fechar';
       if (typeof window.showToast === 'function') { window.showToast(msg, 'info'); }
       else { window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: msg, type: 'info' } })); }
     }
 
     function onKeyDown(e) {
       if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT' || e.target.isContentEditable) return;
-      var key = e.key.toLowerCase();
+      const key = e.key.toLowerCase();
 
       if (key === 'escape') {
-        var m = modalRef.current;
+        const m = modalRef.current;
         if (m.confirmData) { setConfirmData(null); return; }
         if (m.showUpgrade) { setShowUpgrade(false); return; }
         if (m.sidebarOpen) { setSidebarOpen(false); return; }
@@ -130,7 +130,7 @@ export default function App() {
       if (key === 'g') {
         e.preventDefault();
         clearTimeout(timer);
-        buffer = ['g'];
+        buffer.push('g');
         timer = setTimeout(function() { buffer = []; }, 1000);
         return;
       }
@@ -138,7 +138,7 @@ export default function App() {
       if (buffer.length === 1 && buffer[0] === 'g') {
         clearTimeout(timer);
         buffer = [];
-        var hash = routes[key];
+        const hash = routes[key];
         if (hash) { e.preventDefault(); navigate('/' + hash); }
         return;
       }
@@ -152,11 +152,11 @@ export default function App() {
   useEffect(function() {
     if (!session) { onboardingRef.current = null; setOnboardingNeeded(false); return; }
     if (dataLoading) return;
-    var meta2 = session.user.user_metadata || {};
-    var gName = meta2.full_name || meta2.name || '';
-    var doneFlag = !!localStorage.getItem('financia_onboarded_' + session.user.id);
-    var needName = !!gName && brand.name === gName;
-    var needs = !doneFlag && needName;
+    const meta2 = session.user.user_metadata || {};
+    const gName = meta2.full_name || meta2.name || '';
+    const doneFlag = !!localStorage.getItem('financia_onboarded_' + session.user.id);
+    const needName = !!gName && brand.name === gName;
+    const needs = !doneFlag && needName;
     if (onboardingRef.current === null) {
       onboardingRef.current = needs;
       setOnboardingNeeded(needs);
@@ -210,8 +210,8 @@ export default function App() {
     setTx, setProducts, setLosses,
   });
 
-  var loadDataRef = useRef(loadData);
-  loadDataRef.current = loadData;
+const loadDataRef = useRef(loadData);
+loadDataRef.current = loadData;
 
   useEffect(function() {
     if (typeof window === 'undefined') return;
@@ -226,13 +226,13 @@ export default function App() {
   const handleCloseSidebar   = useCallback(function() { setSidebarOpen(false); }, []);
   const handleOpenSidebar    = useCallback(function() { setSidebarOpen(true); }, []);
   const handleDeductStock    = useCallback(function(id, qty) { adjustStock(id, -qty); }, [adjustStock]);
-  const handleConfirmOk      = useCallback(function() { confirmData.onOk(); setConfirmData(null); }, [confirmData]);
+  const handleConfirmOk      = useCallback(async function() { await confirmData.onOk(); setConfirmData(null); }, [confirmData]);
   const handleCancel         = useCallback(function() { setConfirmData(null); }, []);
   const handleCloseUpgrade   = useCallback(function() { setShowUpgrade(false); }, []);
   const handleNav            = useCallback(function(v) { navTo(v); }, [navTo]);
 
-  var sessionViews = ['dashboard','income','expense','inventory','email','report','settings','planos','brandstudio'];
-  var currentView = sessionViews.includes(path) ? path : 'dashboard';
+const sessionViews = ['dashboard','income','expense','inventory','email','report','settings','planos','brandstudio'];
+const currentView = sessionViews.includes(path) ? path : 'dashboard';
 
   if (appLoading) return <Loader/>;
 
@@ -257,7 +257,7 @@ export default function App() {
   }
 
   if (!session) {
-    var seen = !!localStorage.getItem('financia_seen');
+    const seen = !!localStorage.getItem('financia_seen');
     if (!seen && !showLogin) {
       return (
         <FeatureErrorBoundary featureName="Landing">
@@ -279,15 +279,15 @@ export default function App() {
     </div>
   );
 
-  var meta = session.user.user_metadata || {};
-  var googleName = meta.full_name || meta.name || '';
-  var needsName = !!googleName && brand.name === googleName;
-  var needsPhone = false;
+  const meta = session.user.user_metadata || {};
+  const googleName = meta.full_name || meta.name || '';
+  const needsName = !!googleName && brand.name === googleName;
+  let needsPhone = false;
   if (onboardingNeeded) {
-    var finishOnboarding = function(data) {
-      var tasks = [];
+    const finishOnboarding = function(data) {
+      const tasks = [];
       if (needsName && data.name) {
-        var nb = Object.assign({}, brand, {name: data.name});
+        const nb = Object.assign({}, brand, {name: data.name});
         tasks.push(Promise.resolve(saveBrand(nb)));
       }
       if (data.phone) tasks.push(Promise.resolve(savePhone(data.phone)));

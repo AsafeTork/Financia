@@ -8,8 +8,31 @@ export default defineConfig({
     setupFiles: ['./src/test/setup.js'],
     globals: true,
     pool: 'threads',
-    poolOptions: { threads: { minThreads: 2, maxThreads: 4 } },
-    isolate: true,
+    poolOptions: {
+      threads: {
+        minThreads: 2,
+        maxThreads: 4,
+      },
+    },
+    isolate: false,
+    projects: [
+      {
+        name: 'unit',
+        include: ['src/**/*.test.{js,jsx}'],
+        environment: 'jsdom',
+        setupFiles: ['./src/test/setup.js'],
+        globals: true,
+        isolate: false,
+      },
+      {
+        name: 'isolated',
+        include: ['src/**/*.isolated.test.{js,jsx}'],
+        environment: 'jsdom',
+        setupFiles: ['./src/test/setup.js'],
+        globals: true,
+        isolate: true,
+      },
+    ],
     testTimeout: 15000,
     coverage: {
       provider: 'v8',

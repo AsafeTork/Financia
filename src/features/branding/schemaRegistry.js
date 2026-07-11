@@ -1,15 +1,15 @@
 import { BRAND_SCHEMA_VERSION } from './schema.js';
 
-var _modules = {};
-var _order = [];
+const _modules = {};
+const _order = [];
 
 export function registerModule(name, def) {
   if (_modules[name]) return;
   _modules[name] = {
-    name: name,
+    name,
     schema: def.schema || { type: 'object', properties: {} },
     defaults: def.defaults || {},
-    normalizer: def.normalizer || function(v) { return v; },
+    normalizer: def.normalizer || (v => v),
     description: def.description || '',
     dependencies: def.dependencies || [],
     semanticMap: def.semanticMap || {},
@@ -22,12 +22,12 @@ export function getModule(name) {
 }
 
 export function listModules() {
-  return _order.map(function(n) { return { name: n, def: _modules[n] }; });
+  return _order.map(n => ({ name: n, def: _modules[n] }));
 }
 
 export function getSchema(opts) {
-  var modules = opts && opts.modules ? opts.modules : _order;
-  var schema = {
+  const modules = opts && opts.modules ? opts.modules : _order;
+  const schema = {
     $schema: 'https://json-schema.org/draft/2020-12/schema',
     $id: 'https://financia.app/brand-schema/v' + BRAND_SCHEMA_VERSION,
     title: 'Financia Brand Configuration',
@@ -45,9 +45,8 @@ export function getSchema(opts) {
     },
     additionalProperties: false,
   };
-  for (var mi = 0; mi < modules.length; mi++) {
-    var mName = modules[mi];
-    var mod = _modules[mName];
+  for (const mName of modules) {
+    const mod = _modules[mName];
     if (mod) {
       schema.properties.modules.properties[mName] = mod.schema;
     }
@@ -56,7 +55,7 @@ export function getSchema(opts) {
 }
 
 export function validateAgainstModules(input) {
-  var errors = [];
+  const errors = [];
   if (!input || typeof input !== 'object') {
     return { valid: false, errors: ['configuracao invalida'] };
   }
@@ -66,70 +65,68 @@ export function validateAgainstModules(input) {
   if (!input.schemaVersion) {
     return { valid: false, errors: ['campo obrigatorio ausente: schemaVersion'] };
   }
-  var mods = input.modules;
-  for (var k in mods) {
+  const mods = input.modules;
+  for (const k in mods) {
     if (!Object.prototype.hasOwnProperty.call(mods, k)) continue;
-    var mod = _modules[k];
+    const mod = _modules[k];
     if (!mod) {
       errors.push('modulo desconhecido: ' + k);
       continue;
     }
-    var modVal = mods[k];
+    const modVal = mods[k];
     if (modVal === null || modVal === undefined) continue;
-    var subErrs = [];
+    const subErrs = [];
     validateModule(modVal, mod.schema, k, subErrs);
-    for (var ei = 0; ei < subErrs.length; ei++) {
-      errors.push(subErrs[ei]);
+    for (const ei of subErrs) {
+      errors.push(ei);
     }
   }
-  for (var oi = 0; oi < _order.length; oi++) {
-    var m = _modules[_order[oi]];
-    var deps = m.dependencies;
+  for (const mName of _order) {
+    const m = _modules[mName];
+    const deps = m.dependencies;
     if (!deps || deps.length === 0) continue;
-    var hasModule = mods[m.name] && typeof mods[m.name] === 'object';
+    const hasModule = mods[m.name] && typeof mods[m.name] === 'object';
     if (!hasModule) continue;
-    for (var di = 0; di < deps.length; di++) {
-      var dep = deps[di];
+    for (const dep of deps) {
       if (!mods[dep] || typeof mods[dep] !== 'object') {
         errors.push('modulo "' + m.name + '" depende de "' + dep + '" mas ele nao foi fornecido');
       }
     }
   }
-  return { valid: errors.length === 0, errors: errors };
+  return { valid: errors.length === 0, errors };
 }
 
-function validateModule(value, schema, path, errors) {
+const validateModule = (value, schema, path, errors) => {
   if (typeof value !== 'object' || value === null) {
     errors.push('tipo invalido em ' + path + ': esperado object');
     return;
   }
-  var required = schema.required || [];
-  for (var ri = 0; ri < required.length; ri++) {
-    var rk = required[ri];
+  const required = schema.required || [];
+  for (const rk of required) {
     if (value[rk] === undefined || value[rk] === null) {
       errors.push('campo obrigatorio ausente: ' + path + '.' + rk);
     }
   }
-  var props = schema.properties || {};
-  for (var pk in props) {
+  const props = schema.properties || {};
+  for (const pk in props) {
     if (!Object.prototype.hasOwnProperty.call(props, pk)) continue;
     if (value[pk] === undefined) continue;
     validateField(value[pk], props[pk], path + '.' + pk, errors);
   }
   if (schema.additionalProperties === false && schema.properties) {
-    var allowed = Object.keys(schema.properties);
-    for (var k in value) {
+    const allowed = Object.keys(schema.properties);
+    for (const k in value) {
       if (Object.prototype.hasOwnProperty.call(value, k) && allowed.indexOf(k) === -1) {
         errors.push('propriedade nao permitida em ' + path + ': ' + k);
       }
     }
   }
-}
+};
 
-function validateField(value, schemaDef, path, errors) {
+const validateField = (value, schemaDef, path, errors) => {
   if (!schemaDef) return;
-  var t = schemaDef.type;
-  var actual = typeof value;
+  const t = schemaDef.type;
+  const actual = typeof value;
   if (t === 'string' && actual !== 'string') {
     errors.push('tipo invalido em ' + path + ': esperado string, recebido ' + actual);
     return;
@@ -155,26 +152,25 @@ function validateField(value, schemaDef, path, errors) {
   if (t === 'object') {
     validateModule(value, schemaDef, path, errors);
   }
-}
+};
 
 export function normalizeModules(input) {
   if (!input || !input.modules) return input;
-  var out = { schemaVersion: input.schemaVersion, modules: {} };
-  for (var mi = 0; mi < _order.length; mi++) {
-    var mName = _order[mi];
-    var mod = _modules[mName];
-    var inputVal = input.modules[mName];
+  const out = { schemaVersion: input.schemaVersion, modules: {} };
+  for (const mName of _order) {
+    const mod = _modules[mName];
+    const inputVal = input.modules[mName];
     if (inputVal === undefined || inputVal === null) {
-      out.modules[mName] = Object.assign({}, mod.defaults);
+      out.modules[mName] = { ...mod.defaults };
     } else {
-      var normalized = mod.normalizer(inputVal);
-      out.modules[mName] = Object.assign({}, mod.defaults, normalized);
+      const normalized = mod.normalizer(inputVal);
+      out.modules[mName] = { ...mod.defaults, ...normalized };
     }
   }
   return out;
 }
 
-function initBuiltinModules() {
+const initBuiltinModules = () => {
   registerModule('palette', {
     description: 'Cores da marca — paleta completa',
     schema: {
@@ -204,8 +200,8 @@ function initBuiltinModules() {
       textMain: '#0f172a', textSub: '#5b6b7c', textMuted: '#94a3b8',
       border: '#edeae3',
     },
-    normalizer: function(v) {
-      var out = {};
+    normalizer: (v) => {
+      const out = {};
       if (v.style === 'minimal') {
         out.bgPage = v.bgPage || '#ffffff';
         out.bgCard = v.bgCard || '#ffffff';
@@ -218,8 +214,8 @@ function initBuiltinModules() {
         out.bgPage = v.bgPage || '#ffffff';
       }
       if (v.mood) {
-        var moodMap = { professional: { primary: '#1e3a5f', accent: '#2563eb' }, creative: { primary: '#7c3aed', accent: '#f59e0b' }, warm: { primary: '#92400e', accent: '#ea580c' } };
-        var mapped = moodMap[v.mood];
+        const moodMap = { professional: { primary: '#1e3a5f', accent: '#2563eb' }, creative: { primary: '#7c3aed', accent: '#f59e0b' }, warm: { primary: '#92400e', accent: '#ea580c' } };
+        const mapped = moodMap[v.mood];
         if (mapped) {
           out.primary = v.primary || mapped.primary;
           out.accent = v.accent || mapped.accent;
@@ -268,25 +264,25 @@ function initBuiltinModules() {
       baseSize: '16px',
       scale: 1.25,
     },
-    normalizer: function(v) {
-      var out = {};
-      var styleMap = {
+    normalizer: (v) => {
+      const out = {};
+      const styleMap = {
         modern: { fontFamily: "'Inter', system-ui, sans-serif", headingFont: "'Inter', sans-serif", scale: 1.25 },
         classic: { fontFamily: "'Merriweather', Georgia, serif", headingFont: "'Merriweather', Georgia, serif", scale: 1.2 },
         minimal: { fontFamily: "'Inter', system-ui, sans-serif", scale: 1.125 },
         playful: { fontFamily: "'Nunito', system-ui, sans-serif", headingFont: "'Nunito', sans-serif", scale: 1.3 },
       };
       if (v.style) {
-        var mapped = styleMap[v.style];
+        const mapped = styleMap[v.style];
         if (mapped) {
           out.fontFamily = v.fontFamily || mapped.fontFamily;
           out.headingFont = v.headingFont || mapped.headingFont;
           out.scale = v.scale || mapped.scale;
         }
       }
-      var sizeMap = { small: { baseSize: '14px', scale: 1.125 }, medium: { baseSize: '16px', scale: 1.25 }, large: { baseSize: '18px', scale: 1.333 } };
+      const sizeMap = { small: { baseSize: '14px', scale: 1.125 }, medium: { baseSize: '16px', scale: 1.25 }, large: { baseSize: '18px', scale: 1.333 } };
       if (v.size) {
-        var sMapped = sizeMap[v.size];
+        const sMapped = sizeMap[v.size];
         if (sMapped) {
           out.baseSize = v.baseSize || sMapped.baseSize;
           out.scale = v.scale || sMapped.scale;
@@ -326,16 +322,16 @@ function initBuiltinModules() {
       width: '256px', collapsedWidth: '72px',
       text: '#ffffff', activeBg: 'rgba(255,255,255,0.14)',
     },
-    normalizer: function(v) {
-      var out = {};
-      var styleMap = {
+    normalizer: (v) => {
+      const out = {};
+      const styleMap = {
         solid: { bg: '#1e293b', text: '#ffffff', activeBg: 'rgba(255,255,255,0.14)' },
         glass: { bg: 'rgba(255,255,255,0.08)', text: '#1e293b', activeBg: 'rgba(30,41,59,0.08)' },
         minimal: { bg: '#ffffff', text: '#475569', activeBg: '#f1f5f9', activeText: '#1e293b' },
         dark: { bg: '#0f172a', text: '#cbd5e1', activeBg: 'rgba(255,255,255,0.1)' },
       };
       if (v.style) {
-        var m = styleMap[v.style];
+        const m = styleMap[v.style];
         if (m) {
           out.bg = v.bg || m.bg; out.text = v.text || m.text;
           out.activeBg = v.activeBg || m.activeBg;
@@ -367,8 +363,8 @@ function initBuiltinModules() {
       additionalProperties: false,
     },
     defaults: {},
-    normalizer: function(v) {
-      var out = {};
+    normalizer: (v) => {
+      const out = {};
       if (v.style === 'transparent') { out.bg = 'transparent'; }
       if (v.style === 'bordered') { out.bg = v.bg || '#ffffff'; }
       if (v.bg) out.bg = v.bg;
@@ -392,8 +388,8 @@ function initBuiltinModules() {
       additionalProperties: false,
     },
     defaults: { radius: '12px' },
-    normalizer: function(v) {
-      var out = {};
+    normalizer: (v) => {
+      const out = {};
       if (v.style === 'flat') { out.shadow = 'none'; }
       if (v.style === 'raised') { out.shadow = '0 4px 12px rgba(0,0,0,0.08)'; }
       if (v.style === 'outlined') { out.shadow = 'none'; }
@@ -422,8 +418,8 @@ function initBuiltinModules() {
       additionalProperties: false,
     },
     defaults: { radius: '12px', primaryText: '#ffffff' },
-    normalizer: function(v) {
-      var out = {};
+    normalizer: (v) => {
+      const out = {};
       if (v.style === 'pill') { out.radius = '9999px'; }
       if (v.style === 'sharp') { out.radius = '4px'; }
       if (v.style === 'rounded') { out.radius = v.radius || '12px'; }
@@ -454,8 +450,8 @@ function initBuiltinModules() {
       additionalProperties: false,
     },
     defaults: { radius: '12px' },
-    normalizer: function(v) {
-      var out = {};
+    normalizer: (v) => {
+      const out = {};
       if (v.style === 'filled') { out.bg = '#f1f5f9'; out.border = 'transparent'; }
       if (v.style === 'underlined') { out.border = 'none'; out.radius = '0'; out.bg = 'transparent'; }
       if (v.style === 'minimal') { out.border = '#e2e8f0'; out.bg = '#ffffff'; }
@@ -482,8 +478,8 @@ function initBuiltinModules() {
       additionalProperties: false,
     },
     defaults: { sm: '8px', md: '12px', lg: '16px', xl: '24px', full: '9999px' },
-    normalizer: function(v) {
-      var out = {};
+    normalizer: (v) => {
+      const out = {};
       if (v.style === 'sharp') { out.sm = '2px'; out.md = '4px'; out.lg = '6px'; out.xl = '8px'; }
       if (v.style === 'rounded') { out.sm = '8px'; out.md = '12px'; out.lg = '16px'; out.xl = '24px'; }
       if (v.style === 'pill') { out.sm = '4px'; out.md = '8px'; out.lg = '16px'; out.xl = '9999px'; }
@@ -508,8 +504,8 @@ function initBuiltinModules() {
       additionalProperties: false,
     },
     defaults: { unit: 4, gap: '16px', section: '24px', card: '24px' },
-    normalizer: function(v) {
-      var out = {};
+    normalizer: (v) => {
+      const out = {};
       if (v.density === 'compact') { out.gap = '8px'; out.section = '12px'; out.card = '12px'; out.unit = 2; }
       if (v.density === 'comfortable') { out.gap = '16px'; out.section = '24px'; out.card = '24px'; out.unit = 4; }
       if (v.density === 'spacious') { out.gap = '24px'; out.section = '40px'; out.card = '32px'; out.unit = 6; }
@@ -533,8 +529,8 @@ function initBuiltinModules() {
       additionalProperties: false,
     },
     defaults: {},
-    normalizer: function(v) {
-      var out = {};
+    normalizer: (v) => {
+      const out = {};
       if (v.intensity === 'none') { out.sm = 'none'; out.md = 'none'; out.lg = 'none'; }
       if (v.intensity === 'subtle') { out.sm = '0 1px 2px rgba(0,0,0,0.04)'; out.md = '0 2px 8px rgba(0,0,0,0.06)'; out.lg = '0 4px 16px rgba(0,0,0,0.08)'; }
       if (v.intensity === 'medium') { out.sm = '0 1px 3px rgba(0,0,0,0.08)'; out.md = '0 4px 12px rgba(0,0,0,0.1)'; out.lg = '0 8px 24px rgba(0,0,0,0.12)'; }
@@ -558,8 +554,8 @@ function initBuiltinModules() {
       additionalProperties: false,
     },
     defaults: { enabled: true, speed: 'normal' },
-    normalizer: function(v) {
-      var out = {};
+    normalizer: (v) => {
+      const out = {};
       if (v.speed === 'slow') { out.duration = '400ms'; }
       if (v.speed === 'normal') { out.duration = '200ms'; }
       if (v.speed === 'fast') { out.duration = '100ms'; }
@@ -584,8 +580,8 @@ function initBuiltinModules() {
       additionalProperties: false,
     },
     defaults: { maxWidth: '1200px', sidebarPosition: 'left', headerFixed: true },
-    normalizer: function(v) {
-      var out = {};
+    normalizer: (v) => {
+      const out = {};
       if (v.maxWidth) out.maxWidth = v.maxWidth;
       if (v.sidebarPosition) out.sidebarPosition = v.sidebarPosition;
       if (v.headerFixed != null) out.headerFixed = v.headerFixed;
@@ -626,8 +622,8 @@ function initBuiltinModules() {
       additionalProperties: false,
     },
     defaults: {},
-    normalizer: function(v) {
-      var out = {};
+    normalizer: (v) => {
+      const out = {};
       if (v.primary) out.primary = v.primary;
       if (v.light) out.light = v.light;
       if (v.dark) out.dark = v.dark;
@@ -656,7 +652,7 @@ function initBuiltinModules() {
       additionalProperties: false,
     },
     defaults: {},
-    normalizer: function(v) { return v; },
+    normalizer: (v) => v,
     semanticMap: {},
   });
 
@@ -680,7 +676,7 @@ function initBuiltinModules() {
       additionalProperties: false,
     },
     defaults: {},
-    normalizer: function(v) { return v; },
+    normalizer: (v) => v,
     semanticMap: {},
   });
 
@@ -695,9 +691,9 @@ function initBuiltinModules() {
       additionalProperties: false,
     },
     defaults: {},
-    normalizer: function(v) { return v; },
+    normalizer: (v) => v,
     semanticMap: {},
   });
-}
+};
 
 initBuiltinModules();

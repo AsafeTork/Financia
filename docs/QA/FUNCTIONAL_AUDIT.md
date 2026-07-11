@@ -1,3 +1,7 @@
+---
+type: REPORT
+---
+
 # Functional Audit Report — Financia
 
 **Date:** 2026-07-09

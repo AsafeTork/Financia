@@ -144,8 +144,6 @@ function collectTokensFromBrand(b) {
   return tokens;
 }
 
-var _savedPreviewTokens = null;
-
 export function applyBrandVars(b) {
   var el = document.documentElement;
   var tokens = collectTokensFromBrand(b);
@@ -157,46 +155,14 @@ export function applyBrandStudioConfig(b) {
 }
 
 export function enterPreviewMode(proposedBrand) {
-  if (_savedPreviewTokens) return;
   var el = document.documentElement;
-  _savedPreviewTokens = {};
-  var vars = [
-    '--brand', '--brand-soft', '--brand-secondary', '--brand-accent',
-    '--brand-accent-soft', '--brand-grad', '--bg-page', '--bg-card',
-    '--bg-subtle', '--bg-input', '--text-main', '--text-sub', '--text-muted',
-    '--border', '--success', '--warning', '--danger', '--info',
-    '--positive', '--negative', '--chart-1', '--chart-2', '--chart-3',
-    '--chart-4', '--chart-5', '--chart-6', '--font-family', '--font-heading',
-    '--font-mono', '--font-base', '--font-scale', '--radius-sm', '--radius-md',
-    '--radius-lg', '--radius-xl', '--radius-full', '--spacing-gap',
-    '--spacing-section', '--spacing-card', '--sidebar-width',
-    '--sidebar-collapsed-width', '--sidebar-bg', '--sidebar-text',
-    '--sidebar-active-bg', '--sidebar-active-text', '--sidebar-hover-bg',
-    '--sidebar-divider', '--header-bg', '--header-text', '--header-height',
-    '--card-bg', '--card-shadow', '--btn-primary-bg', '--btn-primary-text',
-    '--btn-secondary-bg', '--btn-secondary-text', '--btn-radius', '--btn-height',
-    '--input-bg', '--input-text', '--input-border', '--input-focus-border',
-    '--input-radius', '--input-height', '--shadow-sm', '--shadow-md',
-    '--shadow-lg', '--anim-duration', '--anim-easing',
-  ];
-  for (var vi = 0; vi < vars.length; vi++) {
-    var v = vars[vi];
-    _savedPreviewTokens[v] = el.style.getPropertyValue(v) || '';
-  }
   var previewTokens = collectTokensFromBrand(proposedBrand);
   applyTokenDiff(el, previewTokens);
 }
 
 export function exitPreviewMode() {
-  if (!_savedPreviewTokens) return;
   var el = document.documentElement;
   el.style.cssText = '';
-  for (var k in _savedPreviewTokens) {
-    if (Object.prototype.hasOwnProperty.call(_savedPreviewTokens, k) && _savedPreviewTokens[k]) {
-      el.style.setProperty(k, _savedPreviewTokens[k]);
-    }
-  }
-  _savedPreviewTokens = null;
 }
 
 export default function useBrandAppearance(brand, planInfo) {
@@ -228,7 +194,6 @@ export default function useBrandAppearance(brand, planInfo) {
   }, [appBrand]);
 
   useEffect(function() {
-    if (_savedPreviewTokens) return;
     applyBrandVars(appBrand);
 
     if (savedCampaignRef.current) {

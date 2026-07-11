@@ -1,10 +1,10 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Empty, Skeleton } from '../../shared/ui/ui.jsx';
 import { sb } from '../../lib/supabase.js';
 import { triggerApkBuild, fetchClients, deleteClient, fetchClientUsage, fetchDbStats, fetchStripeOverview } from '../../lib/sync.js';
 import { luminance, lightenHex, fmtDate, formatBytes, dbUsage, fmt } from '../../lib/utils.js';
 import { GH_REPO, effectivePlan, PRICING_PLANS, waLinkTo, APP_URL } from '../../lib/constants.js';
-import { generateLogoSvg, logoSvgToDataUrl } from '../branding/LogoSchemes.jsx';
+import { generateLogoSvg, logoSvgToDataUrl } from '../branding/logoUtils.js';
 
 // Limite de armazenamento do plano Supabase (free = 500 MB). Base do alerta de uso.
 var DB_LIMIT_BYTES = 500 * 1024 * 1024;
@@ -54,15 +54,15 @@ export default function AdminPanel({ toast, confirm, session, brand }) {
   var setSubFor = function(uid, s) { setSubStatuses(function(m) { var n = Object.assign({}, m); n[uid] = s; return n; }); };
   const _logoRef = useRef();
 
-  const reload = function() {
+  const reload = useCallback(function() {
     Promise.all([fetchClients(), fetchClientUsage()]).then(function(res) {
       setClients(res[0]); setUsage(res[1] || {}); setLoadingCli(false);
     }).catch(function() {
       setLoadingCli(false);
       if (toast) toast('Erro ao carregar dados de clientes.', 'error');
     });
-  };
-  useEffect(function() { reload(); }, [done]);
+  }, [toast]);
+  useEffect(function() { reload(); }, [done, reload]);
 
   // Busca status da assinatura (Stripe) dos clientes pagantes — fundo do badge muda cor.
   useEffect(function() {
@@ -79,11 +79,13 @@ export default function AdminPanel({ toast, confirm, session, brand }) {
           if (!alive || controller.signal.aborted) return;
           var d = res && res.data ? res.data : null;
           if (d && (d.status === 'active' || d.status === 'canceled_expiring')) setSubFor(c.user_id, d.status);
-        }).catch(function() {});
+        }).catch(function() {
+          if (toast) toast('Erro ao carregar status de assinatura.', 'error');
+        });
       });
     }
     return function() { alive = false; controller.abort(); };
-  }, [clients]);
+  }, [clients, toast]);
 
   // Painel financeiro/infra (admin): saldo real Stripe + uso do banco. Carrega uma vez.
   useEffect(function() {
@@ -98,7 +100,7 @@ export default function AdminPanel({ toast, confirm, session, brand }) {
       if (toast) toast('Erro ao carregar dados financeiros.', 'error');
     });
     return function() { alive = false; };
-  }, []);
+  }, [toast]);
 
   var realPriceOf = function(c, ep) {
     if (ep === 'pro') {

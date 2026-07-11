@@ -1,3 +1,7 @@
+---
+type: REPORT
+---
+
 # Release Checklist — Financia v5.1.0
 
 **Date:** 2026-07-09

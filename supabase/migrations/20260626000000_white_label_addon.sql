@@ -12,7 +12,7 @@ create or replace function public.set_white_label(p_user uuid, p_on boolean)
 returns void
 language plpgsql
 security definer
-set search_path = public
+set search_path = public, pg_temp
 as $$
 begin
   update public.company_profiles

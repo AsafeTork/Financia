@@ -1,8 +1,8 @@
 import { BRAND_SCHEMA, BRAND_SCHEMA_VERSION } from './schema.js';
 
-var HEX_RE = /^#[0-9a-fA-F]{6}$/;
+const HEX_RE = /^#[0-9a-fA-F]{6}$/;
 
-var ERRORS = {
+const ERRORS = {
   TYPE: 'tipo invalido: esperado {expected}, recebido {actual}',
   REQUIRED: 'campo obrigatorio ausente: {path}',
   PATTERN: 'formato invalido em {path}: deve corresponder a {pattern}',
@@ -15,26 +15,26 @@ var ERRORS = {
   INVALID: 'configuracao invalida',
 };
 
-function typeOf(v) {
+const typeOf = (v) => {
   if (v === null) return 'null';
   if (Array.isArray(v)) return 'array';
   return typeof v;
-}
+};
 
-function validateType(value, schemaDef, path) {
-  var expected = schemaDef.type;
+const validateType = (value, schemaDef, path) => {
+  const expected = schemaDef.type;
   if (!expected) return '';
-  var actual = typeOf(value);
+  const actual = typeOf(value);
   if (actual !== expected) {
     return ERRORS.TYPE
       .replace('{expected}', expected)
       .replace('{actual}', actual);
   }
   return '';
-}
+};
 
-function validateString(value, schemaDef, path) {
-  var err = validateType(value, schemaDef, path);
+const validateString = (value, schemaDef, path) => {
+  let err = validateType(value, schemaDef, path);
   if (err) return err;
   if (schemaDef.pattern && !new RegExp(schemaDef.pattern).test(value)) {
     return ERRORS.PATTERN
@@ -57,10 +57,10 @@ function validateString(value, schemaDef, path) {
       .replace('{max}', schemaDef.maxLength);
   }
   return '';
-}
+};
 
-function validateNumber(value, schemaDef, path) {
-  var err = validateType(value, schemaDef, path);
+const validateNumber = (value, schemaDef, path) => {
+  let err = validateType(value, schemaDef, path);
   if (err) return err;
   if (schemaDef.minimum != null && value < schemaDef.minimum) {
     return ERRORS.MINIMUM
@@ -73,13 +73,11 @@ function validateNumber(value, schemaDef, path) {
       .replace('{max}', schemaDef.maximum);
   }
   return '';
-}
+};
 
-function validateBoolean(value, schemaDef, path) {
-  return validateType(value, schemaDef, path);
-}
+const validateBoolean = (value, schemaDef, path) => validateType(value, schemaDef, path);
 
-function validateInteger(value, schemaDef, path) {
+const validateInteger = (value, schemaDef, path) => {
   if (typeOf(value) !== 'number' || !Number.isInteger(value)) {
     return ERRORS.TYPE
       .replace('{expected}', 'integer')
@@ -96,15 +94,14 @@ function validateInteger(value, schemaDef, path) {
       .replace('{max}', schemaDef.maximum);
   }
   return '';
-}
+};
 
-function validateObject(value, schemaDef, path, errors) {
-  var err = validateType(value, schemaDef, path);
+const validateObject = (value, schemaDef, path, errors) => {
+  let err = validateType(value, schemaDef, path);
   if (err) { errors.push(err); return; }
 
-  var required = schemaDef.required || [];
-  for (var ri = 0; ri < required.length; ri++) {
-    var rk = required[ri];
+  const required = schemaDef.required || [];
+  for (const rk of required) {
     if (value[rk] === undefined || value[rk] === null) {
       errors.push(ERRORS.REQUIRED
         .replace('{path}', path + '.' + rk));
@@ -112,8 +109,8 @@ function validateObject(value, schemaDef, path, errors) {
   }
 
   if (schemaDef.additionalProperties === false && schemaDef.properties) {
-    var allowed = Object.keys(schemaDef.properties);
-    for (var k in value) {
+    const allowed = Object.keys(schemaDef.properties);
+    for (const k in value) {
       if (Object.prototype.hasOwnProperty.call(value, k) && allowed.indexOf(k) === -1) {
         errors.push(ERRORS.ADDITIONAL
           .replace('{path}', path)
@@ -122,41 +119,41 @@ function validateObject(value, schemaDef, path, errors) {
     }
   }
 
-  var props = schemaDef.properties || {};
-  for (var pk in props) {
+  const props = schemaDef.properties || {};
+  for (const pk in props) {
     if (Object.prototype.hasOwnProperty.call(props, pk) && value[pk] !== undefined) {
       validateField(value[pk], props[pk], path + '.' + pk, errors);
     }
   }
-}
+};
 
-function validateField(value, schemaDef, path, errors) {
+const validateField = (value, schemaDef, path, errors) => {
   if (!schemaDef) return;
 
-  var t = schemaDef.type;
+  const t = schemaDef.type;
 
   if (t === 'string') {
-    var serr = validateString(value, schemaDef, path);
+    const serr = validateString(value, schemaDef, path);
     if (serr) errors.push(serr);
   } else if (t === 'number') {
-    var nerr = validateNumber(value, schemaDef, path);
+    const nerr = validateNumber(value, schemaDef, path);
     if (nerr) errors.push(nerr);
   } else if (t === 'integer') {
-    var ierr = validateInteger(value, schemaDef, path);
+    const ierr = validateInteger(value, schemaDef, path);
     if (ierr) errors.push(ierr);
   } else if (t === 'boolean') {
-    var berr = validateBoolean(value, schemaDef, path);
+    const berr = validateBoolean(value, schemaDef, path);
     if (berr) errors.push(berr);
   } else if (t === 'object') {
     validateObject(value, schemaDef, path, errors);
   } else if (t === 'array') {
-    var aerr = validateType(value, schemaDef, path);
+    const aerr = validateType(value, schemaDef, path);
     if (aerr) errors.push(aerr);
   }
-}
+};
 
 export function validateBrandConfig(config) {
-  var errors = [];
+  const errors = [];
 
   if (!config || typeof config !== 'object') {
     return { valid: false, errors: [ERRORS.INVALID] };
@@ -165,7 +162,7 @@ export function validateBrandConfig(config) {
   validateField(config, BRAND_SCHEMA, '$', errors);
 
   if (errors.length > 0) {
-    return { valid: false, errors: errors };
+    return { valid: false, errors };
   }
 
   return { valid: true, errors: [] };

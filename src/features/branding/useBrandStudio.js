@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo, useEffect } from 'react';
-import processResponse from './responseProcessor.js';
+import { processResponse, requiresServiceRole } from './responseProcessor.js';
 import { listPresets, getPreset, savePreset, deletePreset, duplicatePreset, toggleFavoritePreset, getPresetCategories, loadPresetsFromDb, setOnChange } from './presets.js';
 import { applyPlanOverride } from './planThemes.js';
 import { enterPreviewMode, exitPreviewMode } from '../../shared/hooks/useBrandAppearance.js';
@@ -155,5 +155,6 @@ export default function useBrandStudio(brand, planInfo, onSave, toast) {
     applyFullPreset, applyPreset: applyFullPreset,
     deletePreset: handleDeletePreset, duplicatePreset: handleDuplicatePreset, toggleFavorite: handleToggleFavorite,
     brandGlobal, setBrandGlobalField, saveBrandGlobal,
+    requiresServiceRole,
   };
 }

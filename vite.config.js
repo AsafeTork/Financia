@@ -16,6 +16,9 @@ export default defineConfig(async function() {
       outDir: 'dist',
       emptyOutDir: true,
       target: 'esnext',
+      experimental: {
+        chunkImportMap: true,
+      },
       rollupOptions: {
         output: {
           compact: true,

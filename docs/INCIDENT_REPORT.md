@@ -1,3 +1,7 @@
+---
+type: REPORT
+---
+
 # Incident Report — Salvamento Bloqueado (Produção)
 
 **Date:** 2026-07-09

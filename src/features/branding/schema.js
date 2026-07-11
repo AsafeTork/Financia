@@ -1,4 +1,4 @@
-export const BRAND_SCHEMA_VERSION = '1.0.0';
+import { BRAND_SCHEMA_VERSION } from './schemaVersion.js';
 
 export const BRAND_SCHEMA = {
   $schema: 'https://json-schema.org/draft/2020-12/schema',
@@ -10,7 +10,7 @@ export const BRAND_SCHEMA = {
   properties: {
     schemaVersion: {
       type: 'string',
-      enum: ['1.0.0'],
+      enum: [BRAND_SCHEMA_VERSION],
     },
     brandName: {
       type: 'string',
@@ -220,3 +220,5 @@ export const ANIMATIONS_DEFAULTS = {
   enabled: true,
   speed:   'normal',
 };
+
+export { BRAND_SCHEMA_VERSION };

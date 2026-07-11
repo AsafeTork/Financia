@@ -1,0 +1,361 @@
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Code coverage report for src/shared/hooks/useBrandManager.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../../prettify.css" />
+    <link rel="stylesheet" href="../../../base.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="../../../favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+    
+<body>
+<div class='wrapper'>
+    <div class='pad1'>
+        <h1><a href="../../../index.html">All files</a> / <a href="index.html">src/shared/hooks</a> useBrandManager.js</h1>
+        <div class='clearfix'>
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Statements</span>
+                <span class='fraction'>0/58</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Branches</span>
+                <span class='fraction'>0/93</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Functions</span>
+                <span class='fraction'>0/4</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Lines</span>
+                <span class='fraction'>0/45</span>
+            </div>
+        
+            
+        </div>
+        <p class="quiet">
+            Press <em>n</em> or <em>j</em> to go to the next uncovered block, <em>b</em>, <em>p</em> or <em>k</em> for the previous block.
+        </p>
+        <template id="filterTemplate">
+            <div class="quiet">
+                Filter:
+                <input type="search" id="fileSearch">
+            </div>
+        </template>
+    </div>
+    <div class='status-line low'></div>
+    <pre><table class="coverage">
+<tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
+<a name='L2'></a><a href='#L2'>2</a>
+<a name='L3'></a><a href='#L3'>3</a>
+<a name='L4'></a><a href='#L4'>4</a>
+<a name='L5'></a><a href='#L5'>5</a>
+<a name='L6'></a><a href='#L6'>6</a>
+<a name='L7'></a><a href='#L7'>7</a>
+<a name='L8'></a><a href='#L8'>8</a>
+<a name='L9'></a><a href='#L9'>9</a>
+<a name='L10'></a><a href='#L10'>10</a>
+<a name='L11'></a><a href='#L11'>11</a>
+<a name='L12'></a><a href='#L12'>12</a>
+<a name='L13'></a><a href='#L13'>13</a>
+<a name='L14'></a><a href='#L14'>14</a>
+<a name='L15'></a><a href='#L15'>15</a>
+<a name='L16'></a><a href='#L16'>16</a>
+<a name='L17'></a><a href='#L17'>17</a>
+<a name='L18'></a><a href='#L18'>18</a>
+<a name='L19'></a><a href='#L19'>19</a>
+<a name='L20'></a><a href='#L20'>20</a>
+<a name='L21'></a><a href='#L21'>21</a>
+<a name='L22'></a><a href='#L22'>22</a>
+<a name='L23'></a><a href='#L23'>23</a>
+<a name='L24'></a><a href='#L24'>24</a>
+<a name='L25'></a><a href='#L25'>25</a>
+<a name='L26'></a><a href='#L26'>26</a>
+<a name='L27'></a><a href='#L27'>27</a>
+<a name='L28'></a><a href='#L28'>28</a>
+<a name='L29'></a><a href='#L29'>29</a>
+<a name='L30'></a><a href='#L30'>30</a>
+<a name='L31'></a><a href='#L31'>31</a>
+<a name='L32'></a><a href='#L32'>32</a>
+<a name='L33'></a><a href='#L33'>33</a>
+<a name='L34'></a><a href='#L34'>34</a>
+<a name='L35'></a><a href='#L35'>35</a>
+<a name='L36'></a><a href='#L36'>36</a>
+<a name='L37'></a><a href='#L37'>37</a>
+<a name='L38'></a><a href='#L38'>38</a>
+<a name='L39'></a><a href='#L39'>39</a>
+<a name='L40'></a><a href='#L40'>40</a>
+<a name='L41'></a><a href='#L41'>41</a>
+<a name='L42'></a><a href='#L42'>42</a>
+<a name='L43'></a><a href='#L43'>43</a>
+<a name='L44'></a><a href='#L44'>44</a>
+<a name='L45'></a><a href='#L45'>45</a>
+<a name='L46'></a><a href='#L46'>46</a>
+<a name='L47'></a><a href='#L47'>47</a>
+<a name='L48'></a><a href='#L48'>48</a>
+<a name='L49'></a><a href='#L49'>49</a>
+<a name='L50'></a><a href='#L50'>50</a>
+<a name='L51'></a><a href='#L51'>51</a>
+<a name='L52'></a><a href='#L52'>52</a>
+<a name='L53'></a><a href='#L53'>53</a>
+<a name='L54'></a><a href='#L54'>54</a>
+<a name='L55'></a><a href='#L55'>55</a>
+<a name='L56'></a><a href='#L56'>56</a>
+<a name='L57'></a><a href='#L57'>57</a>
+<a name='L58'></a><a href='#L58'>58</a>
+<a name='L59'></a><a href='#L59'>59</a>
+<a name='L60'></a><a href='#L60'>60</a>
+<a name='L61'></a><a href='#L61'>61</a>
+<a name='L62'></a><a href='#L62'>62</a>
+<a name='L63'></a><a href='#L63'>63</a>
+<a name='L64'></a><a href='#L64'>64</a>
+<a name='L65'></a><a href='#L65'>65</a>
+<a name='L66'></a><a href='#L66'>66</a>
+<a name='L67'></a><a href='#L67'>67</a>
+<a name='L68'></a><a href='#L68'>68</a>
+<a name='L69'></a><a href='#L69'>69</a>
+<a name='L70'></a><a href='#L70'>70</a>
+<a name='L71'></a><a href='#L71'>71</a>
+<a name='L72'></a><a href='#L72'>72</a>
+<a name='L73'></a><a href='#L73'>73</a>
+<a name='L74'></a><a href='#L74'>74</a>
+<a name='L75'></a><a href='#L75'>75</a>
+<a name='L76'></a><a href='#L76'>76</a>
+<a name='L77'></a><a href='#L77'>77</a>
+<a name='L78'></a><a href='#L78'>78</a>
+<a name='L79'></a><a href='#L79'>79</a>
+<a name='L80'></a><a href='#L80'>80</a>
+<a name='L81'></a><a href='#L81'>81</a>
+<a name='L82'></a><a href='#L82'>82</a>
+<a name='L83'></a><a href='#L83'>83</a>
+<a name='L84'></a><a href='#L84'>84</a>
+<a name='L85'></a><a href='#L85'>85</a>
+<a name='L86'></a><a href='#L86'>86</a>
+<a name='L87'></a><a href='#L87'>87</a>
+<a name='L88'></a><a href='#L88'>88</a>
+<a name='L89'></a><a href='#L89'>89</a>
+<a name='L90'></a><a href='#L90'>90</a>
+<a name='L91'></a><a href='#L91'>91</a>
+<a name='L92'></a><a href='#L92'>92</a>
+<a name='L93'></a><a href='#L93'>93</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { sb } from '../../lib/supabase.js';
+import { ldb } from '../../lib/dexie.js';
+import { now } from '../../lib/utils.js';
+import { planVisualDefaults } from '../../lib/constants.js';
+&nbsp;
+export function <span class="fstat-no" title="function not covered" >useBrandManager(</span>props) {
+  var { session, toast, setBrand } = <span class="cstat-no" title="statement not covered" >props;</span>
+&nbsp;
+  var saveBrand = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >async </span>function(nb) {</span>
+    var userId = <span class="cstat-no" title="statement not covered" >session.user.id;</span>
+    var existing = <span class="cstat-no" title="statement not covered" >null;</span>
+<span class="cstat-no" title="statement not covered" >    try { <span class="cstat-no" title="statement not covered" >existing = await ldb.profiles.get(userId); </span>} catch (e0) { <span class="cstat-no" title="statement not covered" >void e0; </span>}</span>
+    // white_label do objeto recebido (fonte mais recente) OU do Dexie local
+    var hasWhiteLabel = <span class="cstat-no" title="statement not covered" >!!(nb &amp;&amp; nb.white_label) || !!(existing &amp;&amp; existing.white_label);</span>
+    var visual = <span class="cstat-no" title="statement not covered" >hasWhiteLabel ? null : planVisualDefaults({</span>
+      plan: existing &amp;&amp; existing.plan ? existing.plan : 'free',
+      plan_expires_at: existing &amp;&amp; existing.plan_expires_at ? existing.plan_expires_at : null,
+    });
+    var finalColor = <span class="cstat-no" title="statement not covered" >hasWhiteLabel ? nb.color : visual.color;</span>
+    var finalSecondary = <span class="cstat-no" title="statement not covered" >hasWhiteLabel ? (nb.color_secondary || null) : visual.color_secondary;</span>
+    var finalAccent = <span class="cstat-no" title="statement not covered" >hasWhiteLabel ? (nb.color_accent || null) : visual.color_accent;</span>
+    var finalTheme = <span class="cstat-no" title="statement not covered" >hasWhiteLabel ? (nb.theme || 'light') : visual.theme;</span>
+<span class="cstat-no" title="statement not covered" >    if (!/^#[0-9a-fA-F]{6}$/.test(finalColor)) <span class="cstat-no" title="statement not covered" >finalColor = '#002f59';</span></span>
+<span class="cstat-no" title="statement not covered" >    if (finalSecondary &amp;&amp; !/^#[0-9a-fA-F]{6}$/.test(finalSecondary)) <span class="cstat-no" title="statement not covered" >finalSecondary = null;</span></span>
+<span class="cstat-no" title="statement not covered" >    if (finalAccent &amp;&amp; !/^#[0-9a-fA-F]{6}$/.test(finalAccent)) <span class="cstat-no" title="statement not covered" >finalAccent = null;</span></span>
+    var brandConfig = <span class="cstat-no" title="statement not covered" >nb.brand_config || (existing &amp;&amp; existing.brand_config) || null;</span>
+    var row = <span class="cstat-no" title="statement not covered" >Object.assign({}, existing || {}, {</span>
+      user_id:userId,
+      name:nb.name,
+      logo:nb.logo,
+      color:finalColor,
+      color_secondary:finalSecondary,
+      color_accent:finalAccent,
+      theme:finalTheme,
+      niche:nb.niche||(existing&amp;&amp;existing.niche)||'',
+      white_label:hasWhiteLabel,
+      visual_version:((existing&amp;&amp;existing.visual_version)||0)+1,
+      custom_palette:true,
+      logo_url:nb.logo_url||null,
+      brand_config:brandConfig,
+      updated_at:now(),
+      _synced:0,
+      _updated_at:now(),
+    });
+<span class="cstat-no" title="statement not covered" >    try { <span class="cstat-no" title="statement not covered" >await ldb.profiles.put(row); </span>}</span>
+    catch(e) { <span class="cstat-no" title="statement not covered" >toast('Erro ao salvar configurações: ' + (e.message || 'tente novamente'), 'error'); <span class="cstat-no" title="statement not covered" ></span>return; </span>}
+<span class="cstat-no" title="statement not covered" >    setBrand(Object.assign({}, nb, {</span>
+      color: finalColor,
+      color_secondary: finalSecondary,
+      color_accent: finalAccent,
+      theme: finalTheme,
+      niche:nb.niche||'',
+      white_label:hasWhiteLabel,
+      visual_version:((existing&amp;&amp;existing.visual_version)||0)+1,
+      custom_palette:hasWhiteLabel,
+      brand_config:brandConfig,
+    }));
+<span class="cstat-no" title="statement not covered" >    toast('Configurações salvas', 'success');</span>
+<span class="cstat-no" title="statement not covered" >    if ('serviceWorker' in navigator &amp;&amp; navigator.serviceWorker.controller) {</span>
+<span class="cstat-no" title="statement not covered" >      navigator.serviceWorker.controller.postMessage({type:'UPDATE_BRAND', name:nb.name, logo_url:nb.logo_url||null, color:nb.color||'#002f59'});</span>
+    }
+<span class="cstat-no" title="statement not covered" >    if (navigator.onLine) {</span>
+<span class="cstat-no" title="statement not covered" >      try {</span>
+        var res = <span class="cstat-no" title="statement not covered" >await sb.from('company_profiles').upsert({user_id:userId, name:nb.name, logo:nb.logo, color:finalColor, color_secondary:finalSecondary, color_accent:finalAccent, theme:finalTheme, logo_url:nb.logo_url||null, white_label:hasWhiteLabel, phone:nb.phone||(existing&amp;&amp;existing.phone)||null, niche:nb.niche||null, visual_version:((existing&amp;&amp;existing.visual_version)||0)+1, custom_palette:hasWhiteLabel, updated_at:now()});</span>
+<span class="cstat-no" title="statement not covered" >        if (!res.error) <span class="cstat-no" title="statement not covered" >await ldb.profiles.update(userId, {_synced:1});</span></span>
+        else <span class="cstat-no" title="statement not covered" >toast('Não sincronizado — tentaremos em breve', 'warning');</span>
+      } catch(_e) { <span class="cstat-no" title="statement not covered" >toast('Não sincronizado — tentaremos em breve', 'warning'); </span>}
+    }
+  };
+&nbsp;
+  var savePhone = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >async </span>function(newPhone) {</span>
+    var userId = <span class="cstat-no" title="statement not covered" >session.user.id;</span>
+    var clean = <span class="cstat-no" title="statement not covered" >(newPhone || '').replace(/\D/g, '');</span>
+<span class="cstat-no" title="statement not covered" >    try {</span>
+      var existing = <span class="cstat-no" title="statement not covered" >await ldb.profiles.get(userId);</span>
+<span class="cstat-no" title="statement not covered" >      if (existing) <span class="cstat-no" title="statement not covered" >await ldb.profiles.update(userId, {phone:clean, _synced:0, _updated_at:now()});</span></span>
+    } catch(e) { <span class="cstat-no" title="statement not covered" >void e; </span>}
+<span class="cstat-no" title="statement not covered" >    setBrand(<span class="fstat-no" title="function not covered" >function(</span>b) { <span class="cstat-no" title="statement not covered" >return Object.assign({}, b, {phone:clean}); </span>});</span>
+<span class="cstat-no" title="statement not covered" >    if (navigator.onLine) {</span>
+<span class="cstat-no" title="statement not covered" >      try {</span>
+        var res = <span class="cstat-no" title="statement not covered" >await sb.from('company_profiles').update({phone:clean}).eq('user_id', userId);</span>
+<span class="cstat-no" title="statement not covered" >        if (!res.error) { <span class="cstat-no" title="statement not covered" >await ldb.profiles.update(userId, {_synced:1}); <span class="cstat-no" title="statement not covered" ></span>toast('Telefone atualizado', 'success'); </span>}</span>
+        else <span class="cstat-no" title="statement not covered" >toast('Não sincronizado — tentaremos em breve', 'warning');</span>
+      } catch(e) { <span class="cstat-no" title="statement not covered" >void e; <span class="cstat-no" title="statement not covered" ></span>toast('Não sincronizado — tentaremos em breve', 'warning'); </span>}
+    } else {
+<span class="cstat-no" title="statement not covered" >      toast('Telefone salvo — sincroniza quando online', 'success');</span>
+    }
+<span class="cstat-no" title="statement not covered" >    return true;</span>
+  };
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  return { saveBrand, savePhone };</span>
+}
+&nbsp;</pre></td></tr></table></pre>
+
+                <div class='push'></div><!-- for sticky footer -->
+            </div><!-- /wrapper -->
+            <div class='footer quiet pad2 space-top1 center small'>
+                Code coverage generated by
+                <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
+                at 2026-07-11T14:44:18.962Z
+            </div>
+        <script src="../../../prettify.js"></script>
+        <script>
+            window.onload = function () {
+                prettyPrint();
+            };
+        </script>
+        <script src="../../../sorter.js"></script>
+        <script src="../../../block-navigation.js"></script>
+    </body>
+</html>
+    

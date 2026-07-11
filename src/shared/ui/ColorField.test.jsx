@@ -1,19 +1,21 @@
 // @vitest-environment jsdom
-import { describe, it, expect } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, afterEach } from 'vitest';
+import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import React from 'react';
 import ColorField from './ColorField.jsx';
 
 describe('ColorField', function() {
+  afterEach(function() { cleanup(); });
+
   it('renderiza label e descricao', function() {
     render(React.createElement(ColorField, { label: 'Primaria', desc: 'Cor principal', value: '#002f59', onChange: function() {} }));
-    expect(screen.getByText('Primaria')).toBeInTheDocument();
-    expect(screen.getByText('Cor principal')).toBeInTheDocument();
+    expect(screen.getByText('Primaria')).toBeTruthy();
+    expect(screen.getByText('Cor principal')).toBeTruthy();
   });
 
   it('renderiza sem descricao', function() {
     render(React.createElement(ColorField, { label: 'Primaria', value: '#002f59', onChange: function() {} }));
-    expect(screen.getByText('Primaria')).toBeInTheDocument();
+    expect(screen.getByText('Primaria')).toBeTruthy();
   });
 
   it('atualiza cor via input de texto', function() {

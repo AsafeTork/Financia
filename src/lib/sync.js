@@ -170,46 +170,25 @@ export const deleteClient = async function(uid) {
   } catch { return false; }
 };
 
-const validateToken = function(tok) {
-  if (!tok || tok.length < 10) return false;
-  if (tok.indexOf('ghp_') !== 0 && tok.indexOf('github_pat_') !== 0 && tok.indexOf('gho_') !== 0) return false;
-  return true;
-};
-
-export const triggerApkBuild = async function(clientName, logoUrl, primaryColor, ghToken) {
-  var tok = ghToken || localStorage.getItem('nancia_gh_token') || '';
-  if (!tok) return { ok: false, reason: 'no_token' };
-  if (!validateToken(tok)) return { ok: false, reason: 'invalid_token' };
-  var last = Number(localStorage.getItem('nancia_last_build_at') || '0');
-  if (Date.now() - last < 5 * 60 * 1000) return { ok: false, reason: 'rate_limited' };
-  var safeName = String(clientName || 'Financia').replace(/[^\w\s-]/g, '').trim().slice(0, 60) || 'Financia';
-  var safeLogo = '';
+export const triggerApkBuild = async function(clientName, logoUrl, primaryColor) {
   try {
-    var parsed = new URL(String(logoUrl || '').trim());
-    if (parsed.protocol === 'https:' || parsed.protocol === 'http:') safeLogo = parsed.toString().slice(0, 500);
-  } catch { void 0; }
-  var safeColor = String(primaryColor || '#002f59').replace(/[^#0-9a-fA-F]/g, '');
-  if (!/^#?[0-9a-fA-F]{6}$/.test(safeColor)) safeColor = '#002f59';
-  if (safeColor.charAt(0) !== '#') safeColor = '#' + safeColor;
-  try {
-    const res = await fetch(
-      'https://api.github.com/repos/AsafeTork/financia/actions/workflows/build.yml/dispatches',
-      {
-        method: 'POST',
-        headers: { Authorization: 'token ' + tok, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ref: 'main', inputs: {
-          client_name: safeName,
-          logo_url: safeLogo,
-          primary_color: safeColor.replace('#', ''),
-        }}),
-      }
-    );
-    if (res.status === 204) {
+    var last = Number(localStorage.getItem('nancia_last_build_at') || '0');
+    if (Date.now() - last < 5 * 60 * 1000) return { ok: false, reason: 'rate_limited' };
+    const res = await sb.functions.invoke('trigger-apk-build', {
+      body: { client_name: clientName, logo_url: logoUrl, primary_color: primaryColor },
+    });
+    if (res.error) {
+      var ctx = res.error.context || {};
+      if (ctx.reason === 'no_token') return { ok: false, reason: 'no_token' };
+      return { ok: false, reason: 'edge_error', detail: String(ctx.reason || res.error.message || res.error) };
+    }
+    var data = res.data || {};
+    if (data.ok) {
       localStorage.setItem('nancia_last_build_at', String(Date.now()));
       return { ok: true };
     }
-    return { ok: false, reason: 'api_error', status: res.status };
-  } catch {
+    return { ok: false, reason: data.reason || 'unknown', status: data.status };
+  } catch (_err) {
     return { ok: false, reason: 'network_error' };
   }
 };

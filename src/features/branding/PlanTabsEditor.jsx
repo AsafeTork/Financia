@@ -1,12 +1,12 @@
 import React from 'react';
 
-var PLAN_META = {
+const PLAN_META = {
   free: { label: 'Free', icon: 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4' },
   pro: { label: 'Pro', icon: 'M13 10V3L4 14h7v7l9-11h-7z' },
   premium: { label: 'Premium', icon: 'M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z' },
 };
 
-var PALETTE_FIELDS = [
+const PALETTE_FIELDS = [
   { key: 'primary', label: 'Primaria', desc: 'Sidebar, botoes, navegacao' },
   { key: 'secondary', label: 'Secundaria', desc: 'Cards, badges, tags' },
   { key: 'accent', label: 'Destaque', desc: 'Hover, graficos, progresso' },
@@ -25,60 +25,59 @@ var PALETTE_FIELDS = [
   { key: 'info', label: 'Info', desc: 'Indicador informativo' },
 ];
 
-function defaultPalette(planId) {
-  var map = {
+const defaultPalette = (planId) => {
+  const map = {
     free: { primary:'#002f59', secondary:'#e8f0f7', accent:'#1a6b5c', bgPage:'#f5f5f0', bgCard:'#ffffff', bgInput:'#ffffff', bgSubtle:'#f5f5f0', surface:'#ffffff', textMain:'#0f172a', textSub:'#5b6b7c', textMuted:'#94a3b8', border:'#edeae3' },
     pro: { primary:'#2563eb', secondary:'#eff6ff', accent:'#7c3aed', bgPage:'#f8fafc', bgCard:'#ffffff', bgInput:'#ffffff', bgSubtle:'#f1f5f9', surface:'#ffffff', textMain:'#0f172a', textSub:'#475569', textMuted:'#94a3b8', border:'#e2e8f0' },
     premium: { primary:'#0f172a', secondary:'#f8fafc', accent:'#f59e0b', bgPage:'#fafafa', bgCard:'#ffffff', bgInput:'#ffffff', bgSubtle:'#f5f5f5', surface:'#ffffff', textMain:'#171717', textSub:'#525252', textMuted:'#a3a3a3', border:'#e5e5e5' },
   };
   return map[planId] || map.free;
-}
+};
 
 export default function PlanTabsEditor({ brandConfig, onSavePlan, onCopyJSON, onCopyDocs, brandColor, toast }) {
-  var [activePlan, setActivePlan] = React.useState('free');
-  var planOverrides = React.useMemo(function() { return (brandConfig && brandConfig.planOverrides) || {}; }, [brandConfig]);
-  var palDefaults = defaultPalette(activePlan);
+  const [activePlan, setActivePlan] = React.useState('free');
+  const planOverrides = React.useMemo(() => (brandConfig && brandConfig.planOverrides) || {}, [brandConfig]);
+  const palDefaults = defaultPalette(activePlan);
 
-  var [form, setForm] = React.useState(function() {
-    return initForm(activePlan, planOverrides, palDefaults);
-  });
-  var [saving, setSaving] = React.useState(false);
-  var [hasChanges, setHasChanges] = React.useState(false);
-  var [jsonInput, setJsonInput] = React.useState('');
+  const [form, setForm] = React.useState(() => initForm(activePlan, planOverrides, palDefaults));
+  const [saving, setSaving] = React.useState(false);
+  const [hasChanges, setHasChanges] = React.useState(false);
+  const [jsonInput, setJsonInput] = React.useState('');
 
-  React.useEffect(function() {
-    var f = initForm(activePlan, planOverrides, palDefaults);
+  React.useEffect(() => {
+    const f = initForm(activePlan, planOverrides, palDefaults);
     setForm(f);
     setHasChanges(false);
     setJsonInput(JSON.stringify(f, null, 2));
   }, [activePlan, palDefaults, planOverrides]);
 
-  var setColor = function(k, v) {
-    setForm(function(f) { var o = Object.assign({}, f); o[k] = v; return o; });
+  const setColor = (k, v) => {
+    setForm(f => ({ ...f, [k]: v }));
     setHasChanges(true);
-    setJsonInput(function(prev) {
-      try { var p = JSON.parse(prev); p[k] = v; return JSON.stringify(p, null, 2);       } catch { return prev; }
+    setJsonInput(prev => {
+      try { const p = JSON.parse(prev); p[k] = v; return JSON.stringify(p, null, 2); } catch { return prev; }
     });
   };
 
-  var applyJson = function(json) {
+  const applyJson = (json) => {
     setJsonInput(json);
     try {
-      var parsed = JSON.parse(json);
+      const parsed = JSON.parse(json);
       if (parsed && typeof parsed === 'object') {
-        var safe = {}; var allowedKeys = PALETTE_FIELDS.map(function(f) { return f.key; });
-        allowedKeys.forEach(function(k) { if (parsed[k] !== undefined) safe[k] = String(parsed[k]).slice(0, 100); });
-        setForm(function(f) { return Object.assign({}, f, safe); });
+        const safe = {};
+        const allowedKeys = PALETTE_FIELDS.map(f => f.key);
+        allowedKeys.forEach(k => { if (parsed[k] !== undefined) safe[k] = String(parsed[k]).slice(0, 100); });
+        setForm(f => ({ ...f, ...safe }));
         setHasChanges(true);
       }
     } catch (_) { void _; }
   };
 
-  var doSave = async function() {
+  const doSave = async () => {
     setSaving(true);
     try {
-      var pal = {};
-      PALETTE_FIELDS.forEach(function(f) { pal[f.key] = form[f.key] || null; });
+      const pal = {};
+      PALETTE_FIELDS.forEach(f => { pal[f.key] = form[f.key] || null; });
       await onSavePlan(activePlan, { modules: { palette: pal } });
       setHasChanges(false);
       if (toast) toast('Cores salvas para plano ' + activePlan, 'success');
@@ -86,16 +85,16 @@ export default function PlanTabsEditor({ brandConfig, onSavePlan, onCopyJSON, on
     setSaving(false);
   };
 
-  var palPreview = [form.primary, form.secondary, form.accent];
+  const palPreview = [form.primary, form.secondary, form.accent];
 
   return (
     <div className="flex flex-col gap-4">
       <div className="flex border-b gap-1" style={{borderColor:'var(--border)'}}>
-        {Object.keys(PLAN_META).map(function(k) {
-          var meta = PLAN_META[k];
-          var active = activePlan === k;
+        {Object.keys(PLAN_META).map(k => {
+          const meta = PLAN_META[k];
+          const active = activePlan === k;
           return (
-            <button key={k} onClick={function() { setActivePlan(k); }}
+            <button key={k} onClick={() => setActivePlan(k)}
               className={'flex items-center gap-2 px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors border-b-2 -mb-px ' + (active ? '' : 'text-gray-400 border-transparent hover:text-gray-600')}
               style={active ? {borderColor: brandColor, color: brandColor} : {}}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d={meta.icon} /></svg>
@@ -122,8 +121,8 @@ export default function PlanTabsEditor({ brandConfig, onSavePlan, onCopyJSON, on
         <p className="text-sm font-semibold mb-1" style={{color:'var(--text-main)'}}>Paleta de cores — {PLAN_META[activePlan].label}</p>
         <p className="text-xs mb-4" style={{color:'var(--text-muted)'}}>Essas cores aparecem nos elementos do sistema para usuarios do plano {PLAN_META[activePlan].label}.</p>
         <div className="flex items-center gap-3 mb-5">
-          {palPreview.map(function(c, i) {
-            var labels = ['Primaria', 'Secundaria', 'Destaque'];
+          {palPreview.map((c, i) => {
+            const labels = ['Primaria', 'Secundaria', 'Destaque'];
             return (
               <div key={i} className="flex flex-col items-center gap-1">
                 <div className="w-10 h-10 rounded-xl border-2" style={{background: c, borderColor: 'var(--border)'}} />
@@ -133,17 +132,15 @@ export default function PlanTabsEditor({ brandConfig, onSavePlan, onCopyJSON, on
           })}
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {PALETTE_FIELDS.map(function(f) {
-            return (
-              <ColorInput key={f.key} label={f.label} desc={f.desc} value={form[f.key] || ''} onChange={function(v) { setColor(f.key, v); }} />
-            );
-          })}
+          {PALETTE_FIELDS.map(f => (
+            <ColorInput key={f.key} label={f.label} desc={f.desc} value={form[f.key] || ''} onChange={v => setColor(f.key, v)} />
+          ))}
         </div>
       </div>
 
       <div className="flex flex-col gap-2">
         <label className="text-xs font-medium" style={{color:'var(--text-sub)'}}>JSON</label>
-        <textarea value={jsonInput} onChange={function(e) { applyJson(e.target.value); }}
+        <textarea value={jsonInput} onChange={e => applyJson(e.target.value)}
           rows={4} className="rounded-xl px-3 py-2 text-[11px] font-mono resize-none focus:outline-none"
           style={{background:'var(--bg-input)', color:'var(--text-main)', border:'1px solid var(--border)'}} />
       </div>
@@ -160,13 +157,11 @@ export default function PlanTabsEditor({ brandConfig, onSavePlan, onCopyJSON, on
           </div>
           <div className="flex">
             <div className="w-16 flex-shrink-0 p-1.5 flex flex-col gap-1" style={{background: form.primary || '#1e293b'}}>
-              {[1,2,3,4].map(function(i) {
-                return (
-                  <div key={i} className="h-6 rounded-lg flex items-center justify-center" style={{background: i === 2 ? 'rgba(255,255,255,0.14)' : 'transparent'}}>
-                    <div className="w-3 h-3 rounded" style={{background: i === 2 ? '#ffffff' : 'rgba(255,255,255,0.4)'}} />
-                  </div>
-                );
-              })}
+              {[1,2,3,4].map(i => (
+                <div key={i} className="h-6 rounded-lg flex items-center justify-center" style={{background: i === 2 ? 'rgba(255,255,255,0.14)' : 'transparent'}}>
+                  <div className="w-3 h-3 rounded" style={{background: i === 2 ? '#ffffff' : 'rgba(255,255,255,0.4)'}} />
+                </div>
+              ))}
             </div>
             <div className="flex-1 p-3 flex flex-col gap-2.5">
               <div className="flex items-center gap-2">
@@ -206,13 +201,13 @@ export default function PlanTabsEditor({ brandConfig, onSavePlan, onCopyJSON, on
   );
 }
 
-function initForm(activePlan, planOverrides, palDefaults) {
-  var ov = planOverrides[activePlan] || {};
-  var pal = (ov.modules && ov.modules.palette) || {};
-  var form = {};
-  PALETTE_FIELDS.forEach(function(f) { form[f.key] = pal[f.key] || palDefaults[f.key] || ''; });
+const initForm = (activePlan, planOverrides, palDefaults) => {
+  const ov = planOverrides[activePlan] || {};
+  const pal = (ov.modules && ov.modules.palette) || {};
+  const form = {};
+  PALETTE_FIELDS.forEach(f => { form[f.key] = pal[f.key] || palDefaults[f.key] || ''; });
   return form;
-}
+};
 
 function ColorInput({ label, value, onChange, desc }) {
   return (
@@ -222,8 +217,8 @@ function ColorInput({ label, value, onChange, desc }) {
         {desc && <span className="text-[9px]" style={{color:'var(--text-muted)'}}>{desc}</span>}
       </div>
       <div className="flex items-center gap-2">
-        <input type="color" value={value || '#000000'} onChange={function(e) { onChange(e.target.value); }} className="w-8 h-8 rounded-lg cursor-pointer border-0 p-0.5 flex-shrink-0" />
-        <input type="text" value={value || ''} onChange={function(e) { onChange(e.target.value); }}
+        <input type="color" value={value || '#000000'} onChange={e => onChange(e.target.value)} className="w-8 h-8 rounded-lg cursor-pointer border-0 p-0.5 flex-shrink-0" />
+        <input type="text" value={value || ''} onChange={e => onChange(e.target.value)}
           className="flex-1 rounded-xl px-2.5 py-1.5 text-[11px] font-mono focus:outline-none" style={{background:'var(--bg-input)', color:'var(--text-main)', border:'1px solid var(--border)'}} />
       </div>
     </div>

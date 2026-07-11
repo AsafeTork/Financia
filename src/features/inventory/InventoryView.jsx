@@ -75,7 +75,7 @@ export default function InventoryView({ products, losses, onAddProduct, onEditPr
       if (!ok) return;
       toast('Produto adicionado!', 'success');
       dispatch({type:'CLOSE_PM'});
-    } catch(_) { void _; }
+    } catch(_) { toast('Erro ao adicionar produto.', 'error'); }
     finally { dispatch({type:'SET_SAVING', v:false}); }
   };
   const saveEditP = async function() {
@@ -87,7 +87,7 @@ export default function InventoryView({ products, losses, onAddProduct, onEditPr
       if (!ok) return;
       toast('Produto atualizado', 'success');
       dispatch({type:'SET_EDIT_P', v:null});
-    } catch(_) { void _; }
+    } catch(_) { toast('Erro ao atualizar produto.', 'error'); }
     finally { dispatch({type:'SET_SAVING', v:false}); }
   };
   const saveLoss = async function() {
@@ -104,7 +104,7 @@ export default function InventoryView({ products, losses, onAddProduct, onEditPr
       if (!ok) return;
       toast(p ? 'Perda registrada e estoque abatido' : 'Perda registrada (produto nao encontrado no estoque)', 'success');
       dispatch({type:'CLOSE_LM'});
-    } catch(_) { void _; }
+    } catch(_) { toast('Erro ao registrar perda.', 'error'); }
     finally { dispatch({type:'SET_SAVING', v:false}); }
   };
   const saveEditL = async function() {
@@ -116,7 +116,7 @@ export default function InventoryView({ products, losses, onAddProduct, onEditPr
       if (!ok) return;
       toast('Perda atualizada', 'success');
       dispatch({type:'SET_EDIT_L', v:null});
-    } catch(_) { void _; }
+    } catch(_) { toast('Erro ao atualizar perda.', 'error'); }
     finally { dispatch({type:'SET_SAVING', v:false}); }
   };
   const saveStock = async function() {
@@ -128,7 +128,7 @@ export default function InventoryView({ products, losses, onAddProduct, onEditPr
       if (!ok) return;
       toast('Estoque atualizado!', 'success');
       dispatch({type:'SET_SM', v:null});
-    } catch(_) { void _; }
+    } catch(_) { toast('Erro ao ajustar estoque.', 'error'); }
     finally { dispatch({type:'SET_SAVING', v:false}); }
   };
   const toggleCat = function(cat) {
@@ -245,9 +245,10 @@ export default function InventoryView({ products, losses, onAddProduct, onEditPr
           ) : (
             grouped.map(function(pair) {
               var cat = pair[0], items = pair[1];
+              var catId = 'cat-' + cat.replace(/\s+/g, '-');
               return (
                 <div key={cat}>
-                  <button onClick={function() { toggleCat(cat); }} aria-expanded={!collapsed.has(cat)}
+                  <button onClick={function() { toggleCat(cat); }} aria-expanded={!collapsed.has(cat)} aria-controls={catId + '-content'}
                     className="w-full flex items-center justify-between px-4 py-2.5 min-h-[44px] bg-gray-50 hover:bg-gray-100 transition border-b border-t border-gray-100">
                     <div className="flex items-center gap-2">
                       <svg className={'w-3.5 h-3.5 text-gray-400 transition-transform ' + (collapsed.has(cat) ? '-rotate-90' : '')} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7"/></svg>
@@ -256,7 +257,7 @@ export default function InventoryView({ products, losses, onAddProduct, onEditPr
                     <span className="text-xs text-gray-400">{items.length} {items.length === 1 ? 'item' : 'itens'}</span>
                   </button>
                   {!collapsed.has(cat) && (
-                    <div className="divide-y divide-gray-50">
+                    <div id={catId + '-content'} className="divide-y divide-gray-50" role="region" aria-labelledby={catId + '-btn'}>
                       {items.map(function(p) {
                         var stockOut = p.stock != null && p.stock <= 0;
                         var stockLow = p.stock != null && p.stock > 0 && p.stock <= 5;

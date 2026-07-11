@@ -1,0 +1,442 @@
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Code coverage report for src/features/landing/PrivacyPolicy.jsx</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../../prettify.css" />
+    <link rel="stylesheet" href="../../../base.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="../../../favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+    
+<body>
+<div class='wrapper'>
+    <div class='pad1'>
+        <h1><a href="../../../index.html">All files</a> / <a href="index.html">src/features/landing</a> PrivacyPolicy.jsx</h1>
+        <div class='clearfix'>
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Statements</span>
+                <span class='fraction'>0/13</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Branches</span>
+                <span class='fraction'>0/6</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Functions</span>
+                <span class='fraction'>0/4</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Lines</span>
+                <span class='fraction'>0/12</span>
+            </div>
+        
+            
+        </div>
+        <p class="quiet">
+            Press <em>n</em> or <em>j</em> to go to the next uncovered block, <em>b</em>, <em>p</em> or <em>k</em> for the previous block.
+        </p>
+        <template id="filterTemplate">
+            <div class="quiet">
+                Filter:
+                <input type="search" id="fileSearch">
+            </div>
+        </template>
+    </div>
+    <div class='status-line low'></div>
+    <pre><table class="coverage">
+<tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
+<a name='L2'></a><a href='#L2'>2</a>
+<a name='L3'></a><a href='#L3'>3</a>
+<a name='L4'></a><a href='#L4'>4</a>
+<a name='L5'></a><a href='#L5'>5</a>
+<a name='L6'></a><a href='#L6'>6</a>
+<a name='L7'></a><a href='#L7'>7</a>
+<a name='L8'></a><a href='#L8'>8</a>
+<a name='L9'></a><a href='#L9'>9</a>
+<a name='L10'></a><a href='#L10'>10</a>
+<a name='L11'></a><a href='#L11'>11</a>
+<a name='L12'></a><a href='#L12'>12</a>
+<a name='L13'></a><a href='#L13'>13</a>
+<a name='L14'></a><a href='#L14'>14</a>
+<a name='L15'></a><a href='#L15'>15</a>
+<a name='L16'></a><a href='#L16'>16</a>
+<a name='L17'></a><a href='#L17'>17</a>
+<a name='L18'></a><a href='#L18'>18</a>
+<a name='L19'></a><a href='#L19'>19</a>
+<a name='L20'></a><a href='#L20'>20</a>
+<a name='L21'></a><a href='#L21'>21</a>
+<a name='L22'></a><a href='#L22'>22</a>
+<a name='L23'></a><a href='#L23'>23</a>
+<a name='L24'></a><a href='#L24'>24</a>
+<a name='L25'></a><a href='#L25'>25</a>
+<a name='L26'></a><a href='#L26'>26</a>
+<a name='L27'></a><a href='#L27'>27</a>
+<a name='L28'></a><a href='#L28'>28</a>
+<a name='L29'></a><a href='#L29'>29</a>
+<a name='L30'></a><a href='#L30'>30</a>
+<a name='L31'></a><a href='#L31'>31</a>
+<a name='L32'></a><a href='#L32'>32</a>
+<a name='L33'></a><a href='#L33'>33</a>
+<a name='L34'></a><a href='#L34'>34</a>
+<a name='L35'></a><a href='#L35'>35</a>
+<a name='L36'></a><a href='#L36'>36</a>
+<a name='L37'></a><a href='#L37'>37</a>
+<a name='L38'></a><a href='#L38'>38</a>
+<a name='L39'></a><a href='#L39'>39</a>
+<a name='L40'></a><a href='#L40'>40</a>
+<a name='L41'></a><a href='#L41'>41</a>
+<a name='L42'></a><a href='#L42'>42</a>
+<a name='L43'></a><a href='#L43'>43</a>
+<a name='L44'></a><a href='#L44'>44</a>
+<a name='L45'></a><a href='#L45'>45</a>
+<a name='L46'></a><a href='#L46'>46</a>
+<a name='L47'></a><a href='#L47'>47</a>
+<a name='L48'></a><a href='#L48'>48</a>
+<a name='L49'></a><a href='#L49'>49</a>
+<a name='L50'></a><a href='#L50'>50</a>
+<a name='L51'></a><a href='#L51'>51</a>
+<a name='L52'></a><a href='#L52'>52</a>
+<a name='L53'></a><a href='#L53'>53</a>
+<a name='L54'></a><a href='#L54'>54</a>
+<a name='L55'></a><a href='#L55'>55</a>
+<a name='L56'></a><a href='#L56'>56</a>
+<a name='L57'></a><a href='#L57'>57</a>
+<a name='L58'></a><a href='#L58'>58</a>
+<a name='L59'></a><a href='#L59'>59</a>
+<a name='L60'></a><a href='#L60'>60</a>
+<a name='L61'></a><a href='#L61'>61</a>
+<a name='L62'></a><a href='#L62'>62</a>
+<a name='L63'></a><a href='#L63'>63</a>
+<a name='L64'></a><a href='#L64'>64</a>
+<a name='L65'></a><a href='#L65'>65</a>
+<a name='L66'></a><a href='#L66'>66</a>
+<a name='L67'></a><a href='#L67'>67</a>
+<a name='L68'></a><a href='#L68'>68</a>
+<a name='L69'></a><a href='#L69'>69</a>
+<a name='L70'></a><a href='#L70'>70</a>
+<a name='L71'></a><a href='#L71'>71</a>
+<a name='L72'></a><a href='#L72'>72</a>
+<a name='L73'></a><a href='#L73'>73</a>
+<a name='L74'></a><a href='#L74'>74</a>
+<a name='L75'></a><a href='#L75'>75</a>
+<a name='L76'></a><a href='#L76'>76</a>
+<a name='L77'></a><a href='#L77'>77</a>
+<a name='L78'></a><a href='#L78'>78</a>
+<a name='L79'></a><a href='#L79'>79</a>
+<a name='L80'></a><a href='#L80'>80</a>
+<a name='L81'></a><a href='#L81'>81</a>
+<a name='L82'></a><a href='#L82'>82</a>
+<a name='L83'></a><a href='#L83'>83</a>
+<a name='L84'></a><a href='#L84'>84</a>
+<a name='L85'></a><a href='#L85'>85</a>
+<a name='L86'></a><a href='#L86'>86</a>
+<a name='L87'></a><a href='#L87'>87</a>
+<a name='L88'></a><a href='#L88'>88</a>
+<a name='L89'></a><a href='#L89'>89</a>
+<a name='L90'></a><a href='#L90'>90</a>
+<a name='L91'></a><a href='#L91'>91</a>
+<a name='L92'></a><a href='#L92'>92</a>
+<a name='L93'></a><a href='#L93'>93</a>
+<a name='L94'></a><a href='#L94'>94</a>
+<a name='L95'></a><a href='#L95'>95</a>
+<a name='L96'></a><a href='#L96'>96</a>
+<a name='L97'></a><a href='#L97'>97</a>
+<a name='L98'></a><a href='#L98'>98</a>
+<a name='L99'></a><a href='#L99'>99</a>
+<a name='L100'></a><a href='#L100'>100</a>
+<a name='L101'></a><a href='#L101'>101</a>
+<a name='L102'></a><a href='#L102'>102</a>
+<a name='L103'></a><a href='#L103'>103</a>
+<a name='L104'></a><a href='#L104'>104</a>
+<a name='L105'></a><a href='#L105'>105</a>
+<a name='L106'></a><a href='#L106'>106</a>
+<a name='L107'></a><a href='#L107'>107</a>
+<a name='L108'></a><a href='#L108'>108</a>
+<a name='L109'></a><a href='#L109'>109</a>
+<a name='L110'></a><a href='#L110'>110</a>
+<a name='L111'></a><a href='#L111'>111</a>
+<a name='L112'></a><a href='#L112'>112</a>
+<a name='L113'></a><a href='#L113'>113</a>
+<a name='L114'></a><a href='#L114'>114</a>
+<a name='L115'></a><a href='#L115'>115</a>
+<a name='L116'></a><a href='#L116'>116</a>
+<a name='L117'></a><a href='#L117'>117</a>
+<a name='L118'></a><a href='#L118'>118</a>
+<a name='L119'></a><a href='#L119'>119</a>
+<a name='L120'></a><a href='#L120'>120</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">&nbsp;
+import { safe as _safe } from '../../lib/utils.js';
+var INK  = <span class="cstat-no" title="statement not covered" >'#0a2540';</span>
+var MUTED = <span class="cstat-no" title="statement not covered" >'#5b6b7c';</span>
+var WARM  = <span class="cstat-no" title="statement not covered" >'#fbfaf7';</span>
+var ACCENT = <span class="cstat-no" title="statement not covered" >'#0f9d6c';</span>
+var _BRAND  = <span class="cstat-no" title="statement not covered" >'#002f59';</span>
+&nbsp;
+var sections = <span class="cstat-no" title="statement not covered" >[</span>
+  {
+    title: '1. Controlador dos dados',
+    content: 'O controlador responsável pelo tratamento dos seus dados pessoais no âmbito desta Política é:\n\nNome: [NOME RESPONSÁVEL LEGAL]\nCPF/CNPJ: [CPF/CNPJ]\nE-mail: [E-MAIL]\nCidade/UF: [CIDADE/UF]\n\nO Financia é uma plataforma de gestão financeira para pequenos negócios, operada pelo responsável acima identificado.'
+  },
+  {
+    title: '2. Dados que coletamos',
+    content: 'Coletamos os seguintes dados pessoais:\n\n• Dados de cadastro: nome, endereço de e-mail e número de telefone.\n• Dados de uso: transações financeiras (entradas e saídas), produtos e perdas de estoque inseridos por você.\n• Dados técnicos: endereço IP, tipo de dispositivo, navegador e sistema operacional, coletados automaticamente para fins de segurança e desempenho.\n• Dados de pagamento: quando você contrata o plano Pro, os dados de cartão de crédito são processados diretamente pelo Stripe, Inc. e nunca chegam aos nossos servidores.'
+  },
+  {
+    title: '3. Finalidade do tratamento',
+    content: 'Seus dados são tratados para as seguintes finalidades:\n\n• Prestação do serviço: criar e manter sua conta, permitir o uso das funcionalidades do Financia e sincronizar seus dados entre dispositivos.\n• Comunicações: enviar avisos sobre sua conta, atualizações do serviço e, com seu consentimento, informações sobre novos recursos.\n• Segurança: detectar e prevenir fraudes, abusos e acessos não autorizados.\n• Cumprimento legal: cumprir obrigações previstas em lei, incluindo a LGPD (Lei nº 13.709/2018).'
+  },
+  {
+    title: '4. Compartilhamento de dados',
+    content: 'Não vendemos nem alugamos seus dados pessoais. Compartilhamos apenas com:\n\n• Supabase (supabase.com): provedor de banco de dados e autenticação. Os dados ficam em servidores com certificação SOC 2 Tipo II.\n• Stripe, Inc. (stripe.com): processador de pagamentos para o plano Pro. Sujeito à Política de Privacidade da Stripe.\n• Autoridades competentes: quando exigido por lei ou ordem judicial.\n\nTodos os fornecedores são contratualmente obrigados a proteger seus dados e usá-los apenas para as finalidades acordadas.'
+  },
+  {
+    title: '5. Armazenamento e segurança',
+    content: 'Seus dados são armazenados nos servidores do Supabase localizados nos Estados Unidos, com proteção por criptografia em trânsito (TLS) e em repouso (AES-256). O acesso é controlado por políticas de Row Level Security (RLS): cada usuário enxerga apenas seus próprios dados.\n\nMantemos seus dados enquanto sua conta estiver ativa. Após o cancelamento, os dados são excluídos em até 90 dias, salvo obrigação legal de retenção por prazo maior.'
+  },
+  {
+    title: '6. Seus direitos (LGPD)',
+    content: 'Nos termos da Lei Geral de Proteção de Dados (Lei nº 13.709/2018), você tem direito a:\n\n• Confirmar a existência de tratamento dos seus dados.\n• Acessar seus dados pessoais.\n• Corrigir dados incompletos, inexatos ou desatualizados.\n• Solicitar a anonimização, bloqueio ou eliminação de dados desnecessários ou excessivos.\n• Portabilidade: receber seus dados em formato estruturado para transferência a outro fornecedor.\n• Revogar seu consentimento a qualquer momento.\n• Solicitar a eliminação dos dados tratados com base no seu consentimento.\n\nPara exercer qualquer desses direitos, envie e-mail para [E-MAIL]. Responderemos em até 15 dias úteis.'
+  },
+  {
+    title: '7. Cookies e armazenamento local',
+    content: 'O Financia utiliza localStorage e IndexedDB no seu dispositivo para:\n\n• Manter sua sessão ativa entre visitas.\n• Armazenar dados offline para uso sem conexão à internet.\n• Guardar preferências de exibição.\n\nEsses dados ficam no seu próprio dispositivo e são removidos quando você limpa os dados do navegador ou desinstala o app. Não utilizamos cookies de rastreamento ou publicidade.'
+  },
+  {
+    title: '8. Alterações nesta política',
+    content: 'Podemos atualizar esta Política periodicamente. Quando houver alterações relevantes, notificaremos você por e-mail ou por aviso no próprio app com pelo menos 15 dias de antecedência. O uso continuado do serviço após a notificação constitui aceitação das alterações.'
+  },
+  {
+    title: '9. Contato',
+    content: 'Para dúvidas, solicitações ou reclamações relacionadas ao tratamento de dados pessoais, entre em contato:\n\nE-mail: [E-MAIL]\nWhatsApp: (91) 9 9208-6829\n\nSe considerar que seus direitos não foram atendidos, você pode peticionar à Autoridade Nacional de Proteção de Dados (ANPD) em www.gov.br/anpd.'
+  },
+];
+&nbsp;
+export default function <span class="fstat-no" title="function not covered" >PrivacyPolicy() {</span>
+<span class="cstat-no" title="statement not covered" >  return (</span>
+    &lt;div style={{ background: WARM, color: INK, minHeight: '100vh' }}&gt;
+&nbsp;
+      &lt;header className="sticky top-0 z-30" style={{ background: 'rgba(251,250,247,0.92)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', borderBottom: '1px solid rgba(10,37,64,0.08)' }}&gt;
+        &lt;div className="max-w-3xl mx-auto px-5 h-16 flex items-center justify-between"&gt;
+          &lt;a href="#" className="flex items-center gap-2.5 min-h-[44px]" style={{ textDecoration: 'none' }}&gt;
+            &lt;img src="/icon-192.svg" alt="Financia" className="w-7 h-7" /&gt;
+            &lt;span className="font-display text-lg font-semibold" style={{ color: INK }}&gt;Financia&lt;/span&gt;
+          &lt;/a&gt;
+          &lt;button
+<span class="fstat-no" title="function not covered" >            onClick={f</span>unction() { <span class="cstat-no" title="statement not covered" >window.history.back(); }</span>}
+            className="flex items-center gap-1.5 text-sm font-medium px-4 min-h-[44px] rounded-xl transition hover:bg-black/5"
+            style={{ color: MUTED }}
+          &gt;
+            &lt;svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"&gt;&lt;path d="M19 12H5M12 5l-7 7 7 7" /&gt;&lt;/svg&gt;
+            Voltar
+          &lt;/button&gt;
+        &lt;/div&gt;
+      &lt;/header&gt;
+&nbsp;
+      &lt;main className="max-w-3xl mx-auto px-5 py-12 pb-20"&gt;
+        &lt;div className="mb-10"&gt;
+          &lt;p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: ACCENT }}&gt;Legal&lt;/p&gt;
+          &lt;h1 className="font-display font-semibold" style={{ color: INK, fontSize: 'clamp(2rem, 5vw, 3rem)', letterSpacing: '-1px', lineHeight: 1.1 }}&gt;
+            Política de Privacidade
+          &lt;/h1&gt;
+          &lt;p className="mt-3 text-sm" style={{ color: MUTED }}&gt;Última atualização: [DATA]&lt;/p&gt;
+        &lt;/div&gt;
+&nbsp;
+        &lt;div className="rounded-2xl p-5 mb-8" style={{ background: 'rgba(15,157,108,0.08)', border: '1px solid rgba(15,157,108,0.2)' }}&gt;
+          &lt;p className="text-sm leading-relaxed" style={{ color: INK }}&gt;
+            Esta Política de Privacidade descreve como o &lt;strong&gt;Financia&lt;/strong&gt; coleta, usa e protege seus dados pessoais, em conformidade com a &lt;strong&gt;Lei Geral de Proteção de Dados (LGPD — Lei nº 13.709/2018)&lt;/strong&gt;. Ao usar o Financia, você concorda com as práticas descritas aqui.
+          &lt;/p&gt;
+        &lt;/div&gt;
+&nbsp;
+        &lt;div className="flex flex-col gap-8"&gt;
+          {sections.map(<span class="fstat-no" title="function not covered" >function(s</span>) {
+<span class="cstat-no" title="statement not covered" >            return (</span>
+              &lt;div key={s.title} className="rounded-2xl p-6" style={{ background: '#fff', border: '1px solid rgba(10,37,64,0.08)' }}&gt;
+                &lt;h2 className="font-display font-semibold text-lg mb-3" style={{ color: INK }}&gt;{s.title}&lt;/h2&gt;
+                &lt;div className="text-sm leading-relaxed" style={{ color: MUTED }}&gt;
+                  {s.content.split('\n').map(<span class="fstat-no" title="function not covered" >function(l</span>ine, i) {
+<span class="cstat-no" title="statement not covered" >                    if (!line.trim()) <span class="cstat-no" title="statement not covered" >return &lt;br key={String(i)} /&gt;;</span></span>
+                    var isBullet = <span class="cstat-no" title="statement not covered" >line.startsWith('• ');</span>
+<span class="cstat-no" title="statement not covered" >                    return (</span>
+                      &lt;p key={String(i)} className={isBullet ? 'pl-4 relative mb-1' : 'mb-2'} style={isBullet ? { paddingLeft: '1rem' } : {}}&gt;
+                        {line}
+                      &lt;/p&gt;
+                    );
+                  })}
+                &lt;/div&gt;
+              &lt;/div&gt;
+            );
+          })}
+        &lt;/div&gt;
+      &lt;/main&gt;
+&nbsp;
+      &lt;footer className="max-w-3xl mx-auto px-5 py-8 flex flex-col sm:flex-row items-center justify-between gap-3" style={{ borderTop: '1px solid rgba(10,37,64,0.08)' }}&gt;
+        &lt;div className="flex items-center gap-2"&gt;
+          &lt;img src="/icon-192.svg" alt="" className="w-5 h-5" /&gt;
+          &lt;span className="font-display text-sm font-semibold" style={{ color: INK }}&gt;Financia&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;div className="flex items-center gap-4 text-xs" style={{ color: MUTED }}&gt;
+          &lt;a href="#privacidade" style={{ color: MUTED }}&gt;Privacidade&lt;/a&gt;
+          &lt;a href="#termos" style={{ color: MUTED }}&gt;Termos de Uso&lt;/a&gt;
+        &lt;/div&gt;
+      &lt;/footer&gt;
+&nbsp;
+    &lt;/div&gt;
+  );
+}
+&nbsp;</pre></td></tr></table></pre>
+
+                <div class='push'></div><!-- for sticky footer -->
+            </div><!-- /wrapper -->
+            <div class='footer quiet pad2 space-top1 center small'>
+                Code coverage generated by
+                <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
+                at 2026-07-11T14:44:18.962Z
+            </div>
+        <script src="../../../prettify.js"></script>
+        <script>
+            window.onload = function () {
+                prettyPrint();
+            };
+        </script>
+        <script src="../../../sorter.js"></script>
+        <script src="../../../block-navigation.js"></script>
+    </body>
+</html>
+    

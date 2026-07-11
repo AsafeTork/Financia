@@ -1,3 +1,12 @@
+---
+type: WORKING
+status: DRAFT
+owner: Integrador
+version: 1.0
+reviewed_by:
+ready_for_integration: false
+---
+
 # Financia — Implementation Backlog
 
 > Única fonte de verdade para implementação.

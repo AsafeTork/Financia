@@ -73,7 +73,7 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
       if (toast) toast('Erro ao carregar forma de pagamento.', 'error');
     });
     return function() { alive = false; };
-  }, [tab, cardReload]);
+  }, [tab, cardReload, setPaymentLoading, toast]);
 
   // Busca status da assinatura Stripe na aba Assinatura.
   React.useEffect(function() {
@@ -88,7 +88,7 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
       if (alive) setSubLoading(false);
     }).catch(function() { if (alive) { setSubStatus(null); setSubLoading(false); if (toast) toast('Erro ao carregar status da assinatura.', 'error'); } });
     return function() { alive = false; };
-  }, [tab, planId]);
+  }, [tab, planId, setSubLoading, toast]);
 
   const savePhone = async function() {
     setPhoneSaving(true);
@@ -205,12 +205,22 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
         sub="Conta, assinatura e preferências"
       />
 
-      <div className="flex border-b overflow-x-auto" role="tablist" style={{borderColor:'var(--border)'}}>
-        {tabs.map(function(t) {
+      <div className="flex border-b overflow-x-auto" role="tablist" aria-label="Configurações" style={{borderColor:'var(--border)'}}>
+        {tabs.map(function(t, idx) {
           var active = tab === t.key;
           return (
             <button key={t.key} role="tab" aria-selected={active} aria-controls={'tabpanel-' + t.key} id={'tab-' + t.key}
               onClick={function() { setTab(t.key); }}
+              onKeyDown={function(e) {
+                if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+                  e.preventDefault();
+                  var dir = e.key === 'ArrowRight' ? 1 : -1;
+                  var nextIdx = (idx + dir + tabs.length) % tabs.length;
+                  var nextTab = tabs[nextIdx].key;
+                  setTab(nextTab);
+                  document.getElementById('tab-' + nextTab)?.focus();
+                }
+              }}
               className={'px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors border-b-2 -mb-px ' + (active ? 'text-gray-900' : 'text-gray-400 border-transparent hover:text-gray-600')}
               style={active ? {borderColor: brand.color, color: brand.color} : {}}>
               {t.label}

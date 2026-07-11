@@ -1,3 +1,7 @@
+---
+type: REPORT
+---
+
 # Stress & Behavior Audit — Financia
 
 **Date:** 2026-07-09

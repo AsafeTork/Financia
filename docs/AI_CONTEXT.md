@@ -1,3 +1,8 @@
+---
+type: REFERENCE
+status: deprecated
+---
+
 # INSTRUÇÕES DO SISTEMA E CONTEXTO DO PROJETO (FINANCIA) — DEPRECATED
 
 > **⚠️ DEPRECIADO:** Este arquivo foi substituído por `CLAUDE.md` (raiz do projeto), que é agora a Fonte Única de Verdade. Mantido apenas para referência histórica. Consulte `CLAUDE.md` para regras sintáticas, schema e data flow atuais.

@@ -1,12 +1,15 @@
-import { describe, it, expect } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+// @vitest-environment jsdom
+import { describe, it, expect, afterEach } from 'vitest';
+import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import React from 'react';
 import PhoneInput from './PhoneInput.jsx';
 
 describe('PhoneInput', function() {
+  afterEach(function() { cleanup(); });
+
   it('renderiza com label', function() {
     render(React.createElement(PhoneInput, { label: 'Telefone', onChange: function() {} }));
-    expect(screen.getByText('Telefone')).toBeInTheDocument();
+    expect(screen.getByText('Telefone')).toBeTruthy();
   });
 
   it('exibe o valor do telefone formatado', function() {
@@ -29,14 +32,14 @@ describe('PhoneInput', function() {
   it('lida com valor vazio sem erro', function() {
     render(React.createElement(PhoneInput, { label: 'Telefone', value: '', onChange: function() {} }));
     var input = screen.getByLabelText('Telefone');
-    expect(input).toBeInTheDocument();
+    expect(input).toBeTruthy();
     expect(input.value).toBe('');
   });
 
   it('lida com valor null sem erro', function() {
     render(React.createElement(PhoneInput, { label: 'Telefone', value: null, onChange: function() {} }));
     var input = screen.getByLabelText('Telefone');
-    expect(input).toBeInTheDocument();
+    expect(input).toBeTruthy();
     expect(input.value).toBe('');
   });
 });

@@ -1,3 +1,7 @@
+---
+type: REPORT
+---
+
 # Production Report — Financia v5.2.0
 
 **Date:** 2026-07-09

@@ -14,35 +14,130 @@ env:
   NODE_OPTIONS: --max-old-space-size=6144
 
 jobs:
-  lint:
-    name: Lint & TypeCheck
+  validate-fast:
+    name: Validate Fast (PR)
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: 'npm'
+      - uses: actions/cache@v4
+        with:
+          path: |
+            .eslintcache
+            .cache/tsbuildinfo
+            .cache/vitest
+          key: lint-${{ runner.os }}-${{ hashFiles('package-lock.json', '.eslintrc*', 'eslint.config.*', 'tsconfig.json') }}
+          restore-keys: lint-${{ runner.os }}-
+      - run: npm ci
+      - name: Lint changed files
+        run: |
+          CHANGED=$(git diff --name-only --diff-filter=d origin/${{ github.base_ref }}...HEAD -- '*.ts' '*.tsx' '*.js' '*.jsx')
+          if [ -n "$CHANGED" ]; then
+            echo "$CHANGED" | xargs npx eslint --cache --cache-strategy content --cache-location .eslintcache
+          fi
+      - name: Typecheck changed files
+        run: |
+          CHANGED=$(git diff --name-only --diff-filter=d origin/${{ github.base_ref }}...HEAD -- '*.ts' '*.tsx')
+          if [ -n "$CHANGED" ]; then
+            echo "$CHANGED" | xargs npx tsc --noEmit --incremental
+          fi
+      - name: Test changed
+        run: npx vitest run --changed --reporter=dot --pool=threads --poolOptions.threads.maxThreads=4
+
+  validate-full:
+    name: Validate Full (Push)
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - uses: actions/cache@v4
+        with:
+          path: |
+            .eslintcache
+            .cache/tsbuildinfo
+            .cache/vitest
+            node_modules
+            .vite
+          key: lint-${{ runner.os }}-${{ hashFiles('package-lock.json', '.eslintrc*', 'eslint.config.*', 'tsconfig.json') }}
+          restore-keys: lint-${{ runner.os }}-
       - run: npm ci
       - run: npm run lint
       - run: npm run typecheck
-
-  test:
-    name: Tests
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'npm'
-      - run: npm ci
       - run: npm test
+      - run: npm run build
 
-  coverage:
-    name: Coverage
+  validate-full-pr:
+    name: Validate Full (PR Merge)
+    if: github.event_name == 'pull_request' && github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - uses: actions/cache@v4
+        with:
+          path: |
+            .eslintcache
+            .cache/tsbuildinfo
+            .cache/vitest
+            node_modules
+            .vite
+          key: lint-${{ runner.os }}-${{ hashFiles('package-lock.json', '.eslintrc*', 'eslint.config.*', 'tsconfig.json') }}
+          restore-keys: lint-${{ runner.os }}-
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+
+  validate-full-push:
+    name: Validate Full (Push)
+    if: github.event_name == 'push'
+    needs: [validate-full]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - run: echo "Full validation passed"
+
+  audit-changed:
+    name: Audit Changed
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci
+      - name: Audit changed
+        run: npm run audit:changed
+
+  audit-full:
+    name: Audit Full
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -52,10 +147,65 @@ jobs:
           node-version: '22'
           cache: 'npm'
       - run: npm ci
-      - run: npm run test:coverage
-      - name: Upload coverage
+      - run: npm run audit:full
+
+  build:
+    name: Build APK/EXE
+    needs: [validate-full]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            .vite
+          key: build-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+      - run: npm ci
+      - run: npm run build
+      - name: Build Electron
+        run: npm run electron:build
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: coverage
-          path: coverage/
-          retention-days: 30
+          name: electron-build
+          path: dist/**/*
+          retention-days: 7
+
+  deploy-preview:
+    name: Deploy Preview
+    if: github.event_name == 'pull_request'
+    needs: [validate-fast]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            .vite
+          key: preview-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+      - run: npm ci
+      - run: npm run build
+      - name: Deploy to Vercel Preview
+        uses: amondnet/vercel-action@v25
+        if: ${{ secrets.VERCEL_TOKEN != '' }}
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          scope: ${{ secrets.VERCEL_ORG_ID }}
+          alias-domains: pr-${{ github.event.number }}.financia.app

@@ -1,3 +1,7 @@
+---
+type: REFERENCE
+---
+
 # AI Brand Schema — Financia
 
 ## Objetivo

@@ -1,0 +1,454 @@
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Code coverage report for src/features/landing/TermsOfService.jsx</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../../prettify.css" />
+    <link rel="stylesheet" href="../../../base.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="../../../favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+    
+<body>
+<div class='wrapper'>
+    <div class='pad1'>
+        <h1><a href="../../../index.html">All files</a> / <a href="index.html">src/features/landing</a> TermsOfService.jsx</h1>
+        <div class='clearfix'>
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Statements</span>
+                <span class='fraction'>0/12</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Branches</span>
+                <span class='fraction'>0/4</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Functions</span>
+                <span class='fraction'>0/4</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Lines</span>
+                <span class='fraction'>0/11</span>
+            </div>
+        
+            
+        </div>
+        <p class="quiet">
+            Press <em>n</em> or <em>j</em> to go to the next uncovered block, <em>b</em>, <em>p</em> or <em>k</em> for the previous block.
+        </p>
+        <template id="filterTemplate">
+            <div class="quiet">
+                Filter:
+                <input type="search" id="fileSearch">
+            </div>
+        </template>
+    </div>
+    <div class='status-line low'></div>
+    <pre><table class="coverage">
+<tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
+<a name='L2'></a><a href='#L2'>2</a>
+<a name='L3'></a><a href='#L3'>3</a>
+<a name='L4'></a><a href='#L4'>4</a>
+<a name='L5'></a><a href='#L5'>5</a>
+<a name='L6'></a><a href='#L6'>6</a>
+<a name='L7'></a><a href='#L7'>7</a>
+<a name='L8'></a><a href='#L8'>8</a>
+<a name='L9'></a><a href='#L9'>9</a>
+<a name='L10'></a><a href='#L10'>10</a>
+<a name='L11'></a><a href='#L11'>11</a>
+<a name='L12'></a><a href='#L12'>12</a>
+<a name='L13'></a><a href='#L13'>13</a>
+<a name='L14'></a><a href='#L14'>14</a>
+<a name='L15'></a><a href='#L15'>15</a>
+<a name='L16'></a><a href='#L16'>16</a>
+<a name='L17'></a><a href='#L17'>17</a>
+<a name='L18'></a><a href='#L18'>18</a>
+<a name='L19'></a><a href='#L19'>19</a>
+<a name='L20'></a><a href='#L20'>20</a>
+<a name='L21'></a><a href='#L21'>21</a>
+<a name='L22'></a><a href='#L22'>22</a>
+<a name='L23'></a><a href='#L23'>23</a>
+<a name='L24'></a><a href='#L24'>24</a>
+<a name='L25'></a><a href='#L25'>25</a>
+<a name='L26'></a><a href='#L26'>26</a>
+<a name='L27'></a><a href='#L27'>27</a>
+<a name='L28'></a><a href='#L28'>28</a>
+<a name='L29'></a><a href='#L29'>29</a>
+<a name='L30'></a><a href='#L30'>30</a>
+<a name='L31'></a><a href='#L31'>31</a>
+<a name='L32'></a><a href='#L32'>32</a>
+<a name='L33'></a><a href='#L33'>33</a>
+<a name='L34'></a><a href='#L34'>34</a>
+<a name='L35'></a><a href='#L35'>35</a>
+<a name='L36'></a><a href='#L36'>36</a>
+<a name='L37'></a><a href='#L37'>37</a>
+<a name='L38'></a><a href='#L38'>38</a>
+<a name='L39'></a><a href='#L39'>39</a>
+<a name='L40'></a><a href='#L40'>40</a>
+<a name='L41'></a><a href='#L41'>41</a>
+<a name='L42'></a><a href='#L42'>42</a>
+<a name='L43'></a><a href='#L43'>43</a>
+<a name='L44'></a><a href='#L44'>44</a>
+<a name='L45'></a><a href='#L45'>45</a>
+<a name='L46'></a><a href='#L46'>46</a>
+<a name='L47'></a><a href='#L47'>47</a>
+<a name='L48'></a><a href='#L48'>48</a>
+<a name='L49'></a><a href='#L49'>49</a>
+<a name='L50'></a><a href='#L50'>50</a>
+<a name='L51'></a><a href='#L51'>51</a>
+<a name='L52'></a><a href='#L52'>52</a>
+<a name='L53'></a><a href='#L53'>53</a>
+<a name='L54'></a><a href='#L54'>54</a>
+<a name='L55'></a><a href='#L55'>55</a>
+<a name='L56'></a><a href='#L56'>56</a>
+<a name='L57'></a><a href='#L57'>57</a>
+<a name='L58'></a><a href='#L58'>58</a>
+<a name='L59'></a><a href='#L59'>59</a>
+<a name='L60'></a><a href='#L60'>60</a>
+<a name='L61'></a><a href='#L61'>61</a>
+<a name='L62'></a><a href='#L62'>62</a>
+<a name='L63'></a><a href='#L63'>63</a>
+<a name='L64'></a><a href='#L64'>64</a>
+<a name='L65'></a><a href='#L65'>65</a>
+<a name='L66'></a><a href='#L66'>66</a>
+<a name='L67'></a><a href='#L67'>67</a>
+<a name='L68'></a><a href='#L68'>68</a>
+<a name='L69'></a><a href='#L69'>69</a>
+<a name='L70'></a><a href='#L70'>70</a>
+<a name='L71'></a><a href='#L71'>71</a>
+<a name='L72'></a><a href='#L72'>72</a>
+<a name='L73'></a><a href='#L73'>73</a>
+<a name='L74'></a><a href='#L74'>74</a>
+<a name='L75'></a><a href='#L75'>75</a>
+<a name='L76'></a><a href='#L76'>76</a>
+<a name='L77'></a><a href='#L77'>77</a>
+<a name='L78'></a><a href='#L78'>78</a>
+<a name='L79'></a><a href='#L79'>79</a>
+<a name='L80'></a><a href='#L80'>80</a>
+<a name='L81'></a><a href='#L81'>81</a>
+<a name='L82'></a><a href='#L82'>82</a>
+<a name='L83'></a><a href='#L83'>83</a>
+<a name='L84'></a><a href='#L84'>84</a>
+<a name='L85'></a><a href='#L85'>85</a>
+<a name='L86'></a><a href='#L86'>86</a>
+<a name='L87'></a><a href='#L87'>87</a>
+<a name='L88'></a><a href='#L88'>88</a>
+<a name='L89'></a><a href='#L89'>89</a>
+<a name='L90'></a><a href='#L90'>90</a>
+<a name='L91'></a><a href='#L91'>91</a>
+<a name='L92'></a><a href='#L92'>92</a>
+<a name='L93'></a><a href='#L93'>93</a>
+<a name='L94'></a><a href='#L94'>94</a>
+<a name='L95'></a><a href='#L95'>95</a>
+<a name='L96'></a><a href='#L96'>96</a>
+<a name='L97'></a><a href='#L97'>97</a>
+<a name='L98'></a><a href='#L98'>98</a>
+<a name='L99'></a><a href='#L99'>99</a>
+<a name='L100'></a><a href='#L100'>100</a>
+<a name='L101'></a><a href='#L101'>101</a>
+<a name='L102'></a><a href='#L102'>102</a>
+<a name='L103'></a><a href='#L103'>103</a>
+<a name='L104'></a><a href='#L104'>104</a>
+<a name='L105'></a><a href='#L105'>105</a>
+<a name='L106'></a><a href='#L106'>106</a>
+<a name='L107'></a><a href='#L107'>107</a>
+<a name='L108'></a><a href='#L108'>108</a>
+<a name='L109'></a><a href='#L109'>109</a>
+<a name='L110'></a><a href='#L110'>110</a>
+<a name='L111'></a><a href='#L111'>111</a>
+<a name='L112'></a><a href='#L112'>112</a>
+<a name='L113'></a><a href='#L113'>113</a>
+<a name='L114'></a><a href='#L114'>114</a>
+<a name='L115'></a><a href='#L115'>115</a>
+<a name='L116'></a><a href='#L116'>116</a>
+<a name='L117'></a><a href='#L117'>117</a>
+<a name='L118'></a><a href='#L118'>118</a>
+<a name='L119'></a><a href='#L119'>119</a>
+<a name='L120'></a><a href='#L120'>120</a>
+<a name='L121'></a><a href='#L121'>121</a>
+<a name='L122'></a><a href='#L122'>122</a>
+<a name='L123'></a><a href='#L123'>123</a>
+<a name='L124'></a><a href='#L124'>124</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">&nbsp;
+import { safe as _safe } from '../../lib/utils.js';
+var INK   = <span class="cstat-no" title="statement not covered" >'#0a2540';</span>
+var MUTED = <span class="cstat-no" title="statement not covered" >'#5b6b7c';</span>
+var WARM  = <span class="cstat-no" title="statement not covered" >'#fbfaf7';</span>
+var ACCENT = <span class="cstat-no" title="statement not covered" >'#0f9d6c';</span>
+&nbsp;
+var sections = <span class="cstat-no" title="statement not covered" >[</span>
+  {
+    title: '1. Objeto e partes',
+    content: 'Estes Termos de Uso regulam o acesso e uso do Financia, plataforma de gestão financeira para pequenos negócios, disponível em financia-gestao.onrender.com e como aplicativo instalável (PWA, Android e Windows).\n\nFornecedor: [NOME RESPONSÁVEL LEGAL], CPF/CNPJ [CPF/CNPJ], com sede em [CIDADE/UF], e-mail [E-MAIL].\n\nUsuário: pessoa física ou jurídica que se cadastra e utiliza o Financia.\n\nAo criar uma conta ou usar o serviço, o Usuário aceita integralmente estes Termos.'
+  },
+  {
+    title: '2. Planos e funcionalidades',
+    content: 'O Financia oferece dois planos:\n\n• Plano Gratuito (Free): inclui até 50 transações, 20 produtos e 10 registros de perda. Sem custo, sem cartão de crédito.\n• Plano Pro: inclui transações, produtos e perdas ilimitados, por R$ 70,00 (setenta reais) por mês.\n\nOs limites do plano Gratuito são totais acumulados, não mensais. O Fornecedor poderá alterar esses limites e preços com aviso prévio de 30 dias por e-mail.'
+  },
+  {
+    title: '3. Pagamento e cobrança',
+    content: 'A assinatura do plano Pro é processada pela Stripe, Inc. (stripe.com), plataforma de pagamentos segura.\n\n• A cobrança é mensal, no cartão de crédito informado no momento da assinatura.\n• O plano Pro é ativado imediatamente após a confirmação do pagamento.\n• Em caso de falha na cobrança, o Usuário será notificado por e-mail e terá até 5 dias para regularizar antes da suspensão do acesso Pro.\n• Os dados de cartão são tratados exclusivamente pela Stripe e não são armazenados nos servidores do Financia.'
+  },
+  {
+    title: '4. Cancelamento e reembolso',
+    content: 'O Usuário pode cancelar o plano Pro a qualquer momento, sem multa ou fidelidade.\n\n• O acesso Pro permanece ativo até o final do período já pago.\n• Após o cancelamento, a conta retorna automaticamente para o plano Gratuito.\n• Reembolsos: nos primeiros 7 dias corridos após a primeira contratação, o Usuário pode solicitar reembolso integral por e-mail, em cumprimento ao art. 49 do Código de Defesa do Consumidor (direito de arrependimento). Para solicitações após esse prazo, o reembolso não é garantido e será analisado caso a caso.\n• Para cancelar ou solicitar reembolso, envie e-mail para [E-MAIL].'
+  },
+  {
+    title: '5. Obrigações do usuário',
+    content: 'O Usuário compromete-se a:\n\n• Fornecer informações verdadeiras no cadastro e mantê-las atualizadas.\n• Usar o Financia apenas para fins lícitos e compatíveis com estes Termos.\n• Não compartilhar suas credenciais de acesso com terceiros.\n• Não tentar acessar dados de outros usuários, realizar engenharia reversa no sistema ou sobrecarregar intencionalmente os servidores.\n• Ser o único responsável pelo conteúdo inserido (transações, produtos, perdas).\n\nO descumprimento dessas obrigações pode resultar na suspensão ou encerramento imediato da conta.'
+  },
+  {
+    title: '6. Disponibilidade e limitação de responsabilidade',
+    content: 'O Financia é fornecido "como está" (as is). O Fornecedor não garante disponibilidade ininterrupta do serviço e não se responsabiliza por:\n\n• Perda de dados causada por falhas de dispositivo, rede ou ação do próprio Usuário.\n• Decisões financeiras tomadas com base nas informações exibidas no app — o Financia é uma ferramenta de organização, não uma consultoria financeira.\n• Danos indiretos, lucros cessantes ou perda de oportunidade.\n\nA responsabilidade máxima do Fornecedor perante o Usuário, em qualquer hipótese, fica limitada ao valor pago nos últimos 3 meses de assinatura.'
+  },
+  {
+    title: '7. Dados e privacidade',
+    content: 'O tratamento de dados pessoais é regido pela Política de Privacidade do Financia, disponível em financia-gestao.onrender.com/#privacidade, que é parte integrante destes Termos.\n\nOs dados inseridos pelo Usuário (transações, produtos, etc.) são de sua propriedade exclusiva. O Fornecedor não utilizará esses dados para fins além da prestação do serviço.'
+  },
+  {
+    title: '8. Propriedade intelectual',
+    content: 'Todo o código-fonte, design, marca "Financia", logotipos e conteúdos produzidos pelo Fornecedor são de sua propriedade intelectual exclusiva, protegidos pela Lei nº 9.610/1998 (Lei de Direitos Autorais) e pela Lei nº 9.279/1996 (Lei de Propriedade Industrial).\n\nO Usuário não adquire nenhum direito de propriedade intelectual sobre o serviço. É proibido copiar, modificar, distribuir ou criar obras derivadas sem autorização expressa por escrito.'
+  },
+  {
+    title: '9. Alterações nos termos',
+    content: 'O Fornecedor pode atualizar estes Termos a qualquer momento. Alterações relevantes serão comunicadas por e-mail com antecedência mínima de 15 dias. O uso continuado do serviço após esse prazo constitui aceitação dos novos Termos.\n\nSe o Usuário não concordar com as alterações, poderá cancelar sua conta antes que entrem em vigor.'
+  },
+  {
+    title: '10. Lei aplicável e foro',
+    content: 'Estes Termos são regidos pelas leis da República Federativa do Brasil.\n\nFica eleito o foro da comarca de [CIDADE/UF] para dirimir quaisquer controvérsias decorrentes destes Termos, com renúncia a qualquer outro, por mais privilegiado que seja.\n\nData de vigência: [DATA]'
+  },
+];
+&nbsp;
+export default function <span class="fstat-no" title="function not covered" >TermsOfService() {</span>
+<span class="cstat-no" title="statement not covered" >  return (</span>
+    &lt;div style={{ background: WARM, color: INK, minHeight: '100vh' }}&gt;
+&nbsp;
+      &lt;header className="sticky top-0 z-30" style={{ background: 'rgba(251,250,247,0.92)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', borderBottom: '1px solid rgba(10,37,64,0.08)' }}&gt;
+        &lt;div className="max-w-3xl mx-auto px-5 h-16 flex items-center justify-between"&gt;
+          &lt;a href="#" className="flex items-center gap-2.5 min-h-[44px]" style={{ textDecoration: 'none' }}&gt;
+            &lt;img src="/icon-192.svg" alt="Financia" className="w-7 h-7" /&gt;
+            &lt;span className="font-display text-lg font-semibold" style={{ color: INK }}&gt;Financia&lt;/span&gt;
+          &lt;/a&gt;
+          &lt;button
+<span class="fstat-no" title="function not covered" >            onClick={f</span>unction() { <span class="cstat-no" title="statement not covered" >window.history.back(); }</span>}
+            className="flex items-center gap-1.5 text-sm font-medium px-4 min-h-[44px] rounded-xl transition hover:bg-black/5"
+            style={{ color: MUTED }}
+          &gt;
+            &lt;svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"&gt;&lt;path d="M19 12H5M12 5l-7 7 7 7" /&gt;&lt;/svg&gt;
+            Voltar
+          &lt;/button&gt;
+        &lt;/div&gt;
+      &lt;/header&gt;
+&nbsp;
+      &lt;main className="max-w-3xl mx-auto px-5 py-12 pb-20"&gt;
+        &lt;div className="mb-10"&gt;
+          &lt;p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: ACCENT }}&gt;Legal&lt;/p&gt;
+          &lt;h1 className="font-display font-semibold" style={{ color: INK, fontSize: 'clamp(2rem, 5vw, 3rem)', letterSpacing: '-1px', lineHeight: 1.1 }}&gt;
+            Termos de Uso
+          &lt;/h1&gt;
+          &lt;p className="mt-3 text-sm" style={{ color: MUTED }}&gt;Última atualização: [DATA]&lt;/p&gt;
+        &lt;/div&gt;
+&nbsp;
+        &lt;div className="rounded-2xl p-5 mb-8" style={{ background: 'rgba(15,157,108,0.08)', border: '1px solid rgba(15,157,108,0.2)' }}&gt;
+          &lt;p className="text-sm leading-relaxed" style={{ color: INK }}&gt;
+            Estes Termos de Uso regulam o acesso e o uso do &lt;strong&gt;Financia&lt;/strong&gt;. Leia com atenção antes de criar sua conta. Ao se cadastrar, você declara ter lido, compreendido e aceito integralmente estes Termos, bem como nossa{' '}
+            &lt;a href="#privacidade" style={{ color: ACCENT, fontWeight: 600 }}&gt;Política de Privacidade&lt;/a&gt;.
+          &lt;/p&gt;
+        &lt;/div&gt;
+&nbsp;
+        &lt;div className="flex flex-col gap-8"&gt;
+          {sections.map(<span class="fstat-no" title="function not covered" >function(s</span>) {
+<span class="cstat-no" title="statement not covered" >            return (</span>
+              &lt;div key={s.title} className="rounded-2xl p-6" style={{ background: '#fff', border: '1px solid rgba(10,37,64,0.08)' }}&gt;
+                &lt;h2 className="font-display font-semibold text-lg mb-3" style={{ color: INK }}&gt;{s.title}&lt;/h2&gt;
+                &lt;div className="text-sm leading-relaxed" style={{ color: MUTED }}&gt;
+                  {s.content.split('\n').map(<span class="fstat-no" title="function not covered" >function(l</span>ine, i) {
+<span class="cstat-no" title="statement not covered" >                    if (!line.trim()) <span class="cstat-no" title="statement not covered" >return &lt;br key={String(i)} /&gt;;</span></span>
+                    var isBullet = <span class="cstat-no" title="statement not covered" >line.startsWith('• ');</span>
+<span class="cstat-no" title="statement not covered" >                    return (</span>
+                      &lt;p key={String(i)} className={isBullet ? 'mb-1' : 'mb-2'}&gt;
+                        {line}
+                      &lt;/p&gt;
+                    );
+                  })}
+                &lt;/div&gt;
+              &lt;/div&gt;
+            );
+          })}
+        &lt;/div&gt;
+      &lt;/main&gt;
+&nbsp;
+      &lt;footer className="max-w-3xl mx-auto px-5 py-8 flex flex-col sm:flex-row items-center justify-between gap-3" style={{ borderTop: '1px solid rgba(10,37,64,0.08)' }}&gt;
+        &lt;div className="flex items-center gap-2"&gt;
+          &lt;img src="/icon-192.svg" alt="" className="w-5 h-5" /&gt;
+          &lt;span className="font-display text-sm font-semibold" style={{ color: INK }}&gt;Financia&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;div className="flex items-center gap-4 text-xs" style={{ color: MUTED }}&gt;
+          &lt;a href="#privacidade" style={{ color: MUTED }}&gt;Privacidade&lt;/a&gt;
+          &lt;a href="#termos" style={{ color: MUTED }}&gt;Termos de Uso&lt;/a&gt;
+        &lt;/div&gt;
+      &lt;/footer&gt;
+&nbsp;
+    &lt;/div&gt;
+  );
+}
+&nbsp;</pre></td></tr></table></pre>
+
+                <div class='push'></div><!-- for sticky footer -->
+            </div><!-- /wrapper -->
+            <div class='footer quiet pad2 space-top1 center small'>
+                Code coverage generated by
+                <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
+                at 2026-07-11T14:44:18.962Z
+            </div>
+        <script src="../../../prettify.js"></script>
+        <script>
+            window.onload = function () {
+                prettyPrint();
+            };
+        </script>
+        <script src="../../../sorter.js"></script>
+        <script src="../../../block-navigation.js"></script>
+    </body>
+</html>
+    

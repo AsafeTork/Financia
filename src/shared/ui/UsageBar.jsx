@@ -1,6 +1,7 @@
+import React, { memo, useMemo } from 'react';
 import { Card } from './ui.jsx';
 
-export function UsageBar({ label, used, limit, color, accentColor }) {
+export const UsageBar = memo(function UsageBar({ label, used, limit, color, accentColor }) {
   var unlimited = limit === Infinity;
   var pct = unlimited ? 0 : Math.min(Math.round((used / limit) * 100), 100);
   var reached = !unlimited && used >= limit;
@@ -25,16 +26,20 @@ export function UsageBar({ label, used, limit, color, accentColor }) {
       </div>
     </div>
   );
-}
+});
 
-export function KpiCard({ label, value, variation, sub, color, accentBar, onClick, invert }) {
+export const KpiCard = memo(function KpiCard({ label, value, variation, sub, color, accentBar, onClick, invert }) {
   var hasClick = typeof onClick === 'function';
   var barColor = accentBar || color;
   var hasVar = variation !== null && variation !== undefined;
   var up = hasVar && variation >= 0;
-  // Seta e numero sempre refletem a variacao real; `invert` so troca a cor
-  // (ex: despesa subindo = vermelho, mesmo com seta pra cima e numero positivo).
   var good = invert ? (hasVar && variation <= 0) : up;
+  var kpiId = React.useId();
+  var ariaLabel = useMemo(function() {
+    if (!hasClick) return undefined;
+    return label + ': ' + value + (hasVar ? ', variação ' + (up ? '+' : '') + variation + '%' : '');
+  }, [label, value, hasVar, up, variation, hasClick]);
+
   return (
     <Card className={'p-4 overflow-hidden' + (hasClick ? ' cursor-pointer card-hover transition-transform duration-150 active:scale-[0.98]' : '')}
       onClick={hasClick ? onClick : undefined}
@@ -44,16 +49,18 @@ export function KpiCard({ label, value, variation, sub, color, accentBar, onClic
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(e); }
       } : undefined}
       accent={true}
-      color={barColor}>
+      color={barColor}
+      aria-label={ariaLabel}
+      id={hasClick ? kpiId : undefined}>
       <p className="text-xs font-semibold uppercase tracking-wider mt-2" style={{color:'var(--text-muted)'}}>{label}</p>
       <p className="font-extrabold mt-2 text-gray-900 truncate tabular" style={{fontSize:22, letterSpacing:'-0.5px'}}>{value}</p>
       {variation !== null && variation !== undefined && (
         <div className="flex items-center gap-1 mt-1.5">
           <span className={'text-xs font-semibold flex items-center gap-0.5 px-1.5 py-0.5 rounded-md ' + (good ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-500')}>
             {up ? (
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"><path d="M5 15l7-7 7 7"/></svg>
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" aria-hidden="true"><path d="M5 15l7-7 7 7"/></svg>
             ) : (
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"><path d="M19 9l-7 7-7-7"/></svg>
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" aria-hidden="true"><path d="M19 9l-7 7-7-7"/></svg>
             )}
             {variation > 0 ? '+' : ''}{variation}%
           </span>
@@ -63,32 +70,28 @@ export function KpiCard({ label, value, variation, sub, color, accentBar, onClic
       {sub && variation === null || (sub && variation === undefined) ? <p className="text-xs text-gray-400 mt-1 truncate">{sub}</p> : null}
     </Card>
   );
-}
+});
 
-export function BarChartSVG({ data, color, ...rest }) {
+export const BarChartSVG = memo(function BarChartSVG({ data, color, ...rest }) {
   var barColor = color || 'var(--brand, #1a6b5c)';
   var nums = data.reduce(function(acc, d) { acc.push(d.i, d.o); return acc; }, []);
   var max = Math.max.apply(null, nums);
   var maxVal = max || 1;
   var W = 44, H = 140, bw = 10, pad = 4;
-  var gridVals = [0.25, 0.5, 0.75, 1].map(function(f) { return Math.round(maxVal * f); });
 
   var fmtK = function(v) {
     if (v >= 1000) return (v / 1000).toFixed(1).replace('.0', '') + 'K';
     return String(v);
   };
 
+  var totalIncome = data.reduce(function(s, d) { return s + d.i; }, 0);
+  var totalOutcome = data.reduce(function(s, d) { return s + d.o; }, 0);
+  var ariaDesc = 'Gráfico de barras dos últimos 7 dias. Receitas total: ' + fmtK(totalIncome) + ', Despesas total: ' + fmtK(totalOutcome) + '. ' + data.map(function(d) { return d.day + ': entrada ' + fmtK(d.i) + ', saída ' + fmtK(d.o); }).join('; ');
+
   return (
-    <svg width="100%" height={H + 20} viewBox={'0 0 ' + (data.length * W + 40) + ' ' + (H + 20)} preserveAspectRatio="xMidYMid meet" {...rest}>
-      {gridVals.map(function(gv, gi) {
-        var y = H - 28 - Math.round((gv / maxVal) * (H - 40));
-        return (
-          <g key={gi}>
-            <line x1={36} y1={y} x2={data.length * W + 36} y2={y} stroke="var(--border-color, #f1f5f9)" strokeWidth="1"/>
-            <text x={32} y={y + 3} textAnchor="end" fontSize={8} fill="var(--text-muted, #cbd5e1)">{fmtK(gv)}</text>
-          </g>
-        );
-      })}
+    <svg role="img" aria-label="Gráfico de receitas e despesas" aria-describedby={rest.id ? rest.id + '-desc' : undefined} width="100%" height={H + 20} viewBox={'0 0 ' + (data.length * W + 40) + ' ' + (H + 20)} preserveAspectRatio="xMidYMid meet" {...rest}>
+      <title>Gráfico de receitas e despesas</title>
+      <desc id={rest.id ? rest.id + '-desc' : undefined}>{ariaDesc}</desc>
       {data.map(function(d, i) {
         var x = i * W + pad + 36;
         var ih = Math.round((d.i / maxVal) * (H - 40));
@@ -103,4 +106,4 @@ export function BarChartSVG({ data, color, ...rest }) {
       })}
     </svg>
   );
-}
+});

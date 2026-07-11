@@ -166,11 +166,38 @@ export const Empty = function({ icon, title, sub, action, onAction, color }) {
 
 export const Modal = function({ title, onClose, onSave, color, saving, children, saveLabel, wide }) {
   var bg = color || 'var(--brand)';
+  var titleId = React.useId() + '-title';
+  var dialogRef = React.useRef(null);
+  var previousActive = React.useRef(null);
+
+  React.useEffect(function() {
+    previousActive.current = document.activeElement;
+    var focusable = dialogRef.current?.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+    if (focusable?.length) {
+      var first = focusable[0];
+      var last = focusable[focusable.length - 1];
+      first.focus();
+      var handleTab = function(e) {
+        if (e.key !== 'Tab') return;
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      };
+      var handleEsc = function(e) { if (e.key === 'Escape') onClose(); };
+      document.addEventListener('keydown', handleTab);
+      document.addEventListener('keydown', handleEsc);
+      return function() {
+        document.removeEventListener('keydown', handleTab);
+        document.removeEventListener('keydown', handleEsc);
+        previousActive.current?.focus?.();
+      };
+    }
+  }, [onClose]);
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 anim-fade" style={{background:'rgba(15,23,42,0.55)', backdropFilter:'blur(3px)', WebkitBackdropFilter:'blur(3px)'}}>
-      <div role="dialog" aria-modal="true" aria-label={title} className={'rounded-xl flex flex-col w-full anim-scale ' + (wide ? 'max-w-lg' : 'max-w-sm')} style={{background:'var(--bg-card)', boxShadow:'var(--shadow-lg)', maxHeight:'90vh', border:'1px solid var(--border)'}}>
+      <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby={titleId} className={'rounded-xl flex flex-col w-full anim-scale ' + (wide ? 'max-w-lg' : 'max-w-sm')} style={{background:'var(--bg-card)', boxShadow:'var(--shadow-lg)', maxHeight:'90vh', border:'1px solid var(--border)'}}>
         <div className="flex items-center justify-between px-6 py-4 border-b border-border flex-shrink-0">
-          <span className="font-semibold text-foreground">{title}</span>
+          <span id={titleId} className="font-semibold text-foreground">{title}</span>
           <button onClick={onClose} aria-label="Fechar" className="text-muted-foreground hover:text-foreground p-1 rounded-lg hover:bg-muted">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"/></svg>
           </button>

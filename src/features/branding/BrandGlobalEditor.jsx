@@ -1,21 +1,19 @@
 import React from 'react';
 
 export default function BrandGlobalEditor({ brandGlobal, setField, onSave, brandColor }) {
-  var handleFile = function(key) {
-    return function(e) {
-      var file = e.target && e.target.files && e.target.files[0];
-      if (!file) return;
-      var allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-      if (allowedTypes.indexOf(file.type) === -1) return;
-      if (file.size > 512 * 1024) return;
-      var reader = new FileReader();
-      reader.onload = function() { setField(key, String(reader.result)); };
-      reader.readAsDataURL(file);
-    };
+  const handleFile = (key) => (e) => {
+    const file = e.target && e.target.files && e.target.files[0];
+    if (!file) return;
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+    if (allowedTypes.indexOf(file.type) === -1) return;
+    if (file.size > 512 * 1024) return;
+    const reader = new FileReader();
+    reader.onload = () => setField(key, String(reader.result));
+    reader.readAsDataURL(file);
   };
 
-  var renderLogoUpload = function(key, label, desc) {
-    var value = brandGlobal[key];
+  const renderLogoUpload = (key, label, desc) => {
+    const value = brandGlobal[key];
     return (
       <div className="flex items-center gap-3">
         {value
@@ -29,7 +27,7 @@ export default function BrandGlobalEditor({ brandGlobal, setField, onSave, brand
             Upload imagem
             <input type="file" accept="image/*" onChange={handleFile(key)} className="hidden" />
           </label>
-          {value && <button onClick={function() { setField(key, ''); }} className="text-[10px] ml-2 font-medium hover:opacity-70" style={{color:'var(--text-muted)'}}>Remover</button>}
+          {value && <button onClick={() => setField(key, '')} className="text-[10px] ml-2 font-medium hover:opacity-70" style={{color:'var(--text-muted)'}}>Remover</button>}
         </div>
       </div>
     );
@@ -42,17 +40,17 @@ export default function BrandGlobalEditor({ brandGlobal, setField, onSave, brand
         <div className="flex flex-col gap-3">
           <div className="flex flex-col gap-1">
             <label htmlFor="brand-name" className="text-xs font-medium" style={{color:'var(--text-sub)'}}>Nome do app</label>
-            <input id="brand-name" value={brandGlobal.name} onChange={function(e) { setField('name', e.target.value); }}
+            <input id="brand-name" value={brandGlobal.name} onChange={e => setField('name', e.target.value)}
               className="rounded-xl px-3 py-2.5 text-sm focus:outline-none" style={{background:'var(--bg-input)', color:'var(--text-main)', border:'1px solid var(--border)'}} />
           </div>
           <div className="flex flex-col gap-1">
             <label htmlFor="brand-short-name" className="text-xs font-medium" style={{color:'var(--text-sub)'}}>Nome curto (abraviacao)</label>
-            <input id="brand-short-name" value={brandGlobal.short_name} onChange={function(e) { setField('short_name', e.target.value); }}
+            <input id="brand-short-name" value={brandGlobal.short_name} onChange={e => setField('short_name', e.target.value)}
               className="rounded-xl px-3 py-2.5 text-sm focus:outline-none" style={{background:'var(--bg-input)', color:'var(--text-main)', border:'1px solid var(--border)'}} placeholder="Ex.: FNC" />
           </div>
           <div className="flex flex-col gap-1">
             <label htmlFor="brand-app-title" className="text-xs font-medium" style={{color:'var(--text-sub)'}}>Titulo da aplicacao (aba do navegador)</label>
-            <input id="brand-app-title" value={brandGlobal.app_title} onChange={function(e) { setField('app_title', e.target.value); }}
+            <input id="brand-app-title" value={brandGlobal.app_title} onChange={e => setField('app_title', e.target.value)}
               className="rounded-xl px-3 py-2.5 text-sm focus:outline-none" style={{background:'var(--bg-input)', color:'var(--text-main)', border:'1px solid var(--border)'}} placeholder="Ex.: Financia - Gestao Financeira" />
           </div>
         </div>
@@ -73,7 +71,7 @@ export default function BrandGlobalEditor({ brandGlobal, setField, onSave, brand
         <div className="flex flex-col gap-3">
           <div className="flex flex-col gap-1">
             <label className="text-xs font-medium" style={{color:'var(--text-sub)'}}>Posicao</label>
-            <select value={brandGlobal.secondary_logo_position} onChange={function(e) { setField('secondary_logo_position', e.target.value); }}
+            <select value={brandGlobal.secondary_logo_position} onChange={e => setField('secondary_logo_position', e.target.value)}
               className="rounded-xl px-3 py-2.5 text-sm focus:outline-none" style={{background:'var(--bg-input)', color:'var(--text-main)', border:'1px solid var(--border)'}}>
               <option value="left">Esquerda</option>
               <option value="right">Direita</option>
@@ -81,7 +79,7 @@ export default function BrandGlobalEditor({ brandGlobal, setField, onSave, brand
           </div>
           <div className="flex flex-col gap-1">
             <label htmlFor="brand-logo-size" className="text-xs font-medium" style={{color:'var(--text-sub)'}}>Tamanho (px)</label>
-            <input id="brand-logo-size" type="range" min="20" max="80" value={brandGlobal.secondary_logo_size || 40} onChange={function(e) { setField('secondary_logo_size', parseInt(e.target.value, 10)); }}
+            <input id="brand-logo-size" type="range" min="20" max="80" value={brandGlobal.secondary_logo_size || 40} onChange={e => setField('secondary_logo_size', parseInt(e.target.value, 10))}
               className="w-full accent-current" style={{color: brandColor}} />
             <span className="text-[10px] font-mono" style={{color:'var(--text-muted)'}}>{brandGlobal.secondary_logo_size || 40}px</span>
           </div>

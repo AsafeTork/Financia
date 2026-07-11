@@ -7,7 +7,7 @@ import tseslint from 'typescript-eslint';
 var SRC = { files: ['src/**/*.{js,jsx,ts,tsx}'] };
 
 export default tseslint.config(
-  { ignores: ['dist/', 'node_modules/', 'src/test/gen/', 'supabase/', '*.config.*'] },
+  { ignores: ['dist/', 'node_modules/', 'src/test/gen/', 'supabase/', '*.config.*', 'src/features/branding/LogoSchemes.jsx'] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {

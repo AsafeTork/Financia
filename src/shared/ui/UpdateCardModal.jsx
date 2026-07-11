@@ -189,9 +189,10 @@ export default function UpdateCardModal({ brand, onClose, onChanged, toast }) {
       if (!alive) return;
       setCard(null);
       setPhase('form');
+      if (toast) toast('Erro ao carregar cartão salvo.', 'error');
     });
     return function() { alive = false; };
-  }, [reloadKey]);
+  }, [reloadKey, toast]);
 
   var afterSaved = function() {
     if (toast) toast('Cartão atualizado! As próximas cobranças usarão o novo cartão.', 'success');

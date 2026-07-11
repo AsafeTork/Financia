@@ -16,11 +16,22 @@
     "test:coverage": "vitest run --coverage",
     "test:fast": "vitest run --no-isolate --reporter=dot",
     "test:changed": "vitest run --changed",
+    "test:changed:watch": "vitest --changed",
     "lint": "eslint src/",
-    "typecheck": "tsc --noEmit",
+    "lint:changed": "node scripts/lint-changed.js",
+    "typecheck": "tsc --noEmit --incremental",
+    "typecheck:changed": "node scripts/typecheck-changed.js",
     "security:audit": "npm audit --audit-level=high",
     "analyze": "ANALYZE=true vite build",
-    "check": "npm run lint && npm run typecheck && npm test"
+    "check": "npm run lint && npm run typecheck && npm test",
+    "validate:fast": "npm run lint:changed && npm run typecheck:changed && npm run test:changed",
+    "validate:full": "npm run lint && npm run typecheck && npm test && npm run build",
+    "audit:changed": "node scripts/audit-changed.js",
+    "audit:full": "node scripts/audit-full.js",
+    "validate:fast:js": "node scripts/validate-fast.js",
+    "validate:full:js": "node scripts/validate-full.js",
+    "audit:changed:js": "node scripts/audit-changed.js",
+    "audit:full:js": "node scripts/audit-full.js"
   },
   "dependencies": {
     "@radix-ui/react-label": "^2.1.11",
@@ -33,18 +44,19 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dexie": "^3.2.7",
+    "nodemailer": "^9.0.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.18.1",
     "tailwind-merge": "^3.6.0",
-    "tailwindcss-animate": "^1.0.7",
-    "nodemailer": "^9.0.3"
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",
     "@playwright/test": "^1.61.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
     "@types/react": "^18.3.31",
     "@types/react-dom": "^18.3.7",
     "@vitejs/plugin-react": "^4.3.1",
@@ -58,14 +70,14 @@
     "fake-indexeddb": "^6.2.5",
     "globals": "^17.7.0",
     "jsdom": "^29.1.1",
+    "playwright": "^1.61.0",
     "postcss": "^8.4.47",
     "rollup-plugin-visualizer": "^7.0.1",
     "tailwindcss": "^3.4.14",
     "typescript": "~5.7.0",
     "typescript-eslint": "^8.63.0",
     "vite": "^5.4.10",
-    "vitest": "^4.1.9",
-    "playwright": "^1.61.0"
+    "vitest": "^4.1.9"
   },
   "build": {
     "appId": "com.gestaofinanceira.app",

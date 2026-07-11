@@ -81,7 +81,7 @@ export default function TxView({ type, tx, products, onAdd, onEdit, onDelete, on
       if (!ok) return;
       toast(isIncome ? 'Venda atualizada' : 'Despesa atualizada', 'success');
       setEditItem(null);
-    } catch(_) { void _; }
+    } catch(_) { toast('Erro ao salvar. Tente novamente.', 'error'); }
     finally { setSaving(false); }
   };
   var resetForm = function() { setForm({desc:'', amount:'', date:today(), cat:'Fixo', method:'PIX', fixo:false, day:'5'}); };
@@ -116,7 +116,7 @@ export default function TxView({ type, tx, products, onAdd, onEdit, onDelete, on
       toast(isIncome ? 'Venda registrada!' : 'Despesa registrada!', 'success');
       setModal(false);
       resetForm();
-    } catch(_) { void _; }
+    } catch(_) { toast('Erro ao salvar transação.', 'error'); }
     finally { setSaving(false); }
   };
   var doExport = function(kind) {
@@ -226,7 +226,7 @@ export default function TxView({ type, tx, products, onAdd, onEdit, onDelete, on
           </div>
         ) : (
           <div>
-            <div ref={scrollRef} className="max-h-[calc(100vh-280px)] overflow-auto">
+            <div ref={scrollRef} className="max-h-[calc(100vh-280px)] min-h-[200px] overflow-auto" style={{position:'relative'}}>
               <div role="list" style={{ height: virtualizer.getTotalSize() + 'px', position: 'relative' }}>
                 {function() {
                   var rowItems = flatRows.filter(function(r) { return r.type === 'row'; });

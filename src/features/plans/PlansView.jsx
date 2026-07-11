@@ -241,7 +241,7 @@ export default function PlansView({ brand, planInfo, toast, onNav, isAdmin }) {
       if (alive) setSubLoading(false);
     });
     return function() { alive = false; };
-  }, [plan]);
+  }, [plan, setSubLoading, toast]);
 
   // Decide o que fazer ao clicar no botao de um plano.
   var handleAction = function(p, kind) {

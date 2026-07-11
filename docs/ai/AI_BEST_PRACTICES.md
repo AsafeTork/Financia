@@ -1,3 +1,7 @@
+---
+type: REFERENCE
+---
+
 # AI Best Practices — Financia Brand Studio
 
 ## Do

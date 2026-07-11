@@ -1,3 +1,7 @@
+---
+type: REPORT
+---
+
 # Relatório Final — Correção Arquitetural
 
 **Data:** 2026-07-09

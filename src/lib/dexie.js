@@ -3,19 +3,19 @@ import { now } from './utils.js';
 
 export const ldb = new Dexie('gestao_offline');
 
-ldb.version(2).stores({
-  transactions: 'id, user_id, date, updated_at, _synced, _deleted',
-  products:     'id, user_id, category, updated_at, _synced, _deleted',
-  losses:       'id, user_id, date, updated_at, _synced, _deleted',
-  profiles:     'user_id, updated_at, _synced',
-  meta:         'key',
-});
-
 ldb.version(1).stores({
   transactions: 'id, user_id, date, updated_at',
   products:     'id, user_id, category, updated_at',
   losses:       'id, user_id, date, updated_at',
   profiles:     'user_id, updated_at',
+  meta:         'key',
+});
+
+ldb.version(2).stores({
+  transactions: 'id, user_id, date, updated_at, _synced, _deleted',
+  products:     'id, user_id, category, updated_at, _synced, _deleted',
+  losses:       'id, user_id, date, updated_at, _synced, _deleted',
+  profiles:     'user_id, updated_at, _synced',
   meta:         'key',
 });
 

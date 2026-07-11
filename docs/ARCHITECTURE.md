@@ -1,3 +1,7 @@
+---
+type: REFERENCE
+---
+
 # MANUAL TÉCNICO E ARQUITETURA — FINANCIA
 
 Este documento consolida a arquitetura técnica completa do projeto **Financia**. Ele atua como o manual definitivo do sistema para engenheiros de software e arquitetos.

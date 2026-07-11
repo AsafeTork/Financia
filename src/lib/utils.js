@@ -33,7 +33,7 @@ export const isDarkTheme = function() { return document.documentElement.getAttri
 export const isUrl = function(s) { return !!(s && (s.startsWith('http') || s.startsWith('data:') || s.startsWith('/'))); };
 export const genPwd = function() { const c = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#'; return Array.from({ length: 12 }, () => c[Math.floor(Math.random() * c.length)]).join(''); };
 let _id = 1;
-export const uid = function() { return String(Date.now()) + String(++_id); };
+export const uid = function() { return crypto.randomUUID(); };
 
 export const luminance = function(hex) {
   var c = hexToRgb(hex);

@@ -1,13 +1,15 @@
-var DEFAULT_PLAN_THEMES = {
+import { WHITE_LABEL_VISUAL_DEFAULT } from '../../lib/constants.js';
+
+const DEFAULT_PLAN_THEMES = {
   free: {
     name: 'Free',
     description: 'Tema padrao do plano Gratuito',
-    config: { schemaVersion: '1.0.0', modules: { palette: { primary: '#002f59', secondary: '#e8f0f7', accent: '#1a6b5c', mode: 'light' }, typography: { style: 'modern', size: 'medium' }, borderRadius: { style: 'rounded' }, spacing: { density: 'comfortable' } } },
+    config: { schemaVersion: '1.0.0', modules: { palette: { primary: '#002f59', secondary: '#e8f0f7', accent: '#1a6b5c', mode: 'light' }, typography: { style: 'modern', size: 'medium' }, sidebar: { style: 'solid' }, cards: { style: 'raised' }, buttons: { style: 'rounded' }, borderRadius: { style: 'rounded' }, spacing: { density: 'comfortable' }, shadows: { intensity: 'subtle' }, animations: { speed: 'normal' } } },
   },
   pro: {
     name: 'Pro',
     description: 'Tema padrao do plano Pro',
-    config: { schemaVersion: '1.0.0', modules: { palette: { primary: '#2563eb', secondary: '#eff6ff', accent: '#7c3aed', mode: 'light' }, typography: { style: 'modern', size: 'medium' }, sidebar: { style: 'minimal' }, cards: { style: 'raised' }, buttons: { style: 'rounded' }, borderRadius: { style: 'rounded' }, spacing: { density: 'comfortable' }, shadows: { intensity: 'medium' }, animations: { speed: 'fast' } } },
+    config: { schemaVersion: '1.0.0', modules: { palette: { primary: '#2563eb', secondary: '#eff6ff', accent: '#7c3aed', mode: 'light' }, typography: { style: 'modern', size: 'medium' }, sidebar: { style: 'minimal' }, cards: { style: 'flat' }, buttons: { style: 'pill' }, inputs: { style: 'minimal' }, borderRadius: { style: 'rounded' }, spacing: { density: 'comfortable' }, shadows: { intensity: 'medium' }, animations: { speed: 'fast' } } },
   },
   premium: {
     name: 'Premium',
@@ -17,7 +19,7 @@ var DEFAULT_PLAN_THEMES = {
   white_label: {
     name: 'White Label',
     description: 'Personalizacao completa para revenda',
-    config: { schemaVersion: '1.0.0', modules: { palette: { primary: '#002f59', secondary: '#e8f0f7', accent: '#1a6b5c', mode: 'light' }, typography: { style: 'modern', size: 'medium' }, sidebar: { style: 'solid' }, header: { style: 'solid' }, cards: { style: 'raised' }, buttons: { style: 'rounded' }, inputs: { style: 'outlined' }, borderRadius: { style: 'rounded' }, spacing: { density: 'comfortable' }, shadows: { intensity: 'subtle' }, animations: { speed: 'normal' } } },
+    config: { schemaVersion: '1.0.0', modules: { palette: { primary: WHITE_LABEL_VISUAL_DEFAULT.color, secondary: WHITE_LABEL_VISUAL_DEFAULT.color_secondary, accent: WHITE_LABEL_VISUAL_DEFAULT.color_accent, mode: WHITE_LABEL_VISUAL_DEFAULT.theme }, typography: { style: 'modern', size: 'medium' }, sidebar: { style: 'solid' }, header: { style: 'solid' }, cards: { style: 'raised' }, buttons: { style: 'rounded' }, inputs: { style: 'outlined' }, borderRadius: { style: 'rounded' }, spacing: { density: 'comfortable' }, shadows: { intensity: 'subtle' }, animations: { speed: 'normal' } } },
   },
 };
 
@@ -26,42 +28,40 @@ export function getPlanTheme(planId) {
 }
 
 export function getPlanThemeConfig(planId) {
-  var theme = getPlanTheme(planId);
+  const theme = getPlanTheme(planId);
   return theme ? theme.config : null;
 }
 
 export function listPlanThemes() {
-  return Object.keys(DEFAULT_PLAN_THEMES).map(function(k) {
-    return { planId: k, name: DEFAULT_PLAN_THEMES[k].name, description: DEFAULT_PLAN_THEMES[k].description };
-  });
+  return Object.keys(DEFAULT_PLAN_THEMES).map(k => ({
+    planId: k, name: DEFAULT_PLAN_THEMES[k].name, description: DEFAULT_PLAN_THEMES[k].description,
+  }));
 }
 
 export function resolveBrandForPlan(brand, planInfo) {
   if (!planInfo || !planInfo.plan_id) return brand;
   if (planInfo.white_label) return brand;
 
-  var planId = planInfo.plan_id;
-  var planConfig = getPlanThemeConfig(planId);
+  const planId = planInfo.plan_id;
+  const planConfig = getPlanThemeConfig(planId);
   if (!planConfig) return brand;
 
-  var cfg = null;
+  let cfg = null;
   try { cfg = typeof brand.brand_config === 'string' ? JSON.parse(brand.brand_config) : brand.brand_config; } catch (_) { void _; }
 
-  // User-created brand_config modules take highest priority
-  var hasCustomModules = cfg && cfg.modules && Object.keys(cfg.modules).length > 0;
+  const hasCustomModules = cfg && cfg.modules && Object.keys(cfg.modules).length > 0;
   if (hasCustomModules && !planInfo.white_label) {
     return brand;
   }
 
-  var mergedConfig = JSON.parse(JSON.stringify(planConfig));
+  const mergedConfig = JSON.parse(JSON.stringify(planConfig));
 
-  // Apply admin plan overrides on top of plan theme defaults
   if (cfg && cfg.planOverrides && cfg.planOverrides[planId]) {
-    var override = cfg.planOverrides[planId];
+    const override = cfg.planOverrides[planId];
     if (override.modules) {
-      for (var modKey in override.modules) {
+      for (const modKey of Object.keys(override.modules)) {
         if (!mergedConfig.modules) mergedConfig.modules = {};
-        mergedConfig.modules[modKey] = Object.assign({}, mergedConfig.modules[modKey] || {}, override.modules[modKey]);
+        mergedConfig.modules[modKey] = { ...(mergedConfig.modules[modKey] || {}), ...override.modules[modKey] };
       }
     }
     if (override.logo_url) {
@@ -69,10 +69,11 @@ export function resolveBrandForPlan(brand, planInfo) {
     }
   }
 
-  var pal = mergedConfig.modules && mergedConfig.modules.palette ? mergedConfig.modules.palette : {};
-  var overrideLogo = mergedConfig.logo_url || '';
+  const pal = mergedConfig.modules?.palette || {};
+  const overrideLogo = mergedConfig.logo_url || '';
 
-  return Object.assign({}, brand, {
+  return {
+    ...brand,
     color: pal.primary || brand.color || '#002f59',
     color_secondary: pal.secondary || brand.color_secondary || '#e8f0f7',
     color_accent: pal.accent || brand.color_accent || '#1a6b5c',
@@ -81,13 +82,13 @@ export function resolveBrandForPlan(brand, planInfo) {
     visual_version: (brand.visual_version || 0) + 1,
     custom_palette: false,
     logo_url: overrideLogo || brand.logo_url,
-  });
+  };
 }
 
 export function applyPlanOverride(brand, planId, overrideData) {
-  var cfg = { modules: {} };
+  let cfg = { modules: {} };
   try { cfg = typeof brand.brand_config === 'string' ? JSON.parse(brand.brand_config) : (brand.brand_config || { modules: {} }); } catch (_) { void _; }
   if (!cfg.planOverrides) cfg.planOverrides = {};
   cfg.planOverrides[planId] = overrideData;
-  return Object.assign({}, brand, { brand_config: JSON.stringify(cfg) });
+  return { ...brand, brand_config: JSON.stringify(cfg) };
 }

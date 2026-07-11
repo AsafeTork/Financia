@@ -1,31 +1,31 @@
 import React from 'react';
 
-var SWATCHES = ['primary','secondary','accent','bgPage','bgCard','bgInput','bgSubtle','surface','textMain','textSub','textMuted','border','success','warning','danger','info'];
+const SWATCHES = ['primary','secondary','accent','bgPage','bgCard','bgInput','bgSubtle','surface','textMain','textSub','textMuted','border','success','warning','danger','info'];
 
 export default function PreviewGeral({ brandConfig, brandColor }) {
-  var pal = (brandConfig && (brandConfig.modules && brandConfig.modules.palette || brandConfig.palette)) || {};
-  var typ = (brandConfig && brandConfig.modules && brandConfig.modules.typography) || {};
-  var btn = (brandConfig && brandConfig.modules && brandConfig.modules.buttons) || {};
-  var inp = (brandConfig && brandConfig.modules && brandConfig.modules.inputs) || {};
-  var cardsMod = (brandConfig && brandConfig.modules && brandConfig.modules.cards) || {};
-  var sidebar = (brandConfig && brandConfig.modules && brandConfig.modules.sidebar) || {};
+  const pal = (brandConfig && (brandConfig.modules && brandConfig.modules.palette || brandConfig.palette)) || {};
+  const typ = (brandConfig && brandConfig.modules && brandConfig.modules.typography) || {};
+  const btn = (brandConfig && brandConfig.modules && brandConfig.modules.buttons) || {};
+  const inp = (brandConfig && brandConfig.modules && brandConfig.modules.inputs) || {};
+  const cardsMod = (brandConfig && brandConfig.modules && brandConfig.modules.cards) || {};
+  const sidebar = (brandConfig && brandConfig.modules && brandConfig.modules.sidebar) || {};
 
-  var pk = pal.primary || brandColor || '#002f59';
-  var sc = pal.secondary || '#e8f0f7';
-  var ac = pal.accent || '#1a6b5c';
-  var bgPage = pal.bgPage || '#f5f5f0';
-  var bgCard = pal.bgCard || '#ffffff';
-  var bgInput = pal.bgInput || '#ffffff';
-  var bgSubtle = pal.bgSubtle || '#f5f5f0';
-  var tMain = pal.textMain || '#0f172a';
-  var tSub = pal.textSub || '#5b6b7c';
-  var tMuted = pal.textMuted || '#94a3b8';
-  var bd = pal.border || '#edeae3';
-  var btnRadius = btn.radius || '12px';
-  var inpRadius = inp.radius || '12px';
-  var cardRadius = cardsMod.radius || '12px';
-  var sidebarBg = sidebar.bg || '#1e293b';
-  var sidebarText = sidebar.text || '#ffffff';
+  const pk = pal.primary || brandColor || '#002f59';
+  const sc = pal.secondary || '#e8f0f7';
+  const ac = pal.accent || '#1a6b5c';
+  const bgPage = pal.bgPage || '#f5f5f0';
+  const bgCard = pal.bgCard || '#ffffff';
+  const bgInput = pal.bgInput || '#ffffff';
+  const bgSubtle = pal.bgSubtle || '#f5f5f0';
+  const tMain = pal.textMain || '#0f172a';
+  const tSub = pal.textSub || '#5b6b7c';
+  const tMuted = pal.textMuted || '#94a3b8';
+  const bd = pal.border || '#edeae3';
+  const btnRadius = btn.radius || '12px';
+  const inpRadius = inp.radius || '12px';
+  const cardRadius = cardsMod.radius || '12px';
+  const sidebarBg = sidebar.bg || '#1e293b';
+  const sidebarText = sidebar.text || '#ffffff';
 
   return (
     <div className="rounded-2xl overflow-hidden" style={{background: bgPage, color: tMain, fontFamily: typ.fontFamily || 'inherit'}}>
@@ -41,14 +41,12 @@ export default function PreviewGeral({ brandConfig, brandColor }) {
 
       <div className="flex">
         <div className="w-20 flex-shrink-0 p-2 flex flex-col gap-1.5" style={{background: sidebarBg}}>
-          {[1,2,3,4].map(function(i) {
-            return (
-              <div key={i} className="h-7 rounded-lg flex items-center justify-center"
-                style={{background: i === 2 ? sidebar.activeBg || 'rgba(255,255,255,0.14)' : 'transparent', color: sidebarText}}>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
-              </div>
-            );
-          })}
+          {[1,2,3,4].map(i => (
+            <div key={i} className="h-7 rounded-lg flex items-center justify-center"
+              style={{background: i === 2 ? sidebar.activeBg || 'rgba(255,255,255,0.14)' : 'transparent', color: sidebarText}}>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+            </div>
+          ))}
         </div>
 
         <div className="flex-1 p-4 flex flex-col gap-4">
@@ -88,8 +86,8 @@ export default function PreviewGeral({ brandConfig, brandColor }) {
           </div>
 
           <div className="flex gap-1.5">
-            {SWATCHES.slice(0,13).map(function(s) {
-              var c = pal[s];
+            {SWATCHES.slice(0,13).map(s => {
+              const c = pal[s];
               if (!c) return null;
               return <div key={s} className="w-4 h-4 rounded" style={{background: c}} title={s} />;
             })}

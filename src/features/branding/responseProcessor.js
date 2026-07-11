@@ -1,4 +1,6 @@
-export default function processResponse(rawResponse, currentBrand) {
+import { validateAgainstModules } from './schemaRegistry.js';
+
+export function processResponse(rawResponse, currentBrand) {
   try {
     const json = typeof rawResponse === 'string'
       ? JSON.parse(rawResponse)
@@ -6,6 +8,11 @@ export default function processResponse(rawResponse, currentBrand) {
 
     if (!json || typeof json !== 'object') {
       return { success: false, step: 'parse', error: 'Resposta invalida' };
+    }
+
+    const validation = validateAgainstModules(json);
+    if (!validation.valid) {
+      return { success: false, step: 'validation', error: 'Validacao falhou: ' + validation.errors.join('; ') };
     }
 
     const proposedBrand = buildProposedBrand(json, currentBrand);
@@ -34,4 +41,8 @@ function buildProposedBrand(json, currentBrand) {
     visual_version: ((currentBrand && currentBrand.visual_version) || 0) + 1,
     custom_palette: true,
   });
+}
+
+export function requiresServiceRole() {
+  return true;
 }

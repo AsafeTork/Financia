@@ -1,3 +1,7 @@
+---
+type: REFERENCE
+---
+
 # AI Brand Schema — Financia Brand Studio
 
 ## Schema Version: 1.0.0
