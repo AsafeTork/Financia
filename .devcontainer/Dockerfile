@@ -17,9 +17,9 @@ ENV PATH="${DENO_INSTALL}/bin:${PATH}"
 
 RUN npm install -g supabase
 
-RUN mkdir -p /home/codespace/.npm /workspaces/Financia/.cache && \
+RUN mkdir -p /home/codespace/.npm /home/codespace/.cache && \
     npm config set cache /home/codespace/.npm
 
 USER root
-RUN chown -R codespace:codespace /home/codespace/.npm /workspaces/Financia/.cache
+RUN chown -R codespace:codespace /home/codespace/.npm /home/codespace/.cache
 USER codespace
