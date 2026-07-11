@@ -1,0 +1,11 @@
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "bradlc.vscode-tailwindcss",
+    "denoland.vscode-deno",
+    "ms-playwright.playwright",
+    "github.copilot",
+    "github.copilot-chat"
+  ],
+  "unwantedRecommendations": []
+}

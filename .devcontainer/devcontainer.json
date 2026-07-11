@@ -1,0 +1,70 @@
+{
+  "name": "Financia Development",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": "."
+  },
+  "hostRequirements": {
+    "cpus": 4,
+    "memory": "8gb",
+    "storage": "32gb"
+  },
+  "forwardPorts": [5173, 4173],
+  "portsAttributes": {
+    "5173": {
+      "label": "Vite Dev Server",
+      "onAutoForward": "openBrowser"
+    },
+    "4173": {
+      "label": "Vite Preview",
+      "onAutoForward": "silent"
+    }
+  },
+  "containerEnv": {
+    "VITE_SUPABASE_URL": "${localEnv:VITE_SUPABASE_URL}",
+    "VITE_SUPABASE_ANON_KEY": "${localEnv:VITE_SUPABASE_ANON_KEY}",
+    "VITE_STRIPE_PUBLISHABLE_KEY": "${localEnv:VITE_STRIPE_PUBLISHABLE_KEY}",
+    "VITE_APP_URL": "https://financia-gestao.onrender.com"
+  },
+  "remoteEnv": {
+    "NODE_OPTIONS": "--max-old-space-size=8192"
+  },
+  "mounts": [
+    "source=financia-npm-cache,target=/home/codespace/.npm,type=volume",
+    "source=financia-vite-cache,target=/workspaces/Financia/.cache,type=volume"
+  ],
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
+  "postStartCommand": "bash .devcontainer/post-start.sh",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "bradlc.vscode-tailwindcss",
+        "denoland.vscode-deno",
+        "ms-playwright.playwright",
+        "github.copilot",
+        "github.copilot-chat"
+      ],
+      "settings": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+        "typescript.preferences.importModuleSpecifier": "relative",
+        "files.exclude": {
+          "**/node_modules": true,
+          "**/.cache": true
+        },
+        "vitest.enable": true,
+        "deno.enable": true,
+        "deno.lint": true,
+        "deno.unstable": false,
+        "eslint.format.enable": true,
+        "editor.codeActionsOnSave": {
+          "source.fixAll.eslint": "explicit"
+        }
+      }
+    }
+  },
+  "remoteUser": "codespace",
+  "init": true,
+  "updateRemoteUserUID": true
+}

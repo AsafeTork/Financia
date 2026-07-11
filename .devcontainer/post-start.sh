@@ -1,0 +1,13 @@
+#!/bin/bash
+echo ""
+echo "=== Financia Codespace ==="
+echo "Ambiente pronto."
+echo ""
+echo "Proximos passos:"
+echo "  1. npm run dev         - Servidor de desenvolvimento"
+echo "  2. npm run test:fast   - Testes rapidos"
+echo "  3. npm run lint        - Verificar lint"
+echo ""
+echo "Para parar: gh codespace stop"
+echo "Para apagar: gh codespace delete"
+echo ""

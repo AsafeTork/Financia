@@ -1,0 +1,45 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Debug Vite",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}/src",
+      "sourceMapPathOverrides": {
+        "/__vite/*": "${webRoot}/*"
+      }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug Test (current file)",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "vitest",
+        "run",
+        "${relativeFile}",
+        "--test-timeout=60000"
+      ],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "autoAttachChildProcesses": true
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug Test (all changed)",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "vitest",
+        "run",
+        "--changed",
+        "--test-timeout=60000"
+      ],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "autoAttachChildProcesses": true
+    }
+  ]
+}
