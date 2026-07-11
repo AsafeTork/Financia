@@ -10,7 +10,7 @@ git config --global core.autocrlf input
 
 # Idempotent: .env.local a partir de secrets (sobrescreve se existir)
 if [ -n "${VITE_SUPABASE_URL}" ]; then
-  cat > /workspaces/Financia/.env.local << EOF
+  cat > "${PWD}/.env.local" << EOF
 VITE_SUPABASE_URL=${VITE_SUPABASE_URL}
 VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY}
 VITE_STRIPE_PUBLISHABLE_KEY=${VITE_STRIPE_PUBLISHABLE_KEY}
@@ -20,7 +20,7 @@ EOF
 fi
 
 # Idempotent: npm install (segunda execucao usa cache e apenas atualiza lock)
-cd /workspaces/Financia
+cd "${PWD}"
 if [ ! -d node_modules ]; then
   npm install
   echo "  npm install concluido"
