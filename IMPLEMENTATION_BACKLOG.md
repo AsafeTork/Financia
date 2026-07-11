@@ -79,6 +79,31 @@ ready_for_integration: false
 
 ---
 
+## PHASE 3.1 — BRANDING SIMPLIFICATION (VALIDADA 2026-07-11)
+
+**Goal**: Reduzir drasticamente a complexidade do módulo Branding, eliminando código morto, consolidando schemas e simplificando o hook principal.
+
+| Step | Action | Status |
+|---|---|---|
+| 3.1.1 | Remover Schema Registry (703 linhas, zero consumidores) | ✅ `schemaRegistry.js` DELETADO |
+| 3.1.2 | Atualizar imports/exports no barrel `index.js` | ✅ |
+| 3.1.3 | Consolidar schema único em `schema.js` (fonte da verdade) | ✅ |
+| 3.1.4 | Preservar `validateBrandConfig(config)` como API pública | ✅ |
+| 3.1.5 | Simplificar `useBrandStudio` (262 → 102 linhas, -61%) | ✅ Removidos: history/undo/redo, AI proposal, preset UI, preview mode |
+| 3.1.6 | Atualizar consumidores: `BrandStudioView`, `ModuleEditor`, `PlanTabsEditor`, `PreviewGeral` | ✅ |
+| 3.1.7 | Verificar: build, lint, testes | ✅ Build OK \| Lint sem novos erros \| 1178/1178 testes passam |
+
+**Métricas**:
+- Arquivos Branding: 16 → 14 (-2)
+- Linhas Branding: ~2.800 → 2.095 (-705, -25%)
+- `schemaRegistry.js`: 703 linhas → REMOVIDO
+- `useBrandStudio.js`: 262 → 102 linhas (-61%)
+- 3 schemas concorrentes → 1 schema único (`schema.js`)
+
+**Funcionalidades preservadas**: White-label, Brand Studio, Preview, Persistência, Plan overrides
+
+---
+
 ## PHASE 4 — ARCHITECTURE RE-ORGANIZATION ✅
 
 **Goal**: Feature-based architecture.

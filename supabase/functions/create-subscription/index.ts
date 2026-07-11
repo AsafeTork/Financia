@@ -10,6 +10,7 @@
 import Stripe from 'https://esm.sh/stripe@17.7.0?target=denonext';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { enforceRateLimit, getAdminClient, sanitizePlanId } from '../_shared/security.ts';
+import { withLogging, corsResponse, corsResponse as jsonResponse, Logger } from '../_shared/logger.ts';
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -32,27 +33,10 @@ function planOfSub(sub) {
   return 'pro';
 }
 
-function jsonResponse(status, payload) {
-  const headers = { 'Content-Type': 'application/json' };
-  const keys = Object.keys(CORS_HEADERS);
-  for (let i = 0; i < keys.length; i++) { headers[keys[i]] = CORS_HEADERS[keys[i]]; }
-  return new Response(JSON.stringify(payload), { status: status, headers: headers });
-}
-
-function stripeErrorCode(err, paymentIntent) {
-  const raw = err && err.raw ? err.raw : null;
-  const piErr = paymentIntent && paymentIntent.last_payment_error ? paymentIntent.last_payment_error : null;
-  const keys = [
-    raw && raw.decline_code ? raw.decline_code : '',
-    raw && raw.code ? raw.code : '',
-    piErr && piErr.decline_code ? piErr.decline_code : '',
-    piErr && piErr.code ? piErr.code : '',
-  ];
-  for (let i = 0; i < keys.length; i++) {
-    if (keys[i]) return String(keys[i]);
-  }
-  return 'payment_failed';
-}
+const PLAN_PRICES = { pro: 4990, premium: 9990 };
+const ADMIN_TEST_PRICE = 1;
+const PLAN_RANK = { free: 0, pro: 1, premium: 2 };
+const ACTIVE_STATUSES = ['active', 'trialing', 'past_due', 'unpaid'];
 
 async function findOrCreateCustomer(stripe, email, userId) {
   if (email) {
@@ -156,20 +140,20 @@ async function resolvePriceId(stripe, planId, customCents, userId) {
   return findOrCreatePrice(stripe, planId);
 }
 
-Deno.serve(async function (req) {
+async function handler(req: Request, logger: Logger) {
   if (req.method === 'OPTIONS') {
     return new Response(null, { status: 204, headers: CORS_HEADERS });
   }
 
   const stripeKey = Deno.env.get('STRIPE_SECRET_KEY');
   if (!stripeKey) {
-    return jsonResponse(500, { error: 'stripe_not_configured' });
+    return corsResponse({ error: 'stripe_not_configured' }, 500);
   }
 
   try {
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
-      return jsonResponse(401, { error: 'unauthorized' });
+      return corsResponse({ error: 'unauthorized' }, 401);
     }
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
@@ -181,7 +165,7 @@ Deno.serve(async function (req) {
     const userResult = await supabase.auth.getUser();
     const user = userResult && userResult.data ? userResult.data.user : null;
     if (!user) {
-      return jsonResponse(401, { error: 'unauthorized' });
+      return corsResponse({ error: 'unauthorized' }, 401);
     }
 
     let body = {};
@@ -189,7 +173,7 @@ Deno.serve(async function (req) {
     const planId = sanitizePlanId(body && body.plan_id);
     const useSavedCard = !!(body && body.use_saved_card);
     if (!planId) {
-      return jsonResponse(400, { error: 'invalid_plan' });
+      return corsResponse({ error: 'invalid_plan' }, 400);
     }
 
     const admin = getAdminClient();
@@ -201,14 +185,14 @@ Deno.serve(async function (req) {
     if (body && body.confirm_subscription) {
       const subsList = await stripe.subscriptions.list({ customer: customerId, status: 'all', limit: 20 });
       const activeSub = activeSubscriptionOf(subsList);
-      if (!activeSub) return jsonResponse(400, { error: 'no_active_subscription' });
+      if (!activeSub) return corsResponse({ error: 'no_active_subscription' }, 400);
       const subPlanId = planOfSub(activeSub);
       await activatePlan(admin, user.id, subPlanId);
-      return jsonResponse(200, { status: 'activated' });
+      return corsResponse({ status: 'activated' });
     }
 
     const allowed = await enforceRateLimit(admin, user.id, 'create_subscription', 60, 8);
-    if (!allowed) return jsonResponse(429, { error: 'rate_limited' });
+    if (!allowed) return corsResponse({ error: 'rate_limited' }, 429);
     const isAdmin = await isAdminUser(admin, user.id);
 
     // Preço customizado (desconto manual do admin) por plano, se houver.
@@ -237,12 +221,12 @@ Deno.serve(async function (req) {
     if (activeSub) {
       const item = activeSub.items && activeSub.items.data ? activeSub.items.data[0] : null;
       if (!item) {
-        return jsonResponse(500, { error: 'subscription_without_item' });
+        return corsResponse({ error: 'subscription_without_item' }, 500);
       }
       // Ja esta no mesmo preco? Nada a fazer.
       if (item.price && item.price.id === priceId) {
         await activatePlan(admin, user.id, planId);
-        return jsonResponse(200, { status: 'unchanged' });
+        return corsResponse({ status: 'unchanged' });
       }
       // Upgrade: cobra a diferenca proporcional AGORA e ativa o plano maior (webhook).
       // Downgrade: NAO cobra/credita agora; o plano mais barato passa a valer so no
@@ -257,7 +241,7 @@ Deno.serve(async function (req) {
       if (!isDowngrade) {
         await activatePlan(admin, user.id, planId);
       }
-      return jsonResponse(200, { status: 'changed', scheduled: isDowngrade });
+      return corsResponse({ status: 'changed', scheduled: isDowngrade });
     }
 
     // 2) Sem assinatura: pagar com cartao salvo (off_session) se solicitado.
@@ -265,7 +249,7 @@ Deno.serve(async function (req) {
       const invoiceSettings = customer.invoice_settings || {};
       const defaultPm = invoiceSettings.default_payment_method || null;
       if (!defaultPm) {
-        return jsonResponse(400, { error: 'no_payment_method' });
+        return corsResponse({ error: 'no_payment_method' }, 400);
       }
       const subscription = await stripe.subscriptions.create({
         customer: customerId,
@@ -279,29 +263,29 @@ Deno.serve(async function (req) {
       const invoice = subscription.latest_invoice;
       const pi = invoice && invoice.payment_intent ? invoice.payment_intent : null;
       if (!pi) {
-        return jsonResponse(500, { error: 'no_client_secret' });
+        return corsResponse({ error: 'no_client_secret' }, 500);
       }
       if (pi.status === 'succeeded') {
         await activatePlan(admin, user.id, planId);
-        return jsonResponse(200, { status: 'active' });
+        return corsResponse({ status: 'active' });
       }
       try {
         const confirmed = await stripe.paymentIntents.confirm(pi.id, { off_session: true });
         if (confirmed.status === 'succeeded') {
           await activatePlan(admin, user.id, planId);
-          return jsonResponse(200, { status: 'active' });
+          return corsResponse({ status: 'active' });
         }
         if (confirmed.client_secret) {
-          return jsonResponse(200, { clientSecret: confirmed.client_secret, requiresAction: true });
+          return corsResponse({ clientSecret: confirmed.client_secret, requiresAction: true });
         }
-        return jsonResponse(402, { error: stripeErrorCode(null, confirmed) });
+        return corsResponse({ error: stripeErrorCode(null, confirmed) }, 402);
       } catch (confirmErr) {
         const raw = confirmErr && confirmErr.raw ? confirmErr.raw : null;
         const failedPi = raw && raw.payment_intent ? raw.payment_intent : null;
         if (failedPi && failedPi.client_secret) {
-          return jsonResponse(200, { clientSecret: failedPi.client_secret, requiresAction: true });
+          return corsResponse({ clientSecret: failedPi.client_secret, requiresAction: true });
         }
-        return jsonResponse(402, { error: stripeErrorCode(confirmErr, failedPi) });
+        return corsResponse({ error: stripeErrorCode(confirmErr, failedPi) }, 402);
       }
     }
 
@@ -320,13 +304,13 @@ Deno.serve(async function (req) {
     // Pagamento ja processado automaticamente (ex: cartao salvo faz auto-collect).
     if (paymentIntent && paymentIntent.status === 'succeeded') {
       await activatePlan(admin, user.id, planId);
-      return jsonResponse(200, { status: 'active' });
+      return corsResponse({ status: 'active' });
     }
 
     if (!paymentIntent || !paymentIntent.client_secret) {
-      return jsonResponse(500, { error: 'no_client_secret' });
+      return corsResponse({ error: 'no_client_secret' }, 500);
     }
-    return jsonResponse(200, {
+    return corsResponse({
       clientSecret: paymentIntent.client_secret,
       subscriptionId: subscription.id,
     });
@@ -334,9 +318,11 @@ Deno.serve(async function (req) {
     const statusCode = err && err.statusCode ? Number(err.statusCode) : 500;
     const code = stripeErrorCode(err, null);
     if (statusCode >= 400 && statusCode < 500) {
-      return jsonResponse(statusCode, { error: code });
+      return corsResponse({ error: code }, statusCode);
     }
     const message = err && err.message ? err.message : String(err);
-    return jsonResponse(500, { error: String(message) });
+    return corsResponse({ error: String(message) }, 500);
   }
-});
+}
+
+Deno.serve(withLogging('create-subscription', handler));

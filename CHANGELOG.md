@@ -15,6 +15,19 @@
 - Side effects: added `"sideEffects": false` to package.json for tree-shaking
 - Bundle: `build.target: 'esnext'`, supabase chunk 211KB → sub-chunks
 
+## [5.1.1] — 2026-07-11
+
+### Fase 3 — Branding (VALIDADA)
+
+- **Data**: 2026-07-11
+- **Métricas**: -705 linhas (-25%), 2 arquivos removidos (schemaRegistry.js, normalizer não existia)
+- **schemaRegistry.js**: 703 linhas → REMOVIDO (zero consumidores externos)
+- **useBrandStudio**: 262 → 102 linhas (-61%)
+- **Schema único**: schema.js como fonte da verdade
+- **API pública**: validateBrandConfig(config) preservada
+- **Funcionalidades mantidas**: White-label, Brand Studio, Preview, Persistência, Plan overrides
+- **Redução complexidade**: 3 schemas concorrentes → 1; plugin system morto removido; history/undo/redo/AI proposal/preset UI removidos
+
 ## [5.1.0] — 2026-07-08
 
 ### Refatoração v2 (Fases 0-8)

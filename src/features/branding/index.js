@@ -7,7 +7,6 @@ export { default as PlanTabsEditor } from './PlanTabsEditor.jsx';
 export { default as ModuleEditor } from './ModuleEditor.jsx';
 export { validateBrandConfig } from './validateBrandConfig.js';
 export { BRAND_SCHEMA, BRAND_SCHEMA_VERSION } from './schema.js';
-export { registerModule, getModule, listModules, getSchema, validateAgainstModules, normalizeModules } from './schemaRegistry.js';
 export { default as previewValidate } from './previewValidator.js';
 export { default as processResponse, requiresServiceRole } from './responseProcessor.js';
 export { enterPreviewMode, exitPreviewMode } from '../../shared/hooks/useBrandAppearance.js';

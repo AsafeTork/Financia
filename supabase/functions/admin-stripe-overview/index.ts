@@ -4,21 +4,9 @@
 import Stripe from 'https://esm.sh/stripe@17.7.0?target=denonext';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { cacheGet, cacheSet, enforceRateLimit, getAdminClient } from '../_shared/security.ts';
-
-const CORS_HEADERS = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-};
+import { withLogging, corsResponse, handleOptions, Logger } from '../_shared/logger.ts';
 
 const ACTIVE_STATUSES = ['active', 'trialing', 'past_due'];
-
-function jsonResponse(status, payload) {
-  const headers = { 'Content-Type': 'application/json' };
-  const keys = Object.keys(CORS_HEADERS);
-  for (let i = 0; i < keys.length; i++) { headers[keys[i]] = CORS_HEADERS[keys[i]]; }
-  return new Response(JSON.stringify(payload), { status: status, headers: headers });
-}
 
 function sumBalanceBRL(list) {
   let cents = 0;
@@ -44,20 +32,21 @@ function monthlyCentsOf(item) {
   return Math.round(amount / count);
 }
 
-Deno.serve(async function (req) {
+async function handler(req: Request, logger: Logger): Promise<Response> {
   if (req.method === 'OPTIONS') {
-    return new Response(null, { status: 204, headers: CORS_HEADERS });
+    return handleOptions();
   }
 
   const stripeKey = Deno.env.get('STRIPE_SECRET_KEY');
   if (!stripeKey) {
-    return jsonResponse(500, { error: 'stripe_not_configured' });
+    logger.error('Stripe not configured');
+    return corsResponse({ error: 'stripe_not_configured' }, 500);
   }
 
   try {
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
-      return jsonResponse(401, { error: 'unauthorized' });
+      return corsResponse({ error: 'unauthorized' }, 401);
     }
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
@@ -70,23 +59,32 @@ Deno.serve(async function (req) {
     const userResult = await supabase.auth.getUser();
     const user = userResult && userResult.data ? userResult.data.user : null;
     if (!user) {
-      return jsonResponse(401, { error: 'unauthorized' });
+      return corsResponse({ error: 'unauthorized' }, 401);
     }
+
+    logger.setUserId(user.id);
 
     // Gate de admin via service role (user_roles).
     const admin = createClient(supabaseUrl, serviceKey);
     const roleRes = await admin.from('user_roles').select('role').eq('user_id', user.id).eq('role', 'admin').maybeSingle();
     if (!roleRes || !roleRes.data) {
-      return jsonResponse(403, { error: 'not_authorized' });
+      logger.warn('Non-admin attempted to access stripe overview');
+      return corsResponse({ error: 'not_authorized' }, 403);
     }
+    logger.setAdminId(user.id);
+
     const secAdmin = getAdminClient();
     const allowed = await enforceRateLimit(secAdmin, user.id, 'admin_stripe_overview', 60, 12);
-    if (!allowed) return jsonResponse(429, { error: 'rate_limited' });
+    if (!allowed) {
+      logger.warn('Rate limit exceeded for admin_stripe_overview');
+      return corsResponse({ error: 'rate_limited' }, 429);
+    }
 
     const cachePayload = { user_id: user.id, action: 'admin-stripe-overview' };
     const cached = await cacheGet(secAdmin, 'stripe:admin-overview:' + user.id, cachePayload);
     if (cached && Object.prototype.hasOwnProperty.call(cached, 'mrr_cents')) {
-      return jsonResponse(200, cached);
+      logger.debug('Cache hit for stripe overview');
+      return corsResponse(cached);
     }
 
     const stripe = new Stripe(stripeKey, { apiVersion: '2025-01-27.acacia' });
@@ -121,9 +119,12 @@ Deno.serve(async function (req) {
       truncated: truncated,
     };
     await cacheSet(secAdmin, 'stripe:admin-overview:' + user.id, cachePayload, response, 30, user.id);
-    return jsonResponse(200, response);
+    return corsResponse(response);
   } catch (err) {
     const message = err && err.message ? err.message : String(err);
-    return jsonResponse(500, { error: String(message) });
+    logger.error('Error in admin-stripe-overview', err as Error);
+    return corsResponse({ error: String(message) }, 500);
   }
-});
+}
+
+Deno.serve(withLogging('admin-stripe-overview', handler));

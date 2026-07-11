@@ -2,192 +2,147 @@
 // Cobranca UNICA (nao recorrente) para o add-on de Personalizacao (white-label).
 // Cria um PaymentIntent e devolve o client_secret para confirmar via Stripe Elements
 // DENTRO do app, sem redirecionar. Preco inline em BRL (centavos).
-import Stripe from 'https://esm.sh/stripe@17.7.0?target=denonext';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { enforceRateLimit, getAdminClient, sanitizeKind } from '../_shared/security.ts';
+import { sanitizeKind, getAdminClient, enforceRateLimit } from '../_shared/security.ts';
+import { createStripeClient, findOrCreateCustomer, stripeErrorCode, WHITE_LABEL_PRICE, ADMIN_TEST_PRICE } from '../_shared/stripe.ts';
+import { withLogging, corsResponse, handleOptions, Logger } from '../_shared/logger.ts';
 
+const WHITE_LABEL_PRICE = 49700;
+const ADMIN_TEST_PRICE = 50;
+
+async function activateWhiteLabel(admin: any, userId: string): Promise<void> {
+  if (!admin || !userId) return;
+  try { await admin.from('company_profiles').update({ white_label: true }).eq('user_id', userId); } catch {}
+}
+
+async function handler(req: Request, logger: Logger): Promise<Response> {
+  if (req.method === 'OPTIONS') return handleOptions();
+
+  const stripeKey = Deno.env.get('STRIPE_SECRET_KEY');
+  if (!stripeKey) {
+    logger.error('Stripe not configured');
+    return corsResponse({ error: 'stripe_not_configured' }, 500);
+  }
+
+  try {
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) return corsResponse({ error: 'unauthorized' }, 401);
+
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+
+    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } },
+    });
+
+    const userResult = await supabase.auth.getUser();
+    const user = userResult.data?.user;
+    if (!user) return corsResponse({ error: 'unauthorized' }, 401);
+
+    let body: any = {};
+    try { body = await req.json(); } catch { body = {}; }
+    const kind = sanitizeKind(body?.kind);
+    const confirmWhiteLabel = !!(body?.confirm_white_label);
+    const useSavedCard = !!(body?.use_saved_card);
+    if (!kind) return corsResponse({ error: 'invalid_kind' }, 400);
+
+    const admin = getAdminClient();
+    const allowed = await enforceRateLimit(admin, user.id, 'create_payment', 60, 6);
+    if (!allowed) return corsResponse({ error: 'rate_limited' }, 429);
+
+    // Admin check for test pricing
+    const adminClient = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
+    const { data: roleData } = await adminClient.from('user_roles').select('role').eq('user_id', user.id).eq('role', 'admin').maybeSingle();
+    const isAdmin = roleData?.role === 'admin';
+
+    // Post-payment activation
+    if (body?.confirm_white_label) {
+      await admin.from('company_profiles').update({ white_label: true }).eq('user_id', user.id);
+      return corsResponse({ status: 'activated' });
+    }
+
+    const chargeAmount = isAdmin ? 50 : 49700;
+
+    const stripe = createStripeClient({ secretKey: Deno.env.get('STRIPE_SECRET_KEY')! });
+    const customer = await findOrCreateCustomer(stripe, user.email, user.id);
+    const customerId = customer.id;
+
+    // Pay with saved card (off_session)
+    if (body?.use_saved_card) {
+      const invoiceSettings = customer.invoice_settings || {};
+      let defaultPm = invoiceSettings.default_payment_method || null;
+      if (!defaultPm) {
+        const list = await stripe.paymentMethods.list({ customer: customer.id, type: 'card', limit: 1 });
+        if (list.data.length > 0) defaultPm = list.data[0].id;
+      }
+      if (!defaultPm) return corsResponse({ error: 'no_payment_method' }, 400);
+
+      const pi = await stripe.paymentIntents.create({
+        amount: chargeAmount,
+        currency: 'brl',
+        customer: customer.id,
+        description: 'Financia - Personalizacao (white-label)',
+        payment_method: defaultPm,
+        off_session: true,
+        confirm: true,
+        metadata: { user_id: user.id, kind: 'white_label' },
+      }).catch(async (confirmErr) => {
+        const raw = confirmErr?.raw;
+        const failedPi = raw?.payment_intent;
+        if (failedPi) return failedPi;
+        throw confirmErr;
+      });
+
+      if (pi.status === 'succeeded') {
+        await admin.from('company_profiles').update({ white_label: true }).eq('user_id', user.id);
+        return corsResponse({ status: 'paid' });
+      }
+      if (pi.client_secret && (pi.status === 'requires_action' || pi.status === 'requires_confirmation')) {
+        return corsResponse({ clientSecret: pi.client_secret, requiresAction: true });
+      }
+      return corsResponse({ error: stripeErrorCode(null, pi) }, 402);
+    }
+
+    // New payment intent for new card
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: chargeAmount,
+      currency: 'brl',
+      customer: customer.id,
+      description: 'Financia - Personalizacao (white-label)',
+      automatic_payment_methods: { enabled: true },
+      metadata: { user_id: user.id, kind: 'white_label' },
+    });
+
+    if (!paymentIntent?.client_secret) return corsResponse({ error: 'no_client_secret' }, 500);
+
+    return corsResponse({ clientSecret: paymentIntent.client_secret, paymentIntentId: paymentIntent.id });
+  } catch (err) {
+    const statusCode = err?.statusCode ? Number(err.statusCode) : 500;
+    const code = stripeErrorCode(err, null);
+    if (statusCode >= 400 && statusCode < 500) return corsResponse({ error: code }, statusCode);
+    const message = err?.message || String(err);
+    return corsResponse({ error: String(message) }, 500);
+  }
+}
+
+// Shared helpers
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
-// Preco do pacote de personalizacao: R$ 497,00 (centavos). Espelha WHITELABEL.price.
-const WHITE_LABEL_PRICE = 49700;
-const ADMIN_TEST_PRICE = 50;
-
-// Ativa white_label no banco apos pagamento confirmado.
-async function activateWhiteLabel(admin, userId) {
-  if (!admin || !userId) return;
-  try {
-    await admin.from('company_profiles').update({ white_label: true }).eq('user_id', userId);
-  } catch (_) {}
+function corsResponse(body: any, status = 200): Response {
+  return new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', ...CORS_HEADERS } });
 }
 
-function jsonResponse(status, payload) {
-  const headers = { 'Content-Type': 'application/json' };
-  const keys = Object.keys(CORS_HEADERS);
-  for (let i = 0; i < keys.length; i++) { headers[keys[i]] = CORS_HEADERS[keys[i]]; }
-  return new Response(JSON.stringify(payload), { status: status, headers: headers });
+function handleOptions(): Response {
+  return new Response(null, { status: 204, headers: CORS_HEADERS });
 }
 
-function stripeErrorCode(err, paymentIntent) {
-  const raw = err && err.raw ? err.raw : null;
-  const piErr = paymentIntent && paymentIntent.last_payment_error ? paymentIntent.last_payment_error : null;
-  const keys = [
-    raw && raw.decline_code ? raw.decline_code : '',
-    raw && raw.code ? raw.code : '',
-    piErr && piErr.decline_code ? piErr.decline_code : '',
-    piErr && piErr.code ? piErr.code : '',
-  ];
-  for (let i = 0; i < keys.length; i++) {
-    if (keys[i]) return String(keys[i]);
-  }
-  return 'payment_failed';
-}
-
-async function findOrCreateCustomer(stripe, email, userId) {
-  if (email) {
-    const existing = await stripe.customers.list({ email: email, limit: 20 });
-    if (existing && existing.data && existing.data.length > 0) {
-      for (let i = 0; i < existing.data.length; i++) {
-        const c = existing.data[i];
-        const m = c && c.metadata ? c.metadata : {};
-        if (m.user_id && String(m.user_id) === String(userId)) return c;
-      }
-      return existing.data[0];
-    }
-  }
-  return await stripe.customers.create({ email: email || undefined, metadata: { user_id: userId } });
-}
-
-async function isAdminUser(admin, userId) {
-  if (!admin || !userId) return false;
-  try {
-    const roleRes = await admin.from('user_roles')
-      .select('role')
-      .eq('user_id', userId)
-      .eq('role', 'admin')
-      .maybeSingle();
-    return !!(roleRes && roleRes.data && roleRes.data.role === 'admin');
-  } catch (_) {
-    return false;
-  }
-}
-
-Deno.serve(async function (req) {
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { status: 204, headers: CORS_HEADERS });
-  }
-
-  const stripeKey = Deno.env.get('STRIPE_SECRET_KEY');
-  if (!stripeKey) {
-    return jsonResponse(500, { error: 'stripe_not_configured' });
-  }
-
-  try {
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader) {
-      return jsonResponse(401, { error: 'unauthorized' });
-    }
-
-    const supabaseUrl = Deno.env.get('SUPABASE_URL');
-    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY');
-    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-      global: { headers: { Authorization: authHeader } },
-    });
-
-    const userResult = await supabase.auth.getUser();
-    const user = userResult && userResult.data ? userResult.data.user : null;
-    if (!user) {
-      return jsonResponse(401, { error: 'unauthorized' });
-    }
-
-    let body = {};
-    try { body = await req.json(); } catch (parseErr) { body = {}; }
-    const kind = sanitizeKind(body && body.kind);
-    const confirmWhiteLabel = !!(body && body.confirm_white_label);
-    const useSavedCard = !!(body && body.use_saved_card);
-    if (!kind) {
-      return jsonResponse(400, { error: 'invalid_kind' });
-    }
-    const admin = getAdminClient();
-    const allowed = await enforceRateLimit(admin, user.id, 'create_payment', 60, 6);
-    if (!allowed) return jsonResponse(429, { error: 'rate_limited' });
-    const isAdmin = await isAdminUser(admin, user.id);
-
-    // Ativacao pos-pagamento (chamada pelo frontend apos confirmPayment).
-    if (confirmWhiteLabel) {
-      await activateWhiteLabel(admin, user.id);
-      return jsonResponse(200, { status: 'activated' });
-    }
-
-    const chargeAmount = isAdmin ? ADMIN_TEST_PRICE : WHITE_LABEL_PRICE;
-
-    const stripe = new Stripe(stripeKey, { apiVersion: '2025-01-27.acacia' });
-    const customer = await findOrCreateCustomer(stripe, user.email, user.id);
-    const customerId = customer.id;
-
-    // Pagar com o cartao salvo (off_session): confirma na hora e devolve status.
-    if (useSavedCard) {
-      const invoiceSettings = customer.invoice_settings || {};
-      let defaultPm = invoiceSettings.default_payment_method || null;
-      if (!defaultPm) {
-        const list = await stripe.paymentMethods.list({ customer: customerId, type: 'card', limit: 1 });
-        if (list && list.data && list.data.length > 0) defaultPm = list.data[0].id;
-      }
-      if (!defaultPm) {
-        return jsonResponse(400, { error: 'no_payment_method' });
-      }
-      const pi = await stripe.paymentIntents.create({
-        amount: chargeAmount,
-        currency: 'brl',
-        customer: customerId,
-        description: 'Financia - Personalizacao (white-label)',
-        payment_method: defaultPm,
-        off_session: true,
-        confirm: true,
-        metadata: { user_id: user.id, kind: 'white_label' },
-      }).catch(function (confirmErr) {
-        const raw = confirmErr && confirmErr.raw ? confirmErr.raw : null;
-        const failedPi = raw && raw.payment_intent ? raw.payment_intent : null;
-        if (failedPi) return failedPi;
-        throw confirmErr;
-      });
-      if (pi.status === 'succeeded') {
-        await activateWhiteLabel(admin, user.id);
-        return jsonResponse(200, { status: 'paid' });
-      }
-      if (pi.client_secret && (pi.status === 'requires_action' || pi.status === 'requires_confirmation')) {
-        return jsonResponse(200, { clientSecret: pi.client_secret, requiresAction: true });
-      }
-      return jsonResponse(402, { error: stripeErrorCode(null, pi) });
-    }
-
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: chargeAmount,
-      currency: 'brl',
-      customer: customerId,
-      description: 'Financia - Personalizacao (white-label)',
-      automatic_payment_methods: { enabled: true },
-      metadata: { user_id: user.id, kind: 'white_label' },
-    });
-
-    if (!paymentIntent || !paymentIntent.client_secret) {
-      return jsonResponse(500, { error: 'no_client_secret' });
-    }
-
-    return jsonResponse(200, {
-      clientSecret: paymentIntent.client_secret,
-      paymentIntentId: paymentIntent.id,
-    });
-  } catch (err) {
-    const statusCode = err && err.statusCode ? Number(err.statusCode) : 500;
-    const code = stripeErrorCode(err, null);
-    if (statusCode >= 400 && statusCode < 500) {
-      return jsonResponse(statusCode, { error: code });
-    }
-    const message = err && err.message ? err.message : String(err);
-    return jsonResponse(500, { error: String(message) });
-  }
+Deno.serve(async (req) => {
+  if (req.method === 'OPTIONS') return handleOptions();
+  return withLogging('create-payment', async (req, logger) => {
+    return handler(req, logger);
+  })(req);
 });
