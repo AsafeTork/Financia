@@ -4,12 +4,13 @@ USER root
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     xvfb \
+    unzip \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 USER codespace
 
-RUN curl -fsSL https://deno.land/install.sh | sh -s -- v2
+RUN curl -fsSL https://deno.land/install.sh | sh
 
 ENV DENO_INSTALL="/home/codespace/.deno"
 ENV PATH="${DENO_INSTALL}/bin:${PATH}"
