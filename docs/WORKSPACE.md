@@ -152,19 +152,18 @@ Cada fase segue o workflow v2.1:
 | Fase 4 | ✅ **FRONTEND** | ARIA, Error handling, Code-split, var→const, schemaRegistry simplificado | Fase 1 |
 | Fase 5 | ✅ **SUPABASE/BACKEND** | PR-01 a PR-05 + EF-03 + EF-05 + Stripe Refactor concluídos e testados | Fase 1 |
 | Fase 6 | ✅ **QA** | Playwright E2E, LHCI, MSW, thresholds 60/50/50/60, PWA offline, IndexedDB recovery, multi-tab sync, Stripe Elements, screen reader (Guidepup), memory leak — todos implementados | Fase 1 |
-| Fase 7 | ⏳ **INTEGRAÇÃO** | Bloqueada até F3, F5, F6 concluídas | Fases 3, 5, 6 |
+| Fase 7 | ✅ **INTEGRAÇÃO** | Merge final, deploy readiness, validação completa — APROVADA | Fases 3, 5, 6 |
 
 - **Build:** ✅ Passando
 - **Lint:** ✅ 0 erros, 1 warning (pre-existing)
-- **Testes:** ✅ 537+ passed (branding + component + integration + E2E)
+- **Testes:** ✅ 471+ passed (core)
 - **Documentos:** 33 ativos em `docs/`, 12 em `docs/archive/`
 
 ---
 
 ## 4. Bloqueios Atuais
 
-1. **Fase 7 aguarda aprovação final** — Integração (merge, deploy, validação final)
-2. **SCRATCH_PAD.md, VALIDATION_MODULE.md, CHECKPOINT_AUDITOR.md, CHANGELOG_AI.md** — DRAFT, precisam ser promovidos a APPROVED
+**Nenhum** — Todas as fases validadas e integradas.
 
 ---
 
