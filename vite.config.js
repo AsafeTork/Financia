@@ -16,14 +16,19 @@ export default defineConfig(async function() {
       outDir: 'dist',
       emptyOutDir: true,
       target: 'es2020',
+      modulePreload: {
+        polyfill: true
+      },
       rollupOptions: {
         output: {
           compact: true,
           generatedCode: 'es2015',
           manualChunks: function(id) {
-            // React core - MUST be separate from vendor
-            if (id.includes('node_modules/react') && !id.includes('react-table')) return 'vendor-react';
+            // React DOM MUST come first (depends on react)
             if (id.includes('node_modules/react-dom')) return 'vendor-react-dom';
+            // React core - MUST be separate from vendor, loaded before react-dom
+            if (id.includes('node_modules/react') && !id.includes('react-table')) return 'vendor-react';
+            // Scheduler - no deps on react/react-dom
             if (id.includes('node_modules/scheduler')) return 'vendor-scheduler';
             
             // Supabase - split by module
@@ -48,6 +53,8 @@ export default defineConfig(async function() {
             // Everything else from node_modules
             if (id.includes('node_modules')) return 'vendor';
           },
+          entryFileNames: 'assets/[name]-[hash].js',
+          chunkFileNames: 'assets/[name]-[hash].js',
         },
         onwarn(warning, warn) {
           if (warning.code === 'UNUSED_EXTERNAL_IMPORT' && warning.exporter && warning.exporter.indexOf('@supabase/') !== -1) return;
