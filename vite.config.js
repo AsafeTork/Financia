@@ -20,7 +20,34 @@ export default defineConfig(async function() {
         output: {
           compact: true,
           generatedCode: 'es2015',
-          manualChunks: undefined,  // Let Rollup decide
+          manualChunks: function(id) {
+            // React core - MUST be separate from vendor
+            if (id.includes('node_modules/react') && !id.includes('react-table')) return 'vendor-react';
+            if (id.includes('node_modules/react-dom')) return 'vendor-react-dom';
+            if (id.includes('node_modules/scheduler')) return 'vendor-scheduler';
+            
+            // Supabase - split by module
+            if (id.indexOf('@supabase/postgrest-js') !== -1) return 'supabase-db';
+            if (id.indexOf('@supabase/auth-js') !== -1) return 'supabase-auth';
+            if (id.indexOf('@supabase/storage-js') !== -1) return 'supabase-storage';
+            if (id.indexOf('@supabase/functions-js') !== -1) return 'supabase-functions';
+            if (id.includes('node_modules/@supabase')) return 'supabase';
+            
+            // TanStack Query
+            if (id.includes('node_modules/@tanstack/query-core') || id.includes('node_modules/@tanstack/react-query')) return 'query';
+            
+            // Dexie
+            if (id.includes('node_modules/dexie')) return 'dexie';
+            
+            // Radix UI
+            if (id.includes('node_modules/@radix-ui')) return 'radix';
+            
+            // Stripe
+            if (id.includes('node_modules/@stripe')) return 'stripe';
+            
+            // Everything else from node_modules
+            if (id.includes('node_modules')) return 'vendor';
+          },
         },
         onwarn(warning, warn) {
           if (warning.code === 'UNUSED_EXTERNAL_IMPORT' && warning.exporter && warning.exporter.indexOf('@supabase/') !== -1) return;
@@ -29,7 +56,7 @@ export default defineConfig(async function() {
           warn(warning);
         }
       },
-      chunkSizeWarningLimit: 300,
+      chunkSizeWarningLimit: 500,
     },
     esbuild: {
       jsx: 'automatic',
