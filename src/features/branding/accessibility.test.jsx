@@ -1,7 +1,6 @@
 // @vitest-environment jsdom
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import { render, screen, cleanup } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import BrandStudioView from './BrandStudioView.jsx';
 import BrandGlobalEditor from './BrandGlobalEditor.jsx';
 import PlanTabsEditor from './PlanTabsEditor.jsx';

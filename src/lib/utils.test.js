@@ -24,7 +24,7 @@ describe('safe', function() {
     expect(safe(() => { throw new Error('javascript:alert(1)'); })).toBe('');
   });
   it('limita a 200 caracteres', function() {
-    var long = Array(250).fill('a').join('');
+    const long = Array(250).fill('a').join('');
     expect(safe(() => { throw new Error(long); }).length).toBe(200);
   });
   it('passa string normal sem alteracao', function() {
@@ -40,23 +40,23 @@ describe('safe', function() {
 
 describe('deriveCores', function() {
   it('retorna secondary e accent', function() {
-    var r = deriveCores('#002f59');
+    const r = deriveCores('#002f59');
     expect(r).toHaveProperty('secondary');
     expect(r).toHaveProperty('accent');
   });
   it('secondary e accent sao strings hex', function() {
-    var r = deriveCores('#002f59');
+    const r = deriveCores('#002f59');
     expect(r.secondary).toMatch(/^#[0-9a-f]{6}$/i);
     expect(r.accent).toMatch(/^#[0-9a-f]{6}$/i);
   });
   it('accent e mais claro que secondary', function() {
-    var r = deriveCores('#002f59');
-    var lumAccent = parseInt(r.accent.replace('#', ''), 16);
-    var lumSecondary = parseInt(r.secondary.replace('#', ''), 16);
+    const r = deriveCores('#002f59');
+    const lumAccent = parseInt(r.accent.replace('#', ''), 16);
+    const lumSecondary = parseInt(r.secondary.replace('#', ''), 16);
     expect(lumAccent).toBeGreaterThan(lumSecondary);
   });
   it('funciona com null (usa fallback)', function() {
-    var r = deriveCores(null);
+    const r = deriveCores(null);
     expect(r.secondary).toBe('#6c757d');
     expect(r.accent).toBe('#0dcaf0');
   });

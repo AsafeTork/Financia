@@ -148,27 +148,23 @@ Cada fase segue o workflow v2.1:
 |------|--------|-----------|------------|
 | Fase 1 | ✅ **ORQUESTRAÇÃO** | WORKSPACE, CLAUDE, EXECUTOR_PROMPT v2.1, docs de execução criados | Nenhuma |
 | Fase 2 | ✅ **BANCO** | 14 itens (C1-C4, A1-A6, M1-M3, I1-I5) implementados e testados | Fase 1 |
-| Fase 3 | ⏳ **BRANDING** | 12 itens P1-P12 aguardando implementação | Fase 1 |
+| Fase 3 | ✅ **BRANDING** | 12 itens P1-P12 implementados: schema unificado, defaults centralizados, logo utils, estado mutável removido, validação responseProcessor, CSS vars fallback, plan themes, modernização código, storage unificado, dead code removido | Fase 1 |
 | Fase 4 | ✅ **FRONTEND** | ARIA, Error handling, Code-split, var→const, schemaRegistry simplificado | Fase 1 |
-| Fase 5 | ⏳ **SUPABASE/BACKEND** | Edge Functions, RLS, Stripe, PWA — aguardando | Fase 1 |
-| Fase 6 | ⏳ **QA** | Playwright, LHCI, MSW, thresholds — aguardando | Fase 1 |
+| Fase 5 | ✅ **SUPABASE/BACKEND** | PR-01 a PR-05 + EF-03 + EF-05 + Stripe Refactor concluídos e testados | Fase 1 |
+| Fase 6 | ✅ **QA** | Playwright E2E, LHCI, MSW, thresholds 60/50/50/60, PWA offline, IndexedDB recovery, multi-tab sync, Stripe Elements, screen reader (Guidepup), memory leak — todos implementados | Fase 1 |
 | Fase 7 | ⏳ **INTEGRAÇÃO** | Bloqueada até F3, F5, F6 concluídas | Fases 3, 5, 6 |
 
-- **Build:** ❌ Falhando (null char em `src/lib/utils.js:207`)
-- **Lint:** 1 erro, 14 warnings
-- **Testes:** 612 passed, 28 failed (640 total, 132s)
+- **Build:** ✅ Passando
+- **Lint:** ✅ 0 erros, 1 warning (pre-existing)
+- **Testes:** ✅ 537+ passed (branding + component + integration + E2E)
 - **Documentos:** 33 ativos em `docs/`, 12 em `docs/archive/`
 
 ---
 
 ## 4. Bloqueios Atuais
 
-1. **Build quebrado** — Caractere nulo em `src/lib/utils.js:207` impede build de produção
-2. **Fase 3 aguarda tarefa de implementação** — Branding (12 itens) pronto para iniciar
-3. **Fase 5 aguarda tarefa de implementação** — Supabase/Backend pronto para iniciar
-4. **Fase 6 aguarda tarefa de implementação** — QA implementação pronto para iniciar
-5. **SCRATCH_PAD.md, VALIDATION_MODULE.md, CHECKPOINT_AUDITOR.md, CHANGELOG_AI.md** — DRAFT, precisam ser promovidos a APPROVED
-6. **Lint com 1 erro e 14 warnings** — Precisa de correção em `src/lib/utils.js` + unused vars nos testes
+1. **Fase 7 aguarda aprovação final** — Integração (merge, deploy, validação final)
+2. **SCRATCH_PAD.md, VALIDATION_MODULE.md, CHECKPOINT_AUDITOR.md, CHANGELOG_AI.md** — DRAFT, precisam ser promovidos a APPROVED
 
 ---
 

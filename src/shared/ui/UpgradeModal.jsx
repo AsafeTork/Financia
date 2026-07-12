@@ -14,7 +14,8 @@ export default function UpgradeModal({ reason, brand, onClose, onNav }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 anim-fade" style={{ background: 'rgba(15,23,42,0.55)', backdropFilter: 'blur(3px)', WebkitBackdropFilter: 'blur(3px)' }}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 anim-fade" style={{ background: 'rgba(15,23,42,0.55)', backdropFilter: 'blur(3px)', WebkitBackdropFilter: 'blur(3px)' }}
+      data-testid="upgrade-modal-overlay">
       <div className="rounded-2xl w-full max-w-md flex flex-col anim-scale" style={{ background: 'var(--bg-card)', boxShadow: 'var(--shadow-lg)', maxHeight: '92vh' }}>
 
         <div className="px-6 pt-6 pb-4 flex-shrink-0">
@@ -29,7 +30,8 @@ export default function UpgradeModal({ reason, brand, onClose, onNav }) {
                   : 'Mais espaço, mais recursos e suporte para o seu negócio crescer.'}
               </p>
             </div>
-            <button onClick={onClose} aria-label="Fechar" className="p-2 rounded-lg flex-shrink-0 min-h-[44px] min-w-[44px] flex items-center justify-center transition hover:opacity-70" style={{ color: 'var(--text-muted)' }}>
+            <button onClick={onClose} aria-label="Fechar" className="p-2 rounded-lg flex-shrink-0 min-h-[44px] min-w-[44px] flex items-center justify-center transition hover:opacity-70" style={{ color: 'var(--text-muted)' }}
+              data-testid="upgrade-modal-close">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
           </div>
@@ -60,7 +62,8 @@ export default function UpgradeModal({ reason, brand, onClose, onNav }) {
                 </div>
                 <button type="button" onClick={function() { handlePlanClick(p); }}
                   className="block w-full text-center text-sm font-semibold py-3 rounded-xl transition hover:opacity-90 min-h-[44px] flex items-center justify-center"
-                  style={popular ? { background: c, color: '#fff' } : { border: '1px solid var(--border-md)', color: 'var(--text-main)' }}>
+                  style={popular ? { background: c, color: '#fff' } : { border: '1px solid var(--border-md)', color: 'var(--text-main)' }}
+                  data-testid="upgrade-modal-plan-button">
                   <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
                   Assinar {p.name}
                 </button>
@@ -70,7 +73,8 @@ export default function UpgradeModal({ reason, brand, onClose, onNav }) {
         </div>
 
         <div className="px-6 py-4 flex-shrink-0">
-          <button onClick={onClose} className="w-full rounded-xl py-3 text-sm font-medium min-h-[44px] flex items-center justify-center transition hover:opacity-70" style={{ color: 'var(--text-muted)' }}>
+          <button onClick={onClose} className="w-full rounded-xl py-3 text-sm font-medium min-h-[44px] flex items-center justify-center transition hover:opacity-70" style={{ color: 'var(--text-muted)' }}
+            data-testid="upgrade-modal-cancel">
             Agora não
           </button>
         </div>

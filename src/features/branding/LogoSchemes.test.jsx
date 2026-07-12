@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, it, expect } from 'vitest';
-import { generateLogoSvg, logoSvgToDataUrl } from './LogoSchemes.jsx';
+import { generateLogoSvg, logoSvgToDataUrl } from './logoUtils.js';
 
 describe('LogoSchemes - generateLogoSvg', function() {
 
@@ -48,28 +48,28 @@ describe('LogoSchemes - generateLogoSvg', function() {
   });
 });
 
-describe('LogoSchemes - logoSvgToDataUrl', function() {
+describe('logoSvgToDataUrl', function() {
 
-  it('converte SVG para data URL', function() {
-    const svg = '<svg>test</svg>';
-    const dataUrl = logoSvgToDataUrl(svg);
-    expect(dataUrl).toBe('data:image/svg+xml,%3Csvg%3Etest%3C%2Fsvg%3E');
-  });
+    it('converte SVG para data URL', function() {
+      const svg = '<svg>test</svg>';
+      const dataUrl = logoSvgToDataUrl(svg);
+      expect(dataUrl).toBe('data:image/svg+xml,%3Csvg%3Etest%3C%2Fsvg%3E');
+    });
 
-  it('codifica caracteres especiais', function() {
-    const svg = '<svg width="400" height="400"><rect fill="#ff0000"/></svg>';
-    const dataUrl = logoSvgToDataUrl(svg);
-    expect(dataUrl).toContain('%23ff0000');
-    expect(dataUrl).toContain('%22');
-  });
+    it('codifica caracteres especiais', function() {
+      const svg = '<svg width="400" height="400"><rect fill="#ff0000"/></svg>';
+      const dataUrl = logoSvgToDataUrl(svg);
+      expect(dataUrl).toContain('%23ff0000');
+      expect(dataUrl).toContain('%22');
+    });
 
-  it('retorna string nao vazia', function() {
-    const dataUrl = logoSvgToDataUrl('<svg/>');
-    expect(typeof dataUrl).toBe('string');
-    expect(dataUrl.length).toBeGreaterThan(0);
-    expect(dataUrl.startsWith('data:image/svg+xml,')).toBe(true);
+    it('retorna string nao vazia', function() {
+      const dataUrl = logoSvgToDataUrl('<svg/>');
+      expect(typeof dataUrl).toBe('string');
+      expect(dataUrl.length).toBeGreaterThan(0);
+      expect(dataUrl.startsWith('data:image/svg+xml,')).toBe(true);
+    });
   });
-});
 
 describe('LogoSchemes - buildCheckPath (internal)', function() {
   // buildCheckPath is not exported, but we test via generateLogoSvg

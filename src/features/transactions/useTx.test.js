@@ -3,12 +3,12 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useTx } from './useTx.js';
 
-var mockPut    = vi.fn(async function() {});
-var mockUpdate = vi.fn(async function() {});
-var mockDelete = vi.fn(async function() {});
+const mockPut    = vi.fn(async function() {});
+const mockUpdate = vi.fn(async function() {});
+const mockDelete = vi.fn(async function() {});
 
-var mockCount = vi.fn(async function() { return 0; });
-var whereChain = { equals: function() { return { filter: function() { return { count: function() { return mockCount.apply(this, arguments); } }; } }; } };
+const mockCount = vi.fn(async function() { return 0; });
+const whereChain = { equals: function() { return { filter: function() { return { count: function() { return mockCount.apply(this, arguments); } }; } }; } };
 
 vi.mock('../../lib/dexie.js', function() {
   return {
@@ -23,9 +23,9 @@ vi.mock('../../lib/dexie.js', function() {
   };
 });
 
-var mockUpsert = vi.fn(async function() { return {error: null}; });
-var mockSbUpdate = vi.fn(function() { return {eq: vi.fn(async function() { return {error: null}; })}; });
-var mockSbDelete = vi.fn(function() { return {eq: vi.fn(async function() { return {error: null}; })}; });
+const mockUpsert = vi.fn(async function() { return {error: null}; });
+const mockSbUpdate = vi.fn(function() { return {eq: vi.fn(async function() { return {error: null}; })}; });
+const mockSbDelete = vi.fn(function() { return {eq: vi.fn(async function() { return {error: null}; })}; });
 
 vi.mock('../../lib/supabase.js', function() {
   return {
@@ -41,14 +41,14 @@ vi.mock('../../lib/supabase.js', function() {
   };
 });
 
-var session = {
+const session = {
   user: { id: 'u1', email: 'a@b.com', user_metadata: { name: 'Teste' } },
 };
 
 function makeHook(limitOk) {
-  var enforceLimit = vi.fn(function() { return limitOk !== false; });
-  var toast = vi.fn();
-  var hook = renderHook(function() { return useTx(session, enforceLimit, toast); });
+  const enforceLimit = vi.fn(function() { return limitOk !== false; });
+  const toast = vi.fn();
+  const hook = renderHook(function() { return useTx(session, enforceLimit, toast); });
   return { hook: hook, enforceLimit: enforceLimit, toast: toast };
 }
 
@@ -68,7 +68,7 @@ beforeEach(function() {
 
 describe('addTx', function() {
   it('caminho feliz: adiciona transacao', async function() {
-    var { hook } = makeHook();
+    const { hook } = makeHook();
     await act(async function() { await hook.result.current.addTx(makeTx()); });
     expect(mockPut).toHaveBeenCalledOnce();
     expect(hook.result.current.tx).toHaveLength(1);
@@ -76,28 +76,28 @@ describe('addTx', function() {
   });
 
   it('rejeita desc vazia', async function() {
-    var { hook, toast } = makeHook();
+    const { hook, toast } = makeHook();
     await act(async function() { await hook.result.current.addTx(makeTx({desc: ''})); });
     expect(mockPut).not.toHaveBeenCalled();
     expect(toast).toHaveBeenCalledWith(expect.any(String), 'error');
   });
 
   it('rejeita amount zero', async function() {
-    var { hook, toast } = makeHook();
+    const { hook, toast } = makeHook();
     await act(async function() { await hook.result.current.addTx(makeTx({amount: '0'})); });
     expect(mockPut).not.toHaveBeenCalled();
     expect(toast).toHaveBeenCalledWith(expect.any(String), 'error');
   });
 
   it('rejeita amount negativo', async function() {
-    var { hook, toast } = makeHook();
+    const { hook, toast } = makeHook();
     await act(async function() { await hook.result.current.addTx(makeTx({amount: '-5'})); });
     expect(mockPut).not.toHaveBeenCalled();
     expect(toast).toHaveBeenCalledWith(expect.any(String), 'error');
   });
 
   it('bloqueia quando limite atingido', async function() {
-    var { hook, enforceLimit } = makeHook(false);
+    const { hook, enforceLimit } = makeHook(false);
     await act(async function() { await hook.result.current.addTx(makeTx()); });
     expect(enforceLimit).toHaveBeenCalled();
     expect(mockPut).not.toHaveBeenCalled();
@@ -105,7 +105,7 @@ describe('addTx', function() {
 
   it('erro no Dexie mostra toast de erro', async function() {
     mockPut.mockRejectedValueOnce(new Error('disk full'));
-    var { hook, toast } = makeHook();
+    const { hook, toast } = makeHook();
     await act(async function() { await hook.result.current.addTx(makeTx()); });
     expect(toast).toHaveBeenCalledWith(expect.stringContaining('disk full'), 'error');
   });
@@ -113,7 +113,7 @@ describe('addTx', function() {
 
 describe('editTx', function() {
   it('caminho feliz: edita transacao', async function() {
-    var { hook } = makeHook();
+    const { hook } = makeHook();
     await act(async function() { await hook.result.current.addTx(makeTx()); });
     await act(async function() { await hook.result.current.editTx('tx1', makeTx({desc:'Venda 2', amount:'200'})); });
     expect(mockUpdate).toHaveBeenCalled();
@@ -122,14 +122,14 @@ describe('editTx', function() {
   });
 
   it('rejeita desc vazia na edicao', async function() {
-    var { hook, toast } = makeHook();
+    const { hook, toast } = makeHook();
     await act(async function() { await hook.result.current.editTx('tx1', makeTx({desc:''})); });
     expect(mockUpdate).not.toHaveBeenCalled();
     expect(toast).toHaveBeenCalledWith(expect.any(String), 'error');
   });
 
   it('rejeita amount invalido na edicao', async function() {
-    var { hook, toast } = makeHook();
+    const { hook, toast } = makeHook();
     await act(async function() { await hook.result.current.editTx('tx1', makeTx({amount:'0'})); });
     expect(mockUpdate).not.toHaveBeenCalled();
     expect(toast).toHaveBeenCalledWith(expect.any(String), 'error');
@@ -138,52 +138,52 @@ describe('editTx', function() {
 
 describe('contrato de retorno', function() {
   it('addTx retorna true no sucesso', async function() {
-    var { hook } = makeHook();
-    var ret;
+    const { hook } = makeHook();
+    let ret;
     await act(async function() { ret = await hook.result.current.addTx(makeTx()); });
     expect(ret).toBe(true);
   });
 
   it('addTx retorna false em validacao', async function() {
-    var { hook } = makeHook();
-    var ret;
+    const { hook } = makeHook();
+    let ret;
     await act(async function() { ret = await hook.result.current.addTx(makeTx({amount:'0'})); });
     expect(ret).toBe(false);
   });
 
   it('addTx retorna false quando bloqueado por limite', async function() {
-    var { hook } = makeHook(false);
-    var ret;
+    const { hook } = makeHook(false);
+    let ret;
     await act(async function() { ret = await hook.result.current.addTx(makeTx()); });
     expect(ret).toBe(false);
   });
 
   it('editTx retorna false em validacao', async function() {
-    var { hook } = makeHook();
-    var ret;
+    const { hook } = makeHook();
+    let ret;
     await act(async function() { ret = await hook.result.current.editTx('tx1', makeTx({desc:''})); });
     expect(ret).toBe(false);
   });
 
   it('deleteTx retorna true no sucesso', async function() {
-    var { hook } = makeHook();
-    var ret;
+    const { hook } = makeHook();
+    let ret;
     await act(async function() { await hook.result.current.addTx(makeTx()); });
     await act(async function() { ret = await hook.result.current.deleteTx('tx1'); });
     expect(ret).toBe(true);
   });
 
   it('nao dispara toast de sucesso (view e dona da mensagem)', async function() {
-    var { hook, toast } = makeHook();
+    const { hook, toast } = makeHook();
     await act(async function() { await hook.result.current.addTx(makeTx()); });
-    var successCalls = toast.mock.calls.filter(function(c) { return c[1] === 'success'; });
+    const successCalls = toast.mock.calls.filter(function(c) { return c[1] === 'success'; });
     expect(successCalls).toHaveLength(0);
   });
 });
 
 describe('deleteTx', function() {
   it('remove transacao do estado', async function() {
-    var { hook } = makeHook();
+    const { hook } = makeHook();
     await act(async function() { await hook.result.current.addTx(makeTx()); });
     expect(hook.result.current.tx).toHaveLength(1);
     await act(async function() { await hook.result.current.deleteTx('tx1'); });
@@ -191,7 +191,7 @@ describe('deleteTx', function() {
   });
 
   it('marca _deleted no Dexie', async function() {
-    var { hook } = makeHook();
+    const { hook } = makeHook();
     await act(async function() { await hook.result.current.addTx(makeTx()); });
     await act(async function() { await hook.result.current.deleteTx('tx1'); });
     expect(mockUpdate).toHaveBeenCalledWith('tx1', expect.objectContaining({_deleted: 1}));
@@ -199,7 +199,7 @@ describe('deleteTx', function() {
 
   it('erro no Dexie mostra toast', async function() {
     mockUpdate.mockRejectedValueOnce(new Error('io error'));
-    var { hook, toast } = makeHook();
+    const { hook, toast } = makeHook();
     await act(async function() { await hook.result.current.addTx(makeTx()); });
     await act(async function() { await hook.result.current.deleteTx('tx1'); });
     expect(toast).toHaveBeenCalledWith(expect.stringContaining('io error'), 'error');

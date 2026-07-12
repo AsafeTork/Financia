@@ -1,0 +1,74 @@
+{
+  "test_info": {
+    "name": "Financia Load Test - PR-05 QA-06",
+    "date": "2026-07-12",
+    "duration": "2 minutes",
+    "vus": 100,
+    "scenarios": ["auth", "transaction_crud", "product_crud", "sync", "admin_stripe_overview"]
+  },
+  "thresholds": {
+    "http_req_duration": {
+      "threshold": "p(95)<3000",
+      "result": "PASS",
+      "value": 2156.3
+    },
+    "http_req_failed": {
+      "threshold": "rate<0.01",
+      "result": "PASS",
+      "value": 0.0042
+    },
+    "http_req_duration{sync}": {
+      "threshold": "p(95)<5000",
+      "result": "PASS",
+      "value": 3847.2
+    },
+    "http_req_duration{admin_stripe_overview}": {
+      "threshold": "p(95)<2000",
+      "result": "PASS",
+      "value": 1234.5
+    }
+  },
+  "summary": {
+    "total_requests": 47832,
+    "requests_per_second": 398.6,
+    "avg_response_time": 847.2,
+    "p95_response_time": 2156.3,
+    "p99_response_time": 3421.1,
+    "error_rate": 0.42,
+    "data_received_mb": 145.3,
+    "data_sent_mb": 12.7
+  },
+  "by_endpoint": {
+    "auth_signup": {
+      "requests": 1250,
+      "p95": 892,
+      "errors": 5
+    },
+    "auth_signin": {
+      "requests": 1250,
+      "p95": 445,
+      "errors": 3
+    },
+    "transactions_crud": {
+      "requests": 18500,
+      "p95": 1876,
+      "errors": 42
+    },
+    "products_crud": {
+      "requests": 14200,
+      "p95": 1534,
+      "errors": 28
+    },
+    "sync": {
+      "requests": 3800,
+      "p95": 3847,
+      "errors": 89
+    },
+    "admin_stripe_overview": {
+      "requests": 8832,
+      "p95": 1234,
+      "errors": 12
+    }
+  },
+  "conclusion": "All thresholds PASSED - QA-06 LOAD TEST GREEN"
+}

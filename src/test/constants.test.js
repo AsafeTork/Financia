@@ -6,10 +6,10 @@ import {
   PRICING_PLANS, THEME_PRESETS, NAV, TEMPLATES,
 } from '../lib/constants.js';
 
-var FREE = { plan: 'free' };
-var PRO  = { plan: 'pro', plan_expires_at: null };
-var PRO_EXPIRED  = { plan: 'pro', plan_expires_at: '2000-01-01T00:00:00Z' };
-var PRO_FUTURE   = { plan: 'pro', plan_expires_at: '2099-12-31T00:00:00Z' };
+const FREE = { plan: 'free' };
+const PRO  = { plan: 'pro', plan_expires_at: null };
+const PRO_EXPIRED  = { plan: 'pro', plan_expires_at: '2000-01-01T00:00:00Z' };
+const PRO_FUTURE   = { plan: 'pro', plan_expires_at: '2099-12-31T00:00:00Z' };
 
 // ---------------------------------------------------------------------------
 // PLAN_LIMITS
@@ -54,7 +54,7 @@ describe('effectivePlan', function() {
     expect(effectivePlan({ plan: 'pro', plan_expires_at: null })).toBe('pro');
   });
   it('retorna apenas "free" ou "pro"', function() {
-    var results = [effectivePlan(FREE), effectivePlan(PRO), effectivePlan(null)];
+    const results = [effectivePlan(FREE), effectivePlan(PRO), effectivePlan(null)];
     results.forEach(function(r) { expect(['free', 'pro']).toContain(r); });
   });
 });
@@ -181,7 +181,7 @@ describe('NAV', function() {
   it('contém settings', function() { expect(NAV.some(function(n) { return n.key === 'settings'; })).toBe(true); });
   it('contém report', function() { expect(NAV.some(function(n) { return n.key === 'report'; })).toBe(true); });
   it('email tem adminOnly = true', function() {
-    var email = NAV.find(function(n) { return n.key === 'email'; });
+    const email = NAV.find(function(n) { return n.key === 'email'; });
     expect(email.adminOnly).toBe(true);
   });
   it('todos têm key e label', function() {
@@ -194,7 +194,7 @@ describe('NAV', function() {
     NAV.forEach(function(n) { expect(typeof n.d).toBe('string'); });
   });
   it('dashboard não tem adminOnly', function() {
-    var d = NAV.find(function(n) { return n.key === 'dashboard'; });
+    const d = NAV.find(function(n) { return n.key === 'dashboard'; });
     expect(d.adminOnly).toBeFalsy();
   });
 });
@@ -220,7 +220,7 @@ describe('THEME_PRESETS', function() {
     THEME_PRESETS.forEach(function(t) { expect(typeof t.segment).toBe('string'); });
   });
   it('nomes são únicos', function() {
-    var names = THEME_PRESETS.map(function(t) { return t.name; });
+    const names = THEME_PRESETS.map(function(t) { return t.name; });
     expect(new Set(names).size).toBe(names.length);
   });
 });

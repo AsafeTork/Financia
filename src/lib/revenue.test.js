@@ -9,7 +9,7 @@ describe('countsAsRevenue', function() {
     expect(countsAsRevenue({ plan: 'pro', plan_activated_by: 'admin@x.com' })).toBe(true);
   });
   it('premium pago futuro => true', function() {
-    var future = new Date(Date.now() + 86400000).toISOString();
+    const future = new Date(Date.now() + 86400000).toISOString();
     expect(countsAsRevenue({ plan: 'premium', plan_activated_by: 'uuid', plan_expires_at: future })).toBe(true);
   });
   it('free => false', function() { expect(countsAsRevenue({ plan: 'free' })).toBe(false); });

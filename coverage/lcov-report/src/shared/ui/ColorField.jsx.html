@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">50% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/6</span>
+                <span class='fraction'>3/6</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">50% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/4</span>
+                <span class='fraction'>2/4</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/4</span>
+                <span class='fraction'>4/4</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">60% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/5</span>
+                <span class='fraction'>3/5</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line medium'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -90,25 +90,31 @@
 <a name='L25'></a><a href='#L25'>25</a>
 <a name='L26'></a><a href='#L26'>26</a>
 <a name='L27'></a><a href='#L27'>27</a>
-<a name='L28'></a><a href='#L28'>28</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L28'></a><a href='#L28'>28</a>
+<a name='L29'></a><a href='#L29'>29</a>
+<a name='L30'></a><a href='#L30'>30</a>
+<a name='L31'></a><a href='#L31'>31</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">36x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">36x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -119,27 +125,30 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import React from 'react';
 &nbsp;
-function <span class="fstat-no" title="function not covered" >isValidHex(v</span>) {
-<span class="cstat-no" title="statement not covered" >  return /^#[0-9a-fA-F]{6}$/.test(v);</span>
+function isValidHex(v) {
+  return /^#[0-9a-fA-F]{6}$/.test(v);
 }
 &nbsp;
-export default function <span class="fstat-no" title="function not covered" >ColorField({</span> label, desc, value, onChange }) {
-<span class="cstat-no" title="statement not covered" >  return (</span>
+export default function ColorField({ label, desc, value, onChange }) {
+  return (
     &lt;div className="flex flex-col gap-1.5"&gt;
       &lt;div&gt;
         &lt;p className="text-xs font-semibold" style={{color:'var(--text-main)'}}&gt;{label}&lt;/p&gt;
         &lt;p className="text-xs" style={{color:'var(--text-sub)'}}&gt;{desc}&lt;/p&gt;
       &lt;/div&gt;
       &lt;div className="flex items-center gap-2"&gt;
-        &lt;input type="color" aria-label={label + ' (seletor)'} value={isValidHex(value) ? value : '#002f59'} <span class="fstat-no" title="function not covered" >onChange={f</span>unction(e) { <span class="cstat-no" title="statement not covered" >onChange(e.target.value); }</span>}
-          className="w-9 h-9 rounded-xl cursor-pointer p-0.5 flex-shrink-0" style={{border:'1px solid var(--border)'}}/&gt;
-        &lt;input aria-label={label + ' (hex)'} value={value} <span class="fstat-no" title="function not covered" >onChange={f</span>unction(e) {
+        &lt;input type="color" aria-label={label + ' (seletor)'} value={isValidHex(value) ? value : '#002f59'} onChange={function(e) { onChange(e.target.value); }}
+          className="w-9 h-9 rounded-xl cursor-pointer p-0.5 flex-shrink-0" style={{border:'1px solid var(--border)'}}
+          data-testid="color-field-picker"/&gt;
+        &lt;input aria-label={label + ' (hex)'} value={value} onChange={function(e) {
           var raw = <span class="cstat-no" title="statement not covered" >e.target.value;</span>
 <span class="cstat-no" title="statement not covered" >          if (/^#[0-9a-fA-F]{0,6}$/.test(raw)) <span class="cstat-no" title="statement not covered" >onChange(raw);</span></span>
         }}
           placeholder="#000000" maxLength={7}
-          className="rounded-xl px-3 py-2 text-sm font-mono flex-1 focus:outline-none" style={{background:'var(--bg-input)', color:'var(--text-main)', border:'1px solid var(--border)'}}/&gt;
-        &lt;div className="w-8 h-8 rounded-xl flex-shrink-0" style={{background: value, border:'1px solid var(--border)'}}/&gt;
+          className="rounded-xl px-3 py-2 text-sm font-mono flex-1 focus:outline-none" style={{background:'var(--bg-input)', color:'var(--text-main)', border:'1px solid var(--border)'}}
+          data-testid="color-field-hex-input"/&gt;
+        &lt;div className="w-8 h-8 rounded-xl flex-shrink-0" style={{background: value, border:'1px solid var(--border)'}}
+          data-testid="color-field-preview"/&gt;
       &lt;/div&gt;
     &lt;/div&gt;
   );
@@ -151,7 +160,7 @@ export default function <span class="fstat-no" title="function not covered" >Col
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-07-11T14:44:18.962Z
+                at 2026-07-12T14:09:57.405Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

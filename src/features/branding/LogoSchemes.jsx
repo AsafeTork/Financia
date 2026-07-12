@@ -1,28 +1,37 @@
 import React from 'react';
 import { generateLogoSvg, logoSvgToDataUrl, buildCheckPath } from './logoUtils.js';
 import { OFFICIAL_LOGO_COLORS, LOGO_ELEMENTS } from './defaults.js';
+import { loadLogoSchemesFromDb, persistLogoScheme, deleteLogoSchemeFromDb, migrateLogoSchemesFromLocalStorage } from './presets.js';
 
-function loadSchemes() {
-  try {
-    const raw = localStorage.getItem('financia_logo_schemes');
-    return raw ? JSON.parse(raw) : [];
-  } catch { return []; }
-}
-
-function saveSchemes(schemes) {
-  try { localStorage.setItem('financia_logo_schemes', JSON.stringify(schemes)); } catch (_) { void _; }
+function genId() {
+  return `scheme_${Date.now()}_${Math.random().toString(36).slice(2)}`;
 }
 
 export default function LogoSchemes({ brandColor, toast, onApply }) {
   const [colors, setColors] = React.useState({ ...OFFICIAL_LOGO_COLORS });
   const [schemeName, setSchemeName] = React.useState('');
-  const [schemes, setSchemes] = React.useState(loadSchemes);
+  const [schemes, setSchemes] = React.useState([]);
   const [jsonInput, setJsonInput] = React.useState(JSON.stringify(OFFICIAL_LOGO_COLORS, null, 2));
+
+  React.useEffect(() => {
+    const loadSchemes = async () => {
+      await migrateLogoSchemesFromLocalStorage();
+      const loaded = await loadLogoSchemesFromDb();
+      setSchemes(loaded);
+    };
+    loadSchemes();
+  }, []);
 
   const setColor = (id, val) => {
     setColors(prev => ({ ...prev, [id]: val }));
     setJsonInput(prev => {
-      try { const p = JSON.parse(prev); p[id] = val; return JSON.stringify(p, null, 2); } catch { return prev; }
+      try {
+        const p = JSON.parse(prev);
+        p[id] = val;
+        return JSON.stringify(p, null, 2);
+      } catch {
+        return prev;
+      }
     });
   };
 
@@ -41,12 +50,15 @@ export default function LogoSchemes({ brandColor, toast, onApply }) {
 
   const saveScheme = () => {
     const name = schemeName.trim();
-    if (!name) { if (toast) toast('De um nome para o esquema de cores.', 'warning'); return; }
+    if (!name) {
+      if (toast) toast('De um nome para o esquema de cores.', 'warning');
+      return;
+    }
     const now = Date.now();
-    const entry = { id: `scheme_${now}`, name, colors: { ...colors }, createdAt: now };
+    const entry = { id: genId(), name, colors: { ...colors }, createdAt: now };
     const updated = [entry, ...schemes].slice(0, 20);
     setSchemes(updated);
-    saveSchemes(updated);
+    persistLogoScheme(entry);
     setSchemeName('');
     if (toast) toast(`Esquema "${name}" salvo!`, 'success');
   };
@@ -59,7 +71,7 @@ export default function LogoSchemes({ brandColor, toast, onApply }) {
   const deleteScheme = (id) => {
     const updated = schemes.filter(s => s.id !== id);
     setSchemes(updated);
-    saveSchemes(updated);
+    deleteLogoSchemeFromDb(id);
   };
 
   const resetToOriginal = () => {

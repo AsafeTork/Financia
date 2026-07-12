@@ -51,6 +51,28 @@ jobs:
       - name: Test changed
         run: npx vitest run --changed --reporter=dot --pool=threads --poolOptions.threads.maxThreads=4
 
+  lhci:
+    name: Lighthouse CI
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run build
+      - name: Start preview server
+        run: npm run preview -- --host 0.0.0.0 --port 5173 &
+      - name: Wait for server
+        run: sleep 5
+      - name: Run Lighthouse CI
+        run: npx lhci autorun --upload.target=temporary-public-storage
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
   validate-full:
     name: Validate Full (Push)
     if: github.event_name == 'push'

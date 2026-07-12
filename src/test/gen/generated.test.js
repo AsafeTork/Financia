@@ -16,9 +16,9 @@ import { friendlyStripeError, stripeAppearance } from '../../lib/stripe.js';
 import { periodOf, daysInMonth, dueDate, recurringId, isRecurringId, activeTemplates, buildRecurringRow } from '../../lib/recurring.js';
 import { parsePhone, buildPhone } from '../../shared/ui/PhoneInput.jsx';
 
-var HEX_RE = /^#[0-9a-f]{6}$/i;
+const HEX_RE = /^#[0-9a-f]{6}$/i;
 // 20 hexes representativos (8 invariantes x 20 = 160 testes vs 400 antes)
-var HEXES = [
+const HEXES = [
   '#000000', '#ffffff', '#002f59', '#ff0000', '#00ff00', '#0000ff',
   '#7f1d1d', '#14532d', '#2563eb', '#dc2626', '#16a34a', '#7c3aed',
   '#0d9488', '#1f2937', '#0ea5e9', '#111827', '#4c1d95', '#0f3d3e',
@@ -31,34 +31,34 @@ var HEXES = [
 describe('cores: invariantes por hex', function() {
   HEXES.forEach(function(hex) {
     it('hexToRgb componentes 0-255 inteiros: ' + hex, function() {
-      var c = hexToRgb(hex);
+      const c = hexToRgb(hex);
       expect(Number.isInteger(c.r)).toBe(true);
       expect(c.r).toBeGreaterThanOrEqual(0); expect(c.r).toBeLessThanOrEqual(255);
       expect(c.g).toBeGreaterThanOrEqual(0); expect(c.g).toBeLessThanOrEqual(255);
       expect(c.b).toBeGreaterThanOrEqual(0); expect(c.b).toBeLessThanOrEqual(255);
     });
     it('luminance entre 0 e 1: ' + hex, function() {
-      var l = luminance(hex);
+      const l = luminance(hex);
       expect(l).toBeGreaterThanOrEqual(0); expect(l).toBeLessThanOrEqual(1);
     });
     it('onColor retorna cor de texto valida: ' + hex, function() {
       expect(['#0a2540', '#ffffff']).toContain(onColor(hex));
     });
     it('hexToHsl faixas h/s/l: ' + hex, function() {
-      var hsl = hexToHsl(hex);
+      const hsl = hexToHsl(hex);
       expect(hsl.h).toBeGreaterThanOrEqual(0); expect(hsl.h).toBeLessThanOrEqual(360);
       expect(hsl.s).toBeGreaterThanOrEqual(0); expect(hsl.s).toBeLessThanOrEqual(1);
       expect(hsl.l).toBeGreaterThanOrEqual(0); expect(hsl.l).toBeLessThanOrEqual(1);
     });
     it('hslToHex(hexToHsl) gera hex valido: ' + hex, function() {
-      var hsl = hexToHsl(hex);
+      const hsl = hexToHsl(hex);
       expect(HEX_RE.test(hslToHex(hsl.h, hsl.s, hsl.l))).toBe(true);
     });
     it('lightenHex(0.4) gera hex valido: ' + hex, function() {
       expect(HEX_RE.test(lightenHex(hex, 0.4))).toBe(true);
     });
     it('deriveCores retorna secondary/accent hex validos: ' + hex, function() {
-      var d = deriveCores(hex);
+      const d = deriveCores(hex);
       expect(HEX_RE.test(d.secondary)).toBe(true);
       expect(HEX_RE.test(d.accent)).toBe(true);
     });
@@ -72,7 +72,7 @@ describe('cores: invariantes por hex', function() {
 // 2) hexToRgb / brandAlpha — valores exatos
 // ---------------------------------------------------------------------------
 describe('hexToRgb exato', function() {
-  var T = [
+  const T = [
     ['#000000', 0, 0, 0], ['#ffffff', 255, 255, 255], ['#ff0000', 255, 0, 0],
     ['#00ff00', 0, 255, 0], ['#0000ff', 0, 0, 255], ['#002f59', 0, 47, 89],
     ['#123456', 18, 52, 86], ['#abcdef', 171, 205, 239], ['#0f9d6c', 15, 157, 108],
@@ -80,7 +80,7 @@ describe('hexToRgb exato', function() {
   ];
   T.forEach(function(row) {
     it('hexToRgb ' + row[0], function() {
-      var c = hexToRgb(row[0]);
+      const c = hexToRgb(row[0]);
       expect(c).toEqual({ r: row[1], g: row[2], b: row[3] });
     });
   });
@@ -93,7 +93,7 @@ describe('hexToRgb exato', function() {
 });
 
 describe('brandAlpha exato', function() {
-  var T = [
+  const T = [
     ['#000000', 0.5, 'rgba(0,0,0,0.5)'], ['#ffffff', 1, 'rgba(255,255,255,1)'],
     ['#ff0000', 0.2, 'rgba(255,0,0,0.2)'], ['#002f59', 0.1, 'rgba(0,47,89,0.1)'],
     ['#123456', 0.75, 'rgba(18,52,86,0.75)'], ['#0f9d6c', 0.3, 'rgba(15,157,108,0.3)'],
@@ -125,8 +125,8 @@ describe('lightenHex bordas', function() {
 // 3) fmt + datas (property-based, anti-brittle)
 // ---------------------------------------------------------------------------
 describe('fmt formato monetario', function() {
-  var FMT_RE = /^R\$[ \xa0]-?[\d.]+,\d{2}$/;
-  var nums = [0, 1, 5, 10, 99, 100, 1000, 1234.5, 1234.56, 9999999, 0.01, 0.1, 0.99, 50, 49.9, 99.9, 497, 12.34, 1000000, 7, 3.333, 250, 19.99, 2, 42, 8.5, 123456.78, 0.5, 33, 88.88];
+  const FMT_RE = /^R\$[ \xa0]-?[\d.]+,\d{2}$/;
+  const nums = [0, 1, 5, 10, 99, 100, 1000, 1234.5, 1234.56, 9999999, 0.01, 0.1, 0.99, 50, 49.9, 99.9, 497, 12.34, 1000000, 7, 3.333, 250, 19.99, 2, 42, 8.5, 123456.78, 0.5, 33, 88.88];
   nums.forEach(function(n) {
     it('fmt(' + n + ') casa formato R$', function() {
       expect(FMT_RE.test(fmt(n))).toBe(true);
@@ -141,18 +141,18 @@ describe('fmt formato monetario', function() {
 });
 
 describe('datas (propriedades)', function() {
-  var dates = ['2024-01-15', '2024-02-29', '2023-12-31', '2024-06-01', '2025-03-10', '2024-11-30', '2024-07-04', '2022-05-20', '2024-09-09', '2024-10-31', '2026-01-01', '2024-08-08'];
+  const dates = ['2024-01-15', '2024-02-29', '2023-12-31', '2024-06-01', '2025-03-10', '2024-11-30', '2024-07-04', '2022-05-20', '2024-09-09', '2024-10-31', '2026-01-01', '2024-08-08'];
   dates.forEach(function(d) {
     it('fmtDate(' + d + ') contem barras (pt-BR)', function() {
-      var out = fmtDate(d);
+      const out = fmtDate(d);
       expect(typeof out).toBe('string');
       expect(out).toMatch(/\d{2}\/\d{2}\/\d{4}/);
     });
   });
-  var months = ['2024-01', '2024-02', '2024-03', '2024-06', '2024-12', '2023-07', '2025-05', '2024-09', '2024-11', '2022-04', '2026-02', '2024-10'];
+  const months = ['2024-01', '2024-02', '2024-03', '2024-06', '2024-12', '2023-07', '2025-05', '2024-09', '2024-11', '2022-04', '2026-02', '2024-10'];
   months.forEach(function(m) {
     it('monthLabel(' + m + ') contem o ano', function() {
-      var out = monthLabel(m);
+      const out = monthLabel(m);
       expect(typeof out).toBe('string');
       expect(out).toContain(m.split('-')[0]);
     });
@@ -170,7 +170,7 @@ describe('datas (propriedades)', function() {
 // 4) safe / isUrl / validPhone / maskPhone
 // ---------------------------------------------------------------------------
 describe('safe sanitiza', function() {
-  var T = [
+  const T = [
     ['<b>x</b>', 'bx/b'], ['hello', 'hello'], ['  pad  ', 'pad'], ['a"b', 'ab'],
     ['javascript:alert(1)', 'alert(1)'], ['JAVASCRIPT:x', 'x'], ['', ''],
     ['<script>', 'script'], ['"q"', 'q'], ['normal texto', 'normal texto'],
@@ -185,14 +185,14 @@ describe('safe sanitiza', function() {
   it('safe(0) === ""', function() { expect(safe(0)).toBe(''); });
   it('safe(123) === "123"', function() { expect(safe(123)).toBe('123'); });
   it('safe limita a 200 chars', function() {
-    var big = '';
+    const big = '';
     for (var i = 0; i < 300; i++) big += 'a';
     expect(safe(big).length).toBe(200);
   });
 });
 
 describe('isUrl', function() {
-  var T = [
+  const T = [
     ['http://a.com', true], ['https://a.com', true], ['data:image/png;base64,xx', true],
     ['/caminho', true], ['ftp://x', false], ['foo', false], ['', false],
     ['HTTP://A', false], [' http://a', false], ['mailto:x', false],
@@ -209,7 +209,7 @@ describe('isUrl', function() {
 });
 
 describe('validPhone', function() {
-  var T = [
+  const T = [
     ['1234567890', true], ['12345678901', true], ['123456789012', true], ['1234567890123', true],
     ['123456789', false], ['12345678', false], ['12345678901234', false], ['', false],
     ['(11) 98765-4321', true], ['+55 11 98765-4321', true], ['11 3216-5498', true],
@@ -225,7 +225,7 @@ describe('validPhone', function() {
 });
 
 describe('maskPhone', function() {
-  var T = [
+  const T = [
     ['11987654321', '(11) 98765-4321'], ['1132165498', '(11) 3216-5498'],
     ['119', '(11) 9'], ['11', '(11'], ['1', '(1'], ['', ''],
     ['1198765432199', '(11) 98765-4321'], ['1234567', '(12) 3456-7'],
@@ -244,10 +244,10 @@ describe('maskPhone', function() {
 // 5) genPwd / uid (aleatorio: formato + unicidade)
 // ---------------------------------------------------------------------------
 describe('genPwd', function() {
-  var i;
+  const i;
   for (i = 0; i < 20; i++) {
     it('genPwd #' + i + ' tem 12 chars do charset', function() {
-      var p = genPwd();
+      const p = genPwd();
       expect(p.length).toBe(12);
       expect(/^[A-Za-z0-9!@#]{12}$/.test(p)).toBe(true);
     });
@@ -257,11 +257,11 @@ describe('genPwd', function() {
 describe('uid', function() {
   it('uid retorna string nao vazia', function() { expect(uid().length).toBeGreaterThan(0); });
   it('uid gera 50 ids unicos', function() {
-    var set = {};
+    const set = {};
     for (var i = 0; i < 50; i++) set[uid()] = true;
     expect(Object.keys(set).length).toBe(50);
   });
-  var k;
+  const k;
   for (k = 0; k < 10; k++) {
     it('uid #' + k + ' so digitos', function() { expect(/^\d+$/.test(uid())).toBe(true); });
   }
@@ -272,11 +272,11 @@ describe('uid', function() {
 // ---------------------------------------------------------------------------
 describe('passwordStrength', function() {
   it('vazio => score 0 label vazio', function() {
-    var r = passwordStrength('');
+    const r = passwordStrength('');
     expect(r.score).toBe(0); expect(r.label).toBe(''); expect(r.pct).toBe(0);
   });
   it('null => score 0', function() { expect(passwordStrength(null).score).toBe(0); });
-  var cases = [
+  const cases = [
     ['abcdefgh', 1], ['abcdefghijkl', 2], ['Abcdefghijkl', 3], ['Abcdefghijk1', 4],
     ['Abcdefghijk1!', 5], ['abc', 0], ['Ab1!', 3], ['abcdefg', 0], ['ABCDEFGH', 1],
     ['12345678', 2], ['Abcdefgh', 2], ['Abcdefgh1', 3], ['Abcdefgh1!', 4],
@@ -286,10 +286,10 @@ describe('passwordStrength', function() {
       expect(passwordStrength(row[0]).score).toBe(row[1]);
     });
   });
-  var pws = ['a', 'ab1', 'Abcd1234', 'Senha123!', 'X', 'longsenha', 'Aa1!Aa1!Aa1!'];
+  const pws = ['a', 'ab1', 'Abcd1234', 'Senha123!', 'X', 'longsenha', 'Aa1!Aa1!Aa1!'];
   pws.forEach(function(pw) {
     it('score 0..5 e propriedades p/ ' + JSON.stringify(pw), function() {
-      var r = passwordStrength(pw);
+      const r = passwordStrength(pw);
       expect(r.score).toBeGreaterThanOrEqual(0);
       expect(r.score).toBeLessThanOrEqual(5);
       expect(typeof r.label).toBe('string');
@@ -302,7 +302,7 @@ describe('passwordStrength', function() {
 // 7) cleanNumeric
 // ---------------------------------------------------------------------------
 describe('cleanNumeric', function() {
-  var T = [
+  const T = [
     ['12.50', undefined, '12.50', false], ['12a!', undefined, '12', true],
     ['12,5', undefined, '12.5', false], ['1.2.3', undefined, '1.23', false],
     ['1,2,3', undefined, '1.23', false], ['', undefined, '', false],
@@ -315,13 +315,13 @@ describe('cleanNumeric', function() {
   ];
   T.forEach(function(row) {
     it('cleanNumeric(' + JSON.stringify(row[0]) + ',' + JSON.stringify(row[1]) + ')', function() {
-      var r = cleanNumeric(row[0], row[1]);
+      const r = cleanNumeric(row[0], row[1]);
       expect(r.value).toBe(row[2]);
       expect(r.invalid).toBe(row[3]);
     });
   });
   it('null => vazio valido', function() {
-    var r = cleanNumeric(null);
+    const r = cleanNumeric(null);
     expect(r.value).toBe(''); expect(r.invalid).toBe(false);
   });
   it('limita maxLen padrao decimals (12)', function() {
@@ -334,7 +334,7 @@ describe('cleanNumeric', function() {
     expect(cleanNumeric('123456789', { decimals: false }).value.length).toBe(7);
   });
   it('so simbolos => vazio invalido', function() {
-    var r = cleanNumeric('!!!');
+    const r = cleanNumeric('!!!');
     expect(r.value).toBe(''); expect(r.invalid).toBe(true);
   });
 });
@@ -343,9 +343,9 @@ describe('cleanNumeric', function() {
 // 8) Planos: effectivePlan / limitFor / atLimit
 // ---------------------------------------------------------------------------
 describe('effectivePlan', function() {
-  var future = new Date(Date.now() + 86400000).toISOString();
-  var past = new Date(Date.now() - 86400000).toISOString();
-  var T = [
+  const future = new Date(Date.now() + 86400000).toISOString();
+  const past = new Date(Date.now() - 86400000).toISOString();
+  const T = [
     [null, 'free'], [undefined, 'free'], [{}, 'free'], [{ plan: 'free' }, 'free'],
     [{ plan: 'pro' }, 'pro'], [{ plan: 'premium' }, 'premium'], [{ plan: 'enterprise' }, 'free'],
     [{ plan: null }, 'free'], [{ plan: 'pro', plan_expires_at: future }, 'pro'],
@@ -362,19 +362,19 @@ describe('effectivePlan', function() {
 });
 
 describe('limitFor / atLimit', function() {
-  var plans = [['free', { plan: 'free' }], ['pro', { plan: 'pro' }], ['premium', { plan: 'premium' }]];
-  var kinds = ['transactions', 'products', 'losses'];
-  var freeLimits = { transactions: 50, products: 20, losses: 10 };
+  const plans = [['free', { plan: 'free' }], ['pro', { plan: 'pro' }], ['premium', { plan: 'premium' }]];
+  const kinds = ['transactions', 'products', 'losses'];
+  const freeLimits = { transactions: 50, products: 20, losses: 10 };
   plans.forEach(function(p) {
     kinds.forEach(function(k) {
       it('limitFor ' + p[0] + '/' + k, function() {
-        var exp = p[0] === 'free' ? freeLimits[k] : Infinity;
+        const exp = p[0] === 'free' ? freeLimits[k] : Infinity;
         expect(limitFor(p[1], k)).toBe(exp);
       });
     });
   });
   kinds.forEach(function(k) {
-    var lim = freeLimits[k];
+    const lim = freeLimits[k];
     it('atLimit free ' + k + ' no limite => true', function() { expect(atLimit({ plan: 'free' }, k, lim)).toBe(true); });
     it('atLimit free ' + k + ' abaixo => false', function() { expect(atLimit({ plan: 'free' }, k, lim - 1)).toBe(false); });
     it('atLimit free ' + k + ' acima => true', function() { expect(atLimit({ plan: 'free' }, k, lim + 5)).toBe(true); });
@@ -388,7 +388,7 @@ describe('limitFor / atLimit', function() {
 // 9) waLink
 // ---------------------------------------------------------------------------
 describe('waLink', function() {
-  var base = 'https://wa.me/' + WHATSAPP;
+  const base = 'https://wa.me/' + WHATSAPP;
   it('mensagem simples', function() { expect(waLink('hi')).toBe(base + '?text=hi'); });
   it('vazio sem ?text', function() { expect(waLink('')).toBe(base); });
   it('undefined sem ?text', function() { expect(waLink(undefined)).toBe(base); });
@@ -484,10 +484,10 @@ describe('friendlyStripeError', function() {
 });
 
 describe('stripeAppearance', function() {
-  var colors = ['#002f59', '#ff0000', '#16a34a', '#7c3aed', '#0f9d6c'];
+  const colors = ['#002f59', '#ff0000', '#16a34a', '#7c3aed', '#0f9d6c'];
   colors.forEach(function(c) {
     it('light ' + c + ' theme flat + colorPrimary', function() {
-      var a = stripeAppearance(c, false);
+      const a = stripeAppearance(c, false);
       expect(a.theme).toBe('flat');
       expect(a.variables.colorPrimary).toBe(c);
     });
@@ -507,7 +507,7 @@ describe('stripeAppearance', function() {
 // 12) recurring
 // ---------------------------------------------------------------------------
 describe('daysInMonth', function() {
-  var T = [
+  const T = [
     ['2024-01', 31], ['2024-02', 29], ['2023-02', 28], ['2024-03', 31], ['2024-04', 30],
     ['2024-05', 31], ['2024-06', 30], ['2024-07', 31], ['2024-08', 31], ['2024-09', 30],
     ['2024-10', 31], ['2024-11', 30], ['2024-12', 31], ['2000-02', 29], ['2025-02', 28], ['2028-02', 29],
@@ -518,7 +518,7 @@ describe('daysInMonth', function() {
 });
 
 describe('dueDate', function() {
-  var T = [
+  const T = [
     ['2024-01', 5, '2024-01-05'], ['2024-02', 31, '2024-02-29'], ['2024-04', 31, '2024-04-30'],
     ['2024-01', 0, '2024-01-01'], ['2024-01', -3, '2024-01-01'], ['2024-12', 25, '2024-12-25'],
     ['2024-01', 1, '2024-01-01'], ['2024-01', 31, '2024-01-31'], ['2024-06', 31, '2024-06-30'],
@@ -536,11 +536,11 @@ describe('periodOf', function() {
   it('set 2024', function() { expect(periodOf(new Date(2024, 8, 3))).toBe('2024-09'); });
   it('out 2025', function() { expect(periodOf(new Date(2025, 9, 10))).toBe('2025-10'); });
   it('sem arg formato', function() { expect(periodOf()).toMatch(/^\d{4}-\d{2}$/); });
-  var m;
+  const m;
   for (m = 0; m < 12; m++) {
     (function(mm) {
       it('mes ' + mm + ' padding 2 digitos', function() {
-        var p = periodOf(new Date(2024, mm, 1));
+        const p = periodOf(new Date(2024, mm, 1));
         expect(p).toMatch(/^2024-\d{2}$/);
         expect(p.split('-')[1].length).toBe(2);
       });
@@ -549,7 +549,7 @@ describe('periodOf', function() {
 });
 
 describe('recurringId / isRecurringId', function() {
-  var tpl = { desc: 'Aluguel', amount: 1000, day: 5 };
+  const tpl = { desc: 'Aluguel', amount: 1000, day: 5 };
   it('formato rec-...-periodo', function() {
     expect(recurringId('u1', tpl, '2024-01')).toMatch(/^rec-[a-z0-9]+-2024-01$/);
   });
@@ -574,11 +574,11 @@ describe('recurringId / isRecurringId', function() {
   it('desc case-insensitive', function() {
     expect(recurringId('u1', { desc: 'ALUGUEL', amount: 1000, day: 5 }, '2024-01')).toBe(recurringId('u1', tpl, '2024-01'));
   });
-  var ids = ['rec-abc-2024-01', 'rec-x', 'rec-'];
+  const ids = ['rec-abc-2024-01', 'rec-x', 'rec-'];
   ids.forEach(function(id) {
     it('isRecurringId(' + id + ') true', function() { expect(isRecurringId(id)).toBe(true); });
   });
-  var notIds = ['abc', '', 'transaction-1', 'REC-x'];
+  const notIds = ['abc', '', 'transaction-1', 'REC-x'];
   notIds.forEach(function(id) {
     it('isRecurringId(' + JSON.stringify(id) + ') false', function() { expect(isRecurringId(id)).toBe(false); });
   });
@@ -610,7 +610,7 @@ describe('activeTemplates', function() {
 });
 
 describe('buildRecurringRow', function() {
-  var row = buildRecurringRow('u1', { desc: 'Aluguel', amount: 1000, day: 5, category: 'Casa' }, '2024-01', 'Me');
+  const row = buildRecurringRow('u1', { desc: 'Aluguel', amount: 1000, day: 5, category: 'Casa' }, '2024-01', 'Me');
   it('type expense', function() { expect(row.type).toBe('expense'); });
   it('amount numerico', function() { expect(row.amount).toBe(1000); });
   it('date via dueDate', function() { expect(row.date).toBe('2024-01-05'); });
@@ -622,7 +622,7 @@ describe('buildRecurringRow', function() {
   it('user_id', function() { expect(row.user_id).toBe('u1'); });
   it('registered_by custom', function() { expect(row.registered_by).toBe('Me'); });
   it('description trim', function() { expect(row.description).toBe('Aluguel'); });
-  var row2 = buildRecurringRow('u2', { desc: ' Luz ', amount: 90, day: 50 }, '2024-02');
+  const row2 = buildRecurringRow('u2', { desc: ' Luz ', amount: 90, day: 50 }, '2024-02');
   it('category default Fixo', function() { expect(row2.category).toBe('Fixo'); });
   it('registered_by default Recorrente', function() { expect(row2.registered_by).toBe('Recorrente'); });
   it('day clamp ao mes (fev)', function() { expect(row2.date).toBe('2024-02-29'); });
@@ -651,41 +651,41 @@ describe('parsePhone', function() {
 
 describe('buildPhone', function() {
   it('BR 11 valido', function() {
-    var r = buildPhone('BR', '11987654321');
+    const r = buildPhone('BR', '11987654321');
     expect(r.valid).toBe(true); expect(r.e164).toBe('+5511987654321'); expect(r.country).toBe('BR'); expect(r.dialCode).toBe('+55');
   });
   it('BR 10 valido', function() {
-    var r = buildPhone('BR', '1132165498');
+    const r = buildPhone('BR', '1132165498');
     expect(r.valid).toBe(true); expect(r.e164).toBe('+551132165498');
   });
   it('PT 9 valido', function() {
-    var r = buildPhone('PT', '912345678');
+    const r = buildPhone('PT', '912345678');
     expect(r.valid).toBe(true); expect(r.e164).toBe('+351912345678');
   });
   it('US 10 valido', function() {
-    var r = buildPhone('US', '2025550123');
+    const r = buildPhone('US', '2025550123');
     expect(r.valid).toBe(true); expect(r.e164).toBe('+12025550123');
   });
   it('AR 10 valido', function() {
-    var r = buildPhone('AR', '1123456789');
+    const r = buildPhone('AR', '1123456789');
     expect(r.valid).toBe(true); expect(r.e164).toBe('+541123456789');
   });
   it('MX 10 valido', function() {
-    var r = buildPhone('MX', '1234567890');
+    const r = buildPhone('MX', '1234567890');
     expect(r.valid).toBe(true); expect(r.e164).toBe('+521234567890');
   });
   it('ES 9 valido', function() {
-    var r = buildPhone('ES', '912345678');
+    const r = buildPhone('ES', '912345678');
     expect(r.valid).toBe(true); expect(r.e164).toBe('+34912345678');
   });
   it('BR curto invalido', function() { expect(buildPhone('BR', '123').valid).toBe(false); });
   it('BR vazio invalido e164 vazio', function() {
-    var r = buildPhone('BR', '');
+    const r = buildPhone('BR', '');
     expect(r.valid).toBe(false); expect(r.e164).toBe('');
   });
   it('PT errado tamanho invalido', function() { expect(buildPhone('PT', '12').valid).toBe(false); });
   it('iso desconhecido cai em BR', function() {
-    var r = buildPhone('ZZ', '11987654321');
+    const r = buildPhone('ZZ', '11987654321');
     expect(r.valid).toBe(true); expect(r.e164).toBe('+5511987654321');
   });
   it('national reflete digits', function() { expect(buildPhone('BR', '11987654321').national).toBe('11987654321'); });
@@ -693,23 +693,23 @@ describe('buildPhone', function() {
 });
 
 describe('phone round-trip build->parse', function() {
-  var cases = [
+  const cases = [
     ['BR', '11987654321'], ['BR', '1132165498'], ['PT', '912345678'],
     ['AR', '1123456789'], ['MX', '1234567890'],
   ];
   cases.forEach(function(row) {
     it('roundtrip ' + row[0] + ' ' + row[1], function() {
-      var e164 = buildPhone(row[0], row[1]).e164;
-      var parsed = parsePhone(e164);
+      const e164 = buildPhone(row[0], row[1]).e164;
+      const parsed = parsePhone(e164);
       expect(parsed.iso).toBe(row[0]);
       expect(parsed.digits).toBe(row[1]);
     });
   });
   cases.forEach(function(row) {
     it('roundtrip ' + row[0] + ' ' + row[1] + ' mantem valid', function() {
-      var built = buildPhone(row[0], row[1]);
+      const built = buildPhone(row[0], row[1]);
       expect(built.valid).toBe(true);
-      var re = buildPhone(parsePhone(built.e164).iso, parsePhone(built.e164).digits);
+      const re = buildPhone(parsePhone(built.e164).iso, parsePhone(built.e164).digits);
       expect(re.e164).toBe(built.e164);
     });
   });

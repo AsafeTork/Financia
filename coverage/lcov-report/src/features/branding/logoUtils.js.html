@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>6/6</span>
+                <span class='fraction'>0/6</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">90% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>9/10</span>
+                <span class='fraction'>0/10</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>4/4</span>
+                <span class='fraction'>0/4</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>5/5</span>
+                <span class='fraction'>0/5</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line high'></div>
+    <div class='status-line low'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -83,46 +83,94 @@
 <a name='L18'></a><a href='#L18'>18</a>
 <a name='L19'></a><a href='#L19'>19</a>
 <a name='L20'></a><a href='#L20'>20</a>
-<a name='L21'></a><a href='#L21'>21</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L21'></a><a href='#L21'>21</a>
+<a name='L22'></a><a href='#L22'>22</a>
+<a name='L23'></a><a href='#L23'>23</a>
+<a name='L24'></a><a href='#L24'>24</a>
+<a name='L25'></a><a href='#L25'>25</a>
+<a name='L26'></a><a href='#L26'>26</a>
+<a name='L27'></a><a href='#L27'>27</a>
+<a name='L28'></a><a href='#L28'>28</a>
+<a name='L29'></a><a href='#L29'>29</a>
+<a name='L30'></a><a href='#L30'>30</a>
+<a name='L31'></a><a href='#L31'>31</a>
+<a name='L32'></a><a href='#L32'>32</a>
+<a name='L33'></a><a href='#L33'>33</a>
+<a name='L34'></a><a href='#L34'>34</a>
+<a name='L35'></a><a href='#L35'>35</a>
+<a name='L36'></a><a href='#L36'>36</a>
+<a name='L37'></a><a href='#L37'>37</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">176x</span>
-<span class="cline-any cline-yes">22x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">14x</span>
-<span class="cline-any cline-yes">14x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { OFFICIAL_LOGO_COLORS, CHECK_NORM } from './defaults.js';
 &nbsp;
-export function buildCheckPath(w, h) {
-  const pts = CHECK_NORM.map(p =&gt; `${(p.x * w).toFixed(1)} ${(p.y * h).toFixed(1)}`);
-  return `M ${pts[0]} L ${pts[1]} L ${pts[2]} L ${pts[3]} L ${pts[4]} C ${pts[5]} ${pts[6]} ${pts[7]} Z`;
+/**
+ * Builds the SVG path for the check mark.
+ * @param {number} w - Width
+ * @param {number} h - Height
+ * @returns {string} SVG path data
+ */
+export function <span class="fstat-no" title="function not covered" >buildCheckPath(</span>w, h) {
+  const pts = <span class="cstat-no" title="statement not covered" >CHECK_NORM.map(<span class="fstat-no" title="function not covered" >p </span>=&gt; <span class="cstat-no" title="statement not covered" >`${(p.x * w).toFixed(1)} ${(p.y * h).toFixed(1)}`)</span>;</span>
+<span class="cstat-no" title="statement not covered" >  return `M ${pts[0]} L ${pts[1]} L ${pts[2]} L ${pts[3]} L ${pts[4]} C ${pts[5]} ${pts[6]} ${pts[7]} Z`;</span>
 }
 &nbsp;
-export function generateLogoSvg(colors) {
-  const c = colors || OFFICIAL_LOGO_COLORS;
-  return '&lt;svg width="400" height="400" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"&gt;'
+/**
+ * Generates the logo SVG markup.
+ * @param {Object} colors - Color overrides
+ * @returns {string} SVG markup
+ */
+export function <span class="fstat-no" title="function not covered" >generateLogoSvg(</span>colors) {
+  const c = <span class="cstat-no" title="statement not covered" >colors || OFFICIAL_LOGO_COLORS;</span>
+<span class="cstat-no" title="statement not covered" >  return '&lt;svg width="400" height="400" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"&gt;'</span>
     + '&lt;rect width="400" height="400" fill="transparent"/&gt;'
-    + `&lt;g transform="translate(34,200)"&gt;&lt;rect width="71" height="125" rx="10" fill="${c.blue || <span class="branch-1 cbranch-no" title="branch not covered" >OFFICIAL_LOGO_COLORS.blue}</span>"/&gt;&lt;/g&gt;`
+    + `&lt;g transform="translate(34,200)"&gt;&lt;rect width="71" height="125" rx="10" fill="${c.blue || OFFICIAL_LOGO_COLORS.blue}"/&gt;&lt;/g&gt;`
     + `&lt;g transform="translate(134,129)"&gt;&lt;rect width="71" height="196" rx="10" fill="${c.green || OFFICIAL_LOGO_COLORS.green}"/&gt;&lt;/g&gt;`
     + `&lt;g transform="translate(234,75)"&gt;&lt;rect width="72" height="250" rx="10" fill="${c.teal || OFFICIAL_LOGO_COLORS.teal}"/&gt;&lt;/g&gt;`
     + `&lt;g transform="translate(169,126)"&gt;&lt;path d="${buildCheckPath(197, 148)}" fill="${c.check || OFFICIAL_LOGO_COLORS.check}"/&gt;&lt;/g&gt;`
     + '&lt;/svg&gt;';
 }
 &nbsp;
-export function logoSvgToDataUrl(svgMarkup) {
-  return 'data:image/svg+xml,' + encodeURIComponent(svgMarkup);
+/**
+ * Converts SVG markup to a data URL.
+ * @param {string} svgMarkup - SVG markup
+ * @returns {string} Data URL
+ */
+export function <span class="fstat-no" title="function not covered" >logoSvgToDataUrl(</span>svgMarkup) {
+<span class="cstat-no" title="statement not covered" >  return 'data:image/svg+xml,' + encodeURIComponent(svgMarkup);</span>
 }</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
@@ -130,7 +178,7 @@ export function logoSvgToDataUrl(svgMarkup) {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-07-11T14:44:18.962Z
+                at 2026-07-12T14:09:57.405Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

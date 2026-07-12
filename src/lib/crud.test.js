@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 vi.mock('./utils.js', function() {
-  var t = '2025-01-01T00:00:00.000Z';
+  const t = '2025-01-01T00:00:00.000Z';
   return { now: function() { return t; } };
 });
 
@@ -25,7 +25,7 @@ describe('getRb', function() {
 
 describe('rowMeta', function() {
   it('retorna objeto com campos obrigatorios', function() {
-    var m = rowMeta(makeSession({ name: 'Joao' }));
+    const m = rowMeta(makeSession({ name: 'Joao' }));
     expect(m).toHaveProperty('user_id', 'u1');
     expect(m).toHaveProperty('registered_by', 'Joao');
     expect(m).toHaveProperty('_synced', 0);
@@ -37,7 +37,7 @@ describe('rowMeta', function() {
 
 describe('updMeta', function() {
   it('retorna updated_at + sync flags', function() {
-    var m = updMeta();
+    const m = updMeta();
     expect(m).toHaveProperty('updated_at');
     expect(m).toHaveProperty('_synced', 0);
     expect(m).toHaveProperty('_updated_at');
@@ -46,7 +46,7 @@ describe('updMeta', function() {
 
 describe('deletedMeta', function() {
   it('retorna _deleted=1 + sync flags', function() {
-    var m = deletedMeta();
+    const m = deletedMeta();
     expect(m).toHaveProperty('_deleted', 1);
     expect(m).toHaveProperty('_synced', 0);
   });
@@ -54,36 +54,36 @@ describe('deletedMeta', function() {
 
 describe('applyEdit', function() {
   it('atualiza item com id correspondente', function() {
-    var list = [{ id: 1, name: 'a' }, { id: 2, name: 'b' }];
-    var result = applyEdit(list, 1, { name: 'c' });
+    const list = [{ id: 1, name: 'a' }, { id: 2, name: 'b' }];
+    const result = applyEdit(list, 1, { name: 'c' });
     expect(result[0].name).toBe('c');
     expect(result[1].name).toBe('b');
   });
   it('nao modifica lista original', function() {
-    var list = [{ id: 1, name: 'a' }];
-    var result = applyEdit(list, 1, { name: 'c' });
+    const list = [{ id: 1, name: 'a' }];
+    const result = applyEdit(list, 1, { name: 'c' });
     expect(list[0].name).toBe('a');
     expect(result[0].name).toBe('c');
   });
   it('retorna copia mesmo sem match', function() {
-    var list = [{ id: 1 }];
-    var result = applyEdit(list, 99, { x: 1 });
+    const list = [{ id: 1 }];
+    const result = applyEdit(list, 99, { x: 1 });
     expect(result).toEqual([{ id: 1 }]);
   });
 });
 
 describe('countLimit', function() {
   it('conta only non-deleted', async function() {
-    var ldb = {
+    const ldb = {
       items: {
         where: function() {
-          var filterFn;
+          let filterFn;
           return {
             equals: function() {
-              var api = {
+              const api = {
                 filter: function(fn) { filterFn = fn; return api; },
                 count: function() {
-                  var rows = [{ _deleted: 0 }, { _deleted: 1 }, { _deleted: 0 }];
+                  const rows = [{ _deleted: 0 }, { _deleted: 1 }, { _deleted: 0 }];
                   return Promise.resolve(rows.filter(filterFn || Boolean).length);
                 },
               };
@@ -93,36 +93,36 @@ describe('countLimit', function() {
         },
       },
     };
-    var count = await countLimit(ldb, 'items', 'u1');
+    const count = await countLimit(ldb, 'items', 'u1');
     expect(count).toBe(2);
   });
 });
 
 describe('dexiePut / dexieUpdate', function() {
   it('dexiePut retorna true no sucesso', async function() {
-    var ldb = { items: { put: function() { return Promise.resolve(); } } };
-    var toast = vi.fn();
-    var ok = await dexiePut(ldb, 'items', { id: 1 }, toast);
+    const ldb = { items: { put: function() { return Promise.resolve(); } } };
+    const toast = vi.fn();
+    const ok = await dexiePut(ldb, 'items', { id: 1 }, toast);
     expect(ok).toBe(true);
     expect(toast).not.toHaveBeenCalled();
   });
   it('dexiePut chama toast no erro', async function() {
-    var ldb = { items: { put: function() { return Promise.reject(new Error('db full')); } } };
-    var toast = vi.fn();
-    var ok = await dexiePut(ldb, 'items', { id: 1 }, toast);
+    const ldb = { items: { put: function() { return Promise.reject(new Error('db full')); } } };
+    const toast = vi.fn();
+    const ok = await dexiePut(ldb, 'items', { id: 1 }, toast);
     expect(ok).toBe(false);
     expect(toast).toHaveBeenCalledWith('Erro ao salvar: db full', 'error');
   });
   it('dexieUpdate retorna true no sucesso', async function() {
-    var ldb = { items: { update: function() { return Promise.resolve(); } } };
-    var toast = vi.fn();
-    var ok = await dexieUpdate(ldb, 'items', 1, { name: 'x' }, toast);
+    const ldb = { items: { update: function() { return Promise.resolve(); } } };
+    const toast = vi.fn();
+    const ok = await dexieUpdate(ldb, 'items', 1, { name: 'x' }, toast);
     expect(ok).toBe(true);
   });
   it('dexieUpdate chama toast no erro', async function() {
-    var ldb = { items: { update: function() { return Promise.reject(new Error('fail')); } } };
-    var toast = vi.fn();
-    var ok = await dexieUpdate(ldb, 'items', 1, { name: 'x' }, toast);
+    const ldb = { items: { update: function() { return Promise.reject(new Error('fail')); } } };
+    const toast = vi.fn();
+    const ok = await dexieUpdate(ldb, 'items', 1, { name: 'x' }, toast);
     expect(ok).toBe(false);
     expect(toast).toHaveBeenCalled();
   });
@@ -134,21 +134,21 @@ describe('syncUpsert / syncUpdate / syncDelete', function() {
   });
 
   it('syncUpsert marca _synced=1 no sucesso', async function() {
-    var sb = { from: function() { return { upsert: function() { return Promise.resolve({ error: null }); } }; } };
-    var ldb = { items: { update: vi.fn(function() { return Promise.resolve(); }) } };
-    var toast = vi.fn();
+    const sb = { from: function() { return { upsert: function() { return Promise.resolve({ error: null }); } }; } };
+    const ldb = { items: { update: vi.fn(function() { return Promise.resolve(); }) } };
+    const toast = vi.fn();
     await syncUpsert(sb, 'items', { id: 1 }, ldb, 1, toast);
     expect(ldb.items.update).toHaveBeenCalledWith(1, { _synced: 1 });
   });
   it('syncUpsert chama toast no erro do sb', async function() {
-    var sb = { from: function() { return { upsert: function() { return Promise.resolve({ error: new Error('x') }); } }; } };
-    var ldb = { items: { update: vi.fn() } };
-    var toast = vi.fn();
+    const sb = { from: function() { return { upsert: function() { return Promise.resolve({ error: new Error('x') }); } }; } };
+    const ldb = { items: { update: vi.fn() } };
+    const toast = vi.fn();
     await syncUpsert(sb, 'items', { id: 1 }, ldb, 1, toast);
     expect(toast).toHaveBeenCalled();
   });
   function makeThenableSb(response) {
-    var api;
+    let api;
     api = {
       eq: function() { return api; },
       update: function() { return api; },
@@ -159,23 +159,23 @@ describe('syncUpsert / syncUpdate / syncDelete', function() {
   }
 
   it('syncUpdate marca _synced=1 no sucesso', async function() {
-    var sb = { from: function() { return makeThenableSb({ error: null }); } };
-    var ldb = { items: { update: vi.fn(function() { return Promise.resolve(); }) } };
-    var toast = vi.fn();
+    const sb = { from: function() { return makeThenableSb({ error: null }); } };
+    const ldb = { items: { update: vi.fn(function() { return Promise.resolve(); }) } };
+    const toast = vi.fn();
     await syncUpdate(sb, 'items', { name: 'x' }, 1, ldb, toast);
     expect(ldb.items.update).toHaveBeenCalledWith(1, { _synced: 1 });
   });
   it('syncDelete deleta do ldb no sucesso', async function() {
-    var sb = { from: function() { return makeThenableSb({ error: null }); } };
-    var ldb = { items: { delete: vi.fn(function() { return Promise.resolve(); }) } };
-    var toast = vi.fn();
+    const sb = { from: function() { return makeThenableSb({ error: null }); } };
+    const ldb = { items: { delete: vi.fn(function() { return Promise.resolve(); }) } };
+    const toast = vi.fn();
     await syncDelete(sb, 'items', 1, ldb, toast);
     expect(ldb.items.delete).toHaveBeenCalledWith(1);
   });
   it('sync functions retornam cedo se offline', async function() {
     navigator.onLine = false;
-    var ldb = { items: { update: vi.fn(), delete: vi.fn() } };
-    var sb = {};
+    const ldb = { items: { update: vi.fn(), delete: vi.fn() } };
+    const sb = {};
     await syncUpsert(sb, 'items', {}, ldb, 1, vi.fn());
     await syncUpdate(sb, 'items', {}, 1, ldb, vi.fn());
     await syncDelete(sb, 'items', 1, ldb, vi.fn());

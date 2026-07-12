@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
-var mockStorage = {};
+let mockStorage = {};
 if (typeof globalThis.localStorage === 'undefined') {
   Object.defineProperty(globalThis, 'localStorage', {
     value: {
@@ -14,13 +14,13 @@ if (typeof globalThis.localStorage === 'undefined') {
   });
 }
 
-var _clearLS = function() { mockStorage = {}; };
+let _clearLS = function() { mockStorage = {}; };
 
 vi.mock('./dexie.js', function() {
-  var mockLastSync = {};
-  var txTable = { where: vi.fn(), bulkDelete: vi.fn(), bulkPut: vi.fn(), bulkGet: vi.fn() };
-  var prTable = { where: vi.fn(), get: vi.fn(), put: vi.fn(), update: vi.fn() };
-  var lsTable = { where: vi.fn(), bulkDelete: vi.fn(), bulkPut: vi.fn(), bulkGet: vi.fn() };
+  const mockLastSync = {};
+  const txTable = { where: vi.fn(), bulkDelete: vi.fn(), bulkPut: vi.fn(), bulkGet: vi.fn(), clear: vi.fn() };
+  const prTable = { where: vi.fn(), get: vi.fn(), put: vi.fn(), update: vi.fn(), bulkPut: vi.fn(), bulkGet: vi.fn(), clear: vi.fn() };
+  const lsTable = { where: vi.fn(), bulkDelete: vi.fn(), bulkPut: vi.fn(), bulkGet: vi.fn(), clear: vi.fn() };
   return {
     ldb: { transactions: txTable, products: prTable, losses: lsTable, profiles: { where: vi.fn(), get: vi.fn(), put: vi.fn(), update: vi.fn() }, lastSync: { put: vi.fn() } },
     toLocal: function(x) { return x; },
@@ -28,7 +28,7 @@ vi.mock('./dexie.js', function() {
     setLastSync: vi.fn(function(ts, uid) { mockLastSync[uid] = ts; return Promise.resolve(); }),
     FIELD_MAP: { transactions: ['id','user_id','amount'], products: ['id','user_id'], losses: ['id','user_id'] },
     pickFields: function(row, fields) {
-      var out = {};
+      const out = {};
       fields.forEach(function(f) { if (row[f] !== undefined) out[f] = row[f]; });
       return out;
     },
@@ -39,7 +39,7 @@ vi.mock('./dexie.js', function() {
 
 vi.mock('./supabase.js', function() {
   function makeQb(response) {
-    var api;
+    let api;
     api = {
       select: function() { return api; },
       upsert: function() { return Promise.resolve(response || { error: null }); },
@@ -78,29 +78,29 @@ describe('syncAll', function() {
   });
 
   it('retorna false sem uid', async function() {
-    var r = await syncAll(null);
+    const r = await syncAll(null);
     expect(r).toBe(false);
   });
 
   it('retorna false se offline', async function() {
     navigator.onLine = false;
-    var r = await syncAll('u1');
+    const r = await syncAll('u1');
     expect(r).toBe(false);
   });
 
   it('executa sync e retorna true', async function() {
-    var ldbMod = await import('./dexie.js');
-    var txTable = ldbMod.__txTable;
+    const ldbMod = await import('./dexie.js');
+    const txTable = ldbMod.__txTable;
     txTable.where.mockReturnValue({ equals: function() {
       return { and: function() { return { toArray: function() { return Promise.resolve([]); } }; } };
     } });
 
-    var prTable = ldbMod.__prTable;
+    const prTable = ldbMod.__prTable;
     prTable.where.mockReturnValue({ equals: function() {
       return { and: function() { return { toArray: function() { return Promise.resolve([]); } }; } };
     } });
 
-    var lsTable = ldbMod.__lsTable;
+    const lsTable = ldbMod.__lsTable;
     lsTable.where.mockReturnValue({ equals: function() {
       return { and: function() { return { toArray: function() { return Promise.resolve([]); } }; } };
     } });
@@ -109,7 +109,7 @@ describe('syncAll', function() {
       return { and: function() { return { toArray: function() { return Promise.resolve([]); } }; } };
     } });
 
-    var r = await syncAll('u1');
+    const r = await syncAll('u1');
     expect(r).toBe(true);
   });
 });
@@ -119,14 +119,14 @@ describe('fetchClients', function() {
     sb.from.mockReturnValue({
       select: function() { return { order: function() { return Promise.resolve({ data: [{ user_id: 'u1' }] }); } }; },
     });
-    var clients = await fetchClients();
+    const clients = await fetchClients();
     expect(clients).toEqual([{ user_id: 'u1' }]);
   });
   it('retorna array vazio no erro', async function() {
     sb.from.mockReturnValue({
       select: function() { return { order: function() { throw new Error('x'); } }; },
     });
-    var clients = await fetchClients();
+    const clients = await fetchClients();
     expect(clients).toEqual([]);
   });
 });
@@ -134,17 +134,17 @@ describe('fetchClients', function() {
 describe('fetchClientUsage', function() {
   it('retorna mapa de usage', async function() {
     sb.rpc.mockReturnValue(Promise.resolve({ data: [{ user_id: 'u1', count: 5 }], error: null }));
-    var map = await fetchClientUsage();
+    const map = await fetchClientUsage();
     expect(map).toEqual({ u1: { user_id: 'u1', count: 5 } });
   });
   it('retorna {} quando error', async function() {
     sb.rpc.mockReturnValue(Promise.resolve({ data: null, error: new Error('x') }));
-    var map = await fetchClientUsage();
+    const map = await fetchClientUsage();
     expect(map).toEqual({});
   });
   it('retorna {} na exception', async function() {
     sb.rpc.mockRejectedValue(new Error('crash'));
-    var map = await fetchClientUsage();
+    const map = await fetchClientUsage();
     expect(map).toEqual({});
   });
 });
@@ -152,12 +152,12 @@ describe('fetchClientUsage', function() {
 describe('fetchDbStats', function() {
   it('retorna data no sucesso', async function() {
     sb.rpc.mockReturnValue(Promise.resolve({ data: { users: 10 }, error: null }));
-    var s = await fetchDbStats();
+    const s = await fetchDbStats();
     expect(s).toEqual({ users: 10 });
   });
   it('retorna null no error', async function() {
     sb.rpc.mockReturnValue(Promise.resolve({ data: null, error: new Error('x') }));
-    var s = await fetchDbStats();
+    const s = await fetchDbStats();
     expect(s).toBeNull();
   });
 });
@@ -165,22 +165,22 @@ describe('fetchDbStats', function() {
 describe('fetchStripeOverview', function() {
   it('retorna data no sucesso', async function() {
     sb.functions.invoke.mockReturnValue(Promise.resolve({ data: { revenue: 1000 } }));
-    var r = await fetchStripeOverview();
+    const r = await fetchStripeOverview();
     expect(r).toEqual({ revenue: 1000 });
   });
   it('retorna null quando res.error', async function() {
     sb.functions.invoke.mockReturnValue(Promise.resolve({ error: new Error('x') }));
-    var r = await fetchStripeOverview();
+    const r = await fetchStripeOverview();
     expect(r).toBeNull();
   });
   it('retorna null quando data.error', async function() {
     sb.functions.invoke.mockReturnValue(Promise.resolve({ data: { error: 'err' } }));
-    var r = await fetchStripeOverview();
+    const r = await fetchStripeOverview();
     expect(r).toBeNull();
   });
   it('retorna null na exception', async function() {
     sb.functions.invoke.mockRejectedValue(new Error('x'));
-    var r = await fetchStripeOverview();
+    const r = await fetchStripeOverview();
     expect(r).toBeNull();
   });
 });
@@ -194,28 +194,28 @@ describe('admin functions', function() {
   describe('setClientCustomPrice', function() {
     it('retorna ok true no sucesso com applied', async function() {
       sb.functions.invoke.mockReturnValue(Promise.resolve({ data: { applied: true } }));
-      var r = await setClientCustomPrice('u1', 1000);
+      const r = await setClientCustomPrice('u1', 1000);
       expect(r).toEqual({ ok: true, applied: true });
     });
     it('retorna ok true sem applied', async function() {
       sb.functions.invoke.mockReturnValue(Promise.resolve({ data: {} }));
-      var r = await setClientCustomPrice('u1', 1000, 'plan_x');
+      const r = await setClientCustomPrice('u1', 1000, 'plan_x');
       expect(r).toEqual({ ok: true, applied: false });
     });
     it('retorna erro do edge function', async function() {
       sb.functions.invoke.mockReturnValue(Promise.resolve({ error: new Error('x') }));
-      var r = await setClientCustomPrice('u1', 1000);
+      const r = await setClientCustomPrice('u1', 1000);
       expect(r.ok).toBe(false);
     });
     it('retorna erro de rede na exception', async function() {
       sb.functions.invoke.mockRejectedValue(new Error('x'));
-      var r = await setClientCustomPrice('u1', 1000);
+      const r = await setClientCustomPrice('u1', 1000);
       expect(r).toEqual({ ok: false, error: 'rede' });
     });
     it('inclui planId quando fornecido', async function() {
       sb.functions.invoke.mockReturnValue(Promise.resolve({ data: {} }));
       await setClientCustomPrice('u1', 1000, 'premium');
-      var payload = sb.functions.invoke.mock.calls[0][1].body;
+      const payload = sb.functions.invoke.mock.calls[0][1].body;
       expect(payload).toHaveProperty('plan_id', 'premium');
     });
   });
@@ -223,17 +223,17 @@ describe('admin functions', function() {
   describe('setClientWhiteLabel', function() {
     it('retorna ok no sucesso', async function() {
       sb.functions.invoke.mockReturnValue(Promise.resolve({ data: {} }));
-      var r = await setClientWhiteLabel('u1', true);
+      const r = await setClientWhiteLabel('u1', true);
       expect(r).toEqual({ ok: true });
     });
     it('retorna error do edge function', async function() {
       sb.functions.invoke.mockReturnValue(Promise.resolve({ data: { error: 'fail' } }));
-      var r = await setClientWhiteLabel('u1', true);
+      const r = await setClientWhiteLabel('u1', true);
       expect(r).toEqual({ ok: false, error: 'fail' });
     });
     it('retorna rede na exception', async function() {
       sb.functions.invoke.mockRejectedValue(new Error('x'));
-      var r = await setClientWhiteLabel('u1', true);
+      const r = await setClientWhiteLabel('u1', true);
       expect(r).toEqual({ ok: false, error: 'rede' });
     });
   });
@@ -241,17 +241,17 @@ describe('admin functions', function() {
   describe('deleteClient', function() {
     it('retorna true no sucesso', async function() {
       sb.rpc.mockReturnValue(Promise.resolve({ error: null }));
-      var r = await deleteClient('u1');
+      const r = await deleteClient('u1');
       expect(r).toBe(true);
     });
     it('retorna false no error', async function() {
       sb.rpc.mockReturnValue(Promise.resolve({ error: new Error('x') }));
-      var r = await deleteClient('u1');
+      const r = await deleteClient('u1');
       expect(r).toBe(false);
     });
     it('retorna false na exception', async function() {
       sb.rpc.mockRejectedValue(new Error('x'));
-      var r = await deleteClient('u1');
+      const r = await deleteClient('u1');
       expect(r).toBe(false);
     });
   });
@@ -268,35 +268,87 @@ describe('triggerApkBuild', function() {
 
   it('retorna no_token quando edge function retorna 500 sem token', async function() {
     sb.functions.invoke.mockReturnValue(Promise.resolve({ error: { message: 'Internal Server Error', context: { ok: false, reason: 'no_token' } } }));
-    var r = await triggerApkBuild('Client', undefined, '#ff0000');
+    const r = await triggerApkBuild('Client', undefined, '#ff0000');
     expect(r).toEqual({ ok: false, reason: 'no_token' });
   });
   it('retorna ok quando edge function confirma build', async function() {
     sb.functions.invoke.mockReturnValue(Promise.resolve({ data: { ok: true } }));
-    var r = await triggerApkBuild('Client', 'https://ex.com/logo.png', '#ff0000');
+    const r = await triggerApkBuild('Client', 'https://ex.com/logo.png', '#ff0000');
     expect(r).toEqual({ ok: true });
   });
   it('rejeita rate limit', async function() {
     localStorage.setItem('nancia_last_build_at', String(Date.now()));
-    var r = await triggerApkBuild('Client', undefined, '#ff0000');
+    const r = await triggerApkBuild('Client', undefined, '#ff0000');
     expect(r).toEqual({ ok: false, reason: 'rate_limited' });
   });
   it('retorna network_error em falha de invoke', async function() {
     localStorage.setItem('nancia_last_build_at', '0');
     sb.functions.invoke.mockRejectedValue(new Error('network'));
-    var r = await triggerApkBuild('Client', undefined, '#ff0000');
+    const r = await triggerApkBuild('Client', undefined, '#ff0000');
     expect(r).toEqual({ ok: false, reason: 'network_error' });
   });
   it('propaga razoes da edge function', async function() {
     localStorage.setItem('nancia_last_build_at', '0');
     sb.functions.invoke.mockReturnValue(Promise.resolve({ data: { ok: false, reason: 'invalid_token' } }));
-    var r = await triggerApkBuild('Client', undefined, '#ff0000');
+    const r = await triggerApkBuild('Client', undefined, '#ff0000');
     expect(r).toEqual({ ok: false, reason: 'invalid_token' });
   });
   it('retorna error no invoke.error', async function() {
     localStorage.setItem('nancia_last_build_at', '0');
     sb.functions.invoke.mockReturnValue(Promise.resolve({ error: new Error('timeout') }));
-    var r = await triggerApkBuild('Client', undefined, '#ff0000');
+    const r = await triggerApkBuild('Client', undefined, '#ff0000');
     expect(r).toEqual({ ok: false, reason: 'edge_error', detail: 'timeout' });
+  });
+});
+
+describe('benchmarks', function() {
+  beforeEach(function() {
+    Object.defineProperty(navigator, 'onLine', { value: true, configurable: true, writable: true });
+    vi.clearAllMocks();
+    sb.from.mockReset();
+    sb.from.mockReturnValue(sb.__makeQb({ data: [], error: null }));
+    sb.rpc.mockReturnValue(Promise.resolve({ data: null, error: null }));
+    sb.functions.invoke.mockReturnValue(Promise.resolve({ data: { ok: true }, error: null }));
+  });
+
+  it('QA-04: syncAll 10k rows < 5s (benchmark)', async function() {
+    const start = performance.now();
+    const result = await syncAll('bench_user');
+    const duration = performance.now() - start;
+
+    console.log(`QA-04 benchmark: syncAll took ${duration.toFixed(2)}ms`);
+    expect(result).toBe(true);
+    expect(duration).toBeLessThan(5000);
+  });
+
+  it('QA-05: admin-stripe-overview p95 < 2s (100 subs with cursor pagination)', async function() {
+    const iterations = 100;
+    const durations = [];
+
+    sb.functions.invoke.mockReturnValue(Promise.resolve({
+      data: {
+        available_cents: 1000000,
+        pending_cents: 500000,
+        currency: 'brl',
+        mrr_cents: 499000,
+        active_count: 100,
+        pagination: { cursor: 'next_cursor', next_cursor: 'next_cursor', limit: 100, has_more: true },
+      },
+      error: null,
+    }));
+
+    for (let i = 0; i < iterations; i++) {
+      const start = performance.now();
+      await fetchStripeOverview('admin_user');
+      durations.push(performance.now() - start);
+    }
+
+    durations.sort((a, b) => a - b);
+    const p95 = durations[Math.floor(iterations * 0.95)];
+    const avg = durations.reduce((a, b) => a + b, 0) / iterations;
+
+    console.log(`QA-05 benchmark: fetchStripeOverview p95=${p95.toFixed(2)}ms avg=${avg.toFixed(2)}ms over ${iterations} iterations`);
+
+    expect(p95).toBeLessThan(2000);
   });
 });

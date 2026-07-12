@@ -1,7 +1,9 @@
 // Edge Function: stripe-webhook
 // Recebe eventos da Stripe e ativa/rebaixa o plano via RPC SECURITY DEFINER.
-// A atualizacao do plano passa por stripe_activate_plan (o trigger prevent_plan_change
+// A atualizacao do plano passa por set_client_plan (o trigger prevent_plan_change
 // bloqueia UPDATE direto na company_profiles).
+// Failed events are stored in stripe_webhook_dlq for replay/debugging.
+
 import Stripe from 'https://esm.sh/stripe@17.7.0?target=denonext';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { htmlFromText, sendSystemEmail } from '../_shared/mailer.ts';
@@ -24,15 +26,34 @@ async function userEmailById(supabase: any, userId: string): Promise<string> {
   }
 }
 
-// Extrai o plan_id dos metadados da subscription, do price ou do item.
 function planOfSubFromEvent(sub: any): string {
   const m = sub.metadata ? sub.metadata : {};
-  if (m.plan_id === 'pro' || m.plan_id === 'premium') return m.plan_id;
+  if (m.plan_id === 'pro' || m.plan_id === 'premium' || m.plan_id === 'white_label') return m.plan_id;
   const item = sub.items && sub.items.data ? sub.items.data[0] : null;
   if (!item) return 'pro';
   const im = item.price && item.price.metadata ? item.price.metadata : {};
-  if (im.plan_id === 'pro' || im.plan_id === 'premium') return im.plan_id;
+  if (im.plan_id === 'pro' || im.plan_id === 'premium' || im.plan_id === 'white_label') return im.plan_id;
   return 'pro';
+}
+
+async function recordDlqFailure(
+  admin: any,
+  eventId: string,
+  eventType: string,
+  payload: any,
+  error: Error
+): Promise<void> {
+  try {
+    await admin.rpc('record_webhook_failure', {
+      p_event_id: eventId,
+      p_event_type: eventType,
+      p_payload: payload,
+      p_error_message: error.message,
+      p_error_stack: error.stack || '',
+    });
+  } catch (dlqErr) {
+    console.error('Failed to record DLQ entry:', dlqErr);
+  }
 }
 
 async function handler(req: Request, logger: Logger): Promise<Response> {
@@ -82,10 +103,11 @@ async function handler(req: Request, logger: Logger): Promise<Response> {
 
       if (userId) {
         logger.info('Activating plan from checkout', { user_id: userId, plan_id: planId });
-        await supabase.rpc('stripe_activate_plan', {
-          p_user: userId,
+        await supabase.rpc('set_client_plan', {
+          p_target: userId,
           p_plan: planId,
-          p_expires: expires,
+          p_actor: 'stripe_webhook',
+          p_expires_at: expires,
         });
         const to = await userEmailById(supabase, String(userId));
         if (to) {
@@ -122,10 +144,11 @@ async function handler(req: Request, logger: Logger): Promise<Response> {
             ? new Date(Number(sub.current_period_end) * 1000).toISOString()
             : new Date(Date.now() + 31 * 24 * 60 * 60 * 1000).toISOString();
           logger.info('Activating plan from invoice', { user_id: userId, plan_id: planId });
-          await supabase.rpc('stripe_activate_plan', {
-            p_user: userId,
+          await supabase.rpc('set_client_plan', {
+            p_target: userId,
             p_plan: planId,
-            p_expires: expires,
+            p_actor: 'stripe_webhook',
+            p_expires_at: expires,
           });
           const to = await userEmailById(supabase, String(userId));
           if (to) {
@@ -252,10 +275,11 @@ async function handler(req: Request, logger: Logger): Promise<Response> {
 
       if (status !== 'active' && status !== 'trialing') {
         if (status === 'incomplete_expired') {
-          await supabase.rpc('stripe_activate_plan', {
-            p_user: targetUserId,
+          await supabase.rpc('set_client_plan', {
+            p_target: targetUserId,
             p_plan: 'free',
-            p_expires: null,
+            p_actor: 'stripe_webhook',
+            p_expires_at: null,
           });
         }
         return corsResponse({ received: true, note: 'non_active' });
@@ -263,10 +287,11 @@ async function handler(req: Request, logger: Logger): Promise<Response> {
 
       if (targetUserId && planFromSub) {
         logger.info('Subscription updated', { user_id: targetUserId, plan: planFromSub, status });
-        await supabase.rpc('stripe_activate_plan', {
-          p_user: targetUserId,
+        await supabase.rpc('set_client_plan', {
+          p_target: targetUserId,
           p_plan: planFromSub,
-          p_expires: currentPeriodEnd,
+          p_actor: 'stripe_webhook',
+          p_expires_at: currentPeriodEnd,
         });
 
         if (cancelAtPeriodEnd) {
@@ -297,10 +322,11 @@ async function handler(req: Request, logger: Logger): Promise<Response> {
       const userIdSubDel = subMeta.user_id ? subMeta.user_id : null;
       if (userIdSubDel) {
         logger.info('Subscription deleted, reverting to free', { user_id: userIdSubDel });
-        await supabase.rpc('stripe_activate_plan', {
-          p_user: userIdSubDel,
+        await supabase.rpc('set_client_plan', {
+          p_target: userIdSubDel,
           p_plan: 'free',
-          p_expires: null,
+          p_actor: 'stripe_webhook',
+          p_expires_at: null,
         });
         const to = await userEmailById(supabase, String(userIdSubDel));
         if (to) {
@@ -321,6 +347,9 @@ async function handler(req: Request, logger: Logger): Promise<Response> {
     return corsResponse({ received: true });
   } catch (err) {
     logger.error('Error processing Stripe event', err as Error, { type: event?.type });
+    // Record failure in DLQ
+    const admin = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
+    await recordDlqFailure(admin, event?.id || 'unknown', event?.type || 'unknown', event || {}, err as Error);
     // Always return 200 to Stripe to avoid retries for unhandled errors
     return corsResponse({ received: true });
   }

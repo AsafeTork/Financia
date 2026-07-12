@@ -13,14 +13,17 @@ export default function ColorField({ label, desc, value, onChange }) {
       </div>
       <div className="flex items-center gap-2">
         <input type="color" aria-label={label + ' (seletor)'} value={isValidHex(value) ? value : '#002f59'} onChange={function(e) { onChange(e.target.value); }}
-          className="w-9 h-9 rounded-xl cursor-pointer p-0.5 flex-shrink-0" style={{border:'1px solid var(--border)'}}/>
+          className="w-9 h-9 rounded-xl cursor-pointer p-0.5 flex-shrink-0" style={{border:'1px solid var(--border)'}}
+          data-testid="color-field-picker"/>
         <input aria-label={label + ' (hex)'} value={value} onChange={function(e) {
           var raw = e.target.value;
           if (/^#[0-9a-fA-F]{0,6}$/.test(raw)) onChange(raw);
         }}
           placeholder="#000000" maxLength={7}
-          className="rounded-xl px-3 py-2 text-sm font-mono flex-1 focus:outline-none" style={{background:'var(--bg-input)', color:'var(--text-main)', border:'1px solid var(--border)'}}/>
-        <div className="w-8 h-8 rounded-xl flex-shrink-0" style={{background: value, border:'1px solid var(--border)'}}/>
+          className="rounded-xl px-3 py-2 text-sm font-mono flex-1 focus:outline-none" style={{background:'var(--bg-input)', color:'var(--text-main)', border:'1px solid var(--border)'}}
+          data-testid="color-field-hex-input"/>
+        <div className="w-8 h-8 rounded-xl flex-shrink-0" style={{background: value, border:'1px solid var(--border)'}}
+          data-testid="color-field-preview"/>
       </div>
     </div>
   );

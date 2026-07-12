@@ -31,16 +31,16 @@ describe('dueDate', function() {
 
 describe('recurringId', function() {
   it('e deterministico para o mesmo conteudo+periodo', function() {
-    var tpl = { desc: 'Aluguel', amount: 1500, day: 5 };
+    const tpl = { desc: 'Aluguel', amount: 1500, day: 5 };
     expect(recurringId('u1', tpl, '2026-06')).toBe(recurringId('u1', tpl, '2026-06'));
   });
   it('muda quando o valor muda', function() {
-    var a = recurringId('u1', { desc: 'Aluguel', amount: 1500, day: 5 }, '2026-06');
-    var b = recurringId('u1', { desc: 'Aluguel', amount: 1600, day: 5 }, '2026-06');
+    const a = recurringId('u1', { desc: 'Aluguel', amount: 1500, day: 5 }, '2026-06');
+    const b = recurringId('u1', { desc: 'Aluguel', amount: 1600, day: 5 }, '2026-06');
     expect(a).not.toBe(b);
   });
   it('muda a cada periodo', function() {
-    var t = { desc: 'Aluguel', amount: 1500, day: 5 };
+    const t = { desc: 'Aluguel', amount: 1500, day: 5 };
     expect(recurringId('u1', t, '2026-06')).not.toBe(recurringId('u1', t, '2026-07'));
   });
   it('gera id com prefixo rec-', function() {
@@ -55,14 +55,14 @@ describe('isRecurringId', function() {
 
 describe('activeTemplates', function() {
   it('filtra inativos e invalidos', function() {
-    var list = [
+    const list = [
       { desc: 'Aluguel', amount: 1500, day: 5, active: true },
       { desc: 'Pausado', amount: 100, day: 10, active: false },
       { desc: '', amount: 100, day: 5, active: true },
       { desc: 'ZeroValor', amount: 0, day: 5, active: true },
       { desc: 'SemDia', amount: 50, day: 0, active: true },
     ];
-    var out = activeTemplates(list);
+    const out = activeTemplates(list);
     expect(out.length).toBe(1);
     expect(out[0].desc).toBe('Aluguel');
   });
@@ -71,7 +71,7 @@ describe('activeTemplates', function() {
 
 describe('buildRecurringRow', function() {
   it('monta despesa com flag e id deterministico', function() {
-    var row = buildRecurringRow('u1', { desc: 'Aluguel', amount: 1500, day: 5, category: 'Fixo' }, '2026-06', 'Joao');
+    const row = buildRecurringRow('u1', { desc: 'Aluguel', amount: 1500, day: 5, category: 'Fixo' }, '2026-06', 'Joao');
     expect(row.type).toBe('expense');
     expect(row.amount).toBe(1500);
     expect(row.date).toBe('2026-06-05');

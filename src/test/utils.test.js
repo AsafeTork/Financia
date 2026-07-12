@@ -65,7 +65,7 @@ describe('hexToRgb', function() {
   it('#0f9d6c → r=15, g=157, b=108', function() { expect(hexToRgb('#0f9d6c')).toEqual({ r: 15, g: 157, b: 108 }); });
   it('string vazia usa default #002f59', function() { expect(hexToRgb('').r).toBe(0); });
   it('retorna objeto com r/g/b', function() {
-    var c = hexToRgb('#aabbcc');
+    const c = hexToRgb('#aabbcc');
     expect(c).toHaveProperty('r');
     expect(c).toHaveProperty('g');
     expect(c).toHaveProperty('b');
@@ -126,7 +126,7 @@ describe('prevDays', function() {
   it('prevDays(0) igual a today()', function() { expect(prevDays(0)).toBe(today()); });
   it('prevDays(1) anterior a today', function() { expect(prevDays(1) < today()).toBe(true); });
   it('prevDays(7) é 7 dias atrás', function() {
-    var d = new Date(); d.setDate(d.getDate() - 7);
+    const d = new Date(); d.setDate(d.getDate() - 7);
     expect(prevDays(7)).toBe(d.toISOString().split('T')[0]);
   });
   it('formato YYYY-MM-DD', function() { expect(prevDays(30)).toMatch(/^\d{4}-\d{2}-\d{2}$/); });
@@ -165,11 +165,11 @@ describe('genPwd', function() {
   it('retorna string', function() { expect(typeof genPwd()).toBe('string'); });
   it('comprimento 12', function() { expect(genPwd().length).toBe(12); });
   it('não contém caracteres ambíguos (0, O, I, l, 1)', function() {
-    var p = genPwd();
+    const p = genPwd();
     expect(p).not.toMatch(/[0OIl1]/);
   });
   it('duas chamadas raramente iguais', function() {
-    var results = new Set(Array.from({ length: 10 }, genPwd));
+    const results = new Set(Array.from({ length: 10 }, genPwd));
     expect(results.size).toBeGreaterThan(1);
   });
 });
@@ -182,7 +182,7 @@ describe('luminance', function() {
   it('#000000 → 0', function() { expect(luminance('#000000')).toBe(0); });
   it('#ff0000 ≈ 0.2126', function() { expect(luminance('#ff0000')).toBeCloseTo(0.2126, 3); });
   it('retorna número entre 0 e 1', function() {
-    var l = luminance('#002f59');
+    const l = luminance('#002f59');
     expect(l).toBeGreaterThanOrEqual(0);
     expect(l).toBeLessThanOrEqual(1);
   });
@@ -206,8 +206,8 @@ describe('hexToHsl', function() {
   it('#ff0000 → h≈0', function() { expect(hexToHsl('#ff0000').h).toBeCloseTo(0, 0); });
   it('#00ff00 → h≈120', function() { expect(hexToHsl('#00ff00').h).toBeCloseTo(120, 0); });
   it('#0000ff → h≈240', function() { expect(hexToHsl('#0000ff').h).toBeCloseTo(240, 0); });
-  it('#ffffff → s=0, l=1', function() { var c = hexToHsl('#ffffff'); expect(c.s).toBe(0); expect(c.l).toBe(1); });
-  it('#000000 → s=0, l=0', function() { var c = hexToHsl('#000000'); expect(c.s).toBe(0); expect(c.l).toBe(0); });
+  it('#ffffff → s=0, l=1', function() { const c = hexToHsl('#ffffff'); expect(c.s).toBe(0); expect(c.l).toBe(1); });
+  it('#000000 → s=0, l=0', function() { const c = hexToHsl('#000000'); expect(c.s).toBe(0); expect(c.l).toBe(0); });
 });
 
 describe('hslToHex', function() {
@@ -224,23 +224,23 @@ describe('hslToHex', function() {
 // ---------------------------------------------------------------------------
 describe('deriveCores', function() {
   it('retorna objeto com secondary e accent', function() {
-    var r = deriveCores('#002f59');
+    const r = deriveCores('#002f59');
     expect(r).toHaveProperty('secondary');
     expect(r).toHaveProperty('accent');
   });
   it('secondary é string hex', function() { expect(deriveCores('#002f59').secondary).toMatch(/^#[0-9a-f]{6}$/i); });
   it('accent é string hex', function() { expect(deriveCores('#002f59').accent).toMatch(/^#[0-9a-f]{6}$/i); });
   it('secondary ≠ accent', function() {
-    var r = deriveCores('#002f59');
+    const r = deriveCores('#002f59');
     expect(r.secondary).not.toBe(r.accent);
   });
   it('cores diferentes para primárias diferentes', function() {
-    var a = deriveCores('#002f59').accent;
-    var b = deriveCores('#ff0000').accent;
+    const a = deriveCores('#002f59').accent;
+    const b = deriveCores('#ff0000').accent;
     expect(a).not.toBe(b);
   });
   it('sem parâmetro usa default', function() {
-    var r = deriveCores();
+    const r = deriveCores();
     expect(r.secondary).toMatch(/^#/);
     expect(r.accent).toMatch(/^#/);
   });
@@ -259,7 +259,7 @@ describe('passwordStrength', function() {
   it('Abcdefg1 (>=8 + misto + dígito) → score 3', function() { expect(passwordStrength('Abcdefg1').score).toBe(3); });
   it('Abcdefg1! (todos exceto length>=12) → score 4', function() { expect(passwordStrength('Abcdefg1!').score).toBe(4); });
   it('Abcdefgh123! (todos) → score 5, pct 100', function() {
-    var r = passwordStrength('Abcdefgh123!');
+    const r = passwordStrength('Abcdefgh123!');
     expect(r.score).toBe(5);
     expect(r.pct).toBe(100);
   });

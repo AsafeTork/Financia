@@ -3,8 +3,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import useBrandAppearance, { applyBrandVars } from './useBrandAppearance.js';
 
-var mockBrandAlpha = vi.fn(function() { return 'rgba(0,0,0,0.08)'; });
-var mockDeriveCores = vi.fn(function() {
+const mockBrandAlpha = vi.fn(function() { return 'rgba(0,0,0,0.08)'; });
+const mockDeriveCores = vi.fn(function() {
   return { secondary: '#mocked-secondary', accent: '#mocked-accent' };
 });
 
@@ -15,8 +15,8 @@ vi.mock('../../lib/utils.js', function() {
   };
 });
 
-var lsData = {};
-var mockSetProperty = vi.fn();
+let lsData = {};
+const mockSetProperty = vi.fn();
 
 beforeEach(function() {
   lsData = {};
@@ -59,9 +59,9 @@ function makePlanInfo(overrides) {
 describe('useBrandAppearance', function() {
 
   it('non-white-label pro plan gets plan visual defaults', function() {
-    var brand = makeBrand({ white_label: false });
-    var planInfo = makePlanInfo({ plan: 'pro', plan_expires_at: '2099-01-01' });
-    var { result } = renderHook(function() { return useBrandAppearance(brand, planInfo); });
+    const brand = makeBrand({ white_label: false });
+    const planInfo = makePlanInfo({ plan: 'pro', plan_expires_at: '2099-01-01' });
+    const { result } = renderHook(function() { return useBrandAppearance(brand, planInfo); });
     expect(result.current.appBrand.color).toBe('#2563EB');
     expect(result.current.appBrand.color_secondary).toBe('#e0e7ff');
     expect(result.current.appBrand.color_accent).toBe('#4F46E5');
@@ -69,8 +69,8 @@ describe('useBrandAppearance', function() {
   });
 
   it('white-label with custom_palette keeps own colors', function() {
-    var brand = makeBrand({ white_label: true, custom_palette: true, color: '#ff6600', color_secondary: '#fff3e0', color_accent: '#ff9100', theme: 'dark' });
-    var { result } = renderHook(function() { return useBrandAppearance(brand, makePlanInfo()); });
+    const brand = makeBrand({ white_label: true, custom_palette: true, color: '#ff6600', color_secondary: '#fff3e0', color_accent: '#ff9100', theme: 'dark' });
+    const { result } = renderHook(function() { return useBrandAppearance(brand, makePlanInfo()); });
     expect(result.current.appBrand.color).toBe('#ff6600');
     expect(result.current.appBrand.color_secondary).toBe('#fff3e0');
     expect(result.current.appBrand.color_accent).toBe('#ff9100');
@@ -78,8 +78,8 @@ describe('useBrandAppearance', function() {
   });
 
   it('white-label without custom_palette and missing colors gets fallback', function() {
-    var brand = { name: 'Custom', white_label: true, custom_palette: false, logo_url: null };
-    var { result } = renderHook(function() { return useBrandAppearance(brand, makePlanInfo()); });
+    const brand = { name: 'Custom', white_label: true, custom_palette: false, logo_url: null };
+    const { result } = renderHook(function() { return useBrandAppearance(brand, makePlanInfo()); });
     expect(result.current.appBrand.color).toBe('#002f59');
     expect(result.current.appBrand.color_secondary).toBe('#e8f0f7');
     expect(result.current.appBrand.color_accent).toBe('#3bbfa0');
@@ -87,8 +87,8 @@ describe('useBrandAppearance', function() {
   });
 
   it('free plan gets free visual defaults', function() {
-    var brand = makeBrand({ white_label: false });
-    var { result } = renderHook(function() { return useBrandAppearance(brand, makePlanInfo()); });
+    const brand = makeBrand({ white_label: false });
+    const { result } = renderHook(function() { return useBrandAppearance(brand, makePlanInfo()); });
     expect(result.current.appBrand.color).toBe('#0f3d3e');
     expect(result.current.appBrand.color_secondary).toBe('#ccfbf1');
     expect(result.current.appBrand.color_accent).toBe('#0d9488');
@@ -96,55 +96,55 @@ describe('useBrandAppearance', function() {
   });
 
   it('premium plan gets premium visual defaults', function() {
-    var brand = makeBrand({ white_label: false });
-    var planInfo = makePlanInfo({ plan: 'premium', plan_expires_at: '2099-01-01' });
-    var { result } = renderHook(function() { return useBrandAppearance(brand, planInfo); });
+    const brand = makeBrand({ white_label: false });
+    const planInfo = makePlanInfo({ plan: 'premium', plan_expires_at: '2099-01-01' });
+    const { result } = renderHook(function() { return useBrandAppearance(brand, planInfo); });
     expect(result.current.appBrand.color).toBe('#0F172A');
     expect(result.current.appBrand.color_accent).toBe('#D4AF6A');
   });
 
   it('expired plan falls back to free defaults', function() {
-    var brand = makeBrand({ white_label: false });
-    var planInfo = makePlanInfo({ plan: 'pro', plan_expires_at: '2020-01-01' });
-    var { result } = renderHook(function() { return useBrandAppearance(brand, planInfo); });
+    const brand = makeBrand({ white_label: false });
+    const planInfo = makePlanInfo({ plan: 'pro', plan_expires_at: '2020-01-01' });
+    const { result } = renderHook(function() { return useBrandAppearance(brand, planInfo); });
     expect(result.current.appBrand.color).toBe('#0f3d3e');
   });
 
   it('does not crash when brand is null', function() {
-    var { result } = renderHook(function() { return useBrandAppearance(null, makePlanInfo()); });
+    const { result } = renderHook(function() { return useBrandAppearance(null, makePlanInfo()); });
     expect(result.current.appBrand).not.toBeNull();
     expect(result.current.effectiveTheme).toBe('light');
   });
 
   it('does not crash when brand is undefined', function() {
-    var { result } = renderHook(function() { return useBrandAppearance(undefined, makePlanInfo()); });
+    const { result } = renderHook(function() { return useBrandAppearance(undefined, makePlanInfo()); });
     expect(result.current.appBrand).not.toBeNull();
     expect(result.current.effectiveTheme).toBe('light');
   });
 
   it('does not crash when planInfo is null', function() {
-    var brand = makeBrand({ white_label: false });
-    var { result } = renderHook(function() { return useBrandAppearance(brand, null); });
+    const brand = makeBrand({ white_label: false });
+    const { result } = renderHook(function() { return useBrandAppearance(brand, null); });
     expect(result.current.appBrand.color).toBe('#0f3d3e');
   });
 
   it('effectiveTheme falls back to appBrand.theme', function() {
-    var brand = makeBrand({ white_label: true, custom_palette: true, theme: 'dark' });
-    var { result } = renderHook(function() { return useBrandAppearance(brand, makePlanInfo()); });
+    const brand = makeBrand({ white_label: true, custom_palette: true, theme: 'dark' });
+    const { result } = renderHook(function() { return useBrandAppearance(brand, makePlanInfo()); });
     expect(result.current.effectiveTheme).toBe('dark');
   });
 
   it('effectiveTheme prefers localStorage themePref', function() {
     lsData['financia_theme'] = 'dark';
-    var brand = makeBrand({ white_label: true, custom_palette: true, theme: 'light' });
-    var { result } = renderHook(function() { return useBrandAppearance(brand, makePlanInfo()); });
+    const brand = makeBrand({ white_label: true, custom_palette: true, theme: 'light' });
+    const { result } = renderHook(function() { return useBrandAppearance(brand, makePlanInfo()); });
     expect(result.current.themePref).toBe('dark');
     expect(result.current.effectiveTheme).toBe('dark');
   });
 
   it('toggleTheme switches from light to dark and saves', function() {
-    var brand = makeBrand({ white_label: true, custom_palette: true, theme: 'light' });
-    var { result } = renderHook(function() { return useBrandAppearance(brand, makePlanInfo()); });
+    const brand = makeBrand({ white_label: true, custom_palette: true, theme: 'light' });
+    const { result } = renderHook(function() { return useBrandAppearance(brand, makePlanInfo()); });
     act(function() { result.current.toggleTheme(); });
     expect(result.current.themePref).toBe('dark');
     expect(result.current.effectiveTheme).toBe('dark');
@@ -154,8 +154,8 @@ describe('useBrandAppearance', function() {
   });
 
   it('toggleTheme returns previous themePref for null start', function() {
-    var brand = makeBrand({ white_label: true, custom_palette: true, theme: 'light' });
-    var { result } = renderHook(function() { return useBrandAppearance(brand, makePlanInfo()); });
+    const brand = makeBrand({ white_label: true, custom_palette: true, theme: 'light' });
+    const { result } = renderHook(function() { return useBrandAppearance(brand, makePlanInfo()); });
     act(function() { result.current.toggleTheme(); });
     act(function() { result.current.toggleTheme(); });
     act(function() { result.current.toggleTheme(); });
@@ -163,8 +163,8 @@ describe('useBrandAppearance', function() {
   });
 
   it('white-label with partial colors and custom_palette=false uses fallback', function() {
-    var brand = { name: 'Partial', white_label: true, custom_palette: false, color: '#999999', logo_url: null };
-    var { result } = renderHook(function() { return useBrandAppearance(brand, makePlanInfo()); });
+    const brand = { name: 'Partial', white_label: true, custom_palette: false, color: '#999999', logo_url: null };
+    const { result } = renderHook(function() { return useBrandAppearance(brand, makePlanInfo()); });
     expect(result.current.appBrand.color).toBe('#002f59');
     expect(result.current.appBrand.color_secondary).toBe('#e8f0f7');
     expect(result.current.appBrand.color_accent).toBe('#3bbfa0');
@@ -172,14 +172,14 @@ describe('useBrandAppearance', function() {
   });
 
   it('white-label with partial colors and custom_palette=true keeps partial brand', function() {
-    var brand = { name: 'Partial', white_label: true, custom_palette: true, color: '#999999', logo_url: null };
-    var { result } = renderHook(function() { return useBrandAppearance(brand, makePlanInfo()); });
+    const brand = { name: 'Partial', white_label: true, custom_palette: true, color: '#999999', logo_url: null };
+    const { result } = renderHook(function() { return useBrandAppearance(brand, makePlanInfo()); });
     expect(result.current.appBrand.color).toBe('#999999');
   });
 
   it('non-white-label with null planInfo uses free defaults', function() {
-    var brand = makeBrand({ white_label: false });
-    var { result } = renderHook(function() { return useBrandAppearance(brand, null); });
+    const brand = makeBrand({ white_label: false });
+    const { result } = renderHook(function() { return useBrandAppearance(brand, null); });
     expect(result.current.appBrand.color).toBe('#0f3d3e');
   });
 

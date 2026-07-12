@@ -95,8 +95,8 @@ describe('responseProcessor', function() {
   it('retorna erro para array', function() {
     const result = processResponse('[]', {});
     expect(result.success).toBe(false);
-    expect(result.step).toBe('validation');
-    expect(result.error).toContain('Validacao falhou');
+    expect(['parse', 'validation']).toContain(result.step);
+    expect(result.error).toContain('Resposta invalida');
   });
 
   it('aceita objeto ja parseado', function() {

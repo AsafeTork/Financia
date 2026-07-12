@@ -2,11 +2,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { signIn, signUp, signOut, updatePassword, sendPasswordReset } from './auth.js';
 
-var mockSignInWithPassword = vi.fn();
-var mockSignUp = vi.fn();
-var mockSignOut = vi.fn();
-var mockUpdateUser = vi.fn();
-var mockResetPasswordForEmail = vi.fn();
+const mockSignInWithPassword = vi.fn();
+const mockSignUp = vi.fn();
+const mockSignOut = vi.fn();
+const mockUpdateUser = vi.fn();
+const mockResetPasswordForEmail = vi.fn();
 
 vi.mock('./supabase.js', function() {
   return {

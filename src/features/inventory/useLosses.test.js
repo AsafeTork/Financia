@@ -3,12 +3,12 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useLosses } from './useLosses.js';
 
-var mockPut    = vi.fn(async function() {});
-var mockUpdate = vi.fn(async function() {});
-var mockDelete = vi.fn(async function() {});
+const mockPut    = vi.fn(async function() {});
+const mockUpdate = vi.fn(async function() {});
+const mockDelete = vi.fn(async function() {});
 
-var mockCount = vi.fn(async function() { return 0; });
-var whereChain = { equals: function() { return { filter: function() { return { count: function() { return mockCount.apply(this, arguments); } }; } }; } };
+const mockCount = vi.fn(async function() { return 0; });
+const whereChain = { equals: function() { return { filter: function() { return { count: function() { return mockCount.apply(this, arguments); } }; } }; } };
 
 vi.mock('../../lib/dexie.js', function() {
   return {
@@ -24,7 +24,7 @@ vi.mock('../../lib/dexie.js', function() {
 });
 
 vi.mock('../../lib/supabase.js', function() {
-  var eq = vi.fn(async function() { return {error: null}; });
+  const eq = vi.fn(async function() { return {error: null}; });
   return {
     sb: {
       from: function() {
@@ -38,14 +38,14 @@ vi.mock('../../lib/supabase.js', function() {
   };
 });
 
-var session = {
+const session = {
   user: { id: 'u1', email: 'a@b.com', user_metadata: { name: 'Teste' } },
 };
 
 function makeHook(limitOk) {
-  var enforceLimit = vi.fn(function() { return limitOk !== false; });
-  var toast = vi.fn();
-  var hook = renderHook(function() { return useLosses(session, enforceLimit, toast); });
+  const enforceLimit = vi.fn(function() { return limitOk !== false; });
+  const toast = vi.fn();
+  const hook = renderHook(function() { return useLosses(session, enforceLimit, toast); });
   return { hook: hook, enforceLimit: enforceLimit, toast: toast };
 }
 
@@ -62,7 +62,7 @@ beforeEach(function() {
 
 describe('addLoss', function() {
   it('caminho feliz: registra perda', async function() {
-    var { hook } = makeHook();
+    const { hook } = makeHook();
     await act(async function() { await hook.result.current.addLoss(makeLoss()); });
     expect(mockPut).toHaveBeenCalledOnce();
     expect(hook.result.current.losses).toHaveLength(1);
@@ -70,35 +70,35 @@ describe('addLoss', function() {
   });
 
   it('rejeita desc vazia', async function() {
-    var { hook, toast } = makeHook();
+    const { hook, toast } = makeHook();
     await act(async function() { await hook.result.current.addLoss(makeLoss({desc: ''})); });
     expect(mockPut).not.toHaveBeenCalled();
     expect(toast).toHaveBeenCalledWith(expect.any(String), 'error');
   });
 
   it('rejeita qty zero', async function() {
-    var { hook, toast } = makeHook();
+    const { hook, toast } = makeHook();
     await act(async function() { await hook.result.current.addLoss(makeLoss({qty: '0'})); });
     expect(mockPut).not.toHaveBeenCalled();
     expect(toast).toHaveBeenCalledWith(expect.any(String), 'error');
   });
 
   it('rejeita qty negativa', async function() {
-    var { hook, toast } = makeHook();
+    const { hook, toast } = makeHook();
     await act(async function() { await hook.result.current.addLoss(makeLoss({qty: '-1'})); });
     expect(mockPut).not.toHaveBeenCalled();
     expect(toast).toHaveBeenCalledWith(expect.any(String), 'error');
   });
 
   it('bloqueia quando limite atingido', async function() {
-    var { hook, enforceLimit } = makeHook(false);
+    const { hook, enforceLimit } = makeHook(false);
     await act(async function() { await hook.result.current.addLoss(makeLoss()); });
     expect(enforceLimit).toHaveBeenCalled();
     expect(mockPut).not.toHaveBeenCalled();
   });
 
   it('aceita reason null/vazio', async function() {
-    var { hook } = makeHook();
+    const { hook } = makeHook();
     await act(async function() { await hook.result.current.addLoss(makeLoss({reason: ''})); });
     expect(mockPut).toHaveBeenCalledOnce();
     expect(hook.result.current.losses[0].reason).toBeNull();
@@ -106,7 +106,7 @@ describe('addLoss', function() {
 
   it('erro no Dexie mostra toast', async function() {
     mockPut.mockRejectedValueOnce(new Error('quota exceeded'));
-    var { hook, toast } = makeHook();
+    const { hook, toast } = makeHook();
     await act(async function() { await hook.result.current.addLoss(makeLoss()); });
     expect(toast).toHaveBeenCalledWith(expect.stringContaining('quota exceeded'), 'error');
   });
@@ -114,7 +114,7 @@ describe('addLoss', function() {
 
 describe('editLoss', function() {
   it('edita perda existente', async function() {
-    var { hook } = makeHook();
+    const { hook } = makeHook();
     await act(async function() { await hook.result.current.addLoss(makeLoss()); });
     await act(async function() { await hook.result.current.editLoss('l1', makeLoss({desc:'Novo', qty:'5'})); });
     expect(mockUpdate).toHaveBeenCalled();
@@ -123,14 +123,14 @@ describe('editLoss', function() {
   });
 
   it('rejeita desc vazia na edicao', async function() {
-    var { hook, toast } = makeHook();
+    const { hook, toast } = makeHook();
     await act(async function() { await hook.result.current.editLoss('l1', makeLoss({desc:''})); });
     expect(mockUpdate).not.toHaveBeenCalled();
     expect(toast).toHaveBeenCalledWith(expect.any(String), 'error');
   });
 
   it('rejeita qty invalida na edicao', async function() {
-    var { hook, toast } = makeHook();
+    const { hook, toast } = makeHook();
     await act(async function() { await hook.result.current.editLoss('l1', makeLoss({qty:'0'})); });
     expect(mockUpdate).not.toHaveBeenCalled();
     expect(toast).toHaveBeenCalledWith(expect.any(String), 'error');
@@ -139,7 +139,7 @@ describe('editLoss', function() {
 
 describe('deleteLoss', function() {
   it('remove perda do estado', async function() {
-    var { hook } = makeHook();
+    const { hook } = makeHook();
     await act(async function() { await hook.result.current.addLoss(makeLoss()); });
     await act(async function() { await hook.result.current.deleteLoss('l1'); });
     expect(hook.result.current.losses).toHaveLength(0);
@@ -148,7 +148,7 @@ describe('deleteLoss', function() {
 
   it('erro no Dexie mostra toast', async function() {
     mockUpdate.mockRejectedValueOnce(new Error('lock error'));
-    var { hook, toast } = makeHook();
+    const { hook, toast } = makeHook();
     await act(async function() { await hook.result.current.addLoss(makeLoss()); });
     await act(async function() { await hook.result.current.deleteLoss('l1'); });
     expect(toast).toHaveBeenCalledWith(expect.stringContaining('lock error'), 'error');

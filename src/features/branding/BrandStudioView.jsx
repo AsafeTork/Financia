@@ -1,7 +1,8 @@
 import React from 'react';
 import useBrandStudio from './useBrandStudio.js';
 import { PageHead, Card } from '../../shared/ui/ui.jsx';
-import { generateLogoSvg, logoSvgToDataUrl } from './logoUtils.js';
+import { generateLogoSvg, logoSvgToDataUrl, buildCheckPath } from './logoUtils.js';
+import { OFFICIAL_LOGO_COLORS, LOGO_ELEMENTS } from './defaults.js';
 import PlanTabsEditor from './PlanTabsEditor.jsx';
 import PreviewGeral from './PreviewGeral.jsx';
 
@@ -14,56 +15,45 @@ const PLAN_LOGO_META = {
   free: { label: 'Free' },
   pro: { label: 'Pro' },
   premium: { label: 'Premium' },
-};
-
-const LOGO_ELEMENTS = [
-  { id: 'blue', label: 'Coluna 1' },
-  { id: 'green', label: 'Coluna 2' },
-  { id: 'teal', label: 'Coluna 3' },
-  { id: 'check', label: 'Check' },
-];
-
-const ORIGINAL_LOGO = {
-  blue: '#002f59', green: '#1a6b5c', teal: '#6ec6c8', check: '#8cf2d1',
+  white_label: { label: 'White Label' },
 };
 
 function usePlanLogoSync(activePlan, brandConfig, brandColor) {
-  const planOverrides = (brandConfig && brandConfig.planOverrides) || {};
-  const globalColors = (brandConfig && brandConfig.logoColors) || ORIGINAL_LOGO;
+  const planOverrides = (brandConfig && brandConfig.modules && brandConfig.modules.planOverrides) || {};
+  const globalColors = (brandConfig && brandConfig.modules && brandConfig.modules.logo) || OFFICIAL_LOGO_COLORS;
   const overrideColors = planOverrides[activePlan] && planOverrides[activePlan].logoColors;
   const hasCustom = !!overrideColors;
 
-  const [form, setForm] = React.useState(function() {
-    return Object.assign({}, overrideColors || globalColors);
-  });
+  const [form, setForm] = React.useState(() => ({ ...overrideColors || globalColors }));
   const [jsonInput, setJsonInput] = React.useState(JSON.stringify(overrideColors || globalColors, null, 2));
 
-  React.useEffect(function() {
+  React.useEffect(() => {
     const src = overrideColors || globalColors;
-    setForm(Object.assign({}, src));
+    setForm({ ...src });
     setJsonInput(JSON.stringify(src, null, 2));
   }, [activePlan, hasCustom, globalColors, overrideColors]);
 
-  const setColor = function(id, val) {
-    setForm(function(prev) { const o = Object.assign({}, prev); o[id] = val; return o; });
-    setJsonInput(function(prev) {
+  const setColor = (id, val) => {
+    setForm(prev => ({ ...prev, [id]: val }));
+    setJsonInput(prev => {
       try { const p = JSON.parse(prev); p[id] = val; return JSON.stringify(p, null, 2); } catch { return prev; }
     });
   };
 
-  const applyJson = function(json) {
+  const applyJson = (json) => {
     setJsonInput(json);
     try {
       const parsed = JSON.parse(json);
       if (parsed && typeof parsed === 'object') {
-        const safe = {}; const allowedKeys = ['blue', 'green', 'teal', 'check'];
-        allowedKeys.forEach(function(k) { if (parsed[k] !== undefined) safe[k] = String(parsed[k]).slice(0, 100); });
-        setForm(Object.assign({}, form, safe));
+        const safe = {};
+        const allowedKeys = ['blue', 'green', 'teal', 'check'];
+        allowedKeys.forEach(k => { if (parsed[k] !== undefined) safe[k] = String(parsed[k]).slice(0, 100); });
+        setForm(prev => ({ ...prev, ...safe }));
       }
     } catch (_) { void _; }
   };
 
-  return { form: form, hasCustom: hasCustom, jsonInput: jsonInput, setColor: setColor, applyJson: applyJson, setJsonInput: setJsonInput };
+  return { form, hasCustom, jsonInput, setColor, applyJson, setJsonInput };
 }
 
 function LogoTabContent({ brand, bs, brandColor, applyLogoScheme, toast }) {
@@ -71,7 +61,7 @@ function LogoTabContent({ brand, bs, brandColor, applyLogoScheme, toast }) {
   const lps = usePlanLogoSync(activeTab, bs.brandConfig, brandColor);
   const isGlobal = activeTab === '_global';
 
-  const doSave = async function() {
+  const doSave = async () => {
     if (isGlobal) {
       const svg = generateLogoSvg(lps.form);
       const dataUrl = logoSvgToDataUrl(svg);
@@ -81,9 +71,9 @@ function LogoTabContent({ brand, bs, brandColor, applyLogoScheme, toast }) {
     }
   };
 
-  const doReset = async function() {
+  const doReset = async () => {
     if (isGlobal) {
-      const orig = { blue:'#002f59', green:'#1a6b5c', teal:'#6ec6c8', check:'#8cf2d1' };
+      const orig = { blue: '#002f59', green: '#1a6b5c', teal: '#6ec6c8', check: '#8cf2d1' };
       const svg = generateLogoSvg(orig);
       applyLogoScheme(logoSvgToDataUrl(svg), orig);
     } else {
@@ -95,7 +85,7 @@ function LogoTabContent({ brand, bs, brandColor, applyLogoScheme, toast }) {
 
   return (
     <Card className="p-4 sm:p-5">
-      {bs && bs.copyPrompt && bs.copyCurrentJSON && (
+      {bs.copyPrompt && bs.copyCurrentJSON && (
         <div className="flex gap-2 mb-3">
           <button onClick={bs.copyPrompt}
             className="text-xs font-semibold px-3 py-1.5 rounded-lg transition hover:opacity-80 flex items-center gap-1.5"
@@ -112,20 +102,18 @@ function LogoTabContent({ brand, bs, brandColor, applyLogoScheme, toast }) {
         </div>
       )}
       <div className="flex flex-wrap items-center gap-1 border-b pb-1 mb-4" style={{borderColor:'var(--border)'}}>
-        <button onClick={function() { setActiveTab('_global'); }}
+        <button onClick={() => setActiveTab('_global')}
           className={'text-xs font-semibold px-3 py-2 rounded-t-lg transition ' + (activeTab === '_global' ? 'border-b-2' : 'opacity-50')}
           style={activeTab === '_global' ? {borderColor:brandColor, color:brandColor} : {}}>
         Global
         </button>
-        {Object.keys(PLAN_LOGO_META).map(function(k) {
-          return (
-            <button key={k} onClick={function() { setActiveTab(k); }}
-              className={'text-xs font-semibold px-3 py-2 rounded-t-lg transition ' + (activeTab === k ? 'border-b-2' : 'opacity-50')}
-              style={activeTab === k ? {borderColor:brandColor, color:brandColor} : {}}>
-            {PLAN_LOGO_META[k].label}
-            </button>
-          );
-        })}
+        {Object.keys(PLAN_LOGO_META).map(k => (
+          <button key={k} onClick={() => setActiveTab(k)}
+            className={'text-xs font-semibold px-3 py-2 rounded-t-lg transition ' + (activeTab === k ? 'border-b-2' : 'opacity-50')}
+            style={activeTab === k ? {borderColor:brandColor, color:brandColor} : {}}>
+          {PLAN_LOGO_META[k].label}
+          </button>
+        ))}
       </div>
 
       <div className="flex flex-col sm:flex-row gap-4 mb-3">
@@ -133,34 +121,32 @@ function LogoTabContent({ brand, bs, brandColor, applyLogoScheme, toast }) {
           <div className="rounded-xl overflow-hidden bg-white" style={{width:120, height:120}}>
             <svg width="120" height="120" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Preview da logo">
               <rect width="400" height="400" fill="transparent" />
-              <g transform="translate(34,200)"><rect width="71" height="125" rx="10" fill={lps.form.blue || ORIGINAL_LOGO.blue} /></g>
-              <g transform="translate(134,129)"><rect width="71" height="196" rx="10" fill={lps.form.green || ORIGINAL_LOGO.green} /></g>
-              <g transform="translate(234,75)"><rect width="72" height="250" rx="10" fill={lps.form.teal || ORIGINAL_LOGO.teal} /></g>
-              <g transform="translate(169,126)"><path d={buildCheckPath(197, 148)} fill={lps.form.check || ORIGINAL_LOGO.check} /></g>
+              <g transform="translate(34,200)"><rect width="71" height="125" rx="10" fill={lps.form.blue || OFFICIAL_LOGO_COLORS.blue} /></g>
+              <g transform="translate(134,129)"><rect width="71" height="196" rx="10" fill={lps.form.green || OFFICIAL_LOGO_COLORS.green} /></g>
+              <g transform="translate(234,75)"><rect width="72" height="250" rx="10" fill={lps.form.teal || OFFICIAL_LOGO_COLORS.teal} /></g>
+              <g transform="translate(169,126)"><path d={buildCheckPath(197, 148)} fill={lps.form.check || OFFICIAL_LOGO_COLORS.check} /></g>
             </svg>
           </div>
         </div>
 
         <div className="flex-1 grid grid-cols-2 gap-x-3 gap-y-1.5">
-          {LOGO_ELEMENTS.map(function(el) {
-            return (
-              <div key={el.id} className="flex items-center gap-1.5">
-                <div className="w-2.5 h-2.5 rounded flex-shrink-0" style={{background: lps.form[el.id] || '#000'}} />
-                <label htmlFor={"input-" + el.id} className="text-[10px] font-medium min-w-[44px]" style={{color:'var(--text-sub)'}}>{el.label}</label>
-                <input type="color" value={lps.form[el.id] || '#000000'} onChange={function(e) { lps.setColor(el.id, e.target.value); }}
-                  className="w-7 h-7 rounded-lg cursor-pointer border-0 p-0.5 flex-shrink-0" />
-                <input id={"input-" + el.id} type="text" value={lps.form[el.id] || ''} onChange={function(e) { lps.setColor(el.id, e.target.value); }}
-                  className="flex-1 min-w-0 rounded-lg px-1.5 py-1 text-[10px] font-mono focus:outline-none"
-                  style={{background:'var(--bg-input)', color:'var(--text-main)', border:'1px solid var(--border)'}} />
-              </div>
-            );
-          })}
+          {LOGO_ELEMENTS.map(el => (
+            <div key={el.id} className="flex items-center gap-1.5">
+              <div className="w-2.5 h-2.5 rounded flex-shrink-0" style={{background: lps.form[el.id] || '#000'}} />
+              <label htmlFor={"input-" + el.id} className="text-[10px] font-medium min-w-[44px]" style={{color:'var(--text-sub)'}}>{el.label}</label>
+              <input type="color" value={lps.form[el.id] || '#000000'} onChange={e => lps.setColor(el.id, e.target.value)}
+                className="w-7 h-7 rounded-lg cursor-pointer border-0 p-0.5 flex-shrink-0" />
+              <input id={"input-" + el.id} type="text" value={lps.form[el.id] || ''} onChange={e => lps.setColor(el.id, e.target.value)}
+                className="flex-1 min-w-0 rounded-lg px-1.5 py-1 text-[10px] font-mono focus:outline-none"
+                style={{background:'var(--bg-input)', color:'var(--text-main)', border:'1px solid var(--border)'}} />
+            </div>
+          ))}
         </div>
       </div>
 
       <div className="flex flex-col gap-1 mb-3">
         <label htmlFor="logo-json" className="text-[10px] font-medium" style={{color:'var(--text-sub)'}}>JSON</label>
-        <textarea id="logo-json" value={lps.jsonInput} onChange={function(e) { lps.applyJson(e.target.value); }}
+        <textarea id="logo-json" value={lps.jsonInput} onChange={e => lps.applyJson(e.target.value)}
           rows={2} className="rounded-lg px-2 py-1 text-[10px] font-mono resize-none focus:outline-none"
           style={{background:'var(--bg-input)', color:'var(--text-main)', border:'1px solid var(--border)'}} />
       </div>
@@ -187,29 +173,20 @@ function LogoTabContent({ brand, bs, brandColor, applyLogoScheme, toast }) {
   );
 }
 
-function buildCheckPath(w, h) {
-  const NORM = [
-    { x:1.0, y:0.17 }, { x:0.87, y:0 }, { x:0.36, y:0.66 }, { x:0.13, y:0.35 },
-    { x:0, y:0.52 }, { x:0.12, y:0.68 }, { x:0.24, y:0.84 }, { x:0.36, y:1.0 },
-  ];
-  const pts = NORM.map(function(p) { return (p.x * w).toFixed(1) + ' ' + (p.y * h).toFixed(1); });
-  return 'M ' + pts[0] + ' L ' + pts[1] + ' L ' + pts[2] + ' L ' + pts[3]
-    + ' L ' + pts[3] + ' C ' + pts[5] + ' ' + pts[6] + ' ' + pts[7] + ' Z';
-}
-
 export default function BrandStudioView({ brand, planInfo, onSave, toast, onNav }) {
   const bs = useBrandStudio(brand, planInfo, onSave, toast);
   const brandColor = (brand && brand.color) || '#002f59';
   const [section, setSection] = React.useState('logo');
 
-  const applyLogoScheme = async function(dataUrl, colors) {
+  const applyLogoScheme = async (dataUrl, colors) => {
     try {
       bs.saveToHistory(brand);
       const cfg = (typeof bs.brandConfig === 'object' && bs.brandConfig) ? bs.brandConfig : {};
-      const updated = Object.assign({}, brand, {
+      const updated = {
+        ...brand,
         logo_url: dataUrl,
-        brand_config: JSON.stringify(Object.assign({}, cfg, { logoColors: colors })),
-      });
+        brand_config: JSON.stringify({ ...cfg, logoColors: colors }),
+      };
       await onSave(updated);
       if (toast) toast('Logo global atualizada!', 'success');
     } catch (err) {
@@ -239,16 +216,16 @@ export default function BrandStudioView({ brand, planInfo, onSave, toast, onNav 
       </Card>
 
       <div className="flex border-b gap-1" role="tablist" aria-label="Navegacao principal" style={{borderColor:'var(--border)'}}>
-        {NAV_TABS.map(function(s) {
+        {NAV_TABS.map(s => {
           const active = section === s.key;
           return (
-            <button key={s.key} role="tab" id={"tab-" + s.key} aria-selected={active} aria-controls={"panel-" + s.key} onClick={function() { setSection(s.key); }}
+            <button key={s.key} role="tab" id={"tab-" + s.key} aria-selected={active} aria-controls={"panel-" + s.key} onClick={() => setSection(s.key)}
               className={'flex items-center gap-2 px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors border-b-2 -mb-px ' + (active ? '' : 'text-gray-400 border-transparent hover:text-gray-600')}
               style={active ? {borderColor: brandColor, color: brandColor} : {}}>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d={s.icon} /></svg>
             {s.label}
           </button>
-          );
+        );
         })}
       </div>
 

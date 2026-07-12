@@ -3,12 +3,12 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useProducts } from './useProducts.js';
 
-var mockPut    = vi.fn(async function() {});
-var mockUpdate = vi.fn(async function() {});
-var mockDelete = vi.fn(async function() {});
+const mockPut    = vi.fn(async function() {});
+const mockUpdate = vi.fn(async function() {});
+const mockDelete = vi.fn(async function() {});
 
-var mockCount = vi.fn(async function() { return 0; });
-var whereChain = { equals: function() { return { filter: function() { return { count: function() { return mockCount.apply(this, arguments); } }; } }; } };
+const mockCount = vi.fn(async function() { return 0; });
+const whereChain = { equals: function() { return { filter: function() { return { count: function() { return mockCount.apply(this, arguments); } }; } }; } };
 
 vi.mock('../../lib/dexie.js', function() {
   return {
@@ -24,7 +24,7 @@ vi.mock('../../lib/dexie.js', function() {
 });
 
 vi.mock('../../lib/supabase.js', function() {
-  var eq = vi.fn(async function() { return {error: null}; });
+  const eq = vi.fn(async function() { return {error: null}; });
   return {
     sb: {
       from: function() {
@@ -38,14 +38,14 @@ vi.mock('../../lib/supabase.js', function() {
   };
 });
 
-var session = {
+const session = {
   user: { id: 'u1', email: 'a@b.com', user_metadata: { name: 'Teste' } },
 };
 
 function makeHook(limitOk) {
-  var enforceLimit = vi.fn(function() { return limitOk !== false; });
-  var toast = vi.fn();
-  var hook = renderHook(function() { return useProducts(session, enforceLimit, toast); });
+  const enforceLimit = vi.fn(function() { return limitOk !== false; });
+  const toast = vi.fn();
+  const hook = renderHook(function() { return useProducts(session, enforceLimit, toast); });
   return { hook: hook, enforceLimit: enforceLimit, toast: toast };
 }
 
@@ -62,7 +62,7 @@ beforeEach(function() {
 
 describe('addProduct', function() {
   it('caminho feliz: adiciona produto', async function() {
-    var { hook } = makeHook();
+    const { hook } = makeHook();
     await act(async function() { await hook.result.current.addProduct(makeProd()); });
     expect(mockPut).toHaveBeenCalledOnce();
     expect(hook.result.current.products).toHaveLength(1);
@@ -70,35 +70,35 @@ describe('addProduct', function() {
   });
 
   it('rejeita nome vazio', async function() {
-    var { hook, toast } = makeHook();
+    const { hook, toast } = makeHook();
     await act(async function() { await hook.result.current.addProduct(makeProd({name: ''})); });
     expect(mockPut).not.toHaveBeenCalled();
     expect(toast).toHaveBeenCalledWith(expect.any(String), 'error');
   });
 
   it('rejeita preco negativo', async function() {
-    var { hook, toast } = makeHook();
+    const { hook, toast } = makeHook();
     await act(async function() { await hook.result.current.addProduct(makeProd({price: '-1'})); });
     expect(mockPut).not.toHaveBeenCalled();
     expect(toast).toHaveBeenCalledWith(expect.any(String), 'error');
   });
 
   it('rejeita estoque negativo', async function() {
-    var { hook, toast } = makeHook();
+    const { hook, toast } = makeHook();
     await act(async function() { await hook.result.current.addProduct(makeProd({stock: '-5'})); });
     expect(mockPut).not.toHaveBeenCalled();
     expect(toast).toHaveBeenCalledWith(expect.any(String), 'error');
   });
 
   it('bloqueia quando limite atingido', async function() {
-    var { hook, enforceLimit } = makeHook(false);
+    const { hook, enforceLimit } = makeHook(false);
     await act(async function() { await hook.result.current.addProduct(makeProd()); });
     expect(enforceLimit).toHaveBeenCalled();
     expect(mockPut).not.toHaveBeenCalled();
   });
 
   it('aceita preco zero', async function() {
-    var { hook } = makeHook();
+    const { hook } = makeHook();
     await act(async function() { await hook.result.current.addProduct(makeProd({price: '0'})); });
     expect(mockPut).toHaveBeenCalledOnce();
   });
@@ -106,7 +106,7 @@ describe('addProduct', function() {
 
 describe('editProduct', function() {
   it('edita produto existente', async function() {
-    var { hook } = makeHook();
+    const { hook } = makeHook();
     await act(async function() { await hook.result.current.addProduct(makeProd()); });
     await act(async function() { await hook.result.current.editProduct('p1', makeProd({name:'Produto B', price:'99'})); });
     expect(mockUpdate).toHaveBeenCalled();
@@ -115,7 +115,7 @@ describe('editProduct', function() {
   });
 
   it('rejeita nome vazio na edicao', async function() {
-    var { hook, toast } = makeHook();
+    const { hook, toast } = makeHook();
     await act(async function() { await hook.result.current.editProduct('p1', makeProd({name:''})); });
     expect(mockUpdate).not.toHaveBeenCalled();
     expect(toast).toHaveBeenCalledWith(expect.any(String), 'error');
@@ -124,7 +124,7 @@ describe('editProduct', function() {
 
 describe('deleteProduct', function() {
   it('remove produto do estado', async function() {
-    var { hook } = makeHook();
+    const { hook } = makeHook();
     await act(async function() { await hook.result.current.addProduct(makeProd()); });
     await act(async function() { await hook.result.current.deleteProduct('p1'); });
     expect(hook.result.current.products).toHaveLength(0);
@@ -134,28 +134,28 @@ describe('deleteProduct', function() {
 
 describe('adjustStock', function() {
   it('incrementa estoque', async function() {
-    var { hook } = makeHook();
+    const { hook } = makeHook();
     await act(async function() { await hook.result.current.addProduct(makeProd({stock: '10'})); });
     await act(async function() { await hook.result.current.adjustStock('p1', 5); });
     expect(hook.result.current.products[0].stock).toBe(15);
   });
 
   it('decrementa estoque', async function() {
-    var { hook } = makeHook();
+    const { hook } = makeHook();
     await act(async function() { await hook.result.current.addProduct(makeProd({stock: '10'})); });
     await act(async function() { await hook.result.current.adjustStock('p1', -3); });
     expect(hook.result.current.products[0].stock).toBe(7);
   });
 
   it('nao deixa estoque negativo', async function() {
-    var { hook } = makeHook();
+    const { hook } = makeHook();
     await act(async function() { await hook.result.current.addProduct(makeProd({stock: '5'})); });
     await act(async function() { await hook.result.current.adjustStock('p1', -99); });
     expect(hook.result.current.products[0].stock).toBe(0);
   });
 
   it('ignora id inexistente', async function() {
-    var { hook } = makeHook();
+    const { hook } = makeHook();
     await act(async function() { await hook.result.current.adjustStock('nao-existe', 1); });
     expect(mockUpdate).not.toHaveBeenCalled();
   });

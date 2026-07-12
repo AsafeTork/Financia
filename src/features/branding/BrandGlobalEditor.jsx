@@ -44,7 +44,7 @@ export default function BrandGlobalEditor({ brandGlobal, setField, onSave, brand
               className="rounded-xl px-3 py-2.5 text-sm focus:outline-none" style={{background:'var(--bg-input)', color:'var(--text-main)', border:'1px solid var(--border)'}} />
           </div>
           <div className="flex flex-col gap-1">
-            <label htmlFor="brand-short-name" className="text-xs font-medium" style={{color:'var(--text-sub)'}}>Nome curto (abraviacao)</label>
+            <label htmlFor="brand-short-name" className="text-xs font-medium" style={{color:'var(--text-sub)'}}>Nome curto (abreviacao)</label>
             <input id="brand-short-name" value={brandGlobal.short_name} onChange={e => setField('short_name', e.target.value)}
               className="rounded-xl px-3 py-2.5 text-sm focus:outline-none" style={{background:'var(--bg-input)', color:'var(--text-main)', border:'1px solid var(--border)'}} placeholder="Ex.: FNC" />
           </div>

@@ -2,6 +2,7 @@
 // Cobranca UNICA (nao recorrente) para o add-on de Personalizacao (white-label).
 // Cria um PaymentIntent e devolve o client_secret para confirmar via Stripe Elements
 // DENTRO do app, sem redirecionar. Preco inline em BRL (centavos).
+
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { sanitizeKind, getAdminClient, enforceRateLimit } from '../_shared/security.ts';
 import { createStripeClient, findOrCreateCustomer, stripeErrorCode, WHITE_LABEL_PRICE, ADMIN_TEST_PRICE } from '../_shared/stripe.ts';
@@ -51,7 +52,7 @@ async function handler(req: Request, logger: Logger): Promise<Response> {
     if (!allowed) return corsResponse({ error: 'rate_limited' }, 429);
 
     // Admin check for test pricing
-    const adminClient = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
+    const adminClient = createClient(supabaseUrl, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
     const { data: roleData } = await adminClient.from('user_roles').select('role').eq('user_id', user.id).eq('role', 'admin').maybeSingle();
     const isAdmin = roleData?.role === 'admin';
 
@@ -61,14 +62,14 @@ async function handler(req: Request, logger: Logger): Promise<Response> {
       return corsResponse({ status: 'activated' });
     }
 
-    const chargeAmount = isAdmin ? 50 : 49700;
+    const chargeAmount = isAdmin ? ADMIN_TEST_PRICE : WHITE_LABEL_PRICE;
 
-    const stripe = createStripeClient({ secretKey: Deno.env.get('STRIPE_SECRET_KEY')! });
+    const stripe = createStripeClient({ secretKey: stripeKey });
     const customer = await findOrCreateCustomer(stripe, user.email, user.id);
     const customerId = customer.id;
 
     // Pay with saved card (off_session)
-    if (body?.use_saved_card) {
+    if (useSavedCard) {
       const invoiceSettings = customer.invoice_settings || {};
       let defaultPm = invoiceSettings.default_payment_method || null;
       if (!defaultPm) {
@@ -117,32 +118,12 @@ async function handler(req: Request, logger: Logger): Promise<Response> {
 
     return corsResponse({ clientSecret: paymentIntent.client_secret, paymentIntentId: paymentIntent.id });
   } catch (err) {
-    const statusCode = err?.statusCode ? Number(err.statusCode) : 500;
+    const statusCode = err && (err as any).statusCode ? Number((err as any).statusCode) : 500;
     const code = stripeErrorCode(err, null);
     if (statusCode >= 400 && statusCode < 500) return corsResponse({ error: code }, statusCode);
-    const message = err?.message || String(err);
+    const message = err && (err as any).message ? (err as any).message : String(err);
     return corsResponse({ error: String(message) }, 500);
   }
 }
 
-// Shared helpers
-const CORS_HEADERS = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-};
-
-function corsResponse(body: any, status = 200): Response {
-  return new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', ...CORS_HEADERS } });
-}
-
-function handleOptions(): Response {
-  return new Response(null, { status: 204, headers: CORS_HEADERS });
-}
-
-Deno.serve(async (req) => {
-  if (req.method === 'OPTIONS') return handleOptions();
-  return withLogging('create-payment', async (req, logger) => {
-    return handler(req, logger);
-  })(req);
-});
+Deno.serve(withLogging('create-payment', handler));

@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">83.33% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/12</span>
+                <span class='fraction'>10/12</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">50% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/2</span>
+                <span class='fraction'>1/2</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">60% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/5</span>
+                <span class='fraction'>3/5</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/10</span>
+                <span class='fraction'>10/10</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -86,18 +86,18 @@
 <a name='L21'></a><a href='#L21'>21</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -105,20 +105,20 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import React, { useState, useEffect } from 'react';
 &nbsp;
-export default function <span class="fstat-no" title="function not covered" >Offline() {</span>
-  var [off, setOff] = <span class="cstat-no" title="statement not covered" >useState(false);</span>
-<span class="cstat-no" title="statement not covered" >  useEffect(<span class="fstat-no" title="function not covered" >function() {</span></span>
-    var on = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >function() {</span> <span class="cstat-no" title="statement not covered" >setOff(false); }</span>;</span>
-    var off2 = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >function() {</span> <span class="cstat-no" title="statement not covered" >setOff(true); }</span>;</span>
-<span class="cstat-no" title="statement not covered" >    window.addEventListener('online', on);</span>
-<span class="cstat-no" title="statement not covered" >    window.addEventListener('offline', off2);</span>
-<span class="cstat-no" title="statement not covered" >    return <span class="fstat-no" title="function not covered" >function() {</span></span>
-<span class="cstat-no" title="statement not covered" >      window.removeEventListener('online', on);</span>
-<span class="cstat-no" title="statement not covered" >      window.removeEventListener('offline', off2);</span>
+export default function Offline() {
+  var [off, setOff] = useState(false);
+  useEffect(function() {
+    var on = <span class="fstat-no" title="function not covered" >function() {</span> <span class="cstat-no" title="statement not covered" >setOff(false); }</span>;
+    var off2 = <span class="fstat-no" title="function not covered" >function() {</span> <span class="cstat-no" title="statement not covered" >setOff(true); }</span>;
+    window.addEventListener('online', on);
+    window.addEventListener('offline', off2);
+    return function() {
+      window.removeEventListener('online', on);
+      window.removeEventListener('offline', off2);
     };
   }, []);
-<span class="cstat-no" title="statement not covered" >  return off ? (</span>
-    &lt;div className="fixed top-0 left-0 right-0 z-50 bg-amber-500 text-white text-xs font-semibold text-center py-2 px-3"&gt;
+  return off ? (
+<span class="branch-0 cbranch-no" title="branch not covered" >    &lt;div className="fixed top-0 left-0 right-0 z-50 bg-amber-500 text-white text-xs font-semibold text-center py-2 px-3"&gt;</span>
       Offline — alterações ficam salvas no aparelho e sincronizam ao reconectar
     &lt;/div&gt;
   ) : null;
@@ -130,7 +130,7 @@ export default function <span class="fstat-no" title="function not covered" >Off
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-07-11T14:44:18.962Z
+                at 2026-07-12T14:09:57.405Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

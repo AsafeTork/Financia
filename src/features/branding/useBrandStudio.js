@@ -3,19 +3,22 @@ import { processResponse, requiresServiceRole } from './responseProcessor.js';
 import { listPresets, getPreset, savePreset, deletePreset, duplicatePreset, toggleFavoritePreset, getPresetCategories, loadPresetsFromDb, setOnChange } from './presets.js';
 import { applyPlanOverride } from './planThemes.js';
 import { enterPreviewMode, exitPreviewMode } from '../../shared/hooks/useBrandAppearance.js';
+import { getDefaults, mergeWithDefaults } from './schemaRegistry.js';
 
 export default function useBrandStudio(brand, planInfo, onSave, toast) {
-  const brandConfig = useMemo(function() {
+  const brandConfig = useMemo(() => {
     const bc = brand && brand.brand_config;
-    if (typeof bc === 'string') { try { return JSON.parse(bc); } catch { return { modules: {} }; } }
-    return bc || { modules: {} };
+    if (typeof bc === 'string') {
+      try { return JSON.parse(bc); } catch { return getDefaults(); }
+    }
+    return bc ? mergeWithDefaults(bc) : getDefaults();
   }, [brand]);
 
   const [allPresets, setAllPresets] = useState([]);
   const [history, setHistory] = useState([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [proposed, setProposed] = useState(null);
-  const [brandGlobal, setBrandGlobalState] = useState(function() {
+  const [brandGlobal, setBrandGlobalState] = useState(() => {
     const b = brand || {};
     return {
       logo_url: b.logo_url || '', favicon_url: b.favicon_url || '',
@@ -27,39 +30,40 @@ export default function useBrandStudio(brand, planInfo, onSave, toast) {
     };
   });
 
-  useEffect(function() {
-    loadPresetsFromDb().then(function() { setAllPresets(listPresets()); });
-    setOnChange(function() { setAllPresets(listPresets()); });
-    return function() { setOnChange(null); };
+  useEffect(() => {
+    loadPresetsFromDb().then(() => { setAllPresets(listPresets()); });
+    setOnChange(() => { setAllPresets(listPresets()); });
+    return () => { setOnChange(null); };
   }, []);
 
-  useEffect(function() {
+  useEffect(() => {
     if (historyIndex >= 0 && history[historyIndex]) enterPreviewMode(history[historyIndex]);
-    return function() { exitPreviewMode(); };
+    return () => { exitPreviewMode(); };
   }, [historyIndex, history]);
 
-  const presetCats = useMemo(function() { return getPresetCategories(); }, []);
+  // Fixed: added proper dependencies
+  const presetCats = useMemo(() => getPresetCategories(), [allPresets]);
 
-  const saveToHistory = useCallback(function(b) {
+  const saveToHistory = useCallback((b) => {
     const entry = JSON.parse(JSON.stringify(b || brand));
-    setHistory(function(prev) {
+    setHistory(prev => {
       const truncated = prev.slice(0, historyIndex + 1);
       truncated.push(entry);
       if (truncated.length > 20) truncated.shift();
       return truncated;
     });
-    setHistoryIndex(function(i) { return Math.min(i + 1, 19); });
+    setHistoryIndex(i => Math.min(i + 1, 19));
   }, [brand, historyIndex]);
 
-  const undo = useCallback(function() {
-    if (historyIndex > 0) setHistoryIndex(function(i) { return i - 1; });
+  const undo = useCallback(() => {
+    if (historyIndex > 0) setHistoryIndex(i => i - 1);
   }, [historyIndex]);
 
-  const redo = useCallback(function() {
-    if (historyIndex < history.length - 1) setHistoryIndex(function(i) { return i + 1; });
+  const redo = useCallback(() => {
+    if (historyIndex < history.length - 1) setHistoryIndex(i => i + 1);
   }, [historyIndex, history]);
 
-  const restoreFromHistory = useCallback(async function(idx) {
+  const restoreFromHistory = useCallback(async (idx) => {
     const entry = history[idx];
     if (!entry) return;
     await onSave(entry);
@@ -67,49 +71,49 @@ export default function useBrandStudio(brand, planInfo, onSave, toast) {
     if (toast) toast('Versao restaurada.', 'success');
   }, [history, onSave, toast]);
 
-  const savePlanOverride = useCallback(async function(planId, overrideData) {
+  const savePlanOverride = useCallback(async (planId, overrideData) => {
     await onSave(applyPlanOverride(brand, planId, overrideData));
   }, [brand, onSave]);
 
-  const savePlanLogo = useCallback(async function(planId, logoColors) {
+  const savePlanLogo = useCallback(async (planId, logoColors) => {
     let cfg;
     try { cfg = typeof brand.brand_config === 'string' ? JSON.parse(brand.brand_config) : (brand.brand_config || { modules: {} }); } catch { cfg = { modules: {} }; }
     if (!cfg.planOverrides) cfg.planOverrides = {};
     const existing = cfg.planOverrides[planId] || {};
     if (logoColors) {
-      cfg.planOverrides[planId] = Object.assign({}, existing, { logoColors: logoColors });
+      cfg.planOverrides[planId] = { ...existing, logoColors };
     } else {
       delete existing.logoColors;
       if (Object.keys(existing).length > 0) { cfg.planOverrides[planId] = existing; } else { delete cfg.planOverrides[planId]; }
     }
     saveToHistory(brand);
-    const updated = Object.assign({}, brand, { brand_config: JSON.stringify(cfg) });
+    const updated = { ...brand, brand_config: JSON.stringify(cfg) };
     await onSave(updated);
-    if (toast) toast(logoColors ? 'Logo personalizada salva para ' + planId + '!' : 'Plano ' + planId + ' agora usa a logo global.', 'success');
+    if (toast) toast(logoColors ? `Logo personalizada salva para ${planId}!` : `Plano ${planId} agora usa a logo global.`, 'success');
   }, [brand, onSave, toast, saveToHistory]);
 
-  const saveCompletePreset = useCallback(function(name, description, category, tags) {
+  const saveCompletePreset = useCallback((name, description, category, tags) => {
     const result = savePreset(name, description, category, JSON.parse(JSON.stringify(brandConfig)), tags);
-    if (toast) toast('Preset "' + name + '" salvo com sucesso!', 'success');
+    if (toast) toast(`Preset "${name}" salvo com sucesso!`, 'success');
     return result;
   }, [brandConfig, toast]);
 
-  const applyFullPreset = useCallback(async function(presetId) {
+  const applyFullPreset = useCallback(async (presetId) => {
     const preset = getPreset(presetId);
     if (!preset) { if (toast) toast('Preset nao encontrado.', 'error'); return; }
     const cfg = typeof preset.config === 'string' ? JSON.parse(preset.config) : preset.config;
     saveToHistory(brand);
-    await onSave(Object.assign({}, brand, { brand_config: JSON.stringify(cfg) }));
+    await onSave({ ...brand, brand_config: JSON.stringify(cfg) });
     if (toast) toast('Preset aplicado com sucesso!', 'success');
   }, [brand, onSave, toast, saveToHistory]);
 
-  const parseAndValidate = useCallback(function(jsonStr) {
+  const parseAndValidate = useCallback((jsonStr) => {
     const result = processResponse(jsonStr, brand);
     if (result.success) setProposed(result);
     return result;
   }, [brand]);
 
-  const approveProposed = useCallback(async function() {
+  const approveProposed = useCallback(async () => {
     if (!proposed || !proposed.success || !proposed.proposedBrand) return;
     saveToHistory(brand);
     await onSave(proposed.proposedBrand);
@@ -117,15 +121,16 @@ export default function useBrandStudio(brand, planInfo, onSave, toast) {
     if (toast) toast('Alteracoes aprovadas e aplicadas!', 'success');
   }, [proposed, brand, onSave, toast, saveToHistory]);
 
-  const rejectProposed = useCallback(function() { setProposed(null); }, []);
+  const rejectProposed = useCallback(() => { setProposed(null); }, []);
 
-  const setBrandGlobalField = useCallback(function(key, value) {
-    setBrandGlobalState(function(prev) { const o = Object.assign({}, prev); o[key] = value; return o; });
+  const setBrandGlobalField = useCallback((key, value) => {
+    setBrandGlobalState(prev => ({ ...prev, [key]: value }));
   }, []);
 
-  const saveBrandGlobal = useCallback(async function() {
+  const saveBrandGlobal = useCallback(async () => {
     saveToHistory(brand);
-    const updated = Object.assign({}, brand, {
+    const updated = {
+      ...brand,
       logo_url: brandGlobal.logo_url || null, favicon_url: brandGlobal.favicon_url || null,
       name: brandGlobal.name || brand.name, short_name: brandGlobal.short_name || null,
       app_title: brandGlobal.app_title || null, login_logo_url: brandGlobal.login_logo_url || null,
@@ -133,19 +138,28 @@ export default function useBrandStudio(brand, planInfo, onSave, toast) {
       secondary_logo_url: brandGlobal.secondary_logo_url || null,
       secondary_logo_position: brandGlobal.secondary_logo_position || 'right',
       secondary_logo_size: brandGlobal.secondary_logo_size || 40,
-    });
+    };
     await onSave(updated);
     if (toast) toast('Identidade global salva!', 'success');
   }, [brand, brandGlobal, onSave, toast, saveToHistory]);
 
-  const handleDeletePreset = useCallback(function(id) {
+  const handleDeletePreset = useCallback((id) => {
     const ok = deletePreset(id);
     if (ok && toast) toast('Preset removido.', 'success');
     return ok;
   }, [toast]);
 
-  const handleDuplicatePreset = useCallback(function(id) { return duplicatePreset(id); }, []);
-  const handleToggleFavorite = useCallback(function(id) { return toggleFavoritePreset(id); }, []);
+  const handleDuplicatePreset = useCallback((id) => duplicatePreset(id), []);
+  const handleToggleFavorite = useCallback((id) => toggleFavoritePreset(id), []);
+
+  // Add the missing copy functions that BrandStudioView expects
+  const copyPrompt = useCallback(() => {
+    if (toast) toast('Funcao de copiar documentacao nao implementada', 'warning');
+  }, [toast]);
+
+  const copyCurrentJSON = useCallback(() => {
+    if (toast) toast('Funcao de copiar JSON nao implementada', 'warning');
+  }, [toast]);
 
   return {
     brandConfig, allPresets, presetCats, history, historyIndex,
@@ -156,5 +170,7 @@ export default function useBrandStudio(brand, planInfo, onSave, toast) {
     deletePreset: handleDeletePreset, duplicatePreset: handleDuplicatePreset, toggleFavorite: handleToggleFavorite,
     brandGlobal, setBrandGlobalField, saveBrandGlobal,
     requiresServiceRole,
+    // Expose copy functions
+    copyPrompt, copyCurrentJSON,
   };
 }

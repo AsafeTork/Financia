@@ -344,7 +344,12 @@
 <a name='L279'></a><a href='#L279'>279</a>
 <a name='L280'></a><a href='#L280'>280</a>
 <a name='L281'></a><a href='#L281'>281</a>
-<a name='L282'></a><a href='#L282'>282</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L282'></a><a href='#L282'>282</a>
+<a name='L283'></a><a href='#L283'>283</a>
+<a name='L284'></a><a href='#L284'>284</a>
+<a name='L285'></a><a href='#L285'>285</a>
+<a name='L286'></a><a href='#L286'>286</a>
+<a name='L287'></a><a href='#L287'>287</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -595,8 +600,11 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -605,7 +613,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -850,14 +860,16 @@ export default function <span class="fstat-no" title="function not covered" >Upd
   };
 &nbsp;
 <span class="cstat-no" title="statement not covered" >  return (</span>
-    &lt;div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 anim-fade" style={{ background: 'rgba(15,23,42,0.55)', backdropFilter: 'blur(3px)', WebkitBackdropFilter: 'blur(3px)' }}&gt;
+    &lt;div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 anim-fade" style={{ background: 'rgba(15,23,42,0.55)', backdropFilter: 'blur(3px)', WebkitBackdropFilter: 'blur(3px)' }}
+      data-testid="update-card-modal-overlay"&gt;
       &lt;div className="rounded-t-2xl sm:rounded-2xl w-full sm:max-w-md flex flex-col anim-scale" style={{ background: 'var(--bg-card)', maxHeight: '92vh', boxShadow: 'var(--shadow-lg)' }}&gt;
         &lt;div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 flex-shrink-0"&gt;
           &lt;div className="min-w-0"&gt;
             &lt;span className="font-semibold text-gray-900"&gt;Forma de pagamento&lt;/span&gt;
             &lt;p className="text-xs text-gray-400"&gt;{phase === 'preview' ? 'Cartão da sua assinatura' : 'Adicione um cartão'}&lt;/p&gt;
           &lt;/div&gt;
-          &lt;button onClick={onClose} aria-label="Fechar" className="min-w-[44px] min-h-[44px] -mr-2 flex items-center justify-center text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition"&gt;
+          &lt;button onClick={onClose} aria-label="Fechar" className="min-w-[44px] min-h-[44px] -mr-2 flex items-center justify-center text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition"
+            data-testid="update-card-modal-close"&gt;
             &lt;svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"&gt;&lt;path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /&gt;&lt;/svg&gt;
           &lt;/button&gt;
         &lt;/div&gt;
@@ -877,9 +889,11 @@ export default function <span class="fstat-no" title="function not covered" >Upd
               {!confirmRemove &amp;&amp; (
                 &lt;div className="flex gap-2"&gt;
                   &lt;button <span class="fstat-no" title="function not covered" >onClick={f</span>unction() { <span class="cstat-no" title="statement not covered" >setConfirmRemove(true); }</span>} disabled={removing}
-                    className="flex-1 border rounded-xl py-3 text-sm font-medium hover:bg-gray-50 disabled:opacity-50" style={{ borderColor: 'var(--border)', color: '#dc2626' }}&gt;Remover&lt;/button&gt;
+                    className="flex-1 border rounded-xl py-3 text-sm font-medium hover:bg-gray-50 disabled:opacity-50" style={{ borderColor: 'var(--border)', color: '#dc2626' }}
+                    data-testid="update-card-modal-remove"&gt;Remover&lt;/button&gt;
                   &lt;button <span class="fstat-no" title="function not covered" >onClick={f</span>unction() { <span class="cstat-no" title="statement not covered" >setPhase('form'); }</span>} disabled={removing}
-                    className="flex-1 text-white rounded-xl py-3 text-sm font-semibold hover:opacity-90 disabled:opacity-50 transition" style={{ background: brand.color }}&gt;Trocar cartão&lt;/button&gt;
+                    className="flex-1 text-white rounded-xl py-3 text-sm font-semibold hover:opacity-90 disabled:opacity-50 transition" style={{ background: brand.color }}
+                    data-testid="update-card-modal-change"&gt;Trocar cartão&lt;/button&gt;
                 &lt;/div&gt;
               )}
               {confirmRemove &amp;&amp; (
@@ -887,7 +901,8 @@ export default function <span class="fstat-no" title="function not covered" >Upd
                   &lt;p className="text-xs font-medium text-red-700"&gt;Remover este cartão? As próximas cobranças da assinatura podem falhar até você cadastrar outro.&lt;/p&gt;
                   &lt;div className="flex gap-2"&gt;
                     &lt;button <span class="fstat-no" title="function not covered" >onClick={f</span>unction() { <span class="cstat-no" title="statement not covered" >setConfirmRemove(false); }</span>} disabled={removing}
-                      className="flex-1 border rounded-xl py-2.5 text-sm font-medium bg-white hover:bg-gray-50 disabled:opacity-50" style={{ borderColor: 'var(--border)', color: 'var(--text-sub)' }}&gt;Cancelar&lt;/button&gt;
+                      className="flex-1 border rounded-xl py-2.5 text-sm font-medium bg-white hover:bg-gray-50 disabled:opacity-50" style={{ borderColor: 'var(--border)', color: 'var(--text-sub)' }}&gt;
+                      Cancelar&lt;/button&gt;
                     &lt;button onClick={doRemove} disabled={removing}
                       className="flex-1 rounded-xl py-2.5 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50 flex items-center justify-center" style={{ background: '#dc2626' }}&gt;
                       {removing ? &lt;Spin white /&gt; : 'Remover cartão'}
@@ -913,7 +928,7 @@ export default function <span class="fstat-no" title="function not covered" >Upd
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-07-11T14:44:18.962Z
+                at 2026-07-12T14:09:57.405Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

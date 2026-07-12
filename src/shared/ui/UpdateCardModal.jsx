@@ -223,14 +223,16 @@ export default function UpdateCardModal({ brand, onClose, onChanged, toast }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 anim-fade" style={{ background: 'rgba(15,23,42,0.55)', backdropFilter: 'blur(3px)', WebkitBackdropFilter: 'blur(3px)' }}>
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 anim-fade" style={{ background: 'rgba(15,23,42,0.55)', backdropFilter: 'blur(3px)', WebkitBackdropFilter: 'blur(3px)' }}
+      data-testid="update-card-modal-overlay">
       <div className="rounded-t-2xl sm:rounded-2xl w-full sm:max-w-md flex flex-col anim-scale" style={{ background: 'var(--bg-card)', maxHeight: '92vh', boxShadow: 'var(--shadow-lg)' }}>
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 flex-shrink-0">
           <div className="min-w-0">
             <span className="font-semibold text-gray-900">Forma de pagamento</span>
             <p className="text-xs text-gray-400">{phase === 'preview' ? 'Cartão da sua assinatura' : 'Adicione um cartão'}</p>
           </div>
-          <button onClick={onClose} aria-label="Fechar" className="min-w-[44px] min-h-[44px] -mr-2 flex items-center justify-center text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition">
+          <button onClick={onClose} aria-label="Fechar" className="min-w-[44px] min-h-[44px] -mr-2 flex items-center justify-center text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition"
+            data-testid="update-card-modal-close">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
           </button>
         </div>
@@ -250,9 +252,11 @@ export default function UpdateCardModal({ brand, onClose, onChanged, toast }) {
               {!confirmRemove && (
                 <div className="flex gap-2">
                   <button onClick={function() { setConfirmRemove(true); }} disabled={removing}
-                    className="flex-1 border rounded-xl py-3 text-sm font-medium hover:bg-gray-50 disabled:opacity-50" style={{ borderColor: 'var(--border)', color: '#dc2626' }}>Remover</button>
+                    className="flex-1 border rounded-xl py-3 text-sm font-medium hover:bg-gray-50 disabled:opacity-50" style={{ borderColor: 'var(--border)', color: '#dc2626' }}
+                    data-testid="update-card-modal-remove">Remover</button>
                   <button onClick={function() { setPhase('form'); }} disabled={removing}
-                    className="flex-1 text-white rounded-xl py-3 text-sm font-semibold hover:opacity-90 disabled:opacity-50 transition" style={{ background: brand.color }}>Trocar cartão</button>
+                    className="flex-1 text-white rounded-xl py-3 text-sm font-semibold hover:opacity-90 disabled:opacity-50 transition" style={{ background: brand.color }}
+                    data-testid="update-card-modal-change">Trocar cartão</button>
                 </div>
               )}
               {confirmRemove && (
@@ -260,7 +264,8 @@ export default function UpdateCardModal({ brand, onClose, onChanged, toast }) {
                   <p className="text-xs font-medium text-red-700">Remover este cartão? As próximas cobranças da assinatura podem falhar até você cadastrar outro.</p>
                   <div className="flex gap-2">
                     <button onClick={function() { setConfirmRemove(false); }} disabled={removing}
-                      className="flex-1 border rounded-xl py-2.5 text-sm font-medium bg-white hover:bg-gray-50 disabled:opacity-50" style={{ borderColor: 'var(--border)', color: 'var(--text-sub)' }}>Cancelar</button>
+                      className="flex-1 border rounded-xl py-2.5 text-sm font-medium bg-white hover:bg-gray-50 disabled:opacity-50" style={{ borderColor: 'var(--border)', color: 'var(--text-sub)' }}>
+                      Cancelar</button>
                     <button onClick={doRemove} disabled={removing}
                       className="flex-1 rounded-xl py-2.5 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50 flex items-center justify-center" style={{ background: '#dc2626' }}>
                       {removing ? <Spin white /> : 'Remover cartão'}

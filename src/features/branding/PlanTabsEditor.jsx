@@ -1,43 +1,18 @@
 import React from 'react';
+import { PALETTE_UI_FIELDS, PLAN_META, getDefaultPaletteForPlan } from './defaults.js';
 
-const PLAN_META = {
-  free: { label: 'Free', icon: 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4' },
-  pro: { label: 'Pro', icon: 'M13 10V3L4 14h7v7l9-11h-7z' },
-  premium: { label: 'Premium', icon: 'M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z' },
-};
-
-const PALETTE_FIELDS = [
-  { key: 'primary', label: 'Primaria', desc: 'Sidebar, botoes, navegacao' },
-  { key: 'secondary', label: 'Secundaria', desc: 'Cards, badges, tags' },
-  { key: 'accent', label: 'Destaque', desc: 'Hover, graficos, progresso' },
-  { key: 'bgPage', label: 'Fundo pagina', desc: 'Fundo principal' },
-  { key: 'bgCard', label: 'Fundo card', desc: 'Fundo dos cartoes' },
-  { key: 'bgInput', label: 'Fundo input', desc: 'Fundo dos campos' },
-  { key: 'bgSubtle', label: 'Fundo sutil', desc: 'Realce secundario' },
-  { key: 'surface', label: 'Superficie', desc: 'Elementos elevados' },
-  { key: 'textMain', label: 'Texto principal', desc: 'Cor do texto' },
-  { key: 'textSub', label: 'Texto secundario', desc: 'Subtitulos' },
-  { key: 'textMuted', label: 'Texto muted', desc: 'Descricoes' },
-  { key: 'border', label: 'Borda', desc: 'Bordas dos elementos' },
-  { key: 'success', label: 'Sucesso', desc: 'Indicador positivo' },
-  { key: 'warning', label: 'Alerta', desc: 'Indicador atencao' },
-  { key: 'danger', label: 'Erro', desc: 'Indicador negativo' },
-  { key: 'info', label: 'Info', desc: 'Indicador informativo' },
-];
-
-const defaultPalette = (planId) => {
-  const map = {
-    free: { primary:'#002f59', secondary:'#e8f0f7', accent:'#1a6b5c', bgPage:'#f5f5f0', bgCard:'#ffffff', bgInput:'#ffffff', bgSubtle:'#f5f5f0', surface:'#ffffff', textMain:'#0f172a', textSub:'#5b6b7c', textMuted:'#94a3b8', border:'#edeae3' },
-    pro: { primary:'#2563eb', secondary:'#eff6ff', accent:'#7c3aed', bgPage:'#f8fafc', bgCard:'#ffffff', bgInput:'#ffffff', bgSubtle:'#f1f5f9', surface:'#ffffff', textMain:'#0f172a', textSub:'#475569', textMuted:'#94a3b8', border:'#e2e8f0' },
-    premium: { primary:'#0f172a', secondary:'#f8fafc', accent:'#f59e0b', bgPage:'#fafafa', bgCard:'#ffffff', bgInput:'#ffffff', bgSubtle:'#f5f5f5', surface:'#ffffff', textMain:'#171717', textSub:'#525252', textMuted:'#a3a3a3', border:'#e5e5e5' },
-  };
-  return map[planId] || map.free;
+const PLAN_META_LOCAL = {
+  ...PLAN_META,
+  white_label: {
+    label: 'White Label',
+    icon: 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4',
+  },
 };
 
 export default function PlanTabsEditor({ brandConfig, onSavePlan, onCopyJSON, onCopyDocs, brandColor, toast }) {
   const [activePlan, setActivePlan] = React.useState('free');
-  const planOverrides = React.useMemo(() => (brandConfig && brandConfig.planOverrides) || {}, [brandConfig]);
-  const palDefaults = defaultPalette(activePlan);
+  const planOverrides = React.useMemo(() => (brandConfig && brandConfig.modules && brandConfig.modules.planOverrides) || {}, [brandConfig]);
+  const palDefaults = getDefaultPaletteForPlan(activePlan);
 
   const [form, setForm] = React.useState(() => initForm(activePlan, planOverrides, palDefaults));
   const [saving, setSaving] = React.useState(false);
@@ -65,7 +40,7 @@ export default function PlanTabsEditor({ brandConfig, onSavePlan, onCopyJSON, on
       const parsed = JSON.parse(json);
       if (parsed && typeof parsed === 'object') {
         const safe = {};
-        const allowedKeys = PALETTE_FIELDS.map(f => f.key);
+        const allowedKeys = PALETTE_UI_FIELDS.map(f => f.key);
         allowedKeys.forEach(k => { if (parsed[k] !== undefined) safe[k] = String(parsed[k]).slice(0, 100); });
         setForm(f => ({ ...f, ...safe }));
         setHasChanges(true);
@@ -77,7 +52,7 @@ export default function PlanTabsEditor({ brandConfig, onSavePlan, onCopyJSON, on
     setSaving(true);
     try {
       const pal = {};
-      PALETTE_FIELDS.forEach(f => { pal[f.key] = form[f.key] || null; });
+      PALETTE_UI_FIELDS.forEach(f => { pal[f.key] = form[f.key] || null; });
       await onSavePlan(activePlan, { modules: { palette: pal } });
       setHasChanges(false);
       if (toast) toast('Cores salvas para plano ' + activePlan, 'success');
@@ -90,8 +65,8 @@ export default function PlanTabsEditor({ brandConfig, onSavePlan, onCopyJSON, on
   return (
     <div className="flex flex-col gap-4">
       <div className="flex border-b gap-1" style={{borderColor:'var(--border)'}}>
-        {Object.keys(PLAN_META).map(k => {
-          const meta = PLAN_META[k];
+        {Object.keys(PLAN_META_LOCAL).map(k => {
+          const meta = PLAN_META_LOCAL[k];
           const active = activePlan === k;
           return (
             <button key={k} onClick={() => setActivePlan(k)}
@@ -118,8 +93,8 @@ export default function PlanTabsEditor({ brandConfig, onSavePlan, onCopyJSON, on
       </div>
 
       <div>
-        <p className="text-sm font-semibold mb-1" style={{color:'var(--text-main)'}}>Paleta de cores — {PLAN_META[activePlan].label}</p>
-        <p className="text-xs mb-4" style={{color:'var(--text-muted)'}}>Essas cores aparecem nos elementos do sistema para usuarios do plano {PLAN_META[activePlan].label}.</p>
+        <p className="text-sm font-semibold mb-1" style={{color:'var(--text-main)'}}>Paleta de cores — {PLAN_META_LOCAL[activePlan].label}</p>
+        <p className="text-xs mb-4" style={{color:'var(--text-muted)'}}>Essas cores aparecem nos elementos do sistema para usuarios do plano {PLAN_META_LOCAL[activePlan].label}.</p>
         <div className="flex items-center gap-3 mb-5">
           {palPreview.map((c, i) => {
             const labels = ['Primaria', 'Secundaria', 'Destaque'];
@@ -132,7 +107,7 @@ export default function PlanTabsEditor({ brandConfig, onSavePlan, onCopyJSON, on
           })}
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {PALETTE_FIELDS.map(f => (
+          {PALETTE_UI_FIELDS.map(f => (
             <ColorInput key={f.key} label={f.label} desc={f.desc} value={form[f.key] || ''} onChange={v => setColor(f.key, v)} />
           ))}
         </div>
@@ -146,7 +121,7 @@ export default function PlanTabsEditor({ brandConfig, onSavePlan, onCopyJSON, on
       </div>
 
       <div className="border-t pt-4" style={{borderColor:'var(--border)'}}>
-        <p className="text-xs font-semibold uppercase tracking-wide mb-2" style={{color:'var(--text-muted)'}}>Preview — {PLAN_META[activePlan].label}</p>
+        <p className="text-xs font-semibold uppercase tracking-wide mb-2" style={{color:'var(--text-muted)'}}>Preview — {PLAN_META_LOCAL[activePlan].label}</p>
         <div className="rounded-2xl overflow-hidden" style={{background: form.bgPage || '#f5f5f0', color: form.textMain || '#0f172a'}}>
           <div className="flex items-center justify-between px-4 py-2.5" style={{background: form.primary || '#002f59', color:'#ffffff'}}>
             <div className="flex items-center gap-2">
@@ -195,7 +170,7 @@ export default function PlanTabsEditor({ brandConfig, onSavePlan, onCopyJSON, on
       <button onClick={doSave} disabled={saving || !hasChanges}
         className="w-full text-white rounded-xl py-3 text-sm font-semibold hover:opacity-90 disabled:opacity-40 flex items-center justify-center gap-2 min-h-[44px] transition"
         style={{background: brandColor}}>
-        {saving ? 'Salvando...' : 'Salvar configuracao do plano ' + PLAN_META[activePlan].label}
+        {saving ? 'Salvando...' : 'Salvar configuracao do plano ' + PLAN_META_LOCAL[activePlan].label}
       </button>
     </div>
   );
@@ -205,7 +180,7 @@ const initForm = (activePlan, planOverrides, palDefaults) => {
   const ov = planOverrides[activePlan] || {};
   const pal = (ov.modules && ov.modules.palette) || {};
   const form = {};
-  PALETTE_FIELDS.forEach(f => { form[f.key] = pal[f.key] || palDefaults[f.key] || ''; });
+  PALETTE_UI_FIELDS.forEach(f => { form[f.key] = pal[f.key] || palDefaults[f.key] || ''; });
   return form;
 };
 

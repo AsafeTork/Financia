@@ -1,7 +1,7 @@
 import { vi } from 'vitest';
 
 export function makeLdbTable() {
-  var store = {};
+  const store = {};
   return {
     put: vi.fn(async function(row) { store[row.id] = row; return row.id; }),
     update: vi.fn(async function(id, upd) { if (store[id]) store[id] = Object.assign({}, store[id], upd); }),
@@ -12,10 +12,59 @@ export function makeLdbTable() {
 }
 
 export function makeSb() {
-  var chain = {
+  const chain = {
     error: null,
     data: null,
     upsert: vi.fn(async function() { return {error: null}; }),
+    update: vi.fn(function() { return chain; }),
+    delete: vi.fn(function() { return chain; }),
+    eq: vi.fn(function() { return chain; }),
+  };
+  return {
+    from: vi.fn(function() { return chain; }),
+    _chain: chain,
+  };
+}
+
+export function makeSbError() {
+  const chain = {
+    error: new Error('Supabase error'),
+    data: null,
+    upsert: vi.fn(async function() { return {error: new Error('Supabase error')}; }),
+    update: vi.fn(function() { return chain; }),
+    delete: vi.fn(function() { return chain; }),
+    eq: vi.fn(function() { return chain; }),
+  };
+  return {
+    from: vi.fn(function() { return chain; }),
+    _chain: chain,
+  };
+}
+
+export function makeSbLoading() {
+  const chain = {
+    error: null,
+    data: null,
+    loading: true,
+    upsert: vi.fn(async function() { return {error: null, loading: true}; }),
+    update: vi.fn(function() { return chain; }),
+    delete: vi.fn(function() { return chain; }),
+    eq: vi.fn(function() { return chain; }),
+  };
+  return {
+    from: vi.fn(function() { return chain; }),
+    _chain: chain,
+  };
+}
+
+export function makeSbTimeout() {
+  const chain = {
+    error: new Error('Timeout'),
+    data: null,
+    upsert: vi.fn(async function() {
+      await new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 100));
+      return {error: new Error('Timeout')};
+    }),
     update: vi.fn(function() { return chain; }),
     delete: vi.fn(function() { return chain; }),
     eq: vi.fn(function() { return chain; }),

@@ -7,53 +7,14 @@
 //  - JA tem assinatura ativa (upgrade/downgrade) -> ALTERA o item existente (nao cria
 //    outra), com proration; devolve {status:'changed'}. Evita cobranca duplicada.
 // Precos via Price com lookup_key estavel (financia_<plan>_monthly).
+
 import Stripe from 'https://esm.sh/stripe@17.7.0?target=denonext';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { enforceRateLimit, getAdminClient, sanitizePlanId } from '../_shared/security.ts';
-import { withLogging, corsResponse, corsResponse as jsonResponse, Logger } from '../_shared/logger.ts';
+import { withLogging, corsResponse, handleOptions, Logger } from '../_shared/logger.ts';
+import { createStripeClient, findOrCreateCustomer, findOrCreatePrice, resolvePriceId, planOfSub, monthlyCentsOf, PLAN_PRICES, ADMIN_TEST_PRICE, PLAN_RANK, ACTIVE_STATUSES } from '../_shared/stripe.ts';
 
-const CORS_HEADERS = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-};
-
-const PLAN_PRICES = { pro: 4990, premium: 9990 };
-const ADMIN_TEST_PRICE = 1;
-const PLAN_RANK = { free: 0, pro: 1, premium: 2 };
-const ACTIVE_STATUSES = ['active', 'trialing', 'past_due', 'unpaid'];
-
-// Descobre o plano atual de uma assinatura (metadata da sub ou do price).
-function planOfSub(sub) {
-  const m = sub.metadata ? sub.metadata : {};
-  if (m.plan_id === 'pro' || m.plan_id === 'premium') return m.plan_id;
-  const item = sub.items && sub.items.data ? sub.items.data[0] : null;
-  const pm = item && item.price && item.price.metadata ? item.price.metadata : {};
-  if (pm.plan_id === 'pro' || pm.plan_id === 'premium') return pm.plan_id;
-  return 'pro';
-}
-
-const PLAN_PRICES = { pro: 4990, premium: 9990 };
-const ADMIN_TEST_PRICE = 1;
-const PLAN_RANK = { free: 0, pro: 1, premium: 2 };
-const ACTIVE_STATUSES = ['active', 'trialing', 'past_due', 'unpaid'];
-
-async function findOrCreateCustomer(stripe, email, userId) {
-  if (email) {
-    const existing = await stripe.customers.list({ email: email, limit: 20 });
-    if (existing && existing.data && existing.data.length > 0) {
-      for (let i = 0; i < existing.data.length; i++) {
-        const c = existing.data[i];
-        const m = c && c.metadata ? c.metadata : {};
-        if (m.user_id && String(m.user_id) === String(userId)) return c;
-      }
-      return existing.data[0];
-    }
-  }
-  return await stripe.customers.create({ email: email || undefined, metadata: { user_id: userId } });
-}
-
-async function isAdminUser(admin, userId) {
+async function isAdminUser(admin: any, userId: string): Promise<boolean> {
   if (!admin || !userId) return false;
   try {
     const roleRes = await admin.from('user_roles')
@@ -67,41 +28,19 @@ async function isAdminUser(admin, userId) {
   }
 }
 
-async function findOrCreateProduct(stripe, planId) {
+async function activatePlan(admin: any, userId: string, planId: string, expiresAt: string | null): Promise<void> {
+  if (!admin) return;
   try {
-    const found = await stripe.products.search({
-      query: "active:'true' AND metadata['plan_id']:'" + planId + "'",
-      limit: 1,
+    await admin.rpc('set_client_plan', {
+      p_target: userId,
+      p_plan: planId,
+      p_actor: 'create_subscription',
+      p_expires_at: expiresAt,
     });
-    if (found && found.data && found.data.length > 0) return found.data[0].id;
-  } catch (searchErr) {
-    // Search API indisponivel: cai para create.
-  }
-  const created = await stripe.products.create({
-    name: 'Financia ' + planId,
-    metadata: { plan_id: planId },
-  });
-  return created.id;
+  } catch (_) {}
 }
 
-// Price recorrente estavel por plano (reaproveitado em assinar e mudar de plano).
-async function findOrCreatePrice(stripe, planId) {
-  const lookupKey = 'financia_' + planId + '_monthly';
-  const found = await stripe.prices.list({ lookup_keys: [lookupKey], active: true, limit: 1 });
-  if (found && found.data && found.data.length > 0) return found.data[0].id;
-  const productId = await findOrCreateProduct(stripe, planId);
-  const price = await stripe.prices.create({
-    currency: 'brl',
-    unit_amount: PLAN_PRICES[planId],
-    recurring: { interval: 'month' },
-    product: productId,
-    lookup_key: lookupKey,
-    metadata: { plan_id: planId },
-  });
-  return price.id;
-}
-
-function activeSubscriptionOf(subs) {
+function activeSubscriptionOf(subs: Stripe.SubscriptionList): Stripe.Subscription | null {
   if (!subs || !subs.data) return null;
   for (let i = 0; i < subs.data.length; i++) {
     if (ACTIVE_STATUSES.indexOf(subs.data[i].status) !== -1) return subs.data[i];
@@ -109,52 +48,15 @@ function activeSubscriptionOf(subs) {
   return null;
 }
 
-async function activatePlan(admin, userId, planId) {
-  if (!admin) return;
-  try {
-    var expires = new Date(Date.now() + 31 * 24 * 60 * 60 * 1000).toISOString();
-    await admin.rpc('stripe_activate_plan', { p_user: userId, p_plan: planId, p_expires: expires });
-  } catch (_) {}
-}
-
-// Resolve o Price: se o cliente tem preco customizado (desconto do admin), cria/reaproveita
-// um Price especifico por (plano + valor + cliente). lookup_key inclui o valor, entao mudar
-// o desconto gera um novo Price automaticamente, sem transfer_lookup_key.
-async function resolvePriceId(stripe, planId, customCents, userId) {
-  if (customCents && customCents > 0) {
-    const short = String(userId).replace(/-/g, '').slice(0, 12);
-    const lookupKey = 'financia_' + planId + '_c' + customCents + '_' + short;
-    const found = await stripe.prices.list({ lookup_keys: [lookupKey], active: true, limit: 1 });
-    if (found && found.data && found.data.length > 0) return found.data[0].id;
-    const productId = await findOrCreateProduct(stripe, planId);
-    const price = await stripe.prices.create({
-      currency: 'brl',
-      unit_amount: customCents,
-      recurring: { interval: 'month' },
-      product: productId,
-      lookup_key: lookupKey,
-      metadata: { plan_id: planId, custom_for: userId },
-    });
-    return price.id;
-  }
-  return findOrCreatePrice(stripe, planId);
-}
-
-async function handler(req: Request, logger: Logger) {
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { status: 204, headers: CORS_HEADERS });
-  }
+async function handler(req: Request, logger: Logger): Promise<Response> {
+  if (req.method === 'OPTIONS') return handleOptions();
 
   const stripeKey = Deno.env.get('STRIPE_SECRET_KEY');
-  if (!stripeKey) {
-    return corsResponse({ error: 'stripe_not_configured' }, 500);
-  }
+  if (!stripeKey) return corsResponse({ error: 'stripe_not_configured' }, 500);
 
   try {
     const authHeader = req.headers.get('Authorization');
-    if (!authHeader) {
-      return corsResponse({ error: 'unauthorized' }, 401);
-    }
+    if (!authHeader) return corsResponse({ error: 'unauthorized' }, 401);
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
     const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY');
@@ -163,31 +65,27 @@ async function handler(req: Request, logger: Logger) {
     });
 
     const userResult = await supabase.auth.getUser();
-    const user = userResult && userResult.data ? userResult.data.user : null;
-    if (!user) {
-      return corsResponse({ error: 'unauthorized' }, 401);
-    }
+    const user = userResult?.data?.user;
+    if (!user) return corsResponse({ error: 'unauthorized' }, 401);
 
-    let body = {};
-    try { body = await req.json(); } catch (parseErr) { body = {}; }
-    const planId = sanitizePlanId(body && body.plan_id);
+    let body: Record<string, unknown> = {};
+    try { body = await req.json(); } catch { body = {}; }
+    const planId = sanitizePlanId(body?.plan_id);
     const useSavedCard = !!(body && body.use_saved_card);
-    if (!planId) {
-      return corsResponse({ error: 'invalid_plan' }, 400);
-    }
+    if (!planId) return corsResponse({ error: 'invalid_plan' }, 400);
 
     const admin = getAdminClient();
-    const stripe = new Stripe(stripeKey, { apiVersion: '2025-01-27.acacia' });
-    const customer = await findOrCreateCustomer(stripe, user.email, user.id);
+    const stripe = createStripeClient({ secretKey: stripeKey });
+    const customer = await findOrCreateCustomer(stripe, user.email || undefined, user.id);
     const customerId = customer.id;
 
-    // Ativacao pos-pagamento: frontend chama apos confirmPayment / handleNextAction.
+    // Post-payment activation: frontend calls after confirmPayment / handleNextAction
     if (body && body.confirm_subscription) {
       const subsList = await stripe.subscriptions.list({ customer: customerId, status: 'all', limit: 20 });
       const activeSub = activeSubscriptionOf(subsList);
       if (!activeSub) return corsResponse({ error: 'no_active_subscription' }, 400);
       const subPlanId = planOfSub(activeSub);
-      await activatePlan(admin, user.id, subPlanId);
+      await activatePlan(admin, user.id, subPlanId, new Date(Number(activeSub.current_period_end) * 1000).toISOString());
       return corsResponse({ status: 'activated' });
     }
 
@@ -195,42 +93,38 @@ async function handler(req: Request, logger: Logger) {
     if (!allowed) return corsResponse({ error: 'rate_limited' }, 429);
     const isAdmin = await isAdminUser(admin, user.id);
 
-    // Preço customizado (desconto manual do admin) por plano, se houver.
+    // Custom price (admin discount) per plan
     let customCents = 0;
     try {
       const prof = await supabase
         .from('company_profiles')
-        .select('custom_price_cents, custom_price_cents_pro, custom_price_cents_premium')
+        .select('custom_prices')
         .eq('user_id', user.id)
         .maybeSingle();
-      if (prof && prof.data) {
-        if (planId === 'pro' && prof.data.custom_price_cents_pro) customCents = prof.data.custom_price_cents_pro;
-        else if (planId === 'premium' && prof.data.custom_price_cents_premium) customCents = prof.data.custom_price_cents_premium;
-        else if (prof.data.custom_price_cents) customCents = prof.data.custom_price_cents;
+      if (prof && prof.data && prof.data.custom_prices) {
+        const prices = prof.data.custom_prices as Record<string, number | null>;
+        if (prices[planId]) customCents = prices[planId] || 0;
       }
-    } catch (profErr) {
+    } catch (_) {
       customCents = 0;
     }
     if (isAdmin) customCents = ADMIN_TEST_PRICE;
 
     const priceId = await resolvePriceId(stripe, planId, customCents, user.id);
 
-    // 1) Ja existe assinatura ativa? Entao MUDA de plano (upgrade/downgrade), sem duplicar.
+    // 1) Already has active subscription? Then CHANGE plan (upgrade/downgrade), no duplicate.
     const subsList = await stripe.subscriptions.list({ customer: customerId, status: 'all', limit: 20 });
     const activeSub = activeSubscriptionOf(subsList);
     if (activeSub) {
-      const item = activeSub.items && activeSub.items.data ? activeSub.items.data[0] : null;
-      if (!item) {
-        return corsResponse({ error: 'subscription_without_item' }, 500);
-      }
-      // Ja esta no mesmo preco? Nada a fazer.
+      const item = activeSub.items?.data?.[0];
+      if (!item) return corsResponse({ error: 'subscription_without_item' }, 500);
+      // Already on same price? Nothing to do.
       if (item.price && item.price.id === priceId) {
-        await activatePlan(admin, user.id, planId);
+        await activatePlan(admin, user.id, planId, new Date(Number(activeSub.current_period_end) * 1000).toISOString());
         return corsResponse({ status: 'unchanged' });
       }
-      // Upgrade: cobra a diferenca proporcional AGORA e ativa o plano maior (webhook).
-      // Downgrade: NAO cobra/credita agora; o plano mais barato passa a valer so no
-      // proximo ciclo. O cliente mantem o plano mais caro ate o fim do periodo ja pago.
+      // Upgrade: charge proration NOW and activate bigger plan (webhook handles final).
+      // Downgrade: NO proration charge; cheaper plan takes effect at next cycle.
       const currentPlanId = planOfSub(activeSub);
       const isDowngrade = PLAN_RANK[planId] < PLAN_RANK[currentPlanId];
       await stripe.subscriptions.update(activeSub.id, {
@@ -239,18 +133,20 @@ async function handler(req: Request, logger: Logger) {
         metadata: { user_id: user.id, plan_id: planId },
       });
       if (!isDowngrade) {
-        await activatePlan(admin, user.id, planId);
+        await activatePlan(admin, user.id, planId, new Date(Number(activeSub.current_period_end) * 1000).toISOString());
       }
       return corsResponse({ status: 'changed', scheduled: isDowngrade });
     }
 
-    // 2) Sem assinatura: pagar com cartao salvo (off_session) se solicitado.
+    // 2) No subscription: pay with saved card (off_session) if requested.
     if (useSavedCard) {
       const invoiceSettings = customer.invoice_settings || {};
-      const defaultPm = invoiceSettings.default_payment_method || null;
+      let defaultPm = invoiceSettings.default_payment_method || null;
       if (!defaultPm) {
-        return corsResponse({ error: 'no_payment_method' }, 400);
+        const list = await stripe.paymentMethods.list({ customer: customer.id, type: 'card', limit: 1 });
+        if (list.data.length > 0) defaultPm = list.data[0].id;
       }
+      if (!defaultPm) return corsResponse({ error: 'no_payment_method' }, 400);
       const subscription = await stripe.subscriptions.create({
         customer: customerId,
         items: [{ price: priceId }],
@@ -260,19 +156,17 @@ async function handler(req: Request, logger: Logger) {
         expand: ['latest_invoice.payment_intent'],
         metadata: { user_id: user.id, plan_id: planId },
       });
-      const invoice = subscription.latest_invoice;
-      const pi = invoice && invoice.payment_intent ? invoice.payment_intent : null;
-      if (!pi) {
-        return corsResponse({ error: 'no_client_secret' }, 500);
-      }
+      const invoice = subscription.latest_invoice as Stripe.Invoice | null;
+      const pi = invoice?.payment_intent as Stripe.PaymentIntent | null;
+      if (!pi) return corsResponse({ error: 'no_client_secret' }, 500);
       if (pi.status === 'succeeded') {
-        await activatePlan(admin, user.id, planId);
+        await activatePlan(admin, user.id, planId, new Date(Number(subscription.current_period_end) * 1000).toISOString());
         return corsResponse({ status: 'active' });
       }
       try {
         const confirmed = await stripe.paymentIntents.confirm(pi.id, { off_session: true });
         if (confirmed.status === 'succeeded') {
-          await activatePlan(admin, user.id, planId);
+          await activatePlan(admin, user.id, planId, new Date(Number(subscription.current_period_end) * 1000).toISOString());
           return corsResponse({ status: 'active' });
         }
         if (confirmed.client_secret) {
@@ -280,8 +174,8 @@ async function handler(req: Request, logger: Logger) {
         }
         return corsResponse({ error: stripeErrorCode(null, confirmed) }, 402);
       } catch (confirmErr) {
-        const raw = confirmErr && confirmErr.raw ? confirmErr.raw : null;
-        const failedPi = raw && raw.payment_intent ? raw.payment_intent : null;
+        const raw = confirmErr && (confirmErr as any).raw ? (confirmErr as any).raw : null;
+        const failedPi = raw?.payment_intent;
         if (failedPi && failedPi.client_secret) {
           return corsResponse({ clientSecret: failedPi.client_secret, requiresAction: true });
         }
@@ -289,7 +183,7 @@ async function handler(req: Request, logger: Logger) {
       }
     }
 
-    // 3) Sem assinatura e cartao novo: devolve clientSecret para o PaymentElement.
+    // 3) No subscription and new card: return clientSecret for PaymentElement.
     const subscription = await stripe.subscriptions.create({
       customer: customerId,
       items: [{ price: priceId }],
@@ -298,12 +192,12 @@ async function handler(req: Request, logger: Logger) {
       expand: ['latest_invoice.payment_intent'],
       metadata: { user_id: user.id, plan_id: planId },
     });
-    const invoice = subscription.latest_invoice;
-    const paymentIntent = invoice && invoice.payment_intent ? invoice.payment_intent : null;
+    const invoice = subscription.latest_invoice as Stripe.Invoice | null;
+    const paymentIntent = invoice?.payment_intent as Stripe.PaymentIntent | null;
 
-    // Pagamento ja processado automaticamente (ex: cartao salvo faz auto-collect).
+    // Payment already processed automatically (e.g. saved card auto-collect).
     if (paymentIntent && paymentIntent.status === 'succeeded') {
-      await activatePlan(admin, user.id, planId);
+      await activatePlan(admin, user.id, planId, new Date(Number(subscription.current_period_end) * 1000).toISOString());
       return corsResponse({ status: 'active' });
     }
 
@@ -315,12 +209,10 @@ async function handler(req: Request, logger: Logger) {
       subscriptionId: subscription.id,
     });
   } catch (err) {
-    const statusCode = err && err.statusCode ? Number(err.statusCode) : 500;
+    const statusCode = err && (err as any).statusCode ? Number((err as any).statusCode) : 500;
     const code = stripeErrorCode(err, null);
-    if (statusCode >= 400 && statusCode < 500) {
-      return corsResponse({ error: code }, statusCode);
-    }
-    const message = err && err.message ? err.message : String(err);
+    if (statusCode >= 400 && statusCode < 500) return corsResponse({ error: code }, statusCode);
+    const message = err && (err as any).message ? (err as any).message : String(err);
     return corsResponse({ error: String(message) }, 500);
   }
 }

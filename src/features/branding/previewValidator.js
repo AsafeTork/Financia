@@ -1,16 +1,21 @@
 const WCAG_AA_CONTRAST = 4.5;
 
+/**
+ * Validates a proposed brand configuration for WCAG contrast and color conflicts.
+ * @param {Object} proposedBrand - The proposed brand configuration
+ * @param {Object} currentBrand - The current brand configuration
+ * @returns {Object} Validation result with issues, suggestions, and conflicts
+ */
 export default function previewValidate(proposedBrand, currentBrand) {
   const issues = [];
   const suggestions = [];
-  const ignoredProps = [];
   const conflicts = [];
 
   const proposedConfig = proposedBrand && proposedBrand.brand_config
     ? parseConfig(proposedBrand.brand_config) : null;
 
   if (!proposedConfig || !proposedConfig.modules) {
-    return { issues: [], suggestions: [], unknownProps: [], ignoredProps: [], conflicts: [] };
+    return { issues: [], suggestions: [], conflicts: [] };
   }
 
   const pal = proposedConfig.modules.palette || {};
@@ -18,7 +23,7 @@ export default function previewValidate(proposedBrand, currentBrand) {
   if (pal.primary && pal.bgPage) {
     const contrast = getContrastRatio(pal.primary, pal.bgPage);
     if (contrast < WCAG_AA_CONTRAST) {
-      issues.push('Contraste insuficiente entre primary (' + pal.primary + ') e bgPage (' + pal.bgPage + '): ' + contrast.toFixed(2) + ':1 (minimo 4.5:1)');
+      issues.push(`Contraste insuficiente entre primary (${pal.primary}) e bgPage (${pal.bgPage}): ${contrast.toFixed(2)}:1 (minimo 4.5:1)`);
       suggestions.push('Escureca a cor primaria ou clareie o fundo da pagina para melhorar o contraste.');
     }
   }
@@ -26,7 +31,7 @@ export default function previewValidate(proposedBrand, currentBrand) {
   if (pal.textMain && pal.bgPage) {
     const textContrast = getContrastRatio(pal.textMain, pal.bgPage);
     if (textContrast < WCAG_AA_CONTRAST) {
-      issues.push('Contraste insuficiente entre texto (' + pal.textMain + ') e fundo (' + pal.bgPage + '): ' + textContrast.toFixed(2) + ':1');
+      issues.push(`Contraste insuficiente entre texto (${pal.textMain}) e fundo (${pal.bgPage}): ${textContrast.toFixed(2)}:1`);
       suggestions.push('Ajuste textMain para um tom mais escuro ou bgPage mais claro.');
     }
   }
@@ -34,12 +39,12 @@ export default function previewValidate(proposedBrand, currentBrand) {
   if (pal.primary && pal.accent) {
     const hueDiff = getHueDistance(pal.primary, pal.accent);
     if (hueDiff < 30) {
-      suggestions.push('primary e accent tem matiz muito proximo (' + hueDiff.toFixed(0) + ' graus). Considere aumentar a diferenca para melhor distincao visual.');
+      suggestions.push(`primary e accent tem matiz muito proximo (${hueDiff.toFixed(0)} graus). Considere aumentar a diferenca para melhor distincao visual.`);
     }
   }
 
   if (pal.primary && pal.secondary && pal.primary === pal.secondary) {
-    issues.push('primary e secondary sao identicos (' + pal.primary + '). Eles devem ser diferentes.');
+    issues.push(`primary e secondary sao identicos (${pal.primary}). Eles devem ser diferentes.`);
   }
 
   if (pal.bgCard && pal.bgPage && pal.bgCard === pal.bgPage) {
@@ -51,13 +56,12 @@ export default function previewValidate(proposedBrand, currentBrand) {
 
   const versionCheck = checkVersionCompatibility(proposedBrand);
   if (versionCheck) {
-    ignoredProps.push(versionCheck);
+    // Version warnings are tracked but not blocking
   }
 
   return {
     issues,
     suggestions,
-    ignoredProps,
     conflicts,
   };
 }
@@ -113,7 +117,7 @@ const checkVersionCompatibility = (proposedBrand) => {
   const cfg = parseConfig(proposedBrand && proposedBrand.brand_config);
   if (!cfg || !cfg.schemaVersion) return null;
   if (cfg.schemaVersion !== '1.0.0') {
-    return 'schemaVersion "' + cfg.schemaVersion + '" nao e reconhecido. Usando tradutor padrao.';
+    return `schemaVersion "${cfg.schemaVersion}" nao e reconhecido. Usando tradutor padrao.`;
   }
   return null;
 };

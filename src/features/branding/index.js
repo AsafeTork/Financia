@@ -5,14 +5,13 @@ export { default as PreviewGeral } from './PreviewGeral.jsx';
 export { default as BrandGlobalEditor } from './BrandGlobalEditor.jsx';
 export { default as PlanTabsEditor } from './PlanTabsEditor.jsx';
 export { default as ModuleEditor } from './ModuleEditor.jsx';
-export { validateBrandConfig } from './validateBrandConfig.js';
-export { BRAND_SCHEMA, BRAND_SCHEMA_VERSION } from './schema.js';
+export { validateAgainstModules, getSchema, normalizeModules, getDefaults, mergeWithDefaults } from './schemaRegistry.js';
 export { default as previewValidate } from './previewValidator.js';
 export { default as processResponse, requiresServiceRole } from './responseProcessor.js';
 export { enterPreviewMode, exitPreviewMode } from '../../shared/hooks/useBrandAppearance.js';
 export { listPresets, getPreset, savePreset, deletePreset, duplicatePreset, toggleFavoritePreset, exportPreset, importPreset, getPresetCategories, OFFICIAL_PRESETS, loadPresetsFromDb } from './presets.js';
 export { getPlanTheme, getPlanThemeConfig, listPlanThemes, resolveBrandForPlan, applyPlanOverride } from './planThemes.js';
-export { generateLogoSvg, logoSvgToDataUrl, buildCheckPath, ORIGINAL_LOGO_COLORS, LOGO_ELEMENTS, CHECK_NORM } from './logoUtils.js';
+export { generateLogoSvg, logoSvgToDataUrl, buildCheckPath, OFFICIAL_LOGO_COLORS, LOGO_ELEMENTS, CHECK_NORM } from './logoUtils.js';
 export {
   DEFAULT_PALETTE_FIELDS,
   OFFICIAL_LOGO_COLORS,
@@ -27,4 +26,18 @@ export {
   PLAN_META,
   getDefaultPaletteForPlan,
   getAllPaletteKeys,
+  PALETTE_DEFAULTS,
+  TYPOGRAPHY_DEFAULTS,
+  LOGO_DEFAULTS,
+  SIDEBAR_DEFAULTS,
+  HEADER_DEFAULTS,
+  CARDS_DEFAULTS,
+  BUTTONS_DEFAULTS,
+  INPUTS_DEFAULTS,
+  BORDER_RADIUS_DEFAULTS,
+  SHADOWS_DEFAULTS,
+  SPACING_DEFAULTS,
+  ANIMATIONS_DEFAULTS,
+  THEME_DEFAULTS,
+  PLAN_OVERRIDES_DEFAULTS,
 } from './defaults.js';

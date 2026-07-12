@@ -11,7 +11,7 @@ function newCollection() {
 }
 
 function newTable() {
-  var col = newCollection();
+  const col = newCollection();
   return {
     where: vi.fn().mockReturnValue(col),
     get: vi.fn().mockResolvedValue(null),
@@ -43,25 +43,25 @@ function newSupabaseQuery() {
   };
 }
 
-var _mockTransactions;
-var _mockProducts;
-var _mockLosses;
-var mockProfiles;
-var _mockMeta;
-var mockQuery;
+let _mockTransactions;
+let _mockProducts;
+let _mockLosses;
+let mockProfiles;
+let _mockMeta;
+let mockQuery;
 
 vi.mock('dexie', function() {
-  var t = newTable();
-  var p = newTable();
-  var l = newTable();
-  var pr = newTable();
-  var m = newTable();
+  const t = newTable();
+  const p = newTable();
+  const l = newTable();
+  const pr = newTable();
+  const m = newTable();
   _mockTransactions = t;
   _mockProducts = p;
   _mockLosses = l;
   mockProfiles = pr;
   _mockMeta = m;
-  var MockDexie = vi.fn(function() {
+  const MockDexie = vi.fn(function() {
     return {
       version: vi.fn().mockReturnThis(),
       stores: vi.fn().mockReturnThis(),
@@ -90,7 +90,7 @@ vi.mock('./supabase.js', function() {
 import { syncAll } from './sync.js';
 import { sb } from './supabase.js';
 
-var UID = 'test-user-id';
+const UID = 'test-user-id';
 
 describe('syncProfiles (via syncAll)', function() {
 
@@ -114,7 +114,7 @@ describe('syncProfiles (via syncAll)', function() {
   });
 
   it('push sends all PROFILE_WRITE_FIELDS including white_label to upsert', async function() {
-    var localRow = {
+    const localRow = {
       user_id: UID,
       name: 'Test Co',
       logo: 'l.png',
@@ -135,11 +135,11 @@ describe('syncProfiles (via syncAll)', function() {
     mockProfiles.collection.toArray.mockResolvedValue([localRow]);
     mockQuery.maybeSingle.mockResolvedValue({ data: null, error: null });
 
-    var _result = await syncAll(UID);
+    const _result = await syncAll(UID);
 
     expect(sb.from).toHaveBeenCalledWith('company_profiles');
     expect(mockQuery.upsert).toHaveBeenCalledTimes(1);
-    var payload = mockQuery.upsert.mock.calls[0][0];
+    const payload = mockQuery.upsert.mock.calls[0][0];
     expect(payload.white_label).toBe(true);
     expect(payload.user_id).toBe(UID);
     expect(payload.name).toBe('Test Co');
@@ -179,7 +179,7 @@ describe('syncProfiles (via syncAll)', function() {
     await syncAll(UID);
 
     expect(mockProfiles.put).toHaveBeenCalledTimes(1);
-    var saved = mockProfiles.put.mock.calls[0][0];
+    const saved = mockProfiles.put.mock.calls[0][0];
     expect(saved.name).toBe('Remote');
     expect(saved._synced).toBe(1);
   });
@@ -192,9 +192,9 @@ describe('syncProfiles (via syncAll)', function() {
     mockQuery.upsert.mockReturnValue(new Promise(function() {}));
 
     vi.useFakeTimers();
-    var promise = syncAll(UID);
+    const promise = syncAll(UID);
     await vi.advanceTimersByTimeAsync(15001);
-    var result = await promise;
+    const result = await promise;
     expect(result).toBe(false);
   });
 

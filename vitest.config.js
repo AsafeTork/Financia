@@ -19,6 +19,7 @@ export default defineConfig({
       {
         name: 'unit',
         include: ['src/**/*.test.{js,jsx}'],
+        exclude: ['**/*.benchmark.test.{js,jsx}', '**/e2e/**'],
         environment: 'jsdom',
         setupFiles: ['./src/test/setup.js'],
         globals: true,
@@ -32,6 +33,15 @@ export default defineConfig({
         globals: true,
         isolate: true,
       },
+      {
+        name: 'benchmark',
+        include: ['benchmarks/**/*.benchmark.test.{js,jsx}', 'supabase/functions/*.benchmark.test.{js,ts}'],
+        exclude: ['**/e2e/**'],
+        environment: 'jsdom',
+        setupFiles: ['./src/test/setup.js'],
+        globals: true,
+        isolate: false,
+      },
     ],
     testTimeout: 15000,
     coverage: {
@@ -40,7 +50,7 @@ export default defineConfig({
       include: ['src/**/*.{js,jsx}'],
       exclude: ['src/test/**', 'src/**/*.test.*', 'src/**/*.spec.*'],
       reportsDirectory: './coverage',
-      thresholds: { lines: 40, functions: 30, branches: 30, statements: 40 },
+      thresholds: { lines: 60, functions: 50, branches: 50, statements: 60 },
     },
     deps: {
       optimizer: { web: { include: ['dexie', 'fake-indexeddb'] } },

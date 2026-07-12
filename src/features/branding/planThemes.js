@@ -1,25 +1,26 @@
 import { WHITE_LABEL_VISUAL_DEFAULT } from '../../lib/constants.js';
+import { PLAN_PALETTE_DEFAULTS } from './defaults.js';
 
 const DEFAULT_PLAN_THEMES = {
   free: {
     name: 'Free',
     description: 'Tema padrao do plano Gratuito',
-    config: { schemaVersion: '1.0.0', modules: { palette: { primary: '#002f59', secondary: '#e8f0f7', accent: '#1a6b5c', mode: 'light' }, typography: { style: 'modern', size: 'medium' }, sidebar: { style: 'solid' }, cards: { style: 'raised' }, buttons: { style: 'rounded' }, borderRadius: { style: 'rounded' }, spacing: { density: 'comfortable' }, shadows: { intensity: 'subtle' }, animations: { speed: 'normal' } } },
+    config: { schemaVersion: '1.0.0', modules: { palette: { ...PLAN_PALETTE_DEFAULTS.free, mode: 'light' }, typography: { style: 'modern', size: 'medium' }, sidebar: { style: 'solid' }, cards: { style: 'raised' }, buttons: { style: 'rounded' }, borderRadius: { style: 'rounded' }, spacing: { density: 'comfortable' }, shadows: { intensity: 'subtle' }, animations: { speed: 'normal' } } },
   },
   pro: {
     name: 'Pro',
     description: 'Tema padrao do plano Pro',
-    config: { schemaVersion: '1.0.0', modules: { palette: { primary: '#2563eb', secondary: '#eff6ff', accent: '#7c3aed', mode: 'light' }, typography: { style: 'modern', size: 'medium' }, sidebar: { style: 'minimal' }, cards: { style: 'flat' }, buttons: { style: 'pill' }, inputs: { style: 'minimal' }, borderRadius: { style: 'rounded' }, spacing: { density: 'comfortable' }, shadows: { intensity: 'medium' }, animations: { speed: 'fast' } } },
+    config: { schemaVersion: '1.0.0', modules: { palette: { ...PLAN_PALETTE_DEFAULTS.pro, mode: 'light' }, typography: { style: 'modern', size: 'medium' }, sidebar: { style: 'minimal' }, cards: { style: 'flat' }, buttons: { style: 'pill' }, inputs: { style: 'minimal' }, borderRadius: { style: 'rounded' }, spacing: { density: 'comfortable' }, shadows: { intensity: 'medium' }, animations: { speed: 'fast' } } },
   },
   premium: {
     name: 'Premium',
     description: 'Tema padrao do plano Premium',
-    config: { schemaVersion: '1.0.0', modules: { palette: { primary: '#0f172a', secondary: '#f8fafc', accent: '#f59e0b', mode: 'light' }, typography: { style: 'modern', size: 'large' }, sidebar: { style: 'dark' }, cards: { style: 'raised' }, buttons: { style: 'rounded' }, inputs: { style: 'outlined' }, borderRadius: { style: 'rounded' }, spacing: { density: 'spacious' }, shadows: { intensity: 'strong' }, animations: { speed: 'normal' }, layout: { maxWidth: '1400px' } } },
+    config: { schemaVersion: '1.0.0', modules: { palette: { ...PLAN_PALETTE_DEFAULTS.premium, mode: 'light' }, typography: { style: 'modern', size: 'large' }, sidebar: { style: 'dark' }, cards: { style: 'raised' }, buttons: { style: 'rounded' }, inputs: { style: 'outlined' }, borderRadius: { style: 'rounded' }, spacing: { density: 'spacious' }, shadows: { intensity: 'strong' }, animations: { speed: 'normal' }, layout: { maxWidth: '1400px' } } },
   },
   white_label: {
     name: 'White Label',
     description: 'Personalizacao completa para revenda',
-    config: { schemaVersion: '1.0.0', modules: { palette: { primary: WHITE_LABEL_VISUAL_DEFAULT.color, secondary: WHITE_LABEL_VISUAL_DEFAULT.color_secondary, accent: WHITE_LABEL_VISUAL_DEFAULT.color_accent, mode: WHITE_LABEL_VISUAL_DEFAULT.theme }, typography: { style: 'modern', size: 'medium' }, sidebar: { style: 'solid' }, header: { style: 'solid' }, cards: { style: 'raised' }, buttons: { style: 'rounded' }, inputs: { style: 'outlined' }, borderRadius: { style: 'rounded' }, spacing: { density: 'comfortable' }, shadows: { intensity: 'subtle' }, animations: { speed: 'normal' } } },
+    config: { schemaVersion: '1.0.0', modules: { palette: { ...PLAN_PALETTE_DEFAULTS.white_label, mode: WHITE_LABEL_VISUAL_DEFAULT.theme }, typography: { style: 'modern', size: 'medium' }, sidebar: { style: 'solid' }, header: { style: 'solid' }, cards: { style: 'raised' }, buttons: { style: 'rounded' }, inputs: { style: 'outlined' }, borderRadius: { style: 'rounded' }, spacing: { density: 'comfortable' }, shadows: { intensity: 'subtle' }, animations: { speed: 'normal' } } },
   },
 };
 

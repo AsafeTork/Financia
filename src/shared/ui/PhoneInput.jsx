@@ -174,7 +174,8 @@ export default function PhoneInput(props) {
             onClick={function() { setOpen(function(o) { return !o; }); }}
             aria-haspopup="listbox" aria-expanded={open} aria-label={'Pais: ' + country.name}
             className="flex items-center gap-1.5 pl-3 pr-2.5 text-sm font-medium flex-shrink-0 transition hover:opacity-80 disabled:opacity-50 active:scale-[0.98]"
-            style={{ color: 'var(--text-main)', minHeight: 48 }}>
+            style={{ color: 'var(--text-main)', minHeight: 48 }}
+            data-testid="phone-input-country-select">
             <span style={{ fontSize: 18, lineHeight: 1 }}>{country.flag}</span>
             <span className="tabular">{country.dial}</span>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--text-sub)" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" style={{ transition: 'transform .2s ease', transform: open ? 'rotate(180deg)' : 'none' }}><path d="M6 9l6 6 6-6" /></svg>
@@ -189,7 +190,8 @@ export default function PhoneInput(props) {
             onBlur={function() { setFocused(false); setTouched(true); }}
             placeholder={formatLocal(iso, '').length ? '' : (iso === 'BR' ? '(11) 91234-5678' : 'Numero')}
             className="flex-1 min-w-0 bg-transparent px-3 text-sm outline-none"
-            style={{ color: 'var(--text-main)', minHeight: 48 }} />
+            style={{ color: 'var(--text-main)', minHeight: 48 }}
+            data-testid="phone-input-field" />
         </div>
 
         {open && (
@@ -205,7 +207,8 @@ export default function PhoneInput(props) {
                 <button key={c.iso} type="button" role="option" aria-selected={active}
                   onClick={function() { pick(c.iso); }}
                   className="w-full flex items-center gap-2.5 px-3 text-sm transition hover:bg-gray-100"
-                  style={Object.assign({ minHeight: 44, color: 'var(--text-main)' }, active ? { background: 'var(--brand-soft)' } : {})}>
+                  style={Object.assign({ minHeight: 44, color: 'var(--text-main)' }, active ? { background: 'var(--brand-soft)' } : {})}
+                  data-testid="phone-input-country-option">
                   <span style={{ fontSize: 18, lineHeight: 1 }}>{c.flag}</span>
                   <span className="flex-1 text-left truncate">{c.name}</span>
                   <span className="tabular flex-shrink-0" style={{ color: 'var(--text-sub)' }}>{c.dial}</span>

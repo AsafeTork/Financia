@@ -3,13 +3,13 @@ import { cleanNumeric } from './utils.js';
 
 describe('cleanNumeric', function() {
   it('caminho feliz: decimal valido passa intacto', function() {
-    var r = cleanNumeric('12.50');
+    const r = cleanNumeric('12.50');
     expect(r.value).toBe('12.50');
     expect(r.invalid).toBe(false);
   });
 
   it('entrada invalida: letra/simbolo marca invalid e e removido', function() {
-    var r = cleanNumeric('12a!');
+    const r = cleanNumeric('12a!');
     expect(r.value).toBe('12');
     expect(r.invalid).toBe(true);
   });
@@ -24,12 +24,12 @@ describe('cleanNumeric', function() {
   });
 
   it('limita o comprimento (anti-overflow de layout)', function() {
-    var r = cleanNumeric('123456789012345', { maxLen: 12 });
+    const r = cleanNumeric('123456789012345', { maxLen: 12 });
     expect(r.value.length).toBe(12);
   });
 
   it('modo inteiro: remove ponto/virgula e marca invalid', function() {
-    var r = cleanNumeric('10.5', { decimals: false });
+    const r = cleanNumeric('10.5', { decimals: false });
     expect(r.value).toBe('105');
     expect(r.invalid).toBe(true);
   });
@@ -41,7 +41,7 @@ describe('cleanNumeric', function() {
   });
 
   it('so simbolos invalidos: value vazio mas invalid=true', function() {
-    var r = cleanNumeric('abc');
+    const r = cleanNumeric('abc');
     expect(r.value).toBe('');
     expect(r.invalid).toBe(true);
   });

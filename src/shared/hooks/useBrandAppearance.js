@@ -1,13 +1,14 @@
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { brandAlpha, deriveCores } from '../../lib/utils.js';
 import { planVisualDefaults, WHITE_LABEL_VISUAL_DEFAULT } from '../../lib/constants.js';
+import { PALETTE_DEFAULTS } from '../../features/branding/defaults.js';
 
 function loadThemePref() {
-  try { return localStorage.getItem('financia_theme'); } catch (_) { return null; }
+  try { return localStorage.getItem('financia_theme'); } catch { return null; }
 }
 
 function saveThemePref(value) {
-  try { localStorage.setItem('financia_theme', value); } catch (_unused) { void _unused; }
+  try { localStorage.setItem('financia_theme', value); } catch { /* ignore */ }
 }
 
 function computeMissingCustomPalette(brand) {
@@ -23,9 +24,9 @@ function computeEffectiveTheme(themePref, appBrand) {
 }
 
 function applyTokenDiff(el, tokens) {
-  for (var k in tokens) {
+  for (const k in tokens) {
     if (!Object.prototype.hasOwnProperty.call(tokens, k)) continue;
-    var val = tokens[k];
+    const val = tokens[k];
     if (val !== null && val !== undefined) {
       el.style.setProperty(k, val);
     }
@@ -33,42 +34,55 @@ function applyTokenDiff(el, tokens) {
 }
 
 function collectTokensFromBrand(b) {
-  var primary = b.color || '#002f59';
-  var derived = deriveCores(primary);
-  var secondary = b.color_secondary || derived.secondary;
-  var accent = b.color_accent || derived.accent;
-  var tokens = {
+  const primary = b.color || '#002f59';
+  const derived = deriveCores(primary);
+  const secondary = b.color_secondary || derived.secondary;
+  const accent = b.color_accent || derived.accent;
+  const tokens = {
     '--brand': primary,
     '--brand-soft': brandAlpha(primary, 0.08),
     '--brand-secondary': secondary,
     '--brand-accent': accent,
     '--brand-accent-soft': brandAlpha(accent, 0.12),
-    '--brand-grad': 'linear-gradient(135deg, ' + primary + ' 0%, ' + accent + ' 100%)',
+    '--brand-grad': `linear-gradient(135deg, ${primary} 0%, ${accent} 100%)`,
   };
 
   if (!b || !b.brand_config) return tokens;
-  var cfg;
+  let cfg;
   try { cfg = typeof b.brand_config === 'string' ? JSON.parse(b.brand_config) : b.brand_config; }
   catch { return tokens; }
 
-  var pal = cfg.palette || (cfg.modules && cfg.modules.palette) || {};
+  const pal = cfg.palette || (cfg.modules && cfg.modules.palette) || {};
   if (!pal || Object.keys(pal).length === 0) return tokens;
 
-  var v2 = function(m) { return cfg.modules ? cfg.modules[m] : null; };
-  var paletteTokens = {
-    '--bg-page': pal.bgPage, '--bg-card': pal.bgCard, '--bg-subtle': pal.bgSubtle,
-    '--bg-input': pal.bgInput, '--text-main': pal.textMain, '--text-sub': pal.textSub,
-    '--text-muted': pal.textMuted, '--border': pal.border,
-    '--success': pal.success, '--warning': pal.warning, '--danger': pal.danger,
-    '--info': pal.info, '--positive': pal.positive, '--negative': pal.negative,
-    '--chart-1': pal.chart1, '--chart-2': pal.chart2, '--chart-3': pal.chart3,
-    '--chart-4': pal.chart4, '--chart-5': pal.chart5, '--chart-6': pal.chart6,
+  const v2 = m => cfg.modules ? cfg.modules[m] : null;
+  const paletteTokens = {
+    '--bg-page': pal.bgPage || PALETTE_DEFAULTS.bgPage,
+    '--bg-card': pal.bgCard || PALETTE_DEFAULTS.bgCard,
+    '--bg-subtle': pal.bgSubtle || PALETTE_DEFAULTS.bgSubtle,
+    '--bg-input': pal.bgInput || PALETTE_DEFAULTS.bgInput,
+    '--text-main': pal.textMain || PALETTE_DEFAULTS.textMain,
+    '--text-sub': pal.textSub || PALETTE_DEFAULTS.textSub,
+    '--text-muted': pal.textMuted || PALETTE_DEFAULTS.textMuted,
+    '--border': pal.border || PALETTE_DEFAULTS.border,
+    '--success': pal.success || PALETTE_DEFAULTS.success,
+    '--warning': pal.warning || PALETTE_DEFAULTS.warning,
+    '--danger': pal.danger || PALETTE_DEFAULTS.danger,
+    '--info': pal.info || PALETTE_DEFAULTS.info,
+    '--positive': pal.positive,
+    '--negative': pal.negative,
+    '--chart-1': pal.chart1,
+    '--chart-2': pal.chart2,
+    '--chart-3': pal.chart3,
+    '--chart-4': pal.chart4,
+    '--chart-5': pal.chart5,
+    '--chart-6': pal.chart6,
   };
-  for (var pk in paletteTokens) {
+  for (const pk in paletteTokens) {
     if (paletteTokens[pk]) tokens[pk] = paletteTokens[pk];
   }
 
-  var mod = cfg.typography || v2('typography');
+  let mod = cfg.typography || v2('typography');
   if (mod) {
     if (mod.fontFamily) tokens['--font-family'] = mod.fontFamily;
     if (mod.headingFont) tokens['--font-heading'] = mod.headingFont;
@@ -144,60 +158,75 @@ function collectTokensFromBrand(b) {
   return tokens;
 }
 
+/**
+ * Applies brand variables to the document element.
+ * @param {Object} b - Brand object
+ */
 export function applyBrandVars(b) {
-  var el = document.documentElement;
-  var tokens = collectTokensFromBrand(b);
+  const el = document.documentElement;
+  const tokens = collectTokensFromBrand(b);
   applyTokenDiff(el, tokens);
 }
 
+/**
+ * Applies brand studio config to the document element.
+ * @param {Object} b - Brand object
+ */
 export function applyBrandStudioConfig(b) {
   applyBrandVars(b);
 }
 
+/**
+ * Enters preview mode with proposed brand tokens.
+ * @param {Object} proposedBrand - Proposed brand configuration
+ */
 export function enterPreviewMode(proposedBrand) {
-  var el = document.documentElement;
-  var previewTokens = collectTokensFromBrand(proposedBrand);
+  const el = document.documentElement;
+  const previewTokens = collectTokensFromBrand(proposedBrand);
   applyTokenDiff(el, previewTokens);
 }
 
+/**
+ * Exits preview mode by clearing all inline styles.
+ */
 export function exitPreviewMode() {
-  var el = document.documentElement;
+  const el = document.documentElement;
   el.style.cssText = '';
 }
 
 export default function useBrandAppearance(brand, planInfo) {
-  var [themePref, setThemePref] = useState(loadThemePref);
-  var savedCampaignRef = useRef(null);
+  const [themePref, setThemePref] = useState(loadThemePref);
+  const savedCampaignRef = useRef(null);
 
-  var hasWhiteLabel = !!(brand && brand.white_label);
-  var visualPreset = hasWhiteLabel ? null : planVisualDefaults(planInfo);
-  var missingCustomPalette = computeMissingCustomPalette(brand);
-  var useWhiteLabelFallback = computeUseWhiteLabelFallback(hasWhiteLabel, brand, missingCustomPalette);
+  const hasWhiteLabel = !!(brand && brand.white_label);
+  const visualPreset = hasWhiteLabel ? null : planVisualDefaults(planInfo);
+  const missingCustomPalette = computeMissingCustomPalette(brand);
+  const useWhiteLabelFallback = computeUseWhiteLabelFallback(hasWhiteLabel, brand, missingCustomPalette);
 
-  var appBrand = useMemo(function() {
+  const appBrand = useMemo(() => {
     return hasWhiteLabel
       ? (useWhiteLabelFallback
-        ? Object.assign({}, brand, { color: WHITE_LABEL_VISUAL_DEFAULT.color, color_secondary: WHITE_LABEL_VISUAL_DEFAULT.color_secondary, color_accent: WHITE_LABEL_VISUAL_DEFAULT.color_accent, theme: WHITE_LABEL_VISUAL_DEFAULT.theme })
+        ? { ...brand, color: WHITE_LABEL_VISUAL_DEFAULT.color, color_secondary: WHITE_LABEL_VISUAL_DEFAULT.color_secondary, color_accent: WHITE_LABEL_VISUAL_DEFAULT.color_accent, theme: WHITE_LABEL_VISUAL_DEFAULT.theme }
         : brand)
-      : Object.assign({}, brand, { color: visualPreset.color, color_secondary: visualPreset.color_secondary, color_accent: visualPreset.color_accent, theme: visualPreset.theme });
+      : { ...brand, color: visualPreset.color, color_secondary: visualPreset.color_secondary, color_accent: visualPreset.color_accent, theme: visualPreset.theme };
   }, [hasWhiteLabel, useWhiteLabelFallback, brand, visualPreset]);
 
-  var effectiveTheme = computeEffectiveTheme(themePref, appBrand);
+  const effectiveTheme = computeEffectiveTheme(themePref, appBrand);
 
-  var toggleTheme = useCallback(function() {
-    setThemePref(function(prev) {
-      var current = prev || (appBrand && appBrand.theme) || 'light';
-      var next = current === 'dark' ? 'light' : 'dark';
+  const toggleTheme = useCallback(() => {
+    setThemePref(prev => {
+      const current = prev || (appBrand && appBrand.theme) || 'light';
+      const next = current === 'dark' ? 'light' : 'dark';
       saveThemePref(next);
       return next;
     });
   }, [appBrand]);
 
-  useEffect(function() {
+  useEffect(() => {
     applyBrandVars(appBrand);
 
     if (savedCampaignRef.current) {
-      var campaign = savedCampaignRef.current;
+      const campaign = savedCampaignRef.current;
       if (isCampaignActive(campaign)) {
         applyCampaignOverride(campaign);
       }
@@ -205,10 +234,10 @@ export default function useBrandAppearance(brand, planInfo) {
     }
   }, [appBrand]);
 
-  var checkCampaigns = useCallback(function(campaigns) {
+  const checkCampaigns = useCallback((campaigns) => {
     if (!campaigns || campaigns.length === 0) return;
-    for (var ci = 0; ci < campaigns.length; ci++) {
-      var c = campaigns[ci];
+    for (let ci = 0; ci < campaigns.length; ci++) {
+      const c = campaigns[ci];
       if (isCampaignActive(c)) {
         savedCampaignRef.current = c;
         applyCampaignOverride(c);
@@ -222,19 +251,19 @@ export default function useBrandAppearance(brand, planInfo) {
 
 function isCampaignActive(campaign) {
   if (!campaign || !campaign.is_active) return false;
-  var now = Date.now();
-  var start = new Date(campaign.starts_at).getTime();
-  var end = new Date(campaign.expires_at).getTime();
+  const now = Date.now();
+  const start = new Date(campaign.starts_at).getTime();
+  const end = new Date(campaign.expires_at).getTime();
   return now >= start && now < end;
 }
 
 function applyCampaignOverride(campaign) {
   if (!campaign || !campaign.schema_override) return;
-  var el = document.documentElement;
-  var override = typeof campaign.schema_override === 'string'
+  const el = document.documentElement;
+  const override = typeof campaign.schema_override === 'string'
     ? JSON.parse(campaign.schema_override) : campaign.schema_override;
   if (override.palette) {
-    var pal = override.palette;
+    const pal = override.palette;
     if (pal.primary) el.style.setProperty('--brand', pal.primary);
     if (pal.bgPage) el.style.setProperty('--bg-page', pal.bgPage);
     if (pal.bgCard) el.style.setProperty('--bg-card', pal.bgCard);
