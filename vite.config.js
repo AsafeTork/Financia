@@ -16,18 +16,18 @@ export default defineConfig(async function() {
       outDir: 'dist',
       emptyOutDir: true,
       target: 'es2020',
-      modulePreload: {
-        polyfill: true
-      },
       rollupOptions: {
+        input: {
+          main: './index.html'
+        },
         output: {
           compact: true,
           generatedCode: 'es2015',
           manualChunks: function(id) {
-            // React + ReactDOM MUST be together (tight coupling, shared internals)
+            // React + ReactDOM MUST be together (tight coupling)
+            // They MUST be loaded as a single chunk to avoid TDE circular reference
             if (id.includes('node_modules/react') && !id.includes('react-table')) return 'vendor-react';
             if (id.includes('node_modules/react-dom')) return 'vendor-react';
-            
             // Scheduler - no deps on react/react-dom
             if (id.includes('node_modules/scheduler')) return 'vendor-scheduler';
             
