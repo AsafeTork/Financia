@@ -21,7 +21,10 @@ export default defineConfig(async function() {
           compact: true,
           generatedCode: 'es2015',
           manualChunks: function(id) {
-            // NO manualChunks for React/ReactDOM - let Vite handle them natively
+            // React + ReactDOM MUST be in SAME chunk (tight coupling, shared internals)
+            if (id.includes('node_modules/react') && !id.includes('react-table')) return 'vendor-react';
+            if (id.includes('node_modules/react-dom')) return 'vendor-react';
+            
             // Scheduler - no deps on react/react-dom
             if (id.includes('node_modules/scheduler')) return 'vendor-scheduler';
             
