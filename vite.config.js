@@ -21,10 +21,7 @@ export default defineConfig(async function() {
           compact: true,
           generatedCode: 'es2015',
           manualChunks: function(id) {
-            // React + ReactDOM MUST be together in ONE chunk (tight coupling)
-            if (id.includes('node_modules/react') && !id.includes('react-table')) return 'vendor-react';
-            if (id.includes('node_modules/react-dom')) return 'vendor-react';
-            
+            // NO manualChunks for React/ReactDOM - let Vite handle them natively
             // Scheduler - no deps on react/react-dom
             if (id.includes('node_modules/scheduler')) return 'vendor-scheduler';
             
@@ -50,6 +47,9 @@ export default defineConfig(async function() {
             // nodemailer - EXCLUDE from vendor (Node.js only)
             if (id.includes('node_modules/nodemailer')) return 'nodemailer';
             
+            // Scheduler - separate chunk (no deps)
+            if (id.includes('node_modules/scheduler')) return 'vendor-scheduler';
+            
             // Everything else from node_modules
             if (id.includes('node_modules')) return 'vendor';
           },
@@ -68,6 +68,7 @@ export default defineConfig(async function() {
       jsxImportSource: 'react',
     },
     optimizeDeps: {
+      include: ['react', 'react-dom'],
       exclude: ['nodemailer']
     }
   };
