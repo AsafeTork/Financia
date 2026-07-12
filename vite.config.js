@@ -24,10 +24,10 @@ export default defineConfig(async function() {
           compact: true,
           generatedCode: 'es2015',
           manualChunks: function(id) {
-            // React DOM MUST come first (depends on react)
-            if (id.includes('node_modules/react-dom')) return 'vendor-react-dom';
-            // React core - MUST be separate from vendor, loaded before react-dom
+            // React + ReactDOM MUST be together (tight coupling, shared internals)
             if (id.includes('node_modules/react') && !id.includes('react-table')) return 'vendor-react';
+            if (id.includes('node_modules/react-dom')) return 'vendor-react';
+            
             // Scheduler - no deps on react/react-dom
             if (id.includes('node_modules/scheduler')) return 'vendor-scheduler';
             
