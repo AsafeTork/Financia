@@ -20,38 +20,32 @@ export default defineConfig(async function() {
         input: {
           main: './index.html'
         },
-        output: {
+output: {
           compact: true,
           generatedCode: 'es2015',
-          manualChunks: function(id) {
-            // React + ReactDOM MUST be together (tight coupling)
-            // They MUST be loaded as a single chunk to avoid TDE circular reference
-            if (id.includes('node_modules/react') && !id.includes('react-table')) return 'vendor-react';
-            if (id.includes('node_modules/react-dom')) return 'vendor-react';
-            // Scheduler - no deps on react/react-dom
-            if (id.includes('node_modules/scheduler')) return 'vendor-scheduler';
-            
-            // Supabase - split by module
-            if (id.indexOf('@supabase/postgrest-js') !== -1) return 'supabase-db';
-            if (id.indexOf('@supabase/auth-js') !== -1) return 'supabase-auth';
-            if (id.indexOf('@supabase/storage-js') !== -1) return 'supabase-storage';
-            if (id.indexOf('@supabase/functions-js') !== -1) return 'supabase-functions';
-            if (id.includes('node_modules/@supabase')) return 'supabase';
-            
-            // TanStack Query
-            if (id.includes('node_modules/@tanstack/query-core') || id.includes('node_modules/@tanstack/react-query')) return 'query';
-            
-            // Dexie
-            if (id.includes('node_modules/dexie')) return 'dexie';
-            
-            // Radix UI
-            if (id.includes('node_modules/@radix-ui')) return 'radix';
-            
-            // Stripe
-            if (id.includes('node_modules/@stripe')) return 'stripe';
-            
-            // Everything else from node_modules
-            if (id.includes('node_modules')) return 'vendor';
+          manualChunks: {
+            'vendor': [
+              'react',
+              'react-dom',
+              'scheduler',
+              '@supabase/postgrest-js',
+              '@supabase/auth-js',
+              '@supabase/storage-js',
+              '@supabase/functions-js',
+              '@supabase/supabase-js',
+              '@tanstack/react-query',
+              '@tanstack/query-core',
+              'dexie',
+              '@radix-ui/react-label',
+              '@radix-ui/react-slot',
+              '@stripe/react-stripe-js',
+              '@stripe/stripe-js',
+              'clsx',
+              'tailwind-merge',
+              'tailwindcss-animate',
+              'class-variance-authority',
+              'nodemailer'
+            ]
           },
           entryFileNames: 'assets/[name]-[hash].js',
           chunkFileNames: 'assets/[name]-[hash].js',
