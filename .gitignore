@@ -8,3 +8,6 @@ release/
 *.exe
 search.py
 supabase/.temp/
+.opencode/
+.config/
+opencode.json
