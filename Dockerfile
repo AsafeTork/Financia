@@ -16,8 +16,7 @@ WORKDIR /app
 
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/package.json ./
-COPY --from=builder /app/vite.config.js ./
 
 EXPOSE 3000
 
-CMD ["npx", "vite", "preview", "--port", "3000", "--host", "0.0.0.0"]
+CMD ["npx", "serve", "-s", "dist", "-l", "3000"]
