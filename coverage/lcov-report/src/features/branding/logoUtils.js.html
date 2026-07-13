@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/6</span>
+                <span class='fraction'>6/6</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/10</span>
+                <span class='fraction'>10/10</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/4</span>
+                <span class='fraction'>4/4</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/5</span>
+                <span class='fraction'>5/5</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -108,8 +108,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">416x</span>
+<span class="cline-any cline-yes">52x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -118,8 +118,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">20x</span>
+<span class="cline-any cline-yes">20x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -134,7 +134,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">8x</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { OFFICIAL_LOGO_COLORS, CHECK_NORM } from './defaults.js';
 &nbsp;
 /**
@@ -143,9 +143,9 @@
  * @param {number} h - Height
  * @returns {string} SVG path data
  */
-export function <span class="fstat-no" title="function not covered" >buildCheckPath(</span>w, h) {
-  const pts = <span class="cstat-no" title="statement not covered" >CHECK_NORM.map(<span class="fstat-no" title="function not covered" >p </span>=&gt; <span class="cstat-no" title="statement not covered" >`${(p.x * w).toFixed(1)} ${(p.y * h).toFixed(1)}`)</span>;</span>
-<span class="cstat-no" title="statement not covered" >  return `M ${pts[0]} L ${pts[1]} L ${pts[2]} L ${pts[3]} L ${pts[4]} C ${pts[5]} ${pts[6]} ${pts[7]} Z`;</span>
+export function buildCheckPath(w, h) {
+  const pts = CHECK_NORM.map(p =&gt; `${(p.x * w).toFixed(1)} ${(p.y * h).toFixed(1)}`);
+  return `M ${pts[0]} L ${pts[1]} L ${pts[2]} L ${pts[3]} L ${pts[4]} C ${pts[5]} ${pts[6]} ${pts[7]} Z`;
 }
 &nbsp;
 /**
@@ -153,9 +153,9 @@ export function <span class="fstat-no" title="function not covered" >buildCheckP
  * @param {Object} colors - Color overrides
  * @returns {string} SVG markup
  */
-export function <span class="fstat-no" title="function not covered" >generateLogoSvg(</span>colors) {
-  const c = <span class="cstat-no" title="statement not covered" >colors || OFFICIAL_LOGO_COLORS;</span>
-<span class="cstat-no" title="statement not covered" >  return '&lt;svg width="400" height="400" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"&gt;'</span>
+export function generateLogoSvg(colors) {
+  const c = colors || OFFICIAL_LOGO_COLORS;
+  return '&lt;svg width="400" height="400" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"&gt;'
     + '&lt;rect width="400" height="400" fill="transparent"/&gt;'
     + `&lt;g transform="translate(34,200)"&gt;&lt;rect width="71" height="125" rx="10" fill="${c.blue || OFFICIAL_LOGO_COLORS.blue}"/&gt;&lt;/g&gt;`
     + `&lt;g transform="translate(134,129)"&gt;&lt;rect width="71" height="196" rx="10" fill="${c.green || OFFICIAL_LOGO_COLORS.green}"/&gt;&lt;/g&gt;`
@@ -169,8 +169,8 @@ export function <span class="fstat-no" title="function not covered" >generateLog
  * @param {string} svgMarkup - SVG markup
  * @returns {string} Data URL
  */
-export function <span class="fstat-no" title="function not covered" >logoSvgToDataUrl(</span>svgMarkup) {
-<span class="cstat-no" title="statement not covered" >  return 'data:image/svg+xml,' + encodeURIComponent(svgMarkup);</span>
+export function logoSvgToDataUrl(svgMarkup) {
+  return 'data:image/svg+xml,' + encodeURIComponent(svgMarkup);
 }</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
@@ -178,7 +178,7 @@ export function <span class="fstat-no" title="function not covered" >logoSvgToDa
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-07-12T14:09:57.405Z
+                at 2026-07-13T01:26:02.471Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

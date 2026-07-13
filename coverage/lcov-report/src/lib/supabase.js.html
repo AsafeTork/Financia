@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">15.73% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/89</span>
+                <span class='fraction'>14/89</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">33.33% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/36</span>
+                <span class='fraction'>12/36</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">29.62% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/54</span>
+                <span class='fraction'>16/54</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">17.72% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/79</span>
+                <span class='fraction'>14/79</span>
             </div>
         
             
@@ -199,9 +199,9 @@
 <a name='L134'></a><a href='#L134'>134</a>
 <a name='L135'></a><a href='#L135'>135</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -284,8 +284,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -309,22 +309,22 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -333,9 +333,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { createClient } from '@supabase/supabase-js';
 &nbsp;
-var AI_GUARD_KEY = <span class="cstat-no" title="statement not covered" >'__financia_ai_guard_depth__';</span>
-<span class="cstat-no" title="statement not covered" >if (typeof globalThis !== 'undefined' &amp;&amp; typeof globalThis[AI_GUARD_KEY] !== 'number') {</span>
-<span class="cstat-no" title="statement not covered" >  globalThis[AI_GUARD_KEY] = 0;</span>
+var AI_GUARD_KEY = '__financia_ai_guard_depth__';
+<span class="missing-if-branch" title="else path not taken" >E</span>if (typeof globalThis !== 'undefined' &amp;&amp; typeof globalThis[AI_GUARD_KEY] !== 'number') {
+  globalThis[AI_GUARD_KEY] = 0;
 }
 &nbsp;
 function <span class="fstat-no" title="function not covered" >aiGuardDepth(</span>) {
@@ -417,48 +417,48 @@ function <span class="fstat-no" title="function not covered" >createNoopStorageB
   };
 }
 &nbsp;
-function <span class="fstat-no" title="function not covered" >createNoopSupabaseClient(</span>) {
-  var authSub = <span class="cstat-no" title="statement not covered" >{ data: { subscription: { <span class="fstat-no" title="function not covered" >unsubscribe:</span> function() {} } } };</span>
-<span class="cstat-no" title="statement not covered" >  return {</span>
+function createNoopSupabaseClient() {
+  var authSub = { data: { subscription: { unsubscribe: function() {} } } };
+  return {
     auth: {
-<span class="fstat-no" title="function not covered" >      getSession:</span> function() { <span class="cstat-no" title="statement not covered" >return Promise.resolve({ data: { session: null }, error: null }); </span>},
-<span class="fstat-no" title="function not covered" >      onAuthStateChange:</span> function() { <span class="cstat-no" title="statement not covered" >return authSub; </span>},
-<span class="fstat-no" title="function not covered" >      signInWithPassword:</span> function() { <span class="cstat-no" title="statement not covered" >return Promise.resolve({ data: null, error: missingSupabaseError() }); </span>},
-<span class="fstat-no" title="function not covered" >      signUp:</span> function() { <span class="cstat-no" title="statement not covered" >return Promise.resolve({ data: null, error: missingSupabaseError() }); </span>},
-<span class="fstat-no" title="function not covered" >      signInWithOAuth:</span> function() { <span class="cstat-no" title="statement not covered" >return Promise.resolve({ data: null, error: missingSupabaseError() }); </span>},
-<span class="fstat-no" title="function not covered" >      resetPasswordForEmail:</span> function() { <span class="cstat-no" title="statement not covered" >return Promise.resolve({ data: null, error: missingSupabaseError() }); </span>},
-<span class="fstat-no" title="function not covered" >      updateUser:</span> function() { <span class="cstat-no" title="statement not covered" >return Promise.resolve({ data: null, error: missingSupabaseError() }); </span>},
-<span class="fstat-no" title="function not covered" >      signOut:</span> function() { <span class="cstat-no" title="statement not covered" >return Promise.resolve({ data: null, error: null }); </span>},
+      getSession: function() { <span class="cstat-no" title="statement not covered" >return Promise.resolve({ data: { session: null }, error: null }); </span>},
+      onAuthStateChange: function() { <span class="cstat-no" title="statement not covered" >return authSub; </span>},
+      signInWithPassword: function() { <span class="cstat-no" title="statement not covered" >return Promise.resolve({ data: null, error: missingSupabaseError() }); </span>},
+      signUp: function() { <span class="cstat-no" title="statement not covered" >return Promise.resolve({ data: null, error: missingSupabaseError() }); </span>},
+      signInWithOAuth: function() { <span class="cstat-no" title="statement not covered" >return Promise.resolve({ data: null, error: missingSupabaseError() }); </span>},
+      resetPasswordForEmail: function() { <span class="cstat-no" title="statement not covered" >return Promise.resolve({ data: null, error: missingSupabaseError() }); </span>},
+      updateUser: function() { <span class="cstat-no" title="statement not covered" >return Promise.resolve({ data: null, error: missingSupabaseError() }); </span>},
+      signOut: function() { <span class="cstat-no" title="statement not covered" >return Promise.resolve({ data: null, error: null }); </span>},
     },
     storage: {
-<span class="fstat-no" title="function not covered" >      from:</span> function() { <span class="cstat-no" title="statement not covered" >return createNoopStorageBucket(); </span>},
+      from: function() { <span class="cstat-no" title="statement not covered" >return createNoopStorageBucket(); </span>},
     },
     functions: {
-<span class="fstat-no" title="function not covered" >      invoke:</span> function() { <span class="cstat-no" title="statement not covered" >return Promise.resolve({ data: null, error: missingSupabaseError() }); </span>},
+      invoke: function() { <span class="cstat-no" title="statement not covered" >return Promise.resolve({ data: null, error: missingSupabaseError() }); </span>},
     },
-<span class="fstat-no" title="function not covered" >    from:</span> function() { <span class="cstat-no" title="statement not covered" >return createNoopQueryBuilder(); </span>},
-<span class="fstat-no" title="function not covered" >    rpc:</span> function() { <span class="cstat-no" title="statement not covered" >return Promise.resolve({ data: null, error: missingSupabaseError() }); </span>},
-<span class="fstat-no" title="function not covered" >    channel:</span> function() { <span class="cstat-no" title="statement not covered" >return createNoopChannel(); </span>},
-<span class="fstat-no" title="function not covered" >    removeChannel:</span> function() { <span class="cstat-no" title="statement not covered" >return null; </span>},
+    from: function() { <span class="cstat-no" title="statement not covered" >return createNoopQueryBuilder(); </span>},
+    rpc: function() { <span class="cstat-no" title="statement not covered" >return Promise.resolve({ data: null, error: missingSupabaseError() }); </span>},
+    channel: function() { <span class="cstat-no" title="statement not covered" >return createNoopChannel(); </span>},
+    removeChannel: function() { <span class="cstat-no" title="statement not covered" >return null; </span>},
   };
 }
 &nbsp;
-var supabaseUrl = <span class="cstat-no" title="statement not covered" >import.meta.env.VITE_SUPABASE_URL;</span>
-var supabaseAnonKey = <span class="cstat-no" title="statement not covered" >import.meta.env.VITE_SUPABASE_ANON_KEY;</span>
+var supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+var supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 &nbsp;
-<span class="cstat-no" title="statement not covered" >if (!supabaseUrl || !supabaseAnonKey) {</span>
-<span class="cstat-no" title="statement not covered" >  console.error('Supabase não configurado: VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY são obrigatórias.');</span>
+<span class="missing-if-branch" title="else path not taken" >E</span>if (!supabaseUrl || <span class="branch-1 cbranch-no" title="branch not covered" >!supabaseAnonKey)</span> {
+  console.error('Supabase não configurado: VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY são obrigatórias.');
   // Em desenvolvimento, podemos continuar com o cliente noop, mas em produção isso deve ser um erro crítico.
-<span class="cstat-no" title="statement not covered" >  if (import.meta.env.MODE === 'production') {</span>
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (import.meta.env.MODE === 'production') {
 <span class="cstat-no" title="statement not covered" >    throw new Error('Supabase não configurado: variáveis de ambiente ausentes.');</span>
   }
 }
 &nbsp;
-export var sb = <span class="cstat-no" title="statement not covered" >supabaseUrl &amp;&amp; supabaseAnonKey ? createClient(supabaseUrl, supabaseAnonKey) : createNoopSupabaseClient();</span>
+export var sb = supabaseUrl &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >supabaseAnonKey </span>? <span class="branch-0 cbranch-no" title="branch not covered" >createClient(supabaseUrl, supabaseAnonKey) </span>: createNoopSupabaseClient();
 &nbsp;
-<span class="cstat-no" title="statement not covered" >if (sb &amp;&amp; sb.functions &amp;&amp; typeof sb.functions.invoke === 'function') {</span>
-  var _origInvoke = <span class="cstat-no" title="statement not covered" >sb.functions.invoke.bind(sb.functions);</span>
-<span class="cstat-no" title="statement not covered" >  sb.functions.invoke = <span class="fstat-no" title="function not covered" >function(</span>name, opts) {</span>
+<span class="missing-if-branch" title="else path not taken" >E</span>if (sb &amp;&amp; sb.functions &amp;&amp; typeof sb.functions.invoke === 'function') {
+  var _origInvoke = sb.functions.invoke.bind(sb.functions);
+  sb.functions.invoke = <span class="fstat-no" title="function not covered" >function(</span>name, opts) {
 <span class="cstat-no" title="statement not covered" >    if (name === 'ai' &amp;&amp; import.meta.env.DEV &amp;&amp; aiGuardDepth() &lt; 1) {</span>
 <span class="cstat-no" title="statement not covered" >      throw new Error('AI calls must go through src/lib/aiClient.js');</span>
     }
@@ -472,7 +472,7 @@ export var sb = <span class="cstat-no" title="statement not covered" >supabaseUr
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-07-12T14:09:57.405Z
+                at 2026-07-13T01:26:02.471Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/42</span>
+                <span class='fraction'>42/42</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">92.85% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/28</span>
+                <span class='fraction'>26/28</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/8</span>
+                <span class='fraction'>8/8</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/26</span>
+                <span class='fraction'>26/26</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -109,79 +109,79 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">19x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">19x</span>
+<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-yes">9x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">19x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">19x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">19x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { useState } from 'react';
 import { sb } from '../../lib/supabase.js';
 import { ldb } from '../../lib/dexie.js';
 import { rowMeta, updMeta, deletedMeta, applyEdit, countLimit, dexiePut, dexieUpdate, syncUpsert, syncUpdate, syncDelete } from '../../lib/crud.js';
 &nbsp;
-export function <span class="fstat-no" title="function not covered" >useLosses(</span>session, enforceLimit, toast) {
-  var [losses, setLosses] = <span class="cstat-no" title="statement not covered" >useState([]);</span>
+export function useLosses(session, enforceLimit, toast) {
+  var [losses, setLosses] = useState([]);
 &nbsp;
-  var addLoss = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >async </span>function(l) {</span>
-    var cnt = <span class="cstat-no" title="statement not covered" >await countLimit(ldb, 'losses', session.user.id);</span>
-<span class="cstat-no" title="statement not covered" >    if (!enforceLimit('losses', cnt)) <span class="cstat-no" title="statement not covered" >return false;</span></span>
-<span class="cstat-no" title="statement not covered" >    if (!l.desc || !l.desc.trim()) { <span class="cstat-no" title="statement not covered" >toast('Descricao obrigatoria', 'error'); <span class="cstat-no" title="statement not covered" ></span>return false; </span>}</span>
-<span class="cstat-no" title="statement not covered" >    if (!l.qty || Number(l.qty) &lt;= 0) { <span class="cstat-no" title="statement not covered" >toast('Quantidade deve ser maior que zero', 'error'); <span class="cstat-no" title="statement not covered" ></span>return false; </span>}</span>
-    var meta = <span class="cstat-no" title="statement not covered" >rowMeta(session);</span>
-    var row = <span class="cstat-no" title="statement not covered" >{id:l.id, description:l.desc, qty:Number(l.qty), reason:l.reason||null, date:l.date, desc:l.desc, user_id:meta.user_id, registered_by:meta.registered_by, updated_at:meta.updated_at, _synced:meta._synced, _deleted:meta._deleted, _updated_at:meta._updated_at};</span>
-<span class="cstat-no" title="statement not covered" >    if (!await dexiePut(ldb, 'losses', row, toast)) <span class="cstat-no" title="statement not covered" >return false;</span></span>
-<span class="cstat-no" title="statement not covered" >    setLosses(<span class="fstat-no" title="function not covered" >function(</span>p) { <span class="cstat-no" title="statement not covered" >return [row].concat(p); </span>});</span>
-<span class="cstat-no" title="statement not covered" >    await syncUpsert(sb, 'losses', {id:row.id, description:row.description, qty:row.qty, reason:row.reason, date:row.date, user_id:meta.user_id, registered_by:meta.registered_by, updated_at:row.updated_at}, ldb, row.id, toast);</span>
-<span class="cstat-no" title="statement not covered" >    return true;</span>
+  var addLoss = async function(l) {
+    var cnt = await countLimit(ldb, 'losses', session.user.id);
+    if (!enforceLimit('losses', cnt)) return false;
+    if (!l.desc || !l.desc.trim()) { toast('Descricao obrigatoria', 'error'); return false; }
+    if (!l.qty || Number(l.qty) &lt;= 0) { toast('Quantidade deve ser maior que zero', 'error'); return false; }
+    var meta = rowMeta(session);
+    var row = {id:l.id, description:l.desc, qty:Number(l.qty), reason:l.reason||null, date:l.date, desc:l.desc, user_id:meta.user_id, registered_by:meta.registered_by, updated_at:meta.updated_at, _synced:meta._synced, _deleted:meta._deleted, _updated_at:meta._updated_at};
+    if (!await dexiePut(ldb, 'losses', row, toast)) return false;
+    setLosses(function(p) { return [row].concat(p); });
+    await syncUpsert(sb, 'losses', {id:row.id, description:row.description, qty:row.qty, reason:row.reason, date:row.date, user_id:meta.user_id, registered_by:meta.registered_by, updated_at:row.updated_at}, ldb, row.id, toast);
+    return true;
   };
 &nbsp;
-  var editLoss = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >async </span>function(id, u) {</span>
-<span class="cstat-no" title="statement not covered" >    if (!u.desc || !u.desc.trim()) { <span class="cstat-no" title="statement not covered" >toast('Descricao obrigatoria', 'error'); <span class="cstat-no" title="statement not covered" ></span>return false; </span>}</span>
-<span class="cstat-no" title="statement not covered" >    if (!u.qty || Number(u.qty) &lt;= 0) { <span class="cstat-no" title="statement not covered" >toast('Quantidade deve ser maior que zero', 'error'); <span class="cstat-no" title="statement not covered" ></span>return false; </span>}</span>
-    var upd = <span class="cstat-no" title="statement not covered" >Object.assign({description:u.desc, qty:Number(u.qty), reason:u.reason||null, date:u.date, desc:u.desc}, updMeta());</span>
-<span class="cstat-no" title="statement not covered" >    if (!await dexieUpdate(ldb, 'losses', id, upd, toast)) <span class="cstat-no" title="statement not covered" >return false;</span></span>
-<span class="cstat-no" title="statement not covered" >    setLosses(<span class="fstat-no" title="function not covered" >function(</span>p) { <span class="cstat-no" title="statement not covered" >return applyEdit(p, id, upd); </span>});</span>
-<span class="cstat-no" title="statement not covered" >    await syncUpdate(sb, 'losses', {description:upd.description, qty:upd.qty, reason:upd.reason, date:upd.date, updated_at:upd.updated_at}, id, ldb, toast);</span>
-<span class="cstat-no" title="statement not covered" >    return true;</span>
+  var editLoss = async function(id, u) {
+    if (!u.desc || !u.desc.trim()) { toast('Descricao obrigatoria', 'error'); return false; }
+    if (!u.qty || Number(u.qty) &lt;= 0) { toast('Quantidade deve ser maior que zero', 'error'); return false; }
+    var upd = Object.assign({description:u.desc, qty:Number(u.qty), reason:u.reason||<span class="branch-1 cbranch-no" title="branch not covered" >null,</span> date:u.date, desc:u.desc}, updMeta());
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (!await dexieUpdate(ldb, 'losses', id, upd, toast)) return false;
+    setLosses(function(p) { return applyEdit(p, id, upd); });
+    await syncUpdate(sb, 'losses', {description:upd.description, qty:upd.qty, reason:upd.reason, date:upd.date, updated_at:upd.updated_at}, id, ldb, toast);
+    return true;
   };
 &nbsp;
-  var deleteLoss = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >async </span>function(id) {</span>
-<span class="cstat-no" title="statement not covered" >    if (!await dexieUpdate(ldb, 'losses', id, deletedMeta(), toast)) <span class="cstat-no" title="statement not covered" >return false;</span></span>
-<span class="cstat-no" title="statement not covered" >    setLosses(<span class="fstat-no" title="function not covered" >function(</span>p) { <span class="cstat-no" title="statement not covered" >return p.filter(<span class="fstat-no" title="function not covered" >function(</span>l) { <span class="cstat-no" title="statement not covered" >return l.id !== id; </span>}); </span>});</span>
-<span class="cstat-no" title="statement not covered" >    await syncDelete(sb, 'losses', id, ldb, toast);</span>
-<span class="cstat-no" title="statement not covered" >    return true;</span>
+  var deleteLoss = async function(id) {
+    if (!await dexieUpdate(ldb, 'losses', id, deletedMeta(), toast)) return false;
+    setLosses(function(p) { return p.filter(function(l) { return l.id !== id; }); });
+    await syncDelete(sb, 'losses', id, ldb, toast);
+    return true;
   };
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  return {losses, setLosses, addLoss, editLoss, deleteLoss};</span>
+  return {losses, setLosses, addLoss, editLoss, deleteLoss};
 }
 &nbsp;</pre></td></tr></table></pre>
 
@@ -190,7 +190,7 @@ export function <span class="fstat-no" title="function not covered" >useLosses(<
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-07-12T14:09:57.405Z
+                at 2026-07-13T01:26:02.471Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

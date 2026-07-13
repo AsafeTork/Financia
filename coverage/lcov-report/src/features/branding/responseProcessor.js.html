@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">86.66% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/15</span>
+                <span class='fraction'>13/15</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">75% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/32</span>
+                <span class='fraction'>24/32</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">66.66% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/3</span>
+                <span class='fraction'>2/3</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">86.66% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/15</span>
+                <span class='fraction'>13/15</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -131,38 +131,38 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-yes">14x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-yes">10x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-yes">10x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">10x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -189,44 +189,44 @@
  * @param {Object} currentBrand - Current brand configuration
  * @returns {Object} Processing result with success flag and proposed brand
  */
-export function <span class="fstat-no" title="function not covered" >processResponse(</span>rawResponse, currentBrand) {
-<span class="cstat-no" title="statement not covered" >  try {</span>
-    const json = <span class="cstat-no" title="statement not covered" >typeof rawResponse === 'string'</span>
+export function processResponse(rawResponse, currentBrand) {
+  try {
+    const json = typeof rawResponse === 'string'
       ? JSON.parse(rawResponse)
       : rawResponse;
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    if (!json || typeof json !== 'object' || Array.isArray(json)) {</span>
-<span class="cstat-no" title="statement not covered" >      return { success: false, step: 'parse', error: 'Resposta invalida' };</span>
+    if (!json || typeof json !== 'object' || Array.isArray(json)) {
+      return { success: false, step: 'parse', error: 'Resposta invalida' };
     }
 &nbsp;
-    const normalized = <span class="cstat-no" title="statement not covered" >mergeWithDefaults(json);</span>
-    const validation = <span class="cstat-no" title="statement not covered" >validateAgainstModules(normalized);</span>
-<span class="cstat-no" title="statement not covered" >    if (!validation.valid) {</span>
+    const normalized = mergeWithDefaults(json);
+    const validation = validateAgainstModules(normalized);
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (!validation.valid) {
 <span class="cstat-no" title="statement not covered" >      return { success: false, step: 'validation', error: 'Validacao falhou: ' + validation.errors.join('; ') };</span>
     }
 &nbsp;
-    const proposedBrand = <span class="cstat-no" title="statement not covered" >buildProposedBrand(normalized, currentBrand, json);</span>
+    const proposedBrand = buildProposedBrand(normalized, currentBrand, json);
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    return {</span>
+    return {
       success: true,
       step: 'done',
       proposedBrand,
     };
   } catch (e) {
-<span class="cstat-no" title="statement not covered" >    return { success: false, step: 'parse', error: 'Erro inesperado: ' + (e.message || '') };</span>
+    return { success: false, step: 'parse', error: 'Erro inesperado: ' + (e.message || <span class="branch-1 cbranch-no" title="branch not covered" >'')</span> };
   }
 }
 &nbsp;
-function <span class="fstat-no" title="function not covered" >buildProposedBrand(</span>normalized, currentBrand, originalJson) {
-  const mods = <span class="cstat-no" title="statement not covered" >normalized.modules || {};</span>
-  const pal = <span class="cstat-no" title="statement not covered" >mods.palette || {};</span>
+function buildProposedBrand(normalized, currentBrand, originalJson) {
+  const mods = normalized.modules || <span class="branch-1 cbranch-no" title="branch not covered" >{};</span>
+  const pal = mods.palette || <span class="branch-1 cbranch-no" title="branch not covered" >{};</span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  return {</span>
-    ...currentBrand || {},
+  return {
+    ...currentBrand || <span class="branch-1 cbranch-no" title="branch not covered" >{},</span>
     name: currentBrand &amp;&amp; currentBrand.name,
-    color: pal.primary || '#002f59',
-    color_secondary: pal.secondary || '#e8f0f7',
-    color_accent: pal.accent || '#1a6b5c',
+    color: pal.primary || <span class="branch-1 cbranch-no" title="branch not covered" >'#002f59',</span>
+    color_secondary: pal.secondary || <span class="branch-1 cbranch-no" title="branch not covered" >'#e8f0f7',</span>
+    color_accent: pal.accent || <span class="branch-1 cbranch-no" title="branch not covered" >'#1a6b5c',</span>
     theme: pal.mode || (currentBrand &amp;&amp; currentBrand.theme) || 'light',
     brand_config: JSON.stringify(originalJson),
     visual_version: ((currentBrand &amp;&amp; currentBrand.visual_version) || 0) + 1,
@@ -247,7 +247,7 @@ export function <span class="fstat-no" title="function not covered" >requiresSer
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-07-12T14:09:57.405Z
+                at 2026-07-13T01:26:02.471Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

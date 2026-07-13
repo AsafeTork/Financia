@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">33.33% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/24</span>
+                <span class='fraction'>8/24</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">47.05% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/17</span>
+                <span class='fraction'>8/17</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">45.45% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/11</span>
+                <span class='fraction'>5/11</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">36.84% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/19</span>
+                <span class='fraction'>7/19</span>
             </div>
         
             
@@ -161,6 +161,7 @@
 <a name='L96'></a><a href='#L96'>96</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">52x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -169,14 +170,11 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-yes">52x</span>
+<span class="cline-any cline-yes">52x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -187,20 +185,22 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">13x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -255,8 +255,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import React from 'react';
 &nbsp;
-export default function <span class="fstat-no" title="function not covered" >BrandGlobalEditor({</span> brandGlobal, setField, onSave, brandColor }) {
-  const <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >handleFile = (<span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >k</span>ey) =&gt; (e</span>) =&gt; {</span></span>
+export default function BrandGlobalEditor({ brandGlobal, setField, onSave, brandColor }) {
+  const handleFile = (<span class="fstat-no" title="function not covered" >key) =&gt; (e</span>) =&gt; {
     const file = <span class="cstat-no" title="statement not covered" >e.target &amp;&amp; e.target.files &amp;&amp; e.target.files[0];</span>
 <span class="cstat-no" title="statement not covered" >    if (!file) <span class="cstat-no" title="statement not covered" >return;</span></span>
     const allowedTypes = <span class="cstat-no" title="statement not covered" >['image/jpeg', 'image/png', 'image/webp', 'image/gif'];</span>
@@ -267,9 +267,9 @@ export default function <span class="fstat-no" title="function not covered" >Bra
 <span class="cstat-no" title="statement not covered" >    reader.readAsDataURL(file);</span>
   };
 &nbsp;
-  const <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >renderLogoUpload = (k</span>ey, label, desc) =&gt; {</span>
-    const value = <span class="cstat-no" title="statement not covered" >brandGlobal[key];</span>
-<span class="cstat-no" title="statement not covered" >    return (</span>
+  const renderLogoUpload = (key, label, desc) =&gt; {
+    const value = brandGlobal[key];
+    return (
       &lt;div className="flex items-center gap-3"&gt;
         {value
           ? &lt;img src={value} alt={label} className="w-12 h-12 rounded-xl object-cover flex-shrink-0" style={{border:'1px solid var(--border)'}} /&gt;
@@ -282,20 +282,20 @@ export default function <span class="fstat-no" title="function not covered" >Bra
             Upload imagem
             &lt;input type="file" accept="image/*" onChange={handleFile(key)} className="hidden" /&gt;
           &lt;/label&gt;
-          {value &amp;&amp; &lt;button <span class="fstat-no" title="function not covered" >onClick={() =&gt; <span class="cstat-no" title="statement not covered" >s</span>etField(key, '')} c</span>lassName="text-[10px] ml-2 font-medium hover:opacity-70" style={{color:'var(--text-muted)'}}&gt;Remover&lt;/button&gt;}
+          {value &amp;&amp; &lt;button onClick={() =&gt; setField(key, '')} className="text-[10px] ml-2 font-medium hover:opacity-70" style={{color:'var(--text-muted)'}}&gt;Remover&lt;/button&gt;}
         &lt;/div&gt;
       &lt;/div&gt;
     );
   };
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  return (</span>
+  return (
     &lt;div className="flex flex-col gap-5"&gt;
       &lt;div className="flex flex-col gap-4"&gt;
         &lt;p className="text-sm font-semibold" style={{color:'var(--text-main)'}}&gt;Informacoes da marca&lt;/p&gt;
         &lt;div className="flex flex-col gap-3"&gt;
           &lt;div className="flex flex-col gap-1"&gt;
             &lt;label htmlFor="brand-name" className="text-xs font-medium" style={{color:'var(--text-sub)'}}&gt;Nome do app&lt;/label&gt;
-            &lt;input id="brand-name" value={brandGlobal.name} <span class="fstat-no" title="function not covered" >onChange={e</span> =&gt; <span class="cstat-no" title="statement not covered" >setField('name', e.target.value)}</span>
+            &lt;input id="brand-name" value={brandGlobal.name} onChange={e =&gt; setField('name', e.target.value)}
               className="rounded-xl px-3 py-2.5 text-sm focus:outline-none" style={{background:'var(--bg-input)', color:'var(--text-main)', border:'1px solid var(--border)'}} /&gt;
           &lt;/div&gt;
           &lt;div className="flex flex-col gap-1"&gt;
@@ -325,8 +325,8 @@ export default function <span class="fstat-no" title="function not covered" >Bra
         &lt;p className="text-sm font-semibold mb-3" style={{color:'var(--text-main)'}}&gt;Segunda logo - posicao&lt;/p&gt;
         &lt;div className="flex flex-col gap-3"&gt;
           &lt;div className="flex flex-col gap-1"&gt;
-            &lt;label className="text-xs font-medium" style={{color:'var(--text-sub)'}}&gt;Posicao&lt;/label&gt;
-            &lt;select value={brandGlobal.secondary_logo_position} <span class="fstat-no" title="function not covered" >onChange={e</span> =&gt; <span class="cstat-no" title="statement not covered" >setField('secondary_logo_position', e.target.value)}</span>
+            &lt;label htmlFor="brand-secondary-logo-position" className="text-xs font-medium" style={{color:'var(--text-sub)'}}&gt;Posicao&lt;/label&gt;
+            &lt;select id="brand-secondary-logo-position" value={brandGlobal.secondary_logo_position} <span class="fstat-no" title="function not covered" >onChange={e</span> =&gt; <span class="cstat-no" title="statement not covered" >setField('secondary_logo_position', e.target.value)}</span>
               className="rounded-xl px-3 py-2.5 text-sm focus:outline-none" style={{background:'var(--bg-input)', color:'var(--text-main)', border:'1px solid var(--border)'}}&gt;
               &lt;option value="left"&gt;Esquerda&lt;/option&gt;
               &lt;option value="right"&gt;Direita&lt;/option&gt;
@@ -355,7 +355,7 @@ export default function <span class="fstat-no" title="function not covered" >Bra
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-07-12T14:09:57.405Z
+                at 2026-07-13T01:26:02.471Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

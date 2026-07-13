@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">46.15% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/26</span>
+                <span class='fraction'>12/26</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">52.17% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/23</span>
+                <span class='fraction'>12/23</span>
             </div>
         
             
@@ -125,17 +125,9 @@
 <a name='L60'></a><a href='#L60'>60</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -143,7 +135,15 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -153,30 +153,30 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -184,9 +184,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import Dexie from 'dexie';
 import { now } from './utils.js';
 &nbsp;
-export const ldb = <span class="cstat-no" title="statement not covered" >new Dexie('gestao_offline');</span>
+export const ldb = new Dexie('gestao_offline');
 &nbsp;
-<span class="cstat-no" title="statement not covered" >ldb.version(1).stores({</span>
+ldb.version(1).stores({
   transactions: 'id, user_id, date, updated_at',
   products:     'id, user_id, category, updated_at',
   losses:       'id, user_id, date, updated_at',
@@ -194,7 +194,7 @@ export const ldb = <span class="cstat-no" title="statement not covered" >new Dex
   meta:         'key',
 });
 &nbsp;
-<span class="cstat-no" title="statement not covered" >ldb.version(2).stores({</span>
+ldb.version(2).stores({
   transactions: 'id, user_id, date, updated_at, _synced, _deleted',
   products:     'id, user_id, category, updated_at, _synced, _deleted',
   losses:       'id, user_id, date, updated_at, _synced, _deleted',
@@ -202,7 +202,7 @@ export const ldb = <span class="cstat-no" title="statement not covered" >new Dex
   meta:         'key',
 });
 &nbsp;
-<span class="cstat-no" title="statement not covered" >ldb.version(3).stores({</span>
+ldb.version(3).stores({
   transactions: 'id, user_id, date, updated_at, _synced, _deleted',
   products:     'id, user_id, category, updated_at, _synced, _deleted',
   losses:       'id, user_id, date, updated_at, _synced, _deleted',
@@ -212,30 +212,30 @@ export const ldb = <span class="cstat-no" title="statement not covered" >new Dex
   brand_logo_schemes: 'id, name, createdAt',
 });
 &nbsp;
-export const toLocal = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >function(</span>row, extra) {</span>
+export const toLocal = <span class="fstat-no" title="function not covered" >function(</span>row, extra) {
 <span class="cstat-no" title="statement not covered" >  if (!extra) <span class="cstat-no" title="statement not covered" >extra = {};</span></span>
   var base = <span class="cstat-no" title="statement not covered" >{ _synced: 1, _deleted: 0, _updated_at: row.updated_at || row.created_at || now() };</span>
 <span class="cstat-no" title="statement not covered" >  return Object.assign({}, row, base, extra);</span>
 };
 &nbsp;
-export const getLastSync = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >async </span>function(uid) {</span>
+export const getLastSync = <span class="fstat-no" title="function not covered" >async </span>function(uid) {
   const key = <span class="cstat-no" title="statement not covered" >uid ? 'last_sync_' + uid : 'last_sync';</span>
   const r = <span class="cstat-no" title="statement not covered" >await ldb.meta.get(key);</span>
 <span class="cstat-no" title="statement not covered" >  return r ? r.val : '1970-01-01T00:00:00Z';</span>
 };
 &nbsp;
-export const setLastSync = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >function(</span>ts, uid) {</span>
+export const setLastSync = <span class="fstat-no" title="function not covered" >function(</span>ts, uid) {
   const key = <span class="cstat-no" title="statement not covered" >uid ? 'last_sync_' + uid : 'last_sync';</span>
 <span class="cstat-no" title="statement not covered" >  return ldb.meta.put({ key: key, val: ts });</span>
 };
 &nbsp;
-export const TX_FIELDS  = <span class="cstat-no" title="statement not covered" >['id','type','description','amount','date','method','category','items','user_id','registered_by','updated_at'];</span>
-export const PRD_FIELDS = <span class="cstat-no" title="statement not covered" >['id','name','category','price','cost','stock','user_id','registered_by','updated_at'];</span>
-export const LSS_FIELDS = <span class="cstat-no" title="statement not covered" >['id','description','qty','reason','date','user_id','registered_by','updated_at'];</span>
+export const TX_FIELDS  = ['id','type','description','amount','date','method','category','items','user_id','registered_by','updated_at'];
+export const PRD_FIELDS = ['id','name','category','price','cost','stock','user_id','registered_by','updated_at'];
+export const LSS_FIELDS = ['id','description','qty','reason','date','user_id','registered_by','updated_at'];
 &nbsp;
-export const FIELD_MAP = <span class="cstat-no" title="statement not covered" >{ transactions: TX_FIELDS, products: PRD_FIELDS, losses: LSS_FIELDS };</span>
+export const FIELD_MAP = { transactions: TX_FIELDS, products: PRD_FIELDS, losses: LSS_FIELDS };
 &nbsp;
-export const pickFields = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >function(</span>obj, fields) {</span>
+export const pickFields = <span class="fstat-no" title="function not covered" >function(</span>obj, fields) {
   const out = <span class="cstat-no" title="statement not covered" >{};</span>
 <span class="cstat-no" title="statement not covered" >  fields.forEach(<span class="fstat-no" title="function not covered" >function(</span>k) { <span class="cstat-no" title="statement not covered" >if (obj[k] !== undefined) <span class="cstat-no" title="statement not covered" >out[k] = obj[k]; </span></span>});</span>
 <span class="cstat-no" title="statement not covered" >  return out;</span>
@@ -247,7 +247,7 @@ export const pickFields = <span class="cstat-no" title="statement not covered" >
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-07-12T14:09:57.405Z
+                at 2026-07-13T01:26:02.471Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
