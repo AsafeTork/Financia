@@ -1,13 +1,22 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import fs from 'fs';
 
 export default defineConfig(async function() {
   var plugins = [react()];
+  var version = JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
 
   if (process.env.ANALYZE) {
     var { visualizer } = await import('rollup-plugin-visualizer');
     plugins.push(visualizer({ open: true, gzipSize: true, brotliSize: true }));
   }
+
+  plugins.push({
+    name: 'html-version-replace',
+    transformIndexHtml(html) {
+      return html.replace(/%APP_VERSION%/g, version);
+    }
+  });
 
   return {
     plugins: plugins,

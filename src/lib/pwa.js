@@ -44,6 +44,9 @@ export function registerSW() {
 
   var cleanups = [];
 
+  // Check for version mismatch on load - force reload if deploy changed
+  checkVersionAndReload();
+
   // Troca de controlador = atualizacao aplicada -> recarrega uma unica vez.
   var refreshing = false;
   var onControllerChange = function() {
@@ -98,6 +101,24 @@ export function registerSW() {
     cleanups = [];
   };
   return swCleanup;
+}
+
+function checkVersionAndReload() {
+  // Check if app version changed - force reload if different
+  var versionMeta = document.querySelector('meta[name="app-version"]');
+  if (!versionMeta) return;
+  
+  var currentVersion = versionMeta.getAttribute('content');
+  var cachedVersion = sessionStorage.getItem('app-version');
+  
+  if (cachedVersion && cachedVersion !== currentVersion) {
+    // Version changed - force reload to get new assets
+    console.log('App version changed from ' + cachedVersion + ' to ' + currentVersion + ', reloading...');
+    sessionStorage.setItem('app-version', currentVersion);
+    window.location.reload();
+  } else if (!cachedVersion) {
+    sessionStorage.setItem('app-version', currentVersion);
+  }
 }
 
 // ── Instalacao do PWA (beforeinstallprompt) ──

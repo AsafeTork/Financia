@@ -1,5 +1,5 @@
-const CACHE_VER = '5';
-const CACHE_DATE = '20260709';
+const CACHE_VER = '6';
+const CACHE_DATE = '20260713';
 const CACHE = 'financia-' + CACHE_VER + '-' + CACHE_DATE;
 const STATIC = ['/', '/manifest.json', '/icon-192.svg', '/icon-512.svg'];
 

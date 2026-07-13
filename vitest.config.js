@@ -10,7 +10,7 @@ export default defineConfig({
     pool: 'threads',
     minThreads: 2,
     maxThreads: 4,
-    isolate: false,
+    isolate: true,
     include: ['src/**/*.test.{js,jsx}'],
     exclude: ['**/e2e/**', '**/*.isolated.test.{js,jsx}', '**/benchmarks/**', '**/supabase/functions/**'],
     testTimeout: 15000,
