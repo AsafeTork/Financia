@@ -64,12 +64,12 @@ export default function PlanTabsEditor({ brandConfig, onSavePlan, onCopyJSON, on
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex border-b gap-1" style={{borderColor:'var(--border)'}}>
+      <div className="flex border-b gap-1" style={{borderColor:'var(--border)'}} role="tablist" aria-label="Planos">
         {Object.keys(PLAN_META_LOCAL).map(k => {
           const meta = PLAN_META_LOCAL[k];
           const active = activePlan === k;
           return (
-            <button key={k} onClick={() => setActivePlan(k)}
+            <button key={k} onClick={() => setActivePlan(k)} role="tab" aria-selected={active}
               className={'flex items-center gap-2 px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors border-b-2 -mb-px ' + (active ? '' : 'text-gray-400 border-transparent hover:text-gray-600')}
               style={active ? {borderColor: brandColor, color: brandColor} : {}}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d={meta.icon} /></svg>
@@ -114,8 +114,8 @@ export default function PlanTabsEditor({ brandConfig, onSavePlan, onCopyJSON, on
       </div>
 
       <div className="flex flex-col gap-2">
-        <label className="text-xs font-medium" style={{color:'var(--text-sub)'}}>JSON</label>
-        <textarea value={jsonInput} onChange={e => applyJson(e.target.value)}
+        <label htmlFor="plan-json-input" className="text-xs font-medium" style={{color:'var(--text-sub)'}}>JSON</label>
+        <textarea id="plan-json-input" value={jsonInput} onChange={e => applyJson(e.target.value)}
           rows={4} className="rounded-xl px-3 py-2 text-[11px] font-mono resize-none focus:outline-none"
           style={{background:'var(--bg-input)', color:'var(--text-main)', border:'1px solid var(--border)'}} />
       </div>
@@ -185,14 +185,15 @@ const initForm = (activePlan, planOverrides, palDefaults) => {
 };
 
 function ColorInput({ label, value, onChange, desc }) {
+  const inputId = `color-input-${label.toLowerCase().replace(/\s+/g, '-')}`;
   return (
     <div className="flex flex-col gap-1">
       <div className="flex items-center justify-between">
-        <label className="text-xs font-medium" style={{color:'var(--text-sub)'}}>{label}</label>
+        <label htmlFor={inputId} className="text-xs font-medium" style={{color:'var(--text-sub)'}}>{label}</label>
         {desc && <span className="text-[9px]" style={{color:'var(--text-muted)'}}>{desc}</span>}
       </div>
       <div className="flex items-center gap-2">
-        <input type="color" value={value || '#000000'} onChange={e => onChange(e.target.value)} className="w-8 h-8 rounded-lg cursor-pointer border-0 p-0.5 flex-shrink-0" />
+        <input type="color" id={inputId} value={value || '#000000'} onChange={e => onChange(e.target.value)} className="w-8 h-8 rounded-lg cursor-pointer border-0 p-0.5 flex-shrink-0" aria-label={label} />
         <input type="text" value={value || ''} onChange={e => onChange(e.target.value)}
           className="flex-1 rounded-xl px-2.5 py-1.5 text-[11px] font-mono focus:outline-none" style={{background:'var(--bg-input)', color:'var(--text-main)', border:'1px solid var(--border)'}} />
       </div>

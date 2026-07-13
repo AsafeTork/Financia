@@ -1,8 +1,11 @@
 import '@testing-library/jest-dom';
 import 'fake-indexeddb/auto';
-import { beforeAll, afterAll, afterEach, vi } from 'vitest';
+import { beforeAll, afterAll, afterEach, vi, expect } from 'vitest';
 import { setupServer } from 'msw/node';
 import { handlers } from './msw-handlers.js';
+import * as matchers from 'vitest-dom/matchers';
+
+expect.extend(matchers);
 
 const server = setupServer(...handlers);
 
@@ -12,8 +15,17 @@ afterEach(() => {
   server.resetHandlers();
   vi.clearAllMocks();
   vi.clearAllTimers();
-  localStorage.clear();
-  sessionStorage.clear();
+  // Properly handle localStorage/sessionStorage in jsdom
+  try {
+    localStorage.clear();
+  } catch (_) {
+    // ignore
+  }
+  try {
+    sessionStorage.clear();
+  } catch (_) {
+    // ignore
+  }
   indexedDB.databases ? indexedDB.databases().then(dbs => {
     dbs.forEach(db => {
       if (db.name) indexedDB.deleteDatabase(db.name);
@@ -21,15 +33,10 @@ afterEach(() => {
   }) : void 0;
 });
 
-vi.setConfig({
-  testTimeout: 10000,
-  hookTimeout: 5000,
-});
-
 globalThis.cleanupMocks = () => {
   vi.clearAllMocks();
-  localStorage.clear();
-  sessionStorage.clear();
+  try { localStorage.clear(); } catch (_) { /* ignore */ }
+  try { sessionStorage.clear(); } catch (_) { /* ignore */ }
 };
 
 globalThis.resetMocks = () => {

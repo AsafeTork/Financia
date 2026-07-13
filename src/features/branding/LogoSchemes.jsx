@@ -91,7 +91,7 @@ export default function LogoSchemes({ brandColor, toast, onApply }) {
       <div className="flex flex-col sm:flex-row gap-5">
         <div className="flex-shrink-0">
           <div className="rounded-2xl overflow-hidden bg-white" style={{width:280, height:280}}>
-            <svg width="280" height="280" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+            <svg width="280" height="280" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Preview da logo">
               <rect width="400" height="400" fill="transparent"/>
               <g transform="translate(34,200)">
                 <rect width="71" height="125" rx="10" fill={colors.blue} />
@@ -116,9 +116,9 @@ export default function LogoSchemes({ brandColor, toast, onApply }) {
           {LOGO_ELEMENTS.map(el => (
             <div key={el.id} className="flex items-center gap-3">
               <div className="w-3 h-3 rounded flex-shrink-0" style={{background: colors[el.id]}} />
-              <span className="text-xs font-medium min-w-[64px]" style={{color:'var(--text-sub)'}}>{el.label}</span>
-              <input type="color" value={colors[el.id]} onChange={e => setColor(el.id, e.target.value)}
-                className="w-9 h-9 rounded-lg cursor-pointer border-0 p-0.5 flex-shrink-0" />
+              <label htmlFor={`logo-color-${el.id}`} className="text-xs font-medium min-w-[64px]" style={{color:'var(--text-sub)'}}>{el.label}</label>
+              <input type="color" id={`logo-color-${el.id}`} value={colors[el.id]} onChange={e => setColor(el.id, e.target.value)}
+                className="w-9 h-9 rounded-lg cursor-pointer border-0 p-0.5 flex-shrink-0" aria-label={el.label} />
               <input type="text" value={colors[el.id]} onChange={e => setColor(el.id, e.target.value)}
                 className="flex-1 rounded-xl px-2.5 py-1.5 text-xs font-mono focus:outline-none"
                 style={{background:'var(--bg-input)', color:'var(--text-main)', border:'1px solid var(--border)'}} />
@@ -126,8 +126,8 @@ export default function LogoSchemes({ brandColor, toast, onApply }) {
           ))}
 
           <div className="flex flex-col gap-2 mb-2">
-            <label className="text-xs font-medium" style={{color:'var(--text-sub)'}}>JSON</label>
-            <textarea value={jsonInput} onChange={e => applyJson(e.target.value)}
+            <label htmlFor="logo-json-input" className="text-xs font-medium" style={{color:'var(--text-sub)'}}>JSON</label>
+            <textarea id="logo-json-input" value={jsonInput} onChange={e => applyJson(e.target.value)}
               rows={3} className="rounded-xl px-3 py-2 text-[11px] font-mono resize-none focus:outline-none"
               style={{background:'var(--bg-input)', color:'var(--text-main)', border:'1px solid var(--border)'}} />
           </div>
@@ -200,15 +200,17 @@ export default function LogoSchemes({ brandColor, toast, onApply }) {
                   <p className="text-xs font-semibold truncate" style={{color:'var(--text-main)'}}>{s.name}</p>
                   <p className="text-[10px]" style={{color:'var(--text-muted)'}}>{new Date(s.createdAt).toLocaleDateString('pt-BR')}</p>
                 </div>
-                <div className="flex gap-1 flex-shrink-0">
+<div className="flex gap-1 flex-shrink-0">
                   <button onClick={e => { e.stopPropagation(); applyColors(s.colors); }}
                     className="w-7 h-7 rounded-lg flex items-center justify-center text-xs hover:opacity-70"
-                    style={{background:'var(--brand-soft)', color: brandColor}} title="Aplicar">
+                    style={{background:'var(--brand-soft)', color: brandColor}}
+                    aria-label={`Aplicar esquema ${s.name}`}>
                     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 13l4 4L19 7" /></svg>
                   </button>
                   <button onClick={e => { e.stopPropagation(); deleteScheme(s.id); }}
                     className="w-7 h-7 rounded-lg flex items-center justify-center text-xs hover:opacity-70"
-                    style={{color:'#ef4444', background:'rgba(239,68,68,0.08)'}} title="Excluir">
+                    style={{color:'#ef4444', background:'rgba(239,68,68,0.08)'}}
+                    aria-label={`Excluir esquema ${s.name}`}>
                     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
                   </button>
                 </div>

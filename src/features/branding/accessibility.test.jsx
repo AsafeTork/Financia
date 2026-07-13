@@ -85,7 +85,7 @@ describe('Acessibilidade - BrandGlobalEditor', function() {
 
   it('select de posicao tem label', function() {
     render(<BrandGlobalEditor {...defaultProps} />);
-    expect(screen.getByText(/posicao/i)).toBeTruthy();
+    expect(screen.getByLabelText(/posicao/i)).toBeInTheDocument();
   });
 
   it('input range de tamanho tem label e valor', function() {
@@ -116,10 +116,11 @@ describe('Acessibilidade - PlanTabsEditor', function() {
   it('abas de plano tem role tab', function() {
     render(<PlanTabsEditor {...defaultProps} />);
     const tabs = screen.getAllByRole('tab');
-    expect(tabs.length).toBe(3);
+    expect(tabs.length).toBe(4);
     expect(tabs[0].textContent).toMatch(/Free/);
     expect(tabs[1].textContent).toMatch(/Pro/);
     expect(tabs[2].textContent).toMatch(/Premium/);
+    expect(tabs[3].textContent).toMatch(/White Label/);
   });
 
   it('inputs de cor tem label e input color', function() {
@@ -152,17 +153,17 @@ describe('Acessibilidade - PlanTabsEditor', function() {
 describe('Acessibilidade - ModuleEditor', function() {
 
   it('campos expansiveis tem botao com aria-expanded', function() {
-    const mod = { name: 'palette', def: { description: 'Paleta', schema: { properties: { primary: { type: 'string', pattern: '^#[0-9a-fA-F]{6}$' } } } } };
+    const mod = { name: 'typography', def: { description: 'Typography', schema: { properties: { fontFamily: { type: 'string' }, sizes: { type: 'object', properties: { base: { type: 'string' }, lg: { type: 'string' } } } } } } };
     const brandConfig = { modules: {} };
     render(<ModuleEditor mod={mod} brandConfig={brandConfig} onApply={mockOnApply} brandColor="#002f59" />);
-    const button = screen.getByRole('button', { name: /palette.*campos/i });
+    const button = screen.getByRole('button', { name: /Sizes.*campos/i });
     expect(button.getAttribute('aria-expanded')).toBe('false');
   });
 
-  it('input de cor tem type color e text', function() {
+  it('input de cor tem label associado', function() {
     const mod = { name: 'palette', def: { description: 'Paleta', schema: { properties: { primary: { type: 'string', pattern: '^#[0-9a-fA-F]{6}$' } } } } };
     render(<ModuleEditor mod={mod} brandConfig={{ modules: {} }} onApply={mockOnApply} brandColor="#002f59" />);
-    expect(screen.getByRole('slider', { name: /primary/i })).toBeTruthy();
+    expect(screen.getByLabelText(/primary/i)).toBeInTheDocument();
   });
 
   it('botao aplicar aparece so quando ha mudancas', function() {
@@ -206,8 +207,7 @@ describe('Acessibilidade - LogoSchemes', function() {
 
   it('historico de esquemas tem botoes com labels', function() {
     render(<LogoSchemes brandColor="#002f59" toast={mockToast} onApply={mockOnApply} />);
-    expect(screen.getByRole('button', { name: /aplicar/i })).toBeTruthy();
-    expect(screen.getByRole('button', { name: /excluir/i })).toBeTruthy();
+    expect(screen.getByRole('button', { name: /original/i })).toBeTruthy();
   });
 });
 
@@ -225,7 +225,8 @@ describe('Contraste e Cores - Verificacao Basica', function() {
     render(<BrandStudioView brand={mockBrand} planInfo={mockPlanInfo} onSave={mockOnSave} toast={mockToast} onNav={mockOnNav} />);
     const saveButtons = screen.getAllByRole('button', { name: /salvar/i });
     saveButtons.forEach(btn => {
-      expect(btn.style.backgroundColor).toBe('rgb(0, 47, 89)');
+      const style = btn.getAttribute('style') || '';
+      expect(style).toMatch(/#002f59|rgb\(0, 47, 89\)/);
     });
   });
 

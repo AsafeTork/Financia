@@ -158,7 +158,7 @@ describe('uid', function() {
   it('retorna string', function() { expect(typeof uid()).toBe('string'); });
   it('não é vazio', function() { expect(uid().length).toBeGreaterThan(0); });
   it('duas chamadas retornam valores diferentes', function() { expect(uid()).not.toBe(uid()); });
-  it('começa com dígitos (timestamp)', function() { expect(uid()).toMatch(/^\d+/); });
+  it('é um UUID válido', function() { expect(uid()).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i); });
 });
 
 describe('genPwd', function() {

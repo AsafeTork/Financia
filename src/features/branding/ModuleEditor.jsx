@@ -35,14 +35,17 @@ export default function ModuleEditor({ mod, brandConfig, onApply, brandColor }) 
             <div key={key}>
               <button onClick={() => setExpandedField(expandedField === key ? null : key)}
                 className="flex items-center gap-2 text-xs font-semibold w-full text-left px-3 py-2 rounded-lg transition hover:opacity-80"
-                style={{background:'var(--bg-input)', color:'var(--text-sub)', border:'1px solid var(--border)'}}>
+                style={{background:'var(--bg-input)', color:'var(--text-sub)', border:'1px solid var(--border)'}}
+                aria-expanded={expandedField === key}
+                aria-controls={`module-fields-${key}`}
+                id={`module-toggle-${key}`}>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={`transition-transform ${expandedField === key ? 'rotate-90' : ''}`}>
                   <path d="M9 18l6-6-6-6" />
                 </svg>
                 {labelFromKey(key)} ({Object.keys(prop.properties).length} campos)
               </button>
               {expandedField === key && (
-                <div className="pl-4 pt-2 flex flex-col gap-2">
+                <div className="pl-4 pt-2 flex flex-col gap-2" id={`module-fields-${key}`} role="region" aria-labelledby={`module-toggle-${key}`}>
                   {Object.keys(prop.properties).map(subKey => {
                     const subProp = prop.properties[subKey];
                     return renderField(`${key}.${subKey}`, subProp, subKey, getNested(values, `${key}.${subKey}`), v => setField(`${key}.${subKey}`, v));

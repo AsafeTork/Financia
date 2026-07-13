@@ -70,8 +70,8 @@ export default function BrandGlobalEditor({ brandGlobal, setField, onSave, brand
         <p className="text-sm font-semibold mb-3" style={{color:'var(--text-main)'}}>Segunda logo - posicao</p>
         <div className="flex flex-col gap-3">
           <div className="flex flex-col gap-1">
-            <label className="text-xs font-medium" style={{color:'var(--text-sub)'}}>Posicao</label>
-            <select value={brandGlobal.secondary_logo_position} onChange={e => setField('secondary_logo_position', e.target.value)}
+            <label htmlFor="brand-secondary-logo-position" className="text-xs font-medium" style={{color:'var(--text-sub)'}}>Posicao</label>
+            <select id="brand-secondary-logo-position" value={brandGlobal.secondary_logo_position} onChange={e => setField('secondary_logo_position', e.target.value)}
               className="rounded-xl px-3 py-2.5 text-sm focus:outline-none" style={{background:'var(--bg-input)', color:'var(--text-main)', border:'1px solid var(--border)'}}>
               <option value="left">Esquerda</option>
               <option value="right">Direita</option>

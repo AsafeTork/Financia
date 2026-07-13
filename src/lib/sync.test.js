@@ -259,7 +259,7 @@ describe('admin functions', function() {
 
 describe('triggerApkBuild', function() {
   beforeEach(function() {
-    localStorage.clear();
+    globalThis.cleanupMocks();
     vi.useFakeTimers();
   });
   afterEach(function() {

@@ -83,8 +83,10 @@ describe('LogoSchemes utilities', function() {
 
     it('gera path com 8 pontos', function() {
       const path = buildCheckPath(197, 148);
-      const points = path.split(/[MLCZ]/).filter(Boolean);
-      expect(points.length).toBe(8);
+      // Path has 8 points: M(1) + L(4) + C(3 points in one segment) = 8 coordinate pairs
+      // Split by commands gives 7 segments, but we can count coordinate pairs
+      const coordPairs = path.match(/-?\d+\.?\d*\s+-?\d+\.?\d*/g) || [];
+      expect(coordPairs.length).toBe(8);
     });
 
     it('OFFICIAL_LOGO_COLORS contem as 4 cores esperadas', function() {
