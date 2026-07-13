@@ -202,13 +202,16 @@ export default function App() {
   const {products, setProducts, addProduct, editProduct, deleteProduct, adjustStock}    = useProducts(session, enforceLimit, toast);
   const {losses, setLosses, addLoss, editLoss, deleteLoss}                             = useLosses(session, enforceLimit, toast);
 
-  const {saveBrand, savePhone, loadData} = useSession({
-    toast, session, setSession,
-    isAdminDB, setIsAdminDB,
+  var sessionProps = React.useMemo(function() {
+    return { toast, session, setSession, isAdminDB, setIsAdminDB,
+      setAppLoading, setDataLoading, setDataError,
+      setBrand, setPlanInfo, setSyncStatus,
+      setTx, setProducts, setLosses };
+  }, [toast, session, setSession, isAdminDB, setIsAdminDB,
     setAppLoading, setDataLoading, setDataError,
     setBrand, setPlanInfo, setSyncStatus,
-    setTx, setProducts, setLosses,
-  });
+    setTx, setProducts, setLosses]);
+  const {saveBrand, savePhone, loadData} = useSession(sessionProps);
 
 const loadDataRef = useRef(loadData);
 loadDataRef.current = loadData;

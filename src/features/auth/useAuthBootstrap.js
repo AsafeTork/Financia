@@ -17,7 +17,7 @@ export function useAuthBootstrap(props) {
       if (s) {
         localStorage.setItem('financia_last_uid', s.user.id);
         localStorage.setItem('financia_seen', '1');
-        loadData(s.user.id);
+        if (s.user.id !== uidRef.current) loadData(s.user.id);
       } else {
         localStorage.removeItem('financia_last_uid');
         if (cachedUid) onSessionEnd();
