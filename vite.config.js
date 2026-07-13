@@ -12,6 +12,14 @@ export default defineConfig(async function() {
   return {
     plugins: plugins,
     publicDir: 'public',
+    server: {
+      allowedHosts: ['financiabr.onrender.com', 'localhost', '127.0.0.1'],
+    },
+    preview: {
+      allowedHosts: ['financiabr.onrender.com', 'localhost', '127.0.0.1'],
+      port: 4173,
+      host: '0.0.0.0',
+    },
     build: {
       outDir: 'dist',
       emptyOutDir: true,
