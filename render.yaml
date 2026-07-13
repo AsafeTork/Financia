@@ -5,8 +5,19 @@ services:
     buildCommand: npm install && npm run build
     staticPublishPath: ./dist
 
-    # ── Headers de seguranca (injetados em TODAS as respostas HTTP) ──
+    # ── Headers de cache: HTML nunca cacheado, assets imutaveis (hash) ──
     headers:
+      - path: /
+        name: Cache-Control
+        value: no-cache, no-store, must-revalidate
+      - path: /index.html
+        name: Cache-Control
+        value: no-cache, no-store, must-revalidate
+      - path: /assets/
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+
+    # ── Headers de seguranca (injetados em TODAS as respostas HTTP) ──
       # Content-Security-Policy: scripts/estilos apenas de fontes confiaveis.
       # connect-src cobre Supabase (REST/Auth/Storage/Functions + Realtime wss),
       # Stripe, GitHub API (build de APK) e Cloudflare. style-src usa 'unsafe-inline'
