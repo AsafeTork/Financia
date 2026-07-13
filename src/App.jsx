@@ -63,6 +63,21 @@ export default function App() {
   const modalRef                        = useRef({ confirmData, showUpgrade, sidebarOpen, showLogin });
   modalRef.current = { confirmData, showUpgrade, sidebarOpen, showLogin };
 
+  const dismissToast = useCallback(function(id) {
+    setToasts(function(list) { return list.filter(function(t) { return t.id !== id; }); });
+  }, []);
+
+  const toast = useCallback(function(msg, type) {
+    if (!type) type = 'success';
+    var id = ++toastId.current;
+    setToasts(function(list) { return list.concat([{id:id, msg:msg, type:type}]); });
+    var tid = setTimeout(function() {
+      toastTimeoutsRef.current = toastTimeoutsRef.current.filter(function(t) { return t !== tid; });
+      setToasts(function(list) { return list.filter(function(t) { return t.id !== id; }); });
+    }, type === 'error' ? 4000 : 3000);
+    toastTimeoutsRef.current.push(tid);
+  }, []);
+
   const { appBrand, effectiveTheme, toggleTheme } = useBrandAppearance(brand, planInfo);
 
   const navTo = useCallback(function(v) {
@@ -165,21 +180,6 @@ export default function App() {
       setOnboardingNeeded(false);
     }
   }, [session, dataLoading, brand]);
-
-  const dismissToast = useCallback(function(id) {
-    setToasts(function(list) { return list.filter(function(t) { return t.id !== id; }); });
-  }, []);
-
-  const toast = useCallback(function(msg, type) {
-    if (!type) type = 'success';
-    var id = ++toastId.current;
-    setToasts(function(list) { return list.concat([{id:id, msg:msg, type:type}]); });
-    var tid = setTimeout(function() {
-      toastTimeoutsRef.current = toastTimeoutsRef.current.filter(function(t) { return t !== tid; });
-      setToasts(function(list) { return list.filter(function(t) { return t.id !== id; }); });
-    }, type === 'error' ? 4000 : 3000);
-    toastTimeoutsRef.current.push(tid);
-  }, []);
 
   useEffect(function() {
     return function() {
