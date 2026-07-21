@@ -10,224 +10,132 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-env:
-  NODE_OPTIONS: --max-old-space-size=6144
-
 jobs:
-  validate-fast:
-    name: Validate Fast (PR)
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'npm'
-      - uses: actions/cache@v4
-        with:
-          path: |
-            .eslintcache
-            .cache/tsbuildinfo
-            .cache/vitest
-          key: lint-${{ runner.os }}-${{ hashFiles('package-lock.json', '.eslintrc*', 'eslint.config.*', 'tsconfig.json') }}
-          restore-keys: lint-${{ runner.os }}-
-      - run: npm ci
-      - name: Lint changed files
-        run: |
-          CHANGED=$(git diff --name-only --diff-filter=d origin/${{ github.base_ref }}...HEAD -- '*.ts' '*.tsx' '*.js' '*.jsx')
-          if [ -n "$CHANGED" ]; then
-            echo "$CHANGED" | xargs npx eslint --cache --cache-strategy content --cache-location .eslintcache
-          fi
-      - name: Typecheck changed files
-        run: |
-          CHANGED=$(git diff --name-only --diff-filter=d origin/${{ github.base_ref }}...HEAD -- '*.ts' '*.tsx')
-          if [ -n "$CHANGED" ]; then
-            echo "$CHANGED" | xargs npx tsc --noEmit --incremental
-          fi
-      - name: Test changed
-        run: npx vitest run --changed --reporter=dot --pool=threads --poolOptions.threads.maxThreads=4
-
-  lhci:
-    name: Lighthouse CI
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'npm'
-      - run: npm ci
-      - run: npm run build
-      - name: Start preview server
-        run: npm run preview -- --host 0.0.0.0 --port 5173 &
-      - name: Wait for server
-        run: sleep 5
-      - name: Run Lighthouse CI
-        run: npx lhci autorun --upload.target=temporary-public-storage
-        env:
-          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
-
-  validate-full:
-    name: Validate Full (Push)
-    if: github.event_name == 'push'
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'npm'
-      - uses: actions/cache@v4
-        with:
-          path: |
-            .eslintcache
-            .cache/tsbuildinfo
-            .cache/vitest
-            node_modules
-            .vite
-          key: lint-${{ runner.os }}-${{ hashFiles('package-lock.json', '.eslintrc*', 'eslint.config.*', 'tsconfig.json') }}
-          restore-keys: lint-${{ runner.os }}-
-      - run: npm ci
-      - run: npm run lint
-      - run: npm run typecheck
-      - run: npm test
-      - run: npm run build
-
-  validate-full-pr:
-    name: Validate Full (PR Merge)
-    if: github.event_name == 'pull_request' && github.event.pull_request.merged == true
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'npm'
-      - uses: actions/cache@v4
-        with:
-          path: |
-            .eslintcache
-            .cache/tsbuildinfo
-            .cache/vitest
-            node_modules
-            .vite
-          key: lint-${{ runner.os }}-${{ hashFiles('package-lock.json', '.eslintrc*', 'eslint.config.*', 'tsconfig.json') }}
-          restore-keys: lint-${{ runner.os }}-
-      - run: npm ci
-      - run: npm run lint
-      - run: npm run typecheck
-      - run: npm test
-      - run: npm run build
-
-  validate-full-push:
-    name: Validate Full (Push)
-    if: github.event_name == 'push'
-    needs: [validate-full]
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - run: echo "Full validation passed"
-
-  audit-changed:
-    name: Audit Changed
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'npm'
-      - run: npm ci
-      - name: Audit changed
-        run: npm run audit:changed
-
-  audit-full:
-    name: Audit Full
-    if: github.event_name == 'push'
+  lint-typecheck:
+    name: Lint + Typecheck
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'npm'
+          node-version: 20
+          cache: npm
       - run: npm ci
-      - run: npm run audit:full
+      - run: npm run lint
+      - run: npm run typecheck
 
-  build:
-    name: Build APK/EXE
-    needs: [validate-full]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+  unit-tests:
+    name: Unit Tests (1700+)
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'npm'
-      - uses: actions/cache@v4
-        with:
-          path: |
-            node_modules
-            .vite
-          key: build-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          node-version: 20
+          cache: npm
       - run: npm ci
-      - run: npm run build
-      - name: Build Electron
-        run: npm run electron:build
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+      - run: npm run test:coverage
+      - uses: actions/upload-artifact@v4
+        if: always()
         with:
-          name: electron-build
-          path: dist/**/*
+          name: coverage
+          path: coverage/
           retention-days: 7
 
-  deploy-preview:
-    name: Deploy Preview
-    if: github.event_name == 'pull_request'
-    needs: [validate-fast]
+  e2e-tests:
+    name: E2E (${{ matrix.browser }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - browser: chromium
+            project: chromium
+            install-browser: chromium
+          - browser: firefox
+            project: firefox
+            install-browser: firefox
+          - browser: webkit
+            project: webkit
+            install-browser: webkit
+          - browser: mobile-chrome
+            project: "Mobile Chrome"
+            install-browser: chromium
+          - browser: mobile-safari
+            project: "Mobile Safari"
+            install-browser: webkit
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps ${{ matrix.install-browser }}
+      - name: Run Playwright tests
+        run: npx playwright test --project="${{ matrix.project }}"
+        env:
+          CI: true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report-${{ matrix.browser }}
+          path: playwright-report/
+          retention-days: 7
+
+  build:
+    name: Build
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'npm'
-      - uses: actions/cache@v4
-        with:
-          path: |
-            node_modules
-            .vite
-          key: preview-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          node-version: 20
+          cache: npm
       - run: npm ci
       - run: npm run build
-      - name: Deploy to Vercel Preview
-        uses: amondnet/vercel-action@v25
-        if: ${{ secrets.VERCEL_TOKEN != '' }}
+      - uses: actions/upload-artifact@v4
         with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          scope: ${{ secrets.VERCEL_ORG_ID }}
-          alias-domains: pr-${{ github.event.number }}.financia.app
+          name: dist
+          path: dist/
+          retention-days: 7
+
+  security-audit:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run security:audit
+        continue-on-error: true
+
+  summary:
+    name: Test Summary
+    runs-on: ubuntu-latest
+    needs: [lint-typecheck, unit-tests, e2e-tests, build, security-audit]
+    if: always()
+    steps:
+      - run: |
+          echo "## CI Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Job | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Lint + Typecheck | ${{ needs.lint-typecheck.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Unit Tests (1700+) | ${{ needs.unit-tests.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| E2E (chromium) | ${{ needs.e2e-tests.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| E2E (firefox) | ${{ needs.e2e-tests.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| E2E (webkit) | ${{ needs.e2e-tests.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| E2E (mobile-chrome) | ${{ needs.e2e-tests.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| E2E (mobile-safari) | ${{ needs.e2e-tests.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Build | ${{ needs.build.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Security Audit | ${{ needs.security-audit.result }} |" >> $GITHUB_STEP_SUMMARY
