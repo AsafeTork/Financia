@@ -132,12 +132,9 @@ raiz/                         # 20+ arquivos md soltos
 | `docs/UX-AUDIT-REFERENCE.md` | 📘 Documentação Útil | Referência de UX |
 | `docs/testing-strategy-research.md` | 📘 Documentação Útil | Pesquisa de estratégia de testes |
 
-### Documentos Deprecados em docs/ Ativo (devem ser arquivados)
+### Documentos Deprecados (resolvido — Etapa 3 concluída)
 
-| Arquivo | Classificação | Justificativa |
-|---------|--------------|---------------|
-| `docs/PROMPT_UNIVERSAL.md` | 🗑️ Obsoleto | Marcado deprecated, substituído por EXECUTOR_PROMPT.md |
-| `docs/AI_CONTEXT.md` | 🗑️ Obsoleto | Marcado deprecated |
+`docs/PROMPT_UNIVERSAL.md` e `docs/AI_CONTEXT.md` movidos para `docs/archive/`.
 
 ### Duplicatas (Resolvido — raiz limpa)
 
@@ -288,13 +285,13 @@ Raiz contém apenas: `CLAUDE.md`, `README.md`.
 
 **Riscos:** Nenhum — versões oficiais preservadas em `docs/`.
 
-### Etapa 3: Arquivar Deprecados (5 min)
+### Etapa 3: Arquivar Deprecados ✅ (Concluída em 2026-07-20)
 
-**Objetivo:** Mover documentos marcados como deprecated para `docs/archive/`.
+**Resultado:** 2 documentos deprecados movidos para `docs/archive/`.
 
-**Arquivos envolvidos:**
-- `docs/PROMPT_UNIVERSAL.md` → `docs/archive/PROMPT_UNIVERSAL.md`
-- `docs/AI_CONTEXT.md` → `docs/archive/AI_CONTEXT.md`
+**Arquivos movidos:**
+- `docs/PROMPT_UNIVERSAL.md` → `docs/archive/PROMPT_UNIVERSAL.md` (356 B)
+- `docs/AI_CONTEXT.md` → `docs/archive/AI_CONTEXT.md` (13.1 KB)
 
 ### Etapa 4: Criar Índice (20 min)
 
@@ -348,7 +345,7 @@ Raiz contém apenas: `CLAUDE.md`, `README.md`.
   - `docs/INDEX.md` atualizado com lista de arquivos no archive
   - `docs/AUDITORIA_GERAL.md` atualizado com status concluído
 - [x] Etapa 2: Remover 3 duplicatas da raiz + corrigir falso positivo AI_BRAND_SCHEMA
-- [ ] Etapa 3: Arquivar 2 deprecados
+- [x] Etapa 3: Arquivar 2 deprecados (PROMPT_UNIVERSAL + AI_CONTEXT)
 - [ ] Etapa 4: Criar `docs/INDEX.md`
 - [ ] Etapa 5: Atualizar `docs/ARCHITECTURE.md`
 - [ ] Etapa 5: Atualizar `docs/IMPLEMENTATION_ORDER.md`
@@ -430,5 +427,5 @@ Raiz contém apenas: `CLAUDE.md`, `README.md`.
 
 1. ✅ ~~Executar Etapa 1 (limpeza da raiz) — mover 11 obsoletos para archive, 4 para docs/~~
 2. ✅ ~~Executar Etapa 2 (eliminar duplicatas)~~
-3. Executar Etapa 3 (arquivar deprecados em `docs/`)
+3. ✅ ~~Executar Etapa 3 (arquivar deprecados em `docs/`)~~
 4. Revisar este relatório e promover para APPROVED

@@ -128,6 +128,8 @@ type: REFERENCE
 - `QA_MASTER_AUDIT.md` — auditoria antiga, substituída por docs/QA/
 - `ROADMAP.md` — roadmap PHASE 0-10 antigo
 - `UX_MASTER_AUDIT.md` — auditoria antiga, substituída por UX-AUDIT-REFERENCE.md
+- `PROMPT_UNIVERSAL.md` — deprecado, substituído por EXECUTOR_PROMPT.md
+- `AI_CONTEXT.md` — deprecado, conteúdo incorporado ao CLAUDE.md
 
 ---
 
