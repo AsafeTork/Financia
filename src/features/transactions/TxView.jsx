@@ -227,7 +227,7 @@ export default function TxView({ type, tx, products, onAdd, onEdit, onDelete, on
         ) : (
           <div>
             <div ref={scrollRef} className="max-h-[calc(100vh-280px)] min-h-[200px] overflow-auto" style={{position:'relative'}}>
-              <div role="list" style={{ height: virtualizer.getTotalSize() + 'px', position: 'relative' }}>
+              <div role="list" data-testid="tx-list" style={{ height: virtualizer.getTotalSize() + 'px', position: 'relative' }}>
                 {function() {
                   var rowItems = flatRows.filter(function(r) { return r.type === 'row'; });
                   var totalRowCount = rowItems.length;
@@ -246,7 +246,7 @@ export default function TxView({ type, tx, products, onAdd, onEdit, onDelete, on
                     var t = item.data;
                     var rowIndex = flatRows.slice(0, virtualItem.index).filter(function(r) { return r.type === 'row'; }).length + 1;
                     return (
-                      <div key={t.id} role="listitem" aria-setsize={totalRowCount} aria-posinset={rowIndex} style={{ position: 'absolute', top: 0, left: 0, width: '100%', transform: 'translateY(' + virtualItem.start + 'px)' }}>
+                      <div key={t.id} data-testid={'tx-item-' + t.id} role="listitem" aria-setsize={totalRowCount} aria-posinset={rowIndex} style={{ position: 'absolute', top: 0, left: 0, width: '100%', transform: 'translateY(' + virtualItem.start + 'px)' }}>
                       <div className="flex items-center justify-between px-4 py-3.5 border-b border-gray-50 last:border-0 hover:bg-gray-50 transition-colors">
                         <div className="flex items-center gap-3 min-w-0 flex-1">
                           <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{background: accentBg}}>

@@ -26,7 +26,7 @@ export default function AppRoutes(props) {
         <Route path="/report" element={<ReportView tx={tx} brand={brand} toast={toast} onNav={onNav} planInfo={planInfo}/>} />
         <Route path="/settings" element={<SettingsView brand={brand} session={session} planInfo={planInfo} onSave={saveBrand} onSavePhone={savePhone} toast={toast} confirm={confirm} isAdmin={isAdmin} onNav={onNav}/>} />
         <Route path="/planos" element={<PlansView brand={brand} planInfo={planInfo} toast={toast} onNav={onNav} isAdmin={isAdmin}/>} />
-        <Route path="/brandstudio" element={<BrandStudioView brand={brand} planInfo={planInfo} onSave={saveBrand} toast={toast} onNav={onNav}/>} />
+        <Route path="/brandstudio" element={<BrandStudioView brand={brand} planInfo={planInfo} onSave={saveBrand} toast={toast} onNav={onNav} isAdmin={isAdmin}/>} />
       </Routes>
     </Suspense>
   );

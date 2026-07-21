@@ -32,26 +32,27 @@ const mockSetField = vi.fn();
 afterEach(cleanup);
 
 describe('Acessibilidade - BrandStudioView', function() {
+  var sharedProps = { brand: mockBrand, planInfo: mockPlanInfo, onSave: mockOnSave, toast: mockToast, onNav: mockOnNav, isAdmin: true };
 
   it('tem role main e landmarks', function() {
-    render(<BrandStudioView brand={mockBrand} planInfo={mockPlanInfo} onSave={mockOnSave} toast={mockToast} onNav={mockOnNav} />);
+    render(<BrandStudioView {...sharedProps} />);
     expect(screen.getByRole('main')).toBeTruthy();
   });
 
   it('botoes tem labels acessiveis', function() {
-    render(<BrandStudioView brand={mockBrand} planInfo={mockPlanInfo} onSave={mockOnSave} toast={mockToast} onNav={mockOnNav} />);
+    render(<BrandStudioView {...sharedProps} />);
     expect(screen.getByRole('button', { name: /desfazer/i })).toBeTruthy();
     expect(screen.getByRole('button', { name: /refazer/i })).toBeTruthy();
   });
 
   it('abas de navegacao tem role tab', function() {
-    render(<BrandStudioView brand={mockBrand} planInfo={mockPlanInfo} onSave={mockOnSave} toast={mockToast} onNav={mockOnNav} />);
+    render(<BrandStudioView {...sharedProps} />);
     const tabs = screen.getAllByRole('tab');
     expect(tabs.length).toBeGreaterThanOrEqual(2);
   });
 
   it('inputs de cor tem label associado', function() {
-    render(<BrandStudioView brand={mockBrand} planInfo={mockPlanInfo} onSave={mockOnSave} toast={mockToast} onNav={mockOnNav} />);
+    render(<BrandStudioView {...sharedProps} />);
     expect(screen.getByLabelText(/coluna 1/i)).toBeTruthy();
     expect(screen.getByLabelText(/coluna 2/i)).toBeTruthy();
     expect(screen.getByLabelText(/coluna 3/i)).toBeTruthy();
@@ -59,11 +60,16 @@ describe('Acessibilidade - BrandStudioView', function() {
   });
 
   it('navegacao por teclado funciona nas abas', async function() {
-    render(<BrandStudioView brand={mockBrand} planInfo={mockPlanInfo} onSave={mockOnSave} toast={mockToast} onNav={mockOnNav} />);
+    render(<BrandStudioView {...sharedProps} />);
     const logoTab = screen.getByRole('tab', { name: /logo/i });
     const planosTab = screen.getByRole('tab', { name: /planos/i });
     expect(logoTab).toBeTruthy();
     expect(planosTab).toBeTruthy();
+  });
+
+  it('bloqueia acesso sem isAdmin e sem white_label', function() {
+    render(<BrandStudioView brand={mockBrand} planInfo={mockPlanInfo} onSave={mockOnSave} toast={mockToast} onNav={mockOnNav} />);
+    expect(screen.getByText(/não tem permissão/i)).toBeTruthy();
   });
 });
 

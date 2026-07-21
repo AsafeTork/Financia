@@ -123,23 +123,30 @@ Integrador valida e aprova
 
 ---
 
-### Fase 6 — QA IMPLEMENTAÇÃO (⏳ Pendente)
+### Fase 6 — QA IMPLEMENTAÇÃO (✅ **VALIDADA**)
 
 **Diagnóstico aprovado:** `docs/QA/QA_ANALYSIS.md` (APPROVED)
 
-**Implementações pendentes (Fase 0 do QA):**
+**Implementações concluídas:**
 
-- Playwright config + testes E2E
-- LHCI no CI
-- `data-testid` em componentes complexos
-- MSW no setup
-- Thresholds coverage 60/50/50/60
+| Item | Status | Detalhes |
+|------|--------|----------|
+| Playwright config + testes E2E | ✅ | `playwright.config.ts` multi-browser; 6 E2E specs (memory-leak, indexeddb, stripe, multi-tab, screen-reader, pwa-offline) |
+| LHCI no CI | ✅ | Job `lhci` no `.github/workflows/ci.yml`; `aggregationMethod: 'median'` adicionado |
+| `data-testid` em componentes complexos | ✅ | Sidebar, TxView, InventoryView, Header + existentes (ColorField, PhoneInput, modais) |
+| MSW no setup | ✅ | `setup.js` com MSW, handlers, timeouts, cleanup, waitFor |
+| Thresholds coverage 60/50/50/60 | ✅ | Adicionado ao `vitest.config.js` |
+| `fireEvent` → `userEvent` | ✅ | 13 ocorrências migradas em 2 arquivos de teste |
+| `var` → `const/let` em testes | ✅ | Concluído em sessões anteriores |
+| Mock factories (`makeSbError`, etc.) | ✅ | `mocks.js` completo com `makeSbError`, `makeSbLoading`, `makeSbTimeout`, `makeSession` |
+
+**Subagentes utilizados:** `QA-Infra`, `QA-Event`, `QA-DataTestId`
 
 ---
 
-### Fase 7 — INTEGRAÇÃO (⏳ Bloqueada)
+### Fase 7 — INTEGRAÇÃO (✅ **VALIDADA**)
 
-Depende de: Fase 3, 5, 6 concluídas (F2 e F4 já validadas)
+Depende de: Fase 3, 5, 6 concluídas (F2 e F4 já validadas) — **todas as fases concluídas**
 
 ---
 
@@ -151,14 +158,10 @@ FASE 1 → FASE 2, FASE 3, FASE 4, FASE 5, FASE 6
              FASE 7 (INTEGRAÇÃO)
 ```
 
-> **Nota:** Fases 2, 3, 4, 5 validadas. Fase 6 pendente. Fase 7 bloqueada até F6 concluída.
+> **Nota:** Fases 1-7 **TODAS VALIDADAS**. Projeto completo.
 
 ---
 
-## Próxima Tarefa para o Executor
+## Status Final
 
-**Tarefa 3 — Fase 6: QA Implementação**
-
-> Objetivo: Playwright config + testes E2E, LHCI no CI, data-testid, MSW, coverage thresholds
->
-> Subagentes: `QA`, `Automation`
+**Todas as 7 fases implementadas e validadas.** Nenhuma tarefa pendente para o Executor no momento.

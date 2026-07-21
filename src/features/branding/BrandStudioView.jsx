@@ -173,10 +173,27 @@ function LogoTabContent({ brand, bs, brandColor, applyLogoScheme, toast }) {
   );
 }
 
-export default function BrandStudioView({ brand, planInfo, onSave, toast, onNav }) {
+export default function BrandStudioView({ brand, planInfo, onSave, toast, onNav, isAdmin }) {
+  const hasWhiteLabel = !!(brand && brand.white_label);
+  const canAccess = isAdmin || hasWhiteLabel;
   const bs = useBrandStudio(brand, planInfo, onSave, toast);
   const brandColor = (brand && brand.color) || '#002f59';
   const [section, setSection] = React.useState('logo');
+
+  React.useEffect(function() {
+    if (!canAccess && typeof onNav === 'function') onNav('settings');
+  }, [canAccess, onNav]);
+
+  if (!canAccess) {
+    return (
+      <div className="flex flex-col gap-6" role="main">
+        <PageHead icon="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" title="Brand Studio" sub="Acesso restrito a administradores e planos com personalização." />
+        <Card className="p-6 text-center">
+          <p className="text-sm" style={{color:'var(--text-muted)'}}>Você não tem permissão para acessar esta área.</p>
+        </Card>
+      </div>
+    );
+  }
 
   const applyLogoScheme = async (dataUrl, colors) => {
     try {

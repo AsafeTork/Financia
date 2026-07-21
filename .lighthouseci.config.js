@@ -3,6 +3,7 @@ module.exports = {
   ci: {
     collect: {
       numberOfRuns: 3,
+      aggregationMethod: 'median',
       url: process.env.CI_URL || 'http://localhost:5173',
     },
     assert: {

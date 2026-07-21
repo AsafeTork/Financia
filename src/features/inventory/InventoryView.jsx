@@ -205,7 +205,7 @@ export default function InventoryView({ products, losses, onAddProduct, onEditPr
       </div>
 
       {tab === 'products' && (
-        <Card>
+        <Card data-testid="products-list">
           <div className="px-4 py-3 border-b border-gray-50">
             <div className="relative">
               <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
@@ -264,7 +264,7 @@ export default function InventoryView({ products, losses, onAddProduct, onEditPr
                         var margin   = p.cost != null && p.price > 0 ? ((p.price - p.cost) / p.price) * 100 : null;
                         var marginColor = margin === null ? '' : margin > 30 ? '#16a34a' : margin > 10 ? '#d97706' : '#dc2626';
                         return (
-                          <div key={p.id} className="px-4 py-3.5 hover:bg-gray-50 transition-colors">
+                          <div key={p.id} data-testid={'product-item-' + p.id} className="px-4 py-3.5 hover:bg-gray-50 transition-colors">
                             <div className="flex items-start justify-between gap-3">
                               <div className="min-w-0 flex-1">
                                 <div className="flex items-center gap-2 flex-wrap mb-1">

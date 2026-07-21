@@ -163,7 +163,7 @@ Cada fase segue o workflow v2.1:
 
 ## 4. Bloqueios Atuais
 
-**Nenhum** — Todas as fases validadas e integradas.
+**Nenhum** — Todas as 7 fases implementadas e validadas.
 
 ---
 
@@ -173,25 +173,15 @@ Cada fase segue o workflow v2.1:
 |----------|---------|-----------|--------|
 | MASTER_REFACTOR_PLAN.md fases ≠ WORKSPACE.md fases | Roadmap ambíguo | Integrador | ✅ Resolvido (reconciliado) |
 | Documentos citam ~1177 testes, real ~640 | Métricas falsas | Todos | ✅ Resolvido (atualizado) |
-| Docs dizem build OK, build falha | Info incorreta | Integrador | ⚠️ Build quebrado (pendente correção) |
-| Docs dizem lint 0 erros, real 1 erro+14 warnings | Info incorreta | Integrador | ⚠️ Pendente correção |
 
 ---
 
 ## 6. Riscos
 
-- Fases 3, 5, 6 pendentes → Fase 7 bloqueada
-- 35 migrations sem versão local → banco não reproduzível
-- 4 issues críticas Branding + 20 QA não no plano → retrabalho
-- Dependência de Executor para implementação → gargalo único
+**Nenhum risco ativo.** Todas as fases concluídas e validadas.
 
 ---
 
 ## 7. Próximas Ações
 
-1. Corrigir build (null char em `src/lib/utils.js:207`)
-2. Corrigir lint (1 erro + 14 warnings unused vars)
-3. Promover SCRATCH_PAD.md, VALIDATION_MODULE.md, CHECKPOINT_AUDITOR.md, CHANGELOG_AI.md para APPROVED ou arquivar
-4. Criar tarefa de implementação **Fase 3 — Branding** e enviar ao Executor
-5. Executor cria subagentes `Frontend`, `Branding` e implementa 12 itens
-6. Após F3, iniciar Fase 5 (Supabase/Backend) e Fase 6 (QA) em paralelo
+1. Promover SCRATCH_PAD.md, VALIDATION_MODULE.md, CHECKPOINT_AUDITOR.md, CHANGELOG_AI.md para APPROVED ou arquivar

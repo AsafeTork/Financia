@@ -21,6 +21,12 @@ export default defineConfig({
       include: ['src/**/*.{js,jsx}'],
       exclude: ['src/test/**', 'src/**/*.test.*', 'src/**/*.spec.*'],
       reportsDirectory: './coverage',
+      thresholds: {
+        lines: 60,
+        functions: 50,
+        branches: 50,
+        statements: 60,
+      },
     },
     deps: {
       optimizer: { web: { include: ['dexie', 'fake-indexeddb'] } },

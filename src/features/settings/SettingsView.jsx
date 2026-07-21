@@ -46,12 +46,17 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
   var initParsed = parsePhone(brand.phone);
   var initE164 = buildPhone(initParsed.iso, initParsed.digits).e164;
   React.useEffect(function() {
+    var canBrand = isAdmin || hasWhiteLabel;
     if (isAdmin && tab === 'account') {
       setTab('clients');
     } else if (!isAdmin && tab === 'clients') {
       setTab('account');
+    } else if (!canBrand && tab === 'brandstudio') {
+      setTab('account');
+    } else if (!hasWhiteLabel && tab === 'appearance') {
+      setTab('account');
     }
-  }, [isAdmin, tab]);
+  }, [isAdmin, tab, hasWhiteLabel]);
 
   // Busca o cartao salvo ao abrir a aba Assinatura (e apos trocar/remover).
   React.useEffect(function() {
@@ -193,7 +198,7 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
 
   const allTabs = [{key:'account',label:'Conta'}, {key:'subscription',label:'Assinatura'}];
   if (hasWhiteLabel) allTabs.push({key:'appearance',label:'Aparência'});
-  allTabs.push({key:'brandstudio',label:'Brand Studio'});
+  if (isAdmin || hasWhiteLabel) allTabs.push({key:'brandstudio',label:'Brand Studio'});
   allTabs.push({key:'clients',label:'Painel admin',adminOnly:true});
   const tabs = allTabs.filter(function(t) { return !t.adminOnly || isAdmin; });
 
@@ -440,7 +445,7 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
       )}
 
       {tab === 'brandstudio' && (
-        <div id="tabpanel-brandstudio" role="tabpanel" aria-labelledby="tab-brandstudio"><BrandStudioView brand={brand} planInfo={planInfo} onSave={onSave} toast={toast} onNav={onNav} /></div>
+        <div id="tabpanel-brandstudio" role="tabpanel" aria-labelledby="tab-brandstudio"><BrandStudioView brand={brand} planInfo={planInfo} onSave={onSave} toast={toast} onNav={onNav} isAdmin={isAdmin} /></div>
       )}
 
       {tab === 'clients' && (
