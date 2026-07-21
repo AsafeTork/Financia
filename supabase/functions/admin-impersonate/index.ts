@@ -23,14 +23,6 @@ Deno.serve(async function(req: Request) {
 
     const admin = createClient(supabaseUrl, serviceKey);
 
-    const { data: roleData } = await admin
-      .from('user_roles')
-      .select('role')
-      .eq('user_id', user.id)
-      .eq('role', 'admin')
-      .maybeSingle();
-    if (!roleData) return corsResponse({ error: 'forbidden' }, 403);
-
     let body: { target_uid?: string };
     try {
       body = await req.json();
@@ -43,7 +35,14 @@ Deno.serve(async function(req: Request) {
       return corsResponse({ error: 'missing_target' }, 400);
     }
 
-    const { data: targetUser, error: userError } = await admin.auth.admin.getUserById(targetUid);
+    // Parallel: admin role check + target user lookup
+    const [roleResult, targetResult] = await Promise.all([
+      admin.from('user_roles').select('role').eq('user_id', user.id).eq('role', 'admin').maybeSingle(),
+      admin.auth.admin.getUserById(targetUid),
+    ]);
+    if (!roleResult.data) return corsResponse({ error: 'forbidden' }, 403);
+    const targetUser = targetResult.data;
+    const userError = targetResult.error;
     if (userError || !targetUser || !targetUser.user) {
       return corsResponse({ error: 'user_not_found' }, 404);
     }
