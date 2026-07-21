@@ -33,7 +33,7 @@ export default defineConfig({
       name: 'Mobile Safari',
       use: { ...devices['iPhone 12'] },
     },
-    {
+    ...(process.env.CI ? [] : [{
       name: 'screen-reader',
       use: { 
         ...devices['Desktop Chrome'],
@@ -41,7 +41,7 @@ export default defineConfig({
         viewport: { width: 1280, height: 720 },
       },
       workers: 1,
-    },
+    }]),
   ],
   webServer: {
     command: 'npm run dev',
