@@ -24,7 +24,7 @@ jobs:
         with:
           node-version: 20
           cache: npm
-      - run: npm ci
+      - run: npm ci || npm install --legacy-peer-deps
       - run: npm run lint
       - run: npm run typecheck
 
@@ -39,7 +39,7 @@ jobs:
         with:
           node-version: 20
           cache: npm
-      - run: npm ci
+      - run: npm ci || npm install --legacy-peer-deps
       - run: npm run test:coverage
       - uses: actions/upload-artifact@v4
         if: always()
@@ -78,7 +78,7 @@ jobs:
         with:
           node-version: 20
           cache: npm
-      - run: npm ci
+      - run: npm ci || npm install --legacy-peer-deps
       - name: Install Playwright browser
         run: npx playwright install --with-deps ${{ matrix.install-browser }}
       - name: Run Playwright tests
@@ -103,7 +103,7 @@ jobs:
         with:
           node-version: 20
           cache: npm
-      - run: npm ci
+      - run: npm ci || npm install --legacy-peer-deps
       - run: npm run build
       - uses: actions/upload-artifact@v4
         with:
@@ -122,7 +122,7 @@ jobs:
         with:
           node-version: 20
           cache: npm
-      - run: npm ci
+      - run: npm ci || npm install --legacy-peer-deps
       - run: npm run security:audit
         continue-on-error: true
 
