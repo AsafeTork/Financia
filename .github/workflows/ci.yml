@@ -10,6 +10,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  NODE_OPTIONS: '--max-old-space-size=6144'
+
 jobs:
   lint-typecheck:
     name: Lint + Typecheck
@@ -29,6 +32,7 @@ jobs:
     name: Unit Tests (1700+)
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    needs: [lint-typecheck]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -48,6 +52,7 @@ jobs:
     name: E2E (${{ matrix.browser }})
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    needs: [lint-typecheck]
     strategy:
       fail-fast: false
       matrix:
@@ -91,6 +96,7 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    needs: [lint-typecheck]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -109,6 +115,7 @@ jobs:
     name: Security Audit
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    needs: [lint-typecheck]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
