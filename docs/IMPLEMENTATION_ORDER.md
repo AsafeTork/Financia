@@ -106,16 +106,20 @@ Integrador valida e aprova
 - Nenhum `.catch()` silencioso
 - Code-split TxView, Dashboard Charts implementado
 
-### Fase 5 — SUPABASE/BACKEND (⏳ Pendente)
+### Fase 5 — SUPABASE/BACKEND (✅ **VALIDADA**)
 
-**Subagentes necessários:** `Backend`, `Security`, `Database`
+**Verificação em 2026-07-20:** Agente de verificação inspecionou 18 Edge Functions, migrações SQL, Stripe checkout e PWA.
 
-**Pendências:**
+**Resultado da verificação:**
+- Build Trigger EF ✅ — `admin-job-runner/apk/build.ts` com JWT + admin check + rate limit + retry
+- Impersonação EF ✅ — NOVA: `admin-impersonate/index.ts` com JWT, admin check, rate limit
+- Magic Link EF ✅ — Integrado na `admin-impersonate` via `admin_get_magic_link` RPC
+- initPlan wrapping ✅ — 2 migrations com `(SELECT auth.uid())` e `(SELECT private.is_admin())`
+- SECDEF migration ✅ — 4 funções movidas para `private` schema + search_path hardening
+- Stripe AbortController ✅ — 4 invoke calls com signal wiring corrigido
+- PWA setInterval cleanup ✅ — `swCleanup()` exportado, chamado via boot.js
 
-- Edge Functions (build trigger, impersonação, magic link)
-- RLS hardening (initPlan wrapping, SECDEF migration)
-- Stripe checkout AbortController
-- PWA setInterval cleanup
+**Subagentes utilizados:** `Verification Agent`, `Implementation Agent (admin-impersonate EF)`, `Implementation Agent (AbortController)`, `Review Agent`
 
 ---
 
@@ -147,14 +151,14 @@ FASE 1 → FASE 2, FASE 3, FASE 4, FASE 5, FASE 6
              FASE 7 (INTEGRAÇÃO)
 ```
 
-> **Nota:** Fases 2, 3, 4 validadas. Fases 5, 6 pendentes. Fase 7 bloqueada até F5, F6 concluídas.
+> **Nota:** Fases 2, 3, 4, 5 validadas. Fase 6 pendente. Fase 7 bloqueada até F6 concluída.
 
 ---
 
 ## Próxima Tarefa para o Executor
 
-**Tarefa 2 — Fase 5: Supabase/Backend**
+**Tarefa 3 — Fase 6: QA Implementação**
 
-> Objetivo: Implementar Edge Functions pendentes, RLS hardening, Stripe AbortController, PWA cleanup
+> Objetivo: Playwright config + testes E2E, LHCI no CI, data-testid, MSW, coverage thresholds
 >
-> Subagentes: `Backend`, `Security`, `Database`
+> Subagentes: `QA`, `Automation`

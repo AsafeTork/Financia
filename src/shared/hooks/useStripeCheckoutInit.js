@@ -167,7 +167,7 @@ export default function useStripeCheckoutInit(plan, brand, checkoutMode, kind, o
     }, 30000);
 
     var startNewCardSubscription = function() {
-      sb.functions.invoke('create-subscription', { body: { plan_id: plan.id } }).then(function(result) {
+      sb.functions.invoke('create-subscription', { body: { plan_id: plan.id }, signal: abort.signal }).then(function(result) {
         if (!alive || settled) return;
         var data = result && result.data ? result.data : null;
         if (data && data.clientSecret) { toForm(data.clientSecret); return; }
@@ -181,7 +181,7 @@ export default function useStripeCheckoutInit(plan, brand, checkoutMode, kind, o
     };
 
     var startNewCardPayment = function() {
-      sb.functions.invoke('create-payment', { body: { kind: 'white_label' } }).then(function(result) {
+      sb.functions.invoke('create-payment', { body: { kind: 'white_label' }, signal: abort.signal }).then(function(result) {
         if (!alive || settled) return;
         var data = result && result.data ? result.data : null;
         if (data && data.clientSecret) { toForm(data.clientSecret); return; }
@@ -203,7 +203,7 @@ export default function useStripeCheckoutInit(plan, brand, checkoutMode, kind, o
       setStripePromise(getStripe());
 
       if (checkoutMode === 'payment') {
-        sb.functions.invoke('get-payment-method', { body: {} }).then(function(result) {
+        sb.functions.invoke('get-payment-method', { body: {}, signal: abort.signal }).then(function(result) {
           if (!alive || settled) return;
           var data = result && result.data ? result.data : null;
           var savedCard = data && data.card ? data.card : null;
@@ -216,7 +216,7 @@ export default function useStripeCheckoutInit(plan, brand, checkoutMode, kind, o
         return;
       }
 
-      sb.functions.invoke('get-payment-method', { body: {} }).then(function(result) {
+      sb.functions.invoke('get-payment-method', { body: {}, signal: abort.signal }).then(function(result) {
         if (!alive || settled) return;
         var data = result && result.data ? result.data : null;
         var savedCard = data && data.card ? data.card : null;

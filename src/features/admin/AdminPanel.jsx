@@ -75,7 +75,7 @@ export default function AdminPanel({ toast, confirm, session, brand }) {
       var batch = stripeClients.slice(i, i + batchSize);
       batch.forEach(function(c) {
         if (controller.signal.aborted) return;
-        sb.functions.invoke('get-subscription-status', { body: { user_id: c.user_id } }).then(function(res) {
+        sb.functions.invoke('get-subscription-status', { body: { user_id: c.user_id }, signal: controller.signal }).then(function(res) {
           if (!alive || controller.signal.aborted) return;
           var d = res && res.data ? res.data : null;
           if (d && (d.status === 'active' || d.status === 'canceled_expiring')) setSubFor(c.user_id, d.status);
