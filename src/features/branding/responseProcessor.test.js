@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
-import { describe, it, expect } from 'vitest';
-import { processResponse } from './responseProcessor.js';
+import { describe, it, expect, vi } from 'vitest';
+import { processResponse, requiresServiceRole, updateBrandConfig } from './responseProcessor.js';
 
 describe('responseProcessor', function() {
 
@@ -128,5 +128,76 @@ describe('responseProcessor', function() {
     const result = processResponse(response, brand);
     expect(result.proposedBrand.name).toBe('Test');
     expect(result.proposedBrand.logo_url).toBe('data:image/png;base64,abc');
+  });
+});
+
+describe('requiresServiceRole', function() {
+  it('retorna true para brand sem white_label', function() {
+    expect(requiresServiceRole({ white_label: false })).toBe(true);
+  });
+
+  it('retorna false para brand com white_label true', function() {
+    expect(requiresServiceRole({ white_label: true })).toBe(false);
+  });
+
+  it('retorna true para brand nulo', function() {
+    expect(requiresServiceRole(null)).toBe(true);
+  });
+
+  it('retorna true para brand undefined', function() {
+    expect(requiresServiceRole(undefined)).toBe(true);
+  });
+
+  it('retorna true para brand sem white_label field', function() {
+    expect(requiresServiceRole({ name: 'Test' })).toBe(true);
+  });
+});
+
+describe('updateBrandConfig', function() {
+  it('retorna ok true quando Edge Function responde com ok', async function() {
+    const mockClient = {
+      functions: {
+        invoke: vi.fn().mockResolvedValue({ data: { ok: true }, error: null }),
+      },
+    };
+    var result = await updateBrandConfig(mockClient, { modules: {} });
+    expect(result.ok).toBe(true);
+    expect(result.error).toBeUndefined();
+    expect(mockClient.functions.invoke).toHaveBeenCalledWith('update-brand-config', {
+      body: { brand_config: { modules: {} } },
+    });
+  });
+
+  it('retorna ok false quando Edge Function retorna erro', async function() {
+    const mockClient = {
+      functions: {
+        invoke: vi.fn().mockResolvedValue({ data: null, error: new Error('network error') }),
+      },
+    };
+    var result = await updateBrandConfig(mockClient, { modules: {} });
+    expect(result.ok).toBe(false);
+    expect(result.error).toBe('network error');
+  });
+
+  it('retorna ok false quando Edge Function retorna data.error', async function() {
+    const mockClient = {
+      functions: {
+        invoke: vi.fn().mockResolvedValue({ data: { error: 'missing_brand_config' }, error: null }),
+      },
+    };
+    var result = await updateBrandConfig(mockClient, null);
+    expect(result.ok).toBe(false);
+    expect(result.error).toBe('missing_brand_config');
+  });
+
+  it('retorna ok false quando invoke lanca excecao', async function() {
+    const mockClient = {
+      functions: {
+        invoke: vi.fn().mockRejectedValue(new Error('timeout')),
+      },
+    };
+    var result = await updateBrandConfig(mockClient, { modules: {} });
+    expect(result.ok).toBe(false);
+    expect(result.error).toBe('timeout');
   });
 });

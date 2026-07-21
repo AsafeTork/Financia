@@ -89,19 +89,19 @@ function LogoTabContent({ brand, bs, brandColor, applyLogoScheme, toast }) {
         <div className="flex gap-2 mb-3">
           <button onClick={bs.copyPrompt}
             className="text-xs font-semibold px-3 py-1.5 rounded-lg transition hover:opacity-80 flex items-center gap-1.5"
-            style={{background:'var(--bg-subtle)', color:'var(--text-sub)', border:'1px solid var(--border)'}}>
+            style={{background:'var(--bg-subtle, #f1f5f9)', color:'var(--text-sub, #475569)', border:'1px solid var(--border, #e2e8f0)'}}>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
             Copiar doc
           </button>
           <button onClick={bs.copyCurrentJSON}
             className="text-xs font-semibold px-3 py-1.5 rounded-lg transition hover:opacity-80 flex items-center gap-1.5"
-            style={{background:'var(--bg-subtle)', color:'var(--text-sub)', border:'1px solid var(--border)'}}>
+            style={{background:'var(--bg-subtle, #f1f5f9)', color:'var(--text-sub, #475569)', border:'1px solid var(--border, #e2e8f0)'}}>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
             Copiar JSON
           </button>
         </div>
       )}
-      <div className="flex flex-wrap items-center gap-1 border-b pb-1 mb-4" style={{borderColor:'var(--border)'}}>
+      <div className="flex flex-wrap items-center gap-1 border-b pb-1 mb-4" style={{borderColor:'var(--border, #e2e8f0)'}}>
         <button onClick={() => setActiveTab('_global')}
           className={'text-xs font-semibold px-3 py-2 rounded-t-lg transition ' + (activeTab === '_global' ? 'border-b-2' : 'opacity-50')}
           style={activeTab === '_global' ? {borderColor:brandColor, color:brandColor} : {}}>
@@ -133,22 +133,22 @@ function LogoTabContent({ brand, bs, brandColor, applyLogoScheme, toast }) {
           {LOGO_ELEMENTS.map(el => (
             <div key={el.id} className="flex items-center gap-1.5">
               <div className="w-2.5 h-2.5 rounded flex-shrink-0" style={{background: lps.form[el.id] || '#000'}} />
-              <label htmlFor={"input-" + el.id} className="text-[10px] font-medium min-w-[44px]" style={{color:'var(--text-sub)'}}>{el.label}</label>
+              <label htmlFor={"input-" + el.id} className="text-[10px] font-medium min-w-[44px]" style={{color:'var(--text-sub, #475569)'}}>{el.label}</label>
               <input type="color" value={lps.form[el.id] || '#000000'} onChange={e => lps.setColor(el.id, e.target.value)}
                 className="w-7 h-7 rounded-lg cursor-pointer border-0 p-0.5 flex-shrink-0" />
               <input id={"input-" + el.id} type="text" value={lps.form[el.id] || ''} onChange={e => lps.setColor(el.id, e.target.value)}
                 className="flex-1 min-w-0 rounded-lg px-1.5 py-1 text-[10px] font-mono focus:outline-none"
-                style={{background:'var(--bg-input)', color:'var(--text-main)', border:'1px solid var(--border)'}} />
+                style={{background:'var(--bg-input, #f1f5f9)', color:'var(--text-main, #0f172a)', border:'1px solid var(--border, #e2e8f0)'}} />
             </div>
           ))}
         </div>
       </div>
 
       <div className="flex flex-col gap-1 mb-3">
-        <label htmlFor="logo-json" className="text-[10px] font-medium" style={{color:'var(--text-sub)'}}>JSON</label>
+        <label htmlFor="logo-json" className="text-[10px] font-medium" style={{color:'var(--text-sub, #475569)'}}>JSON</label>
         <textarea id="logo-json" value={lps.jsonInput} onChange={e => lps.applyJson(e.target.value)}
           rows={2} className="rounded-lg px-2 py-1 text-[10px] font-mono resize-none focus:outline-none"
-          style={{background:'var(--bg-input)', color:'var(--text-main)', border:'1px solid var(--border)'}} />
+          style={{background:'var(--bg-input, #f1f5f9)', color:'var(--text-main, #0f172a)', border:'1px solid var(--border, #e2e8f0)'}} />
       </div>
 
       <div className="flex gap-2">
@@ -159,13 +159,13 @@ function LogoTabContent({ brand, bs, brandColor, applyLogoScheme, toast }) {
         </button>
         <button onClick={doReset}
           className="text-xs font-semibold px-3 py-2 rounded-xl transition hover:opacity-80 min-h-[36px]"
-          style={{background:'var(--bg-subtle)', color:'var(--text-sub)', border:'1px solid var(--border)'}}>
+          style={{background:'var(--bg-subtle, #f1f5f9)', color:'var(--text-sub, #475569)', border:'1px solid var(--border, #e2e8f0)'}}>
         {isGlobal ? 'Original' : 'Usar global'}
         </button>
       </div>
 
       {!isGlobal && !lps.hasCustom && (
-        <div className="mt-2 rounded-lg p-2 text-[10px]" style={{background:'var(--bg-subtle)', border:'1px solid var(--border)', color:'var(--text-sub)'}}>
+        <div className="mt-2 rounded-lg p-2 text-[10px]" style={{background:'var(--bg-subtle, #f1f5f9)', border:'1px solid var(--border, #e2e8f0)', color:'var(--text-sub, #475569)'}}>
           Usando a logo global. Personalize e salve para criar uma versao propria.
         </div>
       )}
@@ -199,23 +199,23 @@ export default function BrandStudioView({ brand, planInfo, onSave, toast, onNav 
       <PageHead icon="M4 16l4.586-4.586a2 2 0 012.828 0L16 16" title="Brand Studio" sub="Edite a logo global, personalize por plano e gerencie as cores" />
 
       <Card className="p-4">
-        <p className="text-xs font-semibold uppercase tracking-wide mb-2" style={{color:'var(--text-muted)'}}>Preview do estado atual</p>
+        <p className="text-xs font-semibold uppercase tracking-wide mb-2" style={{color:'var(--text-muted, #94a3b8)'}}>Preview do estado atual</p>
         <PreviewGeral brandConfig={bs.brandConfig} brandColor={brandColor} />
         <div className="flex gap-2 mt-2">
           <button onClick={bs.undo} disabled={bs.historyIndex <= 0}
             className="text-xs px-2.5 py-1.5 rounded-lg disabled:opacity-30 transition"
-            style={{background:'var(--bg-input)', color:'var(--text-sub)'}}>
+            style={{background:'var(--bg-input, #f1f5f9)', color:'var(--text-sub, #475569)'}}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 10h13a4 4 0 010 8H7" /><path d="M7 6l-4 4 4 4" /></svg> Desfazer
           </button>
           <button onClick={bs.redo} disabled={bs.historyIndex >= bs.history.length - 1}
             className="text-xs px-2.5 py-1.5 rounded-lg disabled:opacity-30 transition"
-            style={{background:'var(--bg-input)', color:'var(--text-sub)'}}>
+            style={{background:'var(--bg-input, #f1f5f9)', color:'var(--text-sub, #475569)'}}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 10H8a4 4 0 000 8h10" /><path d="M17 6l4 4-4 4" /></svg> Refazer
           </button>
         </div>
       </Card>
 
-      <div className="flex border-b gap-1" role="tablist" aria-label="Navegacao principal" style={{borderColor:'var(--border)'}}>
+      <div className="flex border-b gap-1" role="tablist" aria-label="Navegacao principal" style={{borderColor:'var(--border, #e2e8f0)'}}>
         {NAV_TABS.map(s => {
           const active = section === s.key;
           return (

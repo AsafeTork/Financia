@@ -7,7 +7,7 @@ export { default as PlanTabsEditor } from './PlanTabsEditor.jsx';
 export { default as ModuleEditor } from './ModuleEditor.jsx';
 export { validateAgainstModules, getSchema, normalizeModules, getDefaults, mergeWithDefaults } from './schemaRegistry.js';
 export { default as previewValidate } from './previewValidator.js';
-export { default as processResponse, requiresServiceRole } from './responseProcessor.js';
+export { default as processResponse, requiresServiceRole, updateBrandConfig } from './responseProcessor.js';
 export { enterPreviewMode, exitPreviewMode } from '../../shared/hooks/useBrandAppearance.js';
 export { listPresets, getPreset, savePreset, deletePreset, duplicatePreset, toggleFavoritePreset, exportPreset, importPreset, getPresetCategories, OFFICIAL_PRESETS, loadPresetsFromDb } from './presets.js';
 export { getPlanTheme, getPlanThemeConfig, listPlanThemes, resolveBrandForPlan, applyPlanOverride } from './planThemes.js';

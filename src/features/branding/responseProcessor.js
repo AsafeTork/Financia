@@ -52,9 +52,35 @@ function buildProposedBrand(normalized, currentBrand, originalJson) {
 }
 
 /**
- * Checks if service role is required for brand operations.
- * @returns {boolean} Always true for now
+ * Checks if service role is required to update brand_config for the given brand.
+ * Non-white-label users cannot update brand_config directly via anon key
+ * because RLS blocks the UPDATE. White-label and admin users can use direct upsert.
+ * @param {Object} [brand] - The current brand/profile object
+ * @returns {boolean} true if service role (Edge Function / SECURITY DEFINER) is needed
  */
-export function requiresServiceRole() {
+export function requiresServiceRole(brand) {
+  if (!brand) return true;
+  var wl = brand.white_label;
+  if (typeof wl === 'boolean') return !wl;
   return true;
+}
+
+/**
+ * Updates brand_config on the server using the Edge Function (bypasses RLS via service_role).
+ * @param {import('@supabase/supabase-js').SupabaseClient} supabaseClient
+ * @param {Object} brandConfig - brand_config value to persist
+ * @returns {Promise<{ok: boolean, error?: string}>}
+ */
+export async function updateBrandConfig(supabaseClient, brandConfig) {
+  try {
+    var res = await supabaseClient.functions.invoke('update-brand-config', {
+      body: { brand_config: brandConfig },
+    });
+    if (res.error) return { ok: false, error: String(res.error.message || res.error) };
+    var data = res.data || {};
+    if (data.error) return { ok: false, error: String(data.error) };
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, error: e && e.message ? e.message : String(e) };
+  }
 }

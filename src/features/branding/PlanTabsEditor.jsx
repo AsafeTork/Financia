@@ -64,7 +64,7 @@ export default function PlanTabsEditor({ brandConfig, onSavePlan, onCopyJSON, on
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex border-b gap-1" style={{borderColor:'var(--border)'}} role="tablist" aria-label="Planos">
+      <div className="flex border-b gap-1" style={{borderColor:'var(--border, #e2e8f0)'}} role="tablist" aria-label="Planos">
         {Object.keys(PLAN_META_LOCAL).map(k => {
           const meta = PLAN_META_LOCAL[k];
           const active = activePlan === k;
@@ -80,28 +80,28 @@ export default function PlanTabsEditor({ brandConfig, onSavePlan, onCopyJSON, on
         <div className="flex-1 min-w-[8px]" />
         <button onClick={onCopyDocs}
           className="text-xs font-semibold px-3 py-1.5 rounded-lg transition hover:opacity-80 flex items-center gap-1.5"
-          style={{background:'var(--bg-subtle)', color:'var(--text-sub)', border:'1px solid var(--border)'}}>
+          style={{background:'var(--bg-subtle, #f1f5f9)', color:'var(--text-sub, #475569)', border:'1px solid var(--border, #e2e8f0)'}}>
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
           Copiar doc
         </button>
         <button onClick={onCopyJSON}
           className="text-xs font-semibold px-3 py-1.5 rounded-lg transition hover:opacity-80 flex items-center gap-1.5"
-          style={{background:'var(--bg-subtle)', color:'var(--text-sub)', border:'1px solid var(--border)'}}>
+          style={{background:'var(--bg-subtle, #f1f5f9)', color:'var(--text-sub, #475569)', border:'1px solid var(--border, #e2e8f0)'}}>
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
           Copiar JSON
         </button>
       </div>
 
       <div>
-        <p className="text-sm font-semibold mb-1" style={{color:'var(--text-main)'}}>Paleta de cores — {PLAN_META_LOCAL[activePlan].label}</p>
-        <p className="text-xs mb-4" style={{color:'var(--text-muted)'}}>Essas cores aparecem nos elementos do sistema para usuarios do plano {PLAN_META_LOCAL[activePlan].label}.</p>
+        <p className="text-sm font-semibold mb-1" style={{color:'var(--text-main, #0f172a)'}}>Paleta de cores — {PLAN_META_LOCAL[activePlan].label}</p>
+        <p className="text-xs mb-4" style={{color:'var(--text-muted, #94a3b8)'}}>Essas cores aparecem nos elementos do sistema para usuarios do plano {PLAN_META_LOCAL[activePlan].label}.</p>
         <div className="flex items-center gap-3 mb-5">
           {palPreview.map((c, i) => {
             const labels = ['Primaria', 'Secundaria', 'Destaque'];
             return (
               <div key={i} className="flex flex-col items-center gap-1">
-                <div className="w-10 h-10 rounded-xl border-2" style={{background: c, borderColor: 'var(--border)'}} />
-                <span className="text-[9px] font-medium" style={{color:'var(--text-muted)'}}>{labels[i]}</span>
+                <div className="w-10 h-10 rounded-xl border-2" style={{background: c, borderColor: 'var(--border, #e2e8f0)'}} />
+                <span className="text-[9px] font-medium" style={{color:'var(--text-muted, #94a3b8)'}}>{labels[i]}</span>
               </div>
             );
           })}
@@ -114,14 +114,14 @@ export default function PlanTabsEditor({ brandConfig, onSavePlan, onCopyJSON, on
       </div>
 
       <div className="flex flex-col gap-2">
-        <label htmlFor="plan-json-input" className="text-xs font-medium" style={{color:'var(--text-sub)'}}>JSON</label>
+        <label htmlFor="plan-json-input" className="text-xs font-medium" style={{color:'var(--text-sub, #475569)'}}>JSON</label>
         <textarea id="plan-json-input" value={jsonInput} onChange={e => applyJson(e.target.value)}
           rows={4} className="rounded-xl px-3 py-2 text-[11px] font-mono resize-none focus:outline-none"
-          style={{background:'var(--bg-input)', color:'var(--text-main)', border:'1px solid var(--border)'}} />
+          style={{background:'var(--bg-input, #f1f5f9)', color:'var(--text-main, #0f172a)', border:'1px solid var(--border, #e2e8f0)'}} />
       </div>
 
-      <div className="border-t pt-4" style={{borderColor:'var(--border)'}}>
-        <p className="text-xs font-semibold uppercase tracking-wide mb-2" style={{color:'var(--text-muted)'}}>Preview — {PLAN_META_LOCAL[activePlan].label}</p>
+      <div className="border-t pt-4" style={{borderColor:'var(--border, #e2e8f0)'}}>
+        <p className="text-xs font-semibold uppercase tracking-wide mb-2" style={{color:'var(--text-muted, #94a3b8)'}}>Preview — {PLAN_META_LOCAL[activePlan].label}</p>
         <div className="rounded-2xl overflow-hidden" style={{background: form.bgPage || '#f5f5f0', color: form.textMain || '#0f172a'}}>
           <div className="flex items-center justify-between px-4 py-2.5" style={{background: form.primary || '#002f59', color:'#ffffff'}}>
             <div className="flex items-center gap-2">
@@ -189,13 +189,13 @@ function ColorInput({ label, value, onChange, desc }) {
   return (
     <div className="flex flex-col gap-1">
       <div className="flex items-center justify-between">
-        <label htmlFor={inputId} className="text-xs font-medium" style={{color:'var(--text-sub)'}}>{label}</label>
-        {desc && <span className="text-[9px]" style={{color:'var(--text-muted)'}}>{desc}</span>}
+        <label htmlFor={inputId} className="text-xs font-medium" style={{color:'var(--text-sub, #475569)'}}>{label}</label>
+        {desc && <span className="text-[9px]" style={{color:'var(--text-muted, #94a3b8)'}}>{desc}</span>}
       </div>
       <div className="flex items-center gap-2">
         <input type="color" id={inputId} value={value || '#000000'} onChange={e => onChange(e.target.value)} className="w-8 h-8 rounded-lg cursor-pointer border-0 p-0.5 flex-shrink-0" aria-label={label} />
         <input type="text" value={value || ''} onChange={e => onChange(e.target.value)}
-          className="flex-1 rounded-xl px-2.5 py-1.5 text-[11px] font-mono focus:outline-none" style={{background:'var(--bg-input)', color:'var(--text-main)', border:'1px solid var(--border)'}} />
+          className="flex-1 rounded-xl px-2.5 py-1.5 text-[11px] font-mono focus:outline-none" style={{background:'var(--bg-input, #f1f5f9)', color:'var(--text-main, #0f172a)', border:'1px solid var(--border, #e2e8f0)'}} />
       </div>
     </div>
   );

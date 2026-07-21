@@ -110,26 +110,26 @@ export default function LogoSchemes({ brandColor, toast, onApply }) {
         </div>
 
         <div className="flex-1 flex flex-col gap-3">
-          <p className="text-sm font-semibold" style={{color:'var(--text-main)'}}>Cores da logo</p>
-          <p className="text-xs" style={{color:'var(--text-muted)'}}>Edite a cor de cada elemento da logo. As alteracoes aparecem em tempo real.</p>
+          <p className="text-sm font-semibold" style={{color:'var(--text-main, #0f172a)'}}>Cores da logo</p>
+          <p className="text-xs" style={{color:'var(--text-muted, #94a3b8)'}}>Edite a cor de cada elemento da logo. As alteracoes aparecem em tempo real.</p>
 
           {LOGO_ELEMENTS.map(el => (
             <div key={el.id} className="flex items-center gap-3">
               <div className="w-3 h-3 rounded flex-shrink-0" style={{background: colors[el.id]}} />
-              <label htmlFor={`logo-color-${el.id}`} className="text-xs font-medium min-w-[64px]" style={{color:'var(--text-sub)'}}>{el.label}</label>
+              <label htmlFor={`logo-color-${el.id}`} className="text-xs font-medium min-w-[64px]" style={{color:'var(--text-sub, #475569)'}}>{el.label}</label>
               <input type="color" id={`logo-color-${el.id}`} value={colors[el.id]} onChange={e => setColor(el.id, e.target.value)}
                 className="w-9 h-9 rounded-lg cursor-pointer border-0 p-0.5 flex-shrink-0" aria-label={el.label} />
               <input type="text" value={colors[el.id]} onChange={e => setColor(el.id, e.target.value)}
                 className="flex-1 rounded-xl px-2.5 py-1.5 text-xs font-mono focus:outline-none"
-                style={{background:'var(--bg-input)', color:'var(--text-main)', border:'1px solid var(--border)'}} />
+                style={{background:'var(--bg-input, #f1f5f9)', color:'var(--text-main, #0f172a)', border:'1px solid var(--border, #e2e8f0)'}} />
             </div>
           ))}
 
           <div className="flex flex-col gap-2 mb-2">
-            <label htmlFor="logo-json-input" className="text-xs font-medium" style={{color:'var(--text-sub)'}}>JSON</label>
+            <label htmlFor="logo-json-input" className="text-xs font-medium" style={{color:'var(--text-sub, #475569)'}}>JSON</label>
             <textarea id="logo-json-input" value={jsonInput} onChange={e => applyJson(e.target.value)}
               rows={3} className="rounded-xl px-3 py-2 text-[11px] font-mono resize-none focus:outline-none"
-              style={{background:'var(--bg-input)', color:'var(--text-main)', border:'1px solid var(--border)'}} />
+              style={{background:'var(--bg-input, #f1f5f9)', color:'var(--text-main, #0f172a)', border:'1px solid var(--border, #e2e8f0)'}} />
           </div>
 
           <div className="flex gap-2 mt-1">
@@ -140,20 +140,20 @@ export default function LogoSchemes({ brandColor, toast, onApply }) {
             </button>
             <button onClick={resetToOriginal}
               className="text-xs font-medium px-3 py-2 rounded-xl transition hover:opacity-80"
-              style={{background:'var(--bg-subtle)', color:'var(--text-sub)', border:'1px solid var(--border)'}}>
+              style={{background:'var(--bg-subtle, #f1f5f9)', color:'var(--text-sub, #475569)', border:'1px solid var(--border, #e2e8f0)'}}>
               Original
             </button>
           </div>
         </div>
       </div>
 
-      <div className="border-t pt-4 flex items-end gap-3" style={{borderColor:'var(--border)'}}>
+      <div className="border-t pt-4 flex items-end gap-3" style={{borderColor:'var(--border, #e2e8f0)'}}>
         <div className="flex-1 flex flex-col gap-1">
-          <label htmlFor="scheme-name" className="text-xs font-medium" style={{color:'var(--text-sub)'}}>Nome do esquema</label>
+          <label htmlFor="scheme-name" className="text-xs font-medium" style={{color:'var(--text-sub, #475569)'}}>Nome do esquema</label>
           <input id="scheme-name" value={schemeName} onChange={e => setSchemeName(e.target.value)}
             placeholder="Ex.: Natal, Escuro, Corporativo..."
             className="rounded-xl px-3 py-2.5 text-sm focus:outline-none"
-            style={{background:'var(--bg-input)', color:'var(--text-main)', border:'1px solid var(--border)'}} />
+            style={{background:'var(--bg-input, #f1f5f9)', color:'var(--text-main, #0f172a)', border:'1px solid var(--border, #e2e8f0)'}} />
         </div>
         <button onClick={saveScheme}
           className="text-xs font-semibold px-5 py-2.5 rounded-xl text-white transition hover:opacity-90 min-h-[44px] whitespace-nowrap"
@@ -162,14 +162,14 @@ export default function LogoSchemes({ brandColor, toast, onApply }) {
         </button>
       </div>
 
-      <div className="border-t pt-4" style={{borderColor:'var(--border)'}}>
-        <p className="text-xs font-semibold mb-3" style={{color:'var(--text-muted)'}}>Historico de esquemas</p>
+      <div className="border-t pt-4" style={{borderColor:'var(--border, #e2e8f0)'}}>
+        <p className="text-xs font-semibold mb-3" style={{color:'var(--text-muted, #94a3b8)'}}>Historico de esquemas</p>
         {schemes.length === 0 && (
-          <p className="text-xs text-center py-6" style={{color:'var(--text-muted)'}}>Nenhum esquema salvo ainda.</p>
+          <p className="text-xs text-center py-6" style={{color:'var(--text-muted, #94a3b8)'}}>Nenhum esquema salvo ainda.</p>
         )}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           <div className="rounded-xl p-3 flex items-center gap-3 cursor-pointer transition hover:opacity-80"
-            style={{background:'var(--bg-subtle)', border:`2px solid ${brandColor}`}}
+            style={{background:'var(--bg-subtle, #f1f5f9)', border:`2px solid ${brandColor}`}}
             onClick={() => { resetToOriginal(); applyColors(OFFICIAL_LOGO_COLORS); }}>
             <svg width="48" height="48" viewBox="0 0 400 400" className="flex-shrink-0 rounded-lg overflow-hidden bg-white">
               <g transform="translate(34,200)"><rect width="71" height="125" rx="10" fill={OFFICIAL_LOGO_COLORS.blue} /></g>
@@ -178,8 +178,8 @@ export default function LogoSchemes({ brandColor, toast, onApply }) {
               <g transform="translate(169,126)"><path d={buildCheckPath(197, 148)} fill={OFFICIAL_LOGO_COLORS.check} /></g>
             </svg>
             <div className="min-w-0 flex-1">
-              <p className="text-xs font-semibold truncate" style={{color:'var(--text-main)'}}>Original</p>
-              <p className="text-[10px]" style={{color:'var(--text-muted)'}}>Cores padrao — aplicado</p>
+              <p className="text-xs font-semibold truncate" style={{color:'var(--text-main, #0f172a)'}}>Original</p>
+              <p className="text-[10px]" style={{color:'var(--text-muted, #94a3b8)'}}>Cores padrao — aplicado</p>
             </div>
           </div>
 
@@ -188,7 +188,7 @@ export default function LogoSchemes({ brandColor, toast, onApply }) {
               && s.colors.teal === colors.teal && s.colors.check === colors.check;
             return (
               <div key={s.id} className={`rounded-xl p-3 flex items-center gap-3 transition hover:opacity-80 ${isActive ? 'ring-2' : ''}`}
-                style={{background:'var(--bg-subtle)', border:'1px solid var(--border)', '--tw-ring-color': brandColor}}
+                style={{background:'var(--bg-subtle, #f1f5f9)', border:'1px solid var(--border, #e2e8f0)', '--tw-ring-color': brandColor}}
                 onClick={() => restoreScheme(s)}>
                 <svg width="48" height="48" viewBox="0 0 400 400" className="flex-shrink-0 rounded-lg overflow-hidden bg-white">
                   <g transform="translate(34,200)"><rect width="71" height="125" rx="10" fill={s.colors.blue || OFFICIAL_LOGO_COLORS.blue} /></g>
@@ -197,13 +197,13 @@ export default function LogoSchemes({ brandColor, toast, onApply }) {
                   <g transform="translate(169,126)"><path d={buildCheckPath(197, 148)} fill={s.colors.check || OFFICIAL_LOGO_COLORS.check} /></g>
                 </svg>
                 <div className="min-w-0 flex-1">
-                  <p className="text-xs font-semibold truncate" style={{color:'var(--text-main)'}}>{s.name}</p>
-                  <p className="text-[10px]" style={{color:'var(--text-muted)'}}>{new Date(s.createdAt).toLocaleDateString('pt-BR')}</p>
+                  <p className="text-xs font-semibold truncate" style={{color:'var(--text-main, #0f172a)'}}>{s.name}</p>
+                  <p className="text-[10px]" style={{color:'var(--text-muted, #94a3b8)'}}>{new Date(s.createdAt).toLocaleDateString('pt-BR')}</p>
                 </div>
 <div className="flex gap-1 flex-shrink-0">
                   <button onClick={e => { e.stopPropagation(); applyColors(s.colors); }}
                     className="w-7 h-7 rounded-lg flex items-center justify-center text-xs hover:opacity-70"
-                    style={{background:'var(--brand-soft)', color: brandColor}}
+                    style={{background:'var(--brand-soft, #ccfbf1)', color: brandColor}}
                     aria-label={`Aplicar esquema ${s.name}`}>
                     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 13l4 4L19 7" /></svg>
                   </button>

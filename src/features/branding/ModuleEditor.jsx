@@ -35,7 +35,7 @@ export default function ModuleEditor({ mod, brandConfig, onApply, brandColor }) 
             <div key={key}>
               <button onClick={() => setExpandedField(expandedField === key ? null : key)}
                 className="flex items-center gap-2 text-xs font-semibold w-full text-left px-3 py-2 rounded-lg transition hover:opacity-80"
-                style={{background:'var(--bg-input)', color:'var(--text-sub)', border:'1px solid var(--border)'}}
+                style={{background:'var(--bg-input, #f1f5f9)', color:'var(--text-sub, #475569)', border:'1px solid var(--border, #e2e8f0)'}}
                 aria-expanded={expandedField === key}
                 aria-controls={`module-fields-${key}`}
                 id={`module-toggle-${key}`}>
@@ -80,13 +80,13 @@ function renderField(path, prop, label, value, onChange) {
   if (isColor) {
     return (
       <div key={path} className="flex items-center gap-2">
-        <label htmlFor={fieldId} className="text-[11px] font-medium min-w-[80px]" style={{color:'var(--text-sub)'}}>{labelFromKey(label)}</label>
+        <label htmlFor={fieldId} className="text-[11px] font-medium min-w-[80px]" style={{color:'var(--text-sub, #475569)'}}>{labelFromKey(label)}</label>
         <input type="color" id={fieldId} value={value || '#000000'} onChange={e => onChange(e.target.value)}
           className="w-8 h-8 rounded-lg cursor-pointer border-0 p-0.5 flex-shrink-0" />
         <input type="text" value={value || ''} onChange={e => onChange(e.target.value)}
           placeholder={'#' + '000000'}
           className="flex-1 rounded-lg px-2.5 py-1.5 text-[11px] font-mono focus:outline-none"
-          style={{background:'var(--bg-input)', color:'var(--text-main)', border:'1px solid var(--border)'}} />
+          style={{background:'var(--bg-input, #f1f5f9)', color:'var(--text-main, #0f172a)', border:'1px solid var(--border, #e2e8f0)'}} />
       </div>
     );
   }
@@ -95,8 +95,8 @@ function renderField(path, prop, label, value, onChange) {
     return (
       <div key={path} className="flex flex-col gap-1">
         <div className="flex items-center justify-between">
-          <label htmlFor={fieldId} className="text-[11px] font-medium" style={{color:'var(--text-sub)'}}>{labelFromKey(label)}</label>
-          <span className="text-[10px] font-mono" style={{color:'var(--text-muted)'}}>{value !== undefined ? value : '-'}</span>
+          <label htmlFor={fieldId} className="text-[11px] font-medium" style={{color:'var(--text-sub, #475569)'}}>{labelFromKey(label)}</label>
+          <span className="text-[10px] font-mono" style={{color:'var(--text-muted, #94a3b8)'}}>{value !== undefined ? value : '-'}</span>
         </div>
         <input type="range" id={fieldId}
           min={prop.minimum !== undefined ? prop.minimum : 0}
@@ -104,7 +104,7 @@ function renderField(path, prop, label, value, onChange) {
           step={prop.type === 'integer' ? 1 : 0.01}
           value={value !== undefined ? value : 0}
           onChange={e => onChange(prop.type === 'integer' ? parseInt(e.target.value, 10) : parseFloat(e.target.value))}
-          className="w-full accent-current" style={{color: 'var(--brand)'}} />
+          className="w-full accent-current" style={{color: 'var(--brand, #0f3d3e)'}} />
       </div>
     );
   }
@@ -123,14 +123,14 @@ function renderField(path, prop, label, value, onChange) {
     const uploadId = `upload_${path.replace(/\./g, '_')}`;
     return (
       <div key={path} className="flex flex-col gap-1">
-        <label htmlFor={fieldId} className="text-[11px] font-medium" style={{color:'var(--text-sub)'}}>{labelFromKey(label)}</label>
+        <label htmlFor={fieldId} className="text-[11px] font-medium" style={{color:'var(--text-sub, #475569)'}}>{labelFromKey(label)}</label>
         <div className="flex items-center gap-2">
-          {value && <img src={value} alt="" className="w-9 h-9 rounded-lg object-cover flex-shrink-0" style={{border:'1px solid var(--border)'}} />}
+          {value && <img src={value} alt="" className="w-9 h-9 rounded-lg object-cover flex-shrink-0" style={{border:'1px solid var(--border, #e2e8f0)'}} />}
           <input type="text" id={fieldId} value={value || ''} onChange={e => onChange(e.target.value)}
             placeholder="URL ou upload"
             className="flex-1 min-w-0 rounded-lg px-2.5 py-1.5 text-[11px] font-mono focus:outline-none"
-            style={{background:'var(--bg-input)', color:'var(--text-main)', border:'1px solid var(--border)'}} />
-          <label htmlFor={uploadId} className="text-[10px] font-medium px-2.5 py-1.5 rounded-lg cursor-pointer whitespace-nowrap hover:opacity-80 transition" style={{background:'var(--brand-soft)', color:'var(--brand)'}}>
+            style={{background:'var(--bg-input, #f1f5f9)', color:'var(--text-main, #0f172a)', border:'1px solid var(--border, #e2e8f0)'}} />
+          <label htmlFor={uploadId} className="text-[10px] font-medium px-2.5 py-1.5 rounded-lg cursor-pointer whitespace-nowrap hover:opacity-80 transition" style={{background:'var(--brand-soft, #ccfbf1)', color:'var(--brand, #0f3d3e)'}}>
             Upload
             <input type="file" id={uploadId} accept="image/*" onChange={handleUpload} className="hidden" />
           </label>
@@ -143,9 +143,9 @@ function renderField(path, prop, label, value, onChange) {
   if (prop.type === 'boolean') {
     return (
       <div key={path} className="flex items-center gap-2">
-        <label className="text-[11px] font-medium flex items-center gap-2 cursor-pointer min-h-[36px]" style={{color:'var(--text-sub)'}}>
+        <label className="text-[11px] font-medium flex items-center gap-2 cursor-pointer min-h-[36px]" style={{color:'var(--text-sub, #475569)'}}>
           <input type="checkbox" checked={!!value} onChange={e => onChange(e.target.checked)}
-            className="w-4 h-4 rounded accent-current" style={{color: 'var(--brand)'}} />
+            className="w-4 h-4 rounded accent-current" style={{color: 'var(--brand, #0f3d3e)'}} />
           {labelFromKey(label)}
         </label>
       </div>
@@ -154,11 +154,11 @@ function renderField(path, prop, label, value, onChange) {
 
   return (
     <div key={path} className="flex flex-col gap-1">
-      <label htmlFor={fieldId} className="text-[11px] font-medium" style={{color:'var(--text-sub)'}}>{labelFromKey(label)}</label>
+      <label htmlFor={fieldId} className="text-[11px] font-medium" style={{color:'var(--text-sub, #475569)'}}>{labelFromKey(label)}</label>
       <input type="text" id={fieldId} value={value !== undefined ? value : ''} onChange={e => onChange(e.target.value)}
         placeholder={labelFromKey(label)}
         className="rounded-lg px-2.5 py-1.5 text-[11px] font-mono focus:outline-none"
-        style={{background:'var(--bg-input)', color:'var(--text-main)', border:'1px solid var(--border)'}} />
+        style={{background:'var(--bg-input, #f1f5f9)', color:'var(--text-main, #0f172a)', border:'1px solid var(--border, #e2e8f0)'}} />
     </div>
   );
 }

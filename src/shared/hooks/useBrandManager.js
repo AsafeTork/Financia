@@ -2,6 +2,7 @@ import { sb } from '../../lib/supabase.js';
 import { ldb } from '../../lib/dexie.js';
 import { now } from '../../lib/utils.js';
 import { planVisualDefaults } from '../../lib/constants.js';
+import { updateBrandConfig } from '../../features/branding/responseProcessor.js';
 
 export function useBrandManager(props) {
   var { session, toast, setBrand } = props;
@@ -65,6 +66,13 @@ export function useBrandManager(props) {
         if (!res.error) await ldb.profiles.update(userId, {_synced:1});
         else toast('Não sincronizado — tentaremos em breve', 'warning');
       } catch(_e) { toast('Não sincronizado — tentaremos em breve', 'warning'); }
+      // Sync brand_config via Edge Function (bypasses RLS for non-white-label users)
+      if (brandConfig !== null && brandConfig !== undefined) {
+        var bcResult = await updateBrandConfig(sb, brandConfig);
+        if (!bcResult.ok) {
+          console.warn('brand_config sync failed (non-critical):', bcResult.error);
+        }
+      }
     }
   };
 

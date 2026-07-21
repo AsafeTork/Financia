@@ -18,6 +18,7 @@ export const PALETTE_DEFAULTS = {
   warning: '#f59e0b',
   danger: '#dc2626',
   info: '#2563eb',
+  mode: 'light',
 };
 
 export const TYPOGRAPHY_DEFAULTS = {
@@ -134,6 +135,7 @@ export const DEFAULT_PALETTE_FIELDS = [
   { key: 'textSub', label: 'Texto secundario', desc: 'Subtitulos' },
   { key: 'textMuted', label: 'Texto muted', desc: 'Descricoes' },
   { key: 'border', label: 'Borda', desc: 'Bordas dos elementos' },
+  { key: 'borderMd', label: 'Borda media', desc: 'Bordas secundarias' },
   { key: 'success', label: 'Sucesso', desc: 'Indicador positivo' },
   { key: 'warning', label: 'Alerta', desc: 'Indicador atencao' },
   { key: 'danger', label: 'Erro', desc: 'Indicador negativo' },
