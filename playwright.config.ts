@@ -1,4 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
+import fs from 'fs';
+
+const storageState = fs.existsSync('e2e/storageState.json') ? 'e2e/storageState.json' : undefined;
 
 export default defineConfig({
   testDir: './e2e',
@@ -10,7 +13,7 @@ export default defineConfig({
   use: {
     baseURL: 'http://localhost:5173',
     trace: 'on-first-retry',
-    storageState: 'e2e/storageState.json',
+    storageState,
   },
   projects: [
     {
