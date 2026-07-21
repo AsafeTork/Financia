@@ -306,7 +306,7 @@ Raiz contém apenas: `CLAUDE.md`, `README.md`.
 
 **Documentos:**
 - `docs/ARCHITECTURE.md` — diretórios corrigidos (removido `design-system/`, `hooks/`, `context/`; adicionado `core/`, `routes/`; `db.js` → `dexie.js`; test count 1100+ → 640+)
-- `docs/IMPLEMENTATION_ORDER.md` — status das 7 fases atualizado para VALIDADAS (alinhado com EXECUTION_STATE.md checkpoint_007); version 2.1 → 2.2
+- `docs/IMPLEMENTATION_ORDER.md` — F3/F5/F6/F7 mantidos como PENDENTE (EXECUTION_STATE.md pode estar incorreto; requer verificação real); version 2.1 → 2.2
 
 ### Etapa 6: Simplificar CLAUDE.md (45 min)
 
@@ -419,7 +419,7 @@ Raiz contém apenas: `CLAUDE.md`, `README.md`.
 
 4. **Metadados divergentes:** `WORKSPACE.md` lista EXECUTION_STATE.md como DRAFT, mas o próprio EXECUTION_STATE.md tem cabeçalho APPROVED. Resolvido na reconciliação mas ainda há resquícios.
 
-5. **Status das fases divergente:** `IMPLEMENTATION_ORDER.md` mostra Fase 5 e 6 como pendentes, mas `EXECUTION_STATE.md` checkpoint_006 e checkpoint_007 mostram ambas validadas.
+5. **Status das fases divergente:** `IMPLEMENTATION_ORDER.md` mostra Fase 5 e 6 como pendentes, mas `EXECUTION_STATE.md` checkpoint_006 e checkpoint_007 mostram ambas validadas. **Resolução: mantido PENDENTE no IMPLEMENTATION_ORDER.md** — EXECUTION_STATE.md pode estar incorreto; fases precisam de verificação real antes de marcar como validadas.
 
 ---
 
