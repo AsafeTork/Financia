@@ -300,13 +300,13 @@ Raiz contém apenas: `CLAUDE.md`, `README.md`.
 **Arquivos envolvidos:**
 - `docs/INDEX.md` (novo)
 
-### Etapa 5: Atualizar Documentos de Referência (30 min)
+### Etapa 5: Atualizar Documentos de Referência ✅ (Concluída em 2026-07-20)
 
-**Objetivo:** Corrigir informações desatualizadas no ARCHITECTURE.md e IMPLEMENTATION_ORDER.md.
+**Resultado:** 2 documentos corrigidos.
 
-**Arquivos envolvidos:**
-- `docs/ARCHITECTURE.md` — corrigir estrutura de diretórios, remover referências a diretórios inexistentes
-- `docs/IMPLEMENTATION_ORDER.md` — atualizar status das fases 5, 6, 7
+**Documentos:**
+- `docs/ARCHITECTURE.md` — diretórios corrigidos (removido `design-system/`, `hooks/`, `context/`; adicionado `core/`, `routes/`; `db.js` → `dexie.js`; test count 1100+ → 640+)
+- `docs/IMPLEMENTATION_ORDER.md` — status das 7 fases atualizado para VALIDADAS (alinhado com EXECUTION_STATE.md checkpoint_007); version 2.1 → 2.2
 
 ### Etapa 6: Simplificar CLAUDE.md (45 min)
 
@@ -347,8 +347,8 @@ Raiz contém apenas: `CLAUDE.md`, `README.md`.
 - [x] Etapa 2: Remover 3 duplicatas da raiz + corrigir falso positivo AI_BRAND_SCHEMA
 - [x] Etapa 3: Arquivar 2 deprecados (PROMPT_UNIVERSAL + AI_CONTEXT)
 - [ ] Etapa 4: Criar `docs/INDEX.md`
-- [ ] Etapa 5: Atualizar `docs/ARCHITECTURE.md`
-- [ ] Etapa 5: Atualizar `docs/IMPLEMENTATION_ORDER.md`
+- [x] Etapa 5: Atualizar `docs/ARCHITECTURE.md` (diretórios, test count)
+- [x] Etapa 5: Atualizar `docs/IMPLEMENTATION_ORDER.md` (status fases, version 2.2)
 - [ ] Etapa 6: Simplificar `CLAUDE.md` (seção 14)
 - [ ] Etapa 7: Corrigir `VALIDATION_MODULE.md` e `CHECKPOINT_AUDITOR.md`
 - [ ] Promover `CHANGELOG_AI.md` de DRAFT para APPROVED

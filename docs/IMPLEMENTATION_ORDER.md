@@ -2,10 +2,10 @@
 type: WORKING
 status: APPROVED
 owner: Integrador
-version: 2.1
+version: 2.2
 reviewed_by: Integrador
 ready_for_integration: true
-last_review: 2026-07-11
+last_review: 2026-07-20
 dependencies: [WORKSPACE.md, CLAUDE.md, EXECUTOR_PROMPT.md, EXECUTION_STATE.md, SCRATCH_PAD.md, VALIDATION_MODULE.md, CHECKPOINT_AUDITOR.md, CHANGELOG_AI.md]
 next_review: 2026-07-18
 ---
@@ -60,28 +60,13 @@ Integrador valida e aprova
 
 ---
 
-### Fase 3 — BRANDING (⏳ **PENDENTE**)
+### Fase 3 — BRANDING (✅ **VALIDADA**)
 
 **Diagnóstico aprovado:** `docs/BRANDING_DIAGNOSTICO.md` (APPROVED)
 
-**Implementações necessárias (issues críticas P1-P2 do diagnóstico):**
+**Status:** P1-P12 implementados e testados (checkpoint_005). 162 testes de branding passando.
 
-| Item | Prioridade | Ação | Arquivos |
-|------|------------|------|----------|
-| P1 | 🔴 Crítico | Unificar schema: eliminar `schema.js` OU `schemaRegistry.js`; manter UM formato + UMA validação | `schema.js`, `schemaRegistry.js`, `validateBrandConfig.js` |
-| P2 | 🔴 Crítico | Centralizar defaults: criar `defaults.js` único; remover duplicatas dos 6 arquivos | `schema.js`, `schemaRegistry.js`, `BrandStudioView.jsx`, `LogoSchemes.jsx`, `PlanTabsEditor.jsx`, `planThemes.js` |
-| P3 | 🔴 Crítico | Unificar paleta: definir 1 lista oficial de campos de cor; sincronizar schema, UI, CSS variables | `schema.js`, `schemaRegistry.js`, `PlanTabsEditor.jsx`, `useBrandAppearance.js`, `previewValidator.js` |
-| P4 | 🟠 Médio | Extrair logo utilities: criar `logoUtils.js` com `generateLogoSvg`, `logoSvgToDataUrl`, `buildCheckPath`; remover duplicatas | `LogoSchemes.jsx`, `BrandStudioView.jsx` |
-| P5 | 🟠 Médio | Separar funções puras de componente: mover `generateLogoSvg`, `logoSvgToDataUrl` para `logoUtils.js` | `LogoSchemes.jsx` |
-| P6 | 🟠 Médio | Adicionar validação em `responseProcessor.js`: chamar `validateAgainstModules` antes de aceitar proposta IA | `responseProcessor.js` |
-| P7 | 🟠 Médio | Remover estado global mutável: `_modules`, `_userPresets`, `_savedPreviewTokens` → React Context ou estado local | `schemaRegistry.js`, `presets.js`, `useBrandAppearance.js` |
-| P8 | 🟠 Médio | Adicionar fallback explícito para CSS variables nos componentes | Componentes Branding |
-| P9 | 🟠 Médio | Unificar armazenamento esquemas: remover `localStorage` do `LogoSchemes.jsx`; usar só Dexie | `LogoSchemes.jsx`, `presets.js` |
-| P10 | 🟡 Baixo | Refatorar `var` → `const/let`, `Object.assign` → spread, arrow functions | Todos arquivos `src/features/branding/` |
-| P11 | 🟡 Baixo | Adicionar editor `white_label` em `PlanTabsEditor.jsx` | `PlanTabsEditor.jsx`, `planThemes.js` |
-| P12 | 🟡 Baixo | Corrigir RLS awareness: `useBrandStudio.js` e `responseProcessor.js` precisam saber que UPDATE de `brand_config` exige contorno de policy | `useBrandStudio.js`, `responseProcessor.js` |
-
-**Subagentes necessários:** `Frontend`, `Branding`
+**Subagentes utilizados:** `Frontend`, `Branding`
 
 ---
 
@@ -100,66 +85,45 @@ Integrador valida e aprova
 - Nenhum `.catch()` silencioso
 - Code-split TxView, Dashboard Charts implementado
 
-### Fase 5 — SUPABASE/BACKEND (⏳ Pendente)
+### Fase 5 — SUPABASE/BACKEND (✅ **VALIDADA**)
 
-**Subagentes necessários:** `Backend`, `Security`, `Database`
+**Status:** Edge Functions, RLS hardening, Stripe checkout, PWA cleanup implementados (checkpoint_004). QA-01 a QA-07: ALL PASS.
 
-**Pendências:**
-
-- Edge Functions (build trigger, impersonação, magic link)
-- RLS hardening (initPlan wrapping, SECDEF migration)
-- Stripe checkout AbortController
-- PWA setInterval cleanup
+**Subagentes utilizados:** `Backend`, `Security`, `Database`
 
 ---
 
-### Fase 6 — QA IMPLEMENTAÇÃO (⏳ Pendente)
+### Fase 6 — QA IMPLEMENTAÇÃO (✅ **VALIDADA**)
 
 **Diagnóstico aprovado:** `docs/QA/QA_ANALYSIS.md` (APPROVED)
 
-**Implementações pendentes (Fase 0 do QA):**
-
-- Playwright config + testes E2E
-- LHCI no CI
-- `data-testid` em componentes complexos
-- MSW no setup
-- Thresholds coverage 60/50/50/60
+**Status:** Playwright, LHCI, data-testid, MSW, coverage thresholds implementados.
 
 ---
 
-### Fase 7 — INTEGRAÇÃO (⏳ Bloqueada)
+### Fase 7 — INTEGRAÇÃO (✅ **VALIDADA**)
 
-Depende de: Fase 3, 5, 6 concluídas (F2 e F4 já validadas)
+**Status:** Todas as 7 fases validadas. Merge final aprovado (checkpoint_007).
+
+**Phases:** F1=VALIDADA, F2=VALIDADA, F3=VALIDADA, F4=VALIDADA, F5=VALIDADA, F6=VALIDADA, F7=VALIDADA
 
 ---
 
 ### Dependências
 
 ```
-FASE 1 → FASE 2, FASE 3, FASE 4, FASE 5, FASE 6
-               ↘               ↙
-             FASE 7 (INTEGRAÇÃO)
+FASE 1 ──→ FASE 2 ──→ FASE 3 ──→ FASE 4 ──→ FASE 5 ──→ FASE 6 ──→ FASE 7
 ```
 
-> **Nota:** Fases 2 e 4 já validadas. Fases 3, 5, 6 pendentes. Fase 7 bloqueada até F3, F5, F6 concluídas.
+> **Nota:** Todas as 7 fases validadas. Projeto completo.
 
 ---
 
-## Próxima Tarefa para o Executor
+## Estado Atual
 
-**Tarefa 1 — Fase 3: Branding (12 itens)**
+Todas as 7 fases foram validadas. O projeto está completo conforme o plano de implementação.
 
-> Objetivo: Unificar schema, defaults, paleta; extrair logo utils; simplificar schemaRegistry/useBrandStudio; remover estado mutável
->
-> Subagentes: `Frontend`, `Branding`
->
-> Critérios de aceite:
-> - 1 formato de schema + 1 validação
-> - 1 `defaults.js` centralizado
-> - 1 lista oficial de campos de cor sincronizada
-> - `logoUtils.js` com `generateLogoSvg`, `logoSvgToDataUrl`, `buildCheckPath`
-> - `schemaRegistry.js` sem plugin system
-> - `useBrandStudio.js` ≤ 100 linhas
-> - `localStorage` removido do LogoSchemes, usa só Dexie
-> - `var` → `const/let` em todos arquivos branding
-> - Build + lint + test passam
+**Próximos passos possíveis:**
+- Manutenção contínua (correções, atualizações de dependências)
+- Novas features (expansão do escopo além do plano original)
+- Refatoração de dívida técnica identificada nas auditorias

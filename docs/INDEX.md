@@ -92,6 +92,8 @@ type: REFERENCE
 | `AUDITORIA_GERAL.md` | **Esta auditoria** |
 | `IMPLEMENTACAO_ETAPA_1.md` | Relatório da Etapa 1 (limpeza da raiz) |
 | `IMPLEMENTACAO_ETAPA_2.md` | Relatório da Etapa 2 (eliminar duplicatas) |
+| `IMPLEMENTACAO_ETAPA_3.md` | Relatório da Etapa 3 (arquivar deprecados) |
+| `IMPLEMENTACAO_ETAPA_5.md` | Relatório da Etapa 5 (atualizar referências) |
 
 ## Skills de Agente (.agents/skills/)
 

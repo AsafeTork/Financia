@@ -22,7 +22,7 @@ O Financia é um aplicativo *white-label* de gestão financeira para pequenas em
 | **Deploy** | Render | — | Static Site com auto-deploy no push para `main` |
 | **CI/CD** | GitHub Actions | — | Compilação automática de APK Android e EXE Windows |
 | **Cobrança** | Stripe | — | Stripe Elements + Assinaturas + Venda de White-label |
-| **Testes** | Vitest + Testing Library | — | 1100+ testes unitários e de integração |
+| **Testes** | Vitest + Testing Library | — | 640+ testes (core: 471+ pass) |
 
 ### Estrutura de Diretórios (Organização por Domínio — Feature-First)
 
@@ -32,6 +32,8 @@ O projeto adota uma estrutura **feature-first**: cada domínio de negócio é au
   - `src/App.jsx`: Estado global centralizado, tratamento de rotas por hash e integração dos hooks customizados.
   - `src/main.jsx`: Ponto de entrada do React.
   - `src/index.css` & `animations.css`: Folha de estilo global com variáveis CSS (tokens) e animações.
+  - `src/core/`: Bootstrap e providers raiz (`boot.js`, `providers.jsx`).
+  - `src/routes/`: Roteamento centralizado (`routes.jsx`).
   - `src/features/`: Código organizado por domínio de negócio.
     - `features/auth/`: Login, sessão, impersonação.
     - `features/transactions/`: CRUD de receitas e despesas.
@@ -45,7 +47,7 @@ O projeto adota uma estrutura **feature-first**: cada domínio de negócio é au
     - `features/landing/`: Páginas públicas (landing, privacidade, termos).
   - `src/shared/`: Componentes reutilizáveis de interface (Sidebar, Header, BottomNav, UI primitives).
   - `src/lib/`: Código JS puro (integrações de APIs, banco local e funções utilitárias).
-    - `db.js`: Schema Dexie (IndexedDB) + engine de sincronização push-based.
+    - `dexie.js`: Schema Dexie (IndexedDB) + engine de sincronização push-based.
     - `sync.js`: Sincronização bidirecional offline-remoto + consultas de administração.
     - `supabase.js`: Inicialização do cliente Supabase.
     - `auth.js`: Funções de login, logout e reset de senha.
@@ -57,10 +59,10 @@ O projeto adota uma estrutura **feature-first**: cada domínio de negócio é au
     - `exporters.js`: Exportadores de relatórios para formato PDF ou CSV.
     - `crud.js`: Métodos auxiliares de banco local com disparo imediato de sincronização.
     - `pwa.js`: Utilitário de registro e atualização do Service Worker.
-  - `src/hooks/`: Hooks customizados de gerenciamento de estado e controle de sessões.
-  - `src/context/` & `src/test/`: Configuração de contextos e testes do frontend.
-  - `src/design-system/`: Tokens visuais CSS (colors, typography, spacing, shadows, borderRadius).
+  - `src/test/`: Configuração de contextos e testes do frontend.
 - `supabase/`: Migrações SQL e Deno Edge Functions.
+  - `supabase/migrations/`: Migrações do banco PostgreSQL.
+  - `supabase/functions/`: Edge Functions (Stripe, admin, IA).
 - `electron/`: Script do processo principal (`main.cjs`) para carregar o app em janela Windows nativa.
 - `scripts/`: Scripts utilitários de desenvolvimento (geração de ícones, verificação de sintaxe).
 
