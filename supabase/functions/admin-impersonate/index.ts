@@ -47,16 +47,23 @@ Deno.serve(async function(req: Request) {
     if (userError || !targetUser || !targetUser.user) {
       return corsResponse({ error: 'user_not_found' }, 404);
     }
+    var targetEmail = targetUser.user.email;
+    if (!targetEmail) {
+      return corsResponse({ error: 'target_no_email' }, 400);
+    }
 
     const { data: linkData, error: linkError } = await admin.auth.admin.generateLink({
       type: 'magiclink',
-      email: targetUser.user.email!,
+      email: targetEmail,
     });
     if (linkError || !linkData) {
       return corsResponse({ error: 'generate_link_failed' }, 500);
     }
 
-    var actionLink = linkData.properties?.action_link || '';
+    var actionLink = linkData.properties?.action_link;
+    if (!actionLink) {
+      return corsResponse({ error: 'missing_action_link' }, 500);
+    }
     var urlObj = new URL(actionLink);
     var token = urlObj.searchParams.get('token');
     if (!token) {
@@ -64,11 +71,11 @@ Deno.serve(async function(req: Request) {
     }
 
     const { data: sessionData, error: sessionError } = await admin.auth.verifyOtp({
-      email: targetUser.user.email!,
+      email: targetEmail,
       token: token,
       type: 'magiclink',
     });
-    if (sessionError || !sessionData?.session) {
+    if (sessionError || !sessionData?.session?.access_token) {
       return corsResponse({ error: 'verify_otp_failed' }, 500);
     }
 

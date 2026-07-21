@@ -265,13 +265,14 @@ export default function AdminPanel({ toast, confirm, session, brand }) {
   const handleImpersonate = function(c) {
     sb.functions.invoke('admin-impersonate', { body: { target_uid: c.user_id } })
       .then(function(res) {
-        if (!res || !res.data || !res.data.access_token) {
+        if (!res || !res.data || !res.data.access_token || !res.data.refresh_token) {
           if (toast) toast('Erro ao gerar acesso: resposta inválida', 'error');
           return;
         }
         var hash = '#access_token=' + encodeURIComponent(res.data.access_token)
           + '&refresh_token=' + encodeURIComponent(res.data.refresh_token);
-        window.open(window.location.origin + '/' + hash, '_blank');
+        var win = window.open(window.location.origin + '/' + hash, 'impersonate');
+        if (!win && toast) toast('Popup bloqueado. Permita popups para este site.', 'error');
       })
       .catch(function(err) {
         if (toast) toast('Erro ao acessar conta: ' + (err.message || 'tente novamente'), 'error');

@@ -44,7 +44,7 @@ export default function App() {
   const isLanding = path === 'landing';
 
   const [session, setSession]           = useState(null);
-  const [isAdminDB, setIsAdminDB]       = useState(sessionStorage.getItem('is_admin') === '1');
+  const [isAdminDB, setIsAdminDB]       = useState(false);
   const [appLoading, setAppLoading]     = useState(true);
   const [dataLoading, setDataLoading]   = useState(false);
   const [dataError, setDataError]       = useState(null);

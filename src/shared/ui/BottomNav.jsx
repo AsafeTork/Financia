@@ -12,7 +12,8 @@ var ITEMS = [
 ];
 
 function BottomNav({ view, onNav, brand, isAdmin }) {
-  var visibleItems = ITEMS.filter(function(i) { return !i.adminOnly || isAdmin; });
+  var isAdminUser = !!isAdmin;
+  var visibleItems = ITEMS.filter(function(i) { return !i.adminOnly || isAdminUser; });
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-30 lg:hidden"
       style={{background:'var(--bg-page)', borderTop:'1px solid var(--border-color, #f1f5f9)', paddingBottom:'env(safe-area-inset-bottom, 0px)'}}>
