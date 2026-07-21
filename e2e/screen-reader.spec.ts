@@ -12,8 +12,6 @@ try {
   test.describe.skip('Focus Management (guidepup-playwright not installed)', () => {
     test('placeholder', () => {});
   });
-  // eslint-disable-next-line no-undef
-  export {};
 }
 
 if (GuidepupPlaywright) {
