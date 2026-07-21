@@ -410,9 +410,9 @@ export default function AdminPanel({ toast, confirm, session, brand }) {
                     <div className="flex items-center gap-3 min-w-0">
                       <div className="w-10 h-10 rounded-lg flex-shrink-0 overflow-hidden flex items-center justify-center" style={{background: c.color || '#002f59'}}>
                         {function() { var planUrl = planLogoSvg(brand, c); return c.logo_url
-                          ? <img src={c.logo_url} alt="" className="w-full h-full object-cover"/>
+                          ? <img src={c.logo_url} alt="" decoding="async" className="w-full h-full object-cover"/>
                           : planUrl
-                          ? <img src={planUrl} alt="" className="w-full h-full object-cover"/>
+                          ? <img src={planUrl} alt="" decoding="async" className="w-full h-full object-cover"/>
                           : <span className="text-white text-sm font-bold">{(c.name || '?')[0]}</span>; }()}
                       </div>
                       <div className="min-w-0 flex-1">
@@ -467,9 +467,9 @@ export default function AdminPanel({ toast, confirm, session, brand }) {
                       <div className="flex items-center gap-3 min-w-0">
                         <div className="w-9 h-9 rounded-xl flex-shrink-0 overflow-hidden" style={{background:c.color||'#002f59'}}>
                           {function() { var planUrl = planLogoSvg(brand, c); return c.logo_url
-                            ? <img src={c.logo_url} className="w-full h-full object-cover" alt=""/>
+                            ? <img src={c.logo_url} decoding="async" className="w-full h-full object-cover" alt=""/>
                             : planUrl
-                            ? <img src={planUrl} className="w-full h-full object-cover" alt=""/>
+                            ? <img src={planUrl} decoding="async" className="w-full h-full object-cover" alt=""/>
                             : <div className="w-full h-full flex items-center justify-center text-white text-xs font-bold">{(c.name || '?')[0]}</div>; }()}
                         </div>
                         <div className="flex-1 min-w-0">

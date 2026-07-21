@@ -4,35 +4,26 @@ import { useEffect, useRef } from 'react';
  * Hook para ativar animações ao elemento entrar na viewport
  * Uso: const ref = useScrollReveal(); <div ref={ref} className="scroll-reveal">
  */
-export function useScrollReveal() {
+export function useScrollReveal(options = {}) {
+  const { threshold = 0.1, rootMargin = '0px 0px -50px 0px', selector } = options;
   const ref = useRef(null);
 
-  useEffect(() => {
-    if (!ref.current) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-            // Opcional: parar de observar após aparecer
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      {
-        threshold: 0.1, // Dispara quando 10% do elemento está visível
-        rootMargin: '0px 0px -50px 0px', // Dispara um pouco antes de entrar completamente
-      }
-    );
-
-    var el = ref.current;
-    observer.observe(el);
-
-    return () => {
-      if (el) observer.unobserve(el);
-    };
-  }, []);
+  useEffect(function() {
+    const node = ref.current;
+    if (!node) return;
+    const target = selector ? node.querySelector(selector) : node;
+    if (!target) return;
+    const obs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('anim-up');
+          obs.unobserve(entry.target);
+        }
+      });
+    }, { threshold, rootMargin });
+    obs.observe(target);
+    return function() { obs.disconnect(); };
+  }, [threshold, rootMargin, selector]);
 
   return ref;
 }
@@ -52,11 +43,11 @@ export function useScrollRevealMultiple(containerRef, selector) {
       (entries) => {
         entries.forEach((entry, index) => {
           if (entry.isIntersecting) {
-            var tid = setTimeout(() => {
+            const tid = setTimeout(() => {
               entry.target.classList.add('visible');
             }, index * 100);
             timeouts.push(tid);
-            
+
             observer.unobserve(entry.target);
           }
         });
@@ -70,7 +61,7 @@ export function useScrollRevealMultiple(containerRef, selector) {
     items.forEach((item) => observer.observe(item));
 
     return () => {
-      items.forEach((item) => observer.unobserve(item));
+      observer.disconnect();
       timeouts.forEach(function(tid) { clearTimeout(tid); });
     };
   }, [containerRef, selector]);

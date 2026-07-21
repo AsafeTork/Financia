@@ -10,11 +10,9 @@ import InstallButton from '../../shared/ui/InstallButton.jsx';
 import UpdateCardModal from '../../shared/ui/UpdateCardModal.jsx';
 import CardPreview from '../../shared/ui/CardPreview.jsx';
 import { sb } from '../../lib/supabase.js';
-import { fmt } from '../../lib/utils.js';
+import { fmt, isValidUrl } from '../../lib/utils.js';
 import { triggerApkBuild } from '../../lib/sync.js';
 import ColorField from '../../shared/ui/ColorField.jsx';
-
-function isValidUrl(str) { if (!str) return false; try { var u = new URL(str); return u.protocol === 'https:' || u.protocol === 'http:'; } catch { return false; } }
 
 export default function SettingsView({ brand, session, planInfo, onSave, onSavePhone, toast, confirm, isAdmin, onNav }) {
   var [tab, setTab] = useState(function() {
@@ -238,7 +236,7 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
           <div className="flex items-center gap-3 p-4 rounded-xl" style={{background:'var(--bg-subtle)'}}>
             <div className="w-10 h-10 rounded-xl flex-shrink-0 overflow-hidden" style={{background:brand.color}}>
               {isValidUrl(brand.logo_url)
-                ? <img src={brand.logo_url} alt="logo" className="w-full h-full object-cover"/>
+                ? <img src={brand.logo_url} alt="logo" decoding="async" className="w-full h-full object-cover"/>
                 : <div className="w-full h-full flex items-center justify-center text-white text-sm font-bold">{hasWhiteLabel && brand.name ? brand.name[0].toUpperCase() : 'F'}</div>
               }
             </div>
@@ -375,7 +373,7 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
             <div className="flex items-center gap-4 mb-5">
               <div className="w-16 h-16 rounded-2xl flex-shrink-0 overflow-hidden flex items-center justify-center" style={{background: appForm.color}}>
                 {appForm.logo_url
-                  ? <img src={appForm.logo_url} alt="logo" className="w-full h-full object-cover"/>
+                  ? <img src={appForm.logo_url} alt="logo" decoding="async" className="w-full h-full object-cover"/>
                   : <span className="text-white text-xl font-bold">{brand.name ? brand.name[0].toUpperCase() : 'A'}</span>}
               </div>
               <div className="flex flex-col gap-2 min-w-0">

@@ -55,7 +55,7 @@ export default function TermsOfService() {
       <header className="sticky top-0 z-30" style={{ background: 'rgba(251,250,247,0.92)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', borderBottom: '1px solid rgba(10,37,64,0.08)' }}>
         <div className="max-w-3xl mx-auto px-5 h-16 flex items-center justify-between">
           <a href="#" className="flex items-center gap-2.5 min-h-[44px]" style={{ textDecoration: 'none' }}>
-            <img src="/icon-192.svg" alt="Financia" className="w-7 h-7" />
+            <img src="/icon-192.svg" alt="Financia" fetchpriority="high" decoding="sync" className="w-7 h-7" />
             <span className="font-display text-lg font-semibold" style={{ color: INK }}>Financia</span>
           </a>
           <button
@@ -109,7 +109,7 @@ export default function TermsOfService() {
 
       <footer className="max-w-3xl mx-auto px-5 py-8 flex flex-col sm:flex-row items-center justify-between gap-3" style={{ borderTop: '1px solid rgba(10,37,64,0.08)' }}>
         <div className="flex items-center gap-2">
-          <img src="/icon-192.svg" alt="" className="w-5 h-5" />
+          <img src="/icon-192.svg" alt="" loading="lazy" decoding="async" className="w-5 h-5" />
           <span className="font-display text-sm font-semibold" style={{ color: INK }}>Financia</span>
         </div>
         <div className="flex items-center gap-4 text-xs" style={{ color: MUTED }}>

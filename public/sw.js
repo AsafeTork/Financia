@@ -1,7 +1,7 @@
 const CACHE_VER = '6';
 const CACHE_DATE = '20260713';
 const CACHE = 'financia-' + CACHE_VER + '-' + CACHE_DATE;
-const STATIC = ['/', '/manifest.json', '/icon-192.svg', '/icon-512.svg'];
+const STATIC = ['/', '/manifest.json', '/icon-192.svg', '/icon-512.svg', '/offline.html'];
 
 // Avisa todas as abas o progresso do cache (alimenta a barra do banner).
 function postProgress(pct) {
@@ -50,7 +50,11 @@ self.addEventListener('activate', function(e) {
   e.waitUntil(
     caches.keys().then(function(keys) {
       return Promise.all(keys.filter(function(k) { return k !== CACHE; }).map(function(k) { return caches.delete(k); }));
-    }).then(function() { return self.clients.claim(); })
+    }).then(function() { return self.clients.claim(); }).then(function() {
+      if (self.registration.navigationPreload) {
+        return self.registration.navigationPreload.enable();
+      }
+    })
   );
 });
 
@@ -84,19 +88,59 @@ self.addEventListener('fetch', function(e) {
   var url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
 
-  // Navegacoes (HTML): network-first para sempre pegar a versao nova; cache no offline
+  // NAVIGATIONS: use preloadResponse if available to avoid double-fetch
   if (req.mode === 'navigate') {
     e.respondWith(
-      caches.match('/').then(function(cached) {
-        var fetchPromise = fetch(req).then(function(res) {
-          if (res.ok) {
+      (function() {
+        var preload = e.preloadResponse;
+        var fetchPromise = Promise.resolve(preload).then(function(pr) {
+          if (pr) return pr; // consumed preload — no double fetch!
+          return fetch(req);
+        }).then(function(res) {
+          if (res && res.ok) {
             var clone = res.clone();
-            caches.open(CACHE).then(function(c) { c.put('/', clone); });
+            e.waitUntil(caches.open(CACHE).then(function(ca) { ca.put(url.pathname, clone); }));
           }
           return res;
-        }).catch(function() { return cached; });
-        return cached || fetchPromise;
-      })
+        }).catch(function() {
+          return caches.match(url.pathname).then(function(s) {
+            return s || caches.match('/offline.html');
+          });
+        });
+        return fetchPromise;
+      })()
+    );
+    return;
+  }
+
+  // API GET: stale-while-revalidate with max-age check
+  if (req.url.includes('/api/') && (req.method === 'GET' || req.method === 'HEAD')) {
+    e.respondWith(
+      (function() {
+        var urlKey = url.origin + url.pathname;
+        return caches.match(urlKey).then(function(cached) {
+          var maxAge = 30; // 30 seconds freshness for financial data
+          var isFresh = false;
+          if (cached) {
+            var dateHeader = cached.headers.get('date');
+            if (dateHeader) {
+              var age = (Date.now() - new Date(dateHeader).getTime()) / 1000;
+              isFresh = age < maxAge;
+            }
+          }
+          if (isFresh) return cached;
+
+          var fetchPromise = fetch(req).then(function(res) {
+            if (res && res.ok) {
+              var clone = res.clone();
+              e.waitUntil(caches.open(CACHE).then(function(ca) { ca.put(urlKey, clone); }));
+            }
+            return res;
+          }).catch(function() { return cached; });
+
+          return cached || fetchPromise;
+        });
+      })()
     );
     return;
   }
@@ -109,7 +153,7 @@ self.addEventListener('fetch', function(e) {
         return fetch(req).then(function(res) {
           if (res && res.status === 200) {
             var clone = res.clone();
-            caches.open(CACHE).then(function(c) { c.put(req, clone); });
+            e.waitUntil(caches.open(CACHE).then(function(c) { c.put(req, clone); }));
           }
           return res;
         });
@@ -118,7 +162,7 @@ self.addEventListener('fetch', function(e) {
     return;
   }
 
-  // Assets com hash (imutaveis): cache-first; busca rede se faltar e guarda
+  // Assets com hash (imutaveis): cache-first
   if (url.pathname.indexOf('/assets/') === 0) {
     e.respondWith(
       caches.match(req).then(function(cached) {
@@ -126,7 +170,7 @@ self.addEventListener('fetch', function(e) {
         return fetch(req).then(function(res) {
           if (res && res.status === 200) {
             var clone = res.clone();
-            caches.open(CACHE).then(function(c) { c.put(req, clone); });
+            e.waitUntil(caches.open(CACHE).then(function(c) { c.put(req, clone); }));
           }
           return res;
         });
@@ -135,12 +179,22 @@ self.addEventListener('fetch', function(e) {
     return;
   }
 
-  // Demais GET same-origin: network-first com fallback de cache
+  // Demais GET same-origin: network-first com fallback de cache + size limit
   e.respondWith(
     fetch(req).then(function(res) {
       if (res && res.status === 200) {
         var clone = res.clone();
-        caches.open(CACHE).then(function(c) { c.put(req, clone); });
+        e.waitUntil(
+          caches.open(CACHE).then(function(c) {
+            return c.put(req, clone).then(function() {
+              return caches.open(CACHE).then(function(cc) { return cc.keys(); }).then(function(keys) {
+                if (keys.length > 100) {
+                  cc.delete(keys[0]); // LRU-ish eviction when over 100 entries
+                }
+              });
+            });
+          })
+        );
       }
       return res;
     }).catch(function() { return caches.match(req); })

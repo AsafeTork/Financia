@@ -282,7 +282,7 @@ export default function ClientEditModal({ client, adminEmail, onSave, onClose, t
             <label className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Logo</label>
             <div className="flex items-center gap-3">
               {logoUrl
-                ? <img src={logoUrl} alt="logo" className="w-12 h-12 rounded-xl object-cover border border-gray-200"/>
+                ? <img src={logoUrl} alt="logo" loading="eager" decoding="async" className="w-12 h-12 rounded-xl object-cover border border-gray-200"/>
                 : <div className="w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold text-lg flex-shrink-0" style={{background: color}}>{(name[0] || 'F').toUpperCase()}</div>
               }
               <div className="flex flex-col gap-1.5 flex-1">

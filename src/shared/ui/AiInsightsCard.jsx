@@ -1,7 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, startTransition } from 'react';
 import { Card } from './ui.jsx';
 import { fmt as _fmt, brandAlpha } from '../../lib/utils.js';
 import { askAI } from '../../lib/aiClient.js';
+
+function yieldToMain() {
+  if (globalThis.scheduler?.yield) return globalThis.scheduler.yield();
+  return new Promise(function(r) {
+    var ch = new MessageChannel();
+    ch.port2.onmessage = function() { r(); };
+    ch.port1.postMessage(null);
+  });
+}
 
 export default function AiInsightsCard({ mtx, ti, to, profitCurr, profVar, lowStock, products, brand, plan, onUpgrade }) {
   var canUseAI = plan !== 'free';
@@ -32,8 +41,10 @@ export default function AiInsightsCard({ mtx, ti, to, profitCurr, profVar, lowSt
       + ';products=' + products.length
       + ';entries=' + mtx.length;
     var r = await askAI(resumo, { mode: 'insights', maxTokens: 220 });
-    setAiLoading(false);
-    if (r.ok) setAiText(r.text); else setAiErr(r.error);
+    startTransition(function() {
+      setAiLoading(false);
+      if (r.ok) setAiText(r.text); else setAiErr(r.error);
+    });
   };
 
   return (

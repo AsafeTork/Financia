@@ -255,7 +255,8 @@
   transition: opacity 0.8s ease-out, transform 0.8s ease-out;
 }
 
-.scroll-reveal.visible {
+.scroll-reveal.visible,
+.scroll-reveal.anim-up {
   opacity: 1;
   transform: translateY(0);
 }

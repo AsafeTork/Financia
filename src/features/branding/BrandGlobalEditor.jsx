@@ -17,7 +17,7 @@ export default function BrandGlobalEditor({ brandGlobal, setField, onSave, brand
     return (
       <div className="flex items-center gap-3">
         {value
-          ? <img src={value} alt={label} className="w-12 h-12 rounded-xl object-cover flex-shrink-0" style={{border:'1px solid var(--border, #e2e8f0)'}} />
+          ? <img src={value} alt={label} decoding="async" className="w-12 h-12 rounded-xl object-cover flex-shrink-0" style={{border:'1px solid var(--border, #e2e8f0)'}} />
           : <div className="w-12 h-12 rounded-xl flex items-center justify-center text-xs font-bold flex-shrink-0" style={{background:'var(--bg-subtle, #f1f5f9)', border:'1px dashed var(--border, #e2e8f0)', color:'var(--text-muted, #94a3b8)'}}>{label[0]}</div>
         }
         <div className="min-w-0 flex-1">

@@ -3,53 +3,61 @@ import { useScrollReveal } from '../../shared/hooks/useScrollReveal.js';
 import { fmt } from '../../lib/utils.js';
 import { waLink, PRICING_PLANS } from '../../lib/constants.js';
 
-var NAVY = '#002f59';
-var TEAL = '#1a6b5c';
-var GREEN = '#3bbfa0';
-var _SKY = '#6ec6c8';
-var OFF_WHITE = '#f5f5f0';
-var INK = '#0a2540';
-var MUTED = '#5b6b7c';
+const NAVY = '#002f59';
+const TEAL = '#1a6b5c';
+const GREEN = '#3bbfa0';
+const _SKY = '#6ec6c8';
+const OFF_WHITE = '#f5f5f0';
+const INK = '#0a2540';
+const MUTED = '#5b6b7c';
 
-var GRADIENT_TEAL = 'linear-gradient(135deg, #1a6b5c, #3bbfa0)';
-var GRADIENT_PRIMARY = 'linear-gradient(135deg, #002f59, #1a6b5c)';
-var _GLOW_GREEN = '0 0 40px rgba(59,191,160,0.2)';
-var GLOW_NAVY = '0 0 40px rgba(0,47,89,0.15)';
+const GRADIENT_TEAL = 'linear-gradient(135deg, #1a6b5c, #3bbfa0)';
+const GRADIENT_PRIMARY = 'linear-gradient(135deg, #002f59, #1a6b5c)';
+const _GLOW_GREEN = '0 0 40px rgba(59,191,160,0.2)';
+const GLOW_NAVY = '0 0 40px rgba(0,47,89,0.15)';
 
-var delay = function(ms) { return { animationDelay: ms + 'ms', animationFillMode: 'both' }; };
+const delay = function(ms) { return { animationDelay: ms + 'ms', animationFillMode: 'both' }; };
 
 // ─── COUNTER HOOK ───
 function useCountUp(end, duration) {
-  var ref = useRef(null);
-  var intervalRef = useRef(null);
-  var [val, setVal] = useState(0);
+  const ref = useRef(null);
+  const rafRef = useRef(null);
+  const [val, setVal] = useState(0);
   useEffect(function() {
-    var el = ref.current;
+    const el = ref.current;
     if (!el) return;
-    var obs = new IntersectionObserver(function(entries) {
-      entries.forEach(function(e) {
-        if (!e.isIntersecting) return;
-        var start = 0;
-        var step = Math.ceil(end / (duration / 16));
-        intervalRef.current = setInterval(function() {
-          start += step;
-          if (start >= end) { start = end; clearInterval(intervalRef.current); intervalRef.current = null; }
-          setVal(start);
-        }, 16);
+    const obs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (!entry.isIntersecting) return;
+        let startTime = null;
+        const step = function(ts) {
+          if (!startTime) startTime = ts;
+          const elapsed = ts - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          const current = Math.round(progress * end);
+          setVal(current);
+          if (progress < 1) {
+            rafRef.current = requestAnimationFrame(step);
+          }
+        };
+        rafRef.current = requestAnimationFrame(step);
         obs.disconnect();
       });
     }, { threshold: 0.3 });
     obs.observe(el);
     return function() {
       obs.disconnect();
-      if (intervalRef.current) { clearInterval(intervalRef.current); intervalRef.current = null; }
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+      }
     };
   }, [end, duration]);
   return [val, ref];
 }
 
 // ─── MOCK DATA ───
-var MOCK_CHART = [
+const MOCK_CHART = [
   { day: 'Seg', i: 210, o: 140 },
   { day: 'Ter', i: 350, o: 200 },
   { day: 'Qua', i: 180, o: 280 },
@@ -58,9 +66,9 @@ var MOCK_CHART = [
   { day: 'Sab', i: 780, o: 220 },
   { day: 'Dom', i: 520, o: 150 },
 ];
-var maxChart = Math.max.apply(null, MOCK_CHART.map(function(x) { return Math.max(x.i, x.o); }));
+const maxChart = Math.max.apply(null, MOCK_CHART.map(function(x) { return Math.max(x.i, x.o); }));
 
-var MOCK_MOVEMENTS = [
+const MOCK_MOVEMENTS = [
   { desc: 'Venda balcao', detail: 'PIX', val: '+ R$ 450', type: 'income' },
   { desc: 'Compra insumos', detail: 'Estoque', val: '- R$ 180', type: 'expense' },
   { desc: 'Servico realizado', detail: 'Cartao Credito', val: '+ R$ 890', type: 'income' },
@@ -68,14 +76,14 @@ var MOCK_MOVEMENTS = [
   { desc: 'Aluguel', detail: 'Fixo', val: '- R$ 1.200', type: 'expense' },
 ];
 
-var FEATURES = [
+const FEATURES = [
   { t: 'Funciona offline', d: 'Registre a venda na hora, mesmo sem sinal. Tudo sincroniza sozinho quando a internet volta.', icon: 'M5 12.55a11 11 0 0114.08 0M1.42 9a16 16 0 0121.16 0M8.53 16.11a6 6 0 016.95 0M12 20h.01' },
   { t: 'Ao vivo entre celulares', d: 'Voce no caixa, seu socio no estoque — os mesmos numeros, atualizados na hora nos dois aparelhos.', icon: 'M17 1l4 4-4 4M3 11V9a4 4 0 014-4h14M7 23l-4-4 4-4M21 13v2a4 4 0 01-4 4H3' },
   { t: 'Vendas, despesas e estoque', d: 'O que entra, o que sai e o que tem na prateleira. Um app so, sem planilha baguncada.', icon: 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4' },
   { t: 'Relatorios que decidem', d: 'Lucro do mes, onde o dinheiro esta vazando e exportacao pra planilha em um toque.', icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' },
 ];
 
-var FAQ = [
+const FAQ = [
   { q: 'Preciso de internet pra usar?', a: 'Nao. O Financia funciona offline e sincroniza sozinho quando a conexao volta. Voce nunca perde uma venda.' },
   { q: 'Funciona no celular e no computador?', a: 'Sim. Roda no navegador de qualquer aparelho e pode ser instalado como aplicativo no celular e no Windows.' },
   { q: 'Da pra comecar de graca?', a: 'Da. O plano Gratis ja resolve pra quem esta comecando, sem cartao de credito. Quando crescer, voce passa pro Pro.' },
@@ -83,30 +91,22 @@ var FAQ = [
 ];
 
 export default function Landing({ onEnter }) {
-  var waLinkUrl = waLink('Quero conhecer o Financia para o meu negocio.');
-  var [_scrollY, setScrollY] = useState(0);
+  const waLinkUrl = waLink('Quero conhecer o Financia para o meu negocio.');
+  const statsRef = useScrollReveal();
+  const dashRef = useScrollReveal();
+  const txRef = useScrollReveal();
+  const featRef = useScrollReveal();
+  const priceRef = useScrollReveal();
+  const faqRef = useScrollReveal();
+  const ctaRef = useScrollReveal();
+  const _trustRef = useScrollReveal();
 
-  useEffect(function() {
-    var onScroll = function() { setScrollY(window.scrollY || 0); };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return function() { window.removeEventListener('scroll', onScroll); };
-  }, []);
-
-  var statsRef = useScrollReveal();
-  var dashRef = useScrollReveal();
-  var txRef = useScrollReveal();
-  var featRef = useScrollReveal();
-  var priceRef = useScrollReveal();
-  var faqRef = useScrollReveal();
-  var ctaRef = useScrollReveal();
-  var _trustRef = useScrollReveal();
-
-  var [users] = useCountUp(2800, 1200);
-  var [rating] = useCountUp(95, 1000);
+  const [users] = useCountUp(2800, 1200);
+  const [rating] = useCountUp(95, 1000);
 
   // Estado do FAQ accordion
-  var [openFaq, setOpenFaq] = useState(null);
-  var toggleFaq = function(idx) { setOpenFaq(function(p) { return p === idx ? null : idx; }); };
+  const [openFaq, setOpenFaq] = useState(null);
+  const toggleFaq = function(idx) { setOpenFaq(function(prev) { return prev === idx ? null : idx; }); };
 
   return (
     <div className="relative overflow-hidden" style={{ color: INK, minHeight: '100vh', background: '#fff' }}>
@@ -122,13 +122,13 @@ export default function Landing({ onEnter }) {
       <header className="sticky top-0 z-50" style={{ background: 'rgba(255,255,255,0.80)', backdropFilter: 'blur(16px) saturate(1.8)', WebkitBackdropFilter: 'blur(16px) saturate(1.8)', borderBottom: '1px solid rgba(10,37,64,0.06)' }}>
         <div className="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <img src="/icon-192.svg" alt="Financia" className="w-7 h-7" />
+            <img src="/icon-192.svg" alt="Financia" fetchpriority="high" decoding="sync" className="w-7 h-7" />
             <span className="font-display text-lg font-semibold" style={{ color: NAVY, letterSpacing: '-0.3px' }}>Financia</span>
           </div>
           <nav className="hidden md:flex items-center gap-6 text-sm" style={{ color: MUTED }}>
-            <a href="#beneficios" className="hover:text-[#002f59] transition-colors">Recursos</a>
-            <a href="#planos" className="hover:text-[#002f59] transition-colors">Planos</a>
-            <a href="#faq" className="hover:text-[#002f59] transition-colors">FAQ</a>
+            <button onClick={function() { document.getElementById('beneficios').scrollIntoView({behavior:'smooth'}); }} className="hover:text-[#002f59] transition-colors">Recursos</button>
+            <button onClick={function() { document.getElementById('planos').scrollIntoView({behavior:'smooth'}); }} className="hover:text-[#002f59] transition-colors">Planos</button>
+            <button onClick={function() { document.getElementById('faq').scrollIntoView({behavior:'smooth'}); }} className="hover:text-[#002f59] transition-colors">FAQ</button>
           </nav>
           <div className="flex items-center gap-2">
             <button onClick={onEnter} className="text-sm font-semibold px-5 py-2.5 min-h-[44px] rounded-xl text-white transition-all duration-200 hover:brightness-110 hover:-translate-y-0.5" style={{ background: GRADIENT_PRIMARY, boxShadow: GLOW_NAVY }}>
@@ -166,9 +166,9 @@ export default function Landing({ onEnter }) {
                 Criar conta gratis
                 <svg className="inline-block ml-2 w-4 h-4 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 12h14M12 5l7 7-7 7"/></svg>
               </button>
-              <a href="#planos" className="text-sm font-semibold px-8 py-4 rounded-2xl transition-all duration-200 hover:bg-black/[0.04] text-center" style={{ border: '1px solid rgba(10,37,64,0.12)', color: INK }}>
+              <button onClick={function() { document.getElementById('planos').scrollIntoView({behavior:'smooth'}); }} className="text-sm font-semibold px-8 py-4 rounded-2xl transition-all duration-200 hover:bg-black/[0.04] text-center" style={{ border: '1px solid rgba(10,37,64,0.12)', color: INK }}>
                 Ver planos
-              </a>
+              </button>
             </div>
 
             <div className="anim-fade-up mt-6 flex flex-wrap gap-x-5 gap-y-2 text-xs" style={Object.assign({ color: MUTED }, delay(300))}>
@@ -212,7 +212,7 @@ export default function Landing({ onEnter }) {
 
                   <div className="flex items-end gap-1.5 h-28 mb-4">
                     {MOCK_CHART.map(function(m, i) {
-                      var h = Math.max(Math.round((m.i + m.o) / 18), 6);
+                      const h = Math.max(Math.round((m.i + m.o) / 18), 6);
                       return (
                         <div key={'hc-' + i} className="flex-1 rounded-t-md" style={{ height: h + '%', background: i === MOCK_CHART.length - 1 ? 'linear-gradient(180deg, #3bbfa0, #1a6b5c)' : 'rgba(0,47,89,0.10)', minHeight: 4 }} />
                       );
@@ -330,8 +330,8 @@ export default function Landing({ onEnter }) {
             </div>
             <div className="flex items-end gap-2 h-36">
               {MOCK_CHART.map(function(m, i) {
-                var ih = Math.max((m.i / maxChart) * 100, 4);
-                var oh = Math.max((m.o / maxChart) * 100, 4);
+                const ih = Math.max((m.i / maxChart) * 100, 4);
+                const oh = Math.max((m.o / maxChart) * 100, 4);
                 return (
                   <div key={'bc-' + i} className="flex-1 flex flex-col items-center gap-0.5 justify-end">
                     <div className="w-3/4 rounded-t-sm" style={{ height: oh + '%', background: '#ef4444', minHeight: 3 }} />
@@ -348,7 +348,7 @@ export default function Landing({ onEnter }) {
             <p className="text-sm font-semibold" style={{ color: NAVY }}>Movimentacoes recentes</p>
           </div>
           {MOCK_MOVEMENTS.map(function(t, i) {
-            var inc = t.type === 'income';
+            const inc = t.type === 'income';
             return (
               <div key={'mov-' + i} className="flex items-center justify-between px-5 sm:px-6 py-3.5 hover:bg-[#fafaf8] transition-colors" style={{ borderBottom: i < MOCK_MOVEMENTS.length - 1 ? '1px solid rgba(10,37,64,0.04)' : 'none' }}>
                 <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -391,7 +391,7 @@ export default function Landing({ onEnter }) {
               { date: '02/07', total: '+ R$ 1.770', items: [{ desc: 'Venda online', cat: 'PIX', val: '+ R$ 1.200', inc: true }, { desc: 'Servico realizado', cat: 'Cartao Credito', val: '+ R$ 890', inc: true }, { desc: 'Reposicao estoque', cat: 'Estoque', val: '- R$ 320', inc: false }] },
               { date: '01/07', total: '+ R$ 240', items: [{ desc: 'Venda balcao', cat: 'PIX', val: '+ R$ 780', inc: true }, { desc: 'Compras insumos', cat: 'Variavel', val: '- R$ 540', inc: false }] },
             ].map(function(g, gi) {
-              var gPos = g.items.reduce(function(s, i) { return i.inc ? s + 1 : s - 1; }, 0) >= 0;
+              const gPos = g.items.reduce(function(s, i) { return i.inc ? s + 1 : s - 1; }, 0) >= 0;
               return (
                 <div key={'g-' + gi}>
                   <div className="flex items-center justify-between px-5 py-2.5" style={{ background: 'rgba(10,37,64,0.03)', borderBottom: '1px solid rgba(10,37,64,0.05)' }}>
@@ -455,9 +455,9 @@ export default function Landing({ onEnter }) {
 
           <div className="grid md:grid-cols-3 gap-6 items-stretch max-w-5xl mx-auto">
             {PRICING_PLANS.map(function(p) {
-              var popular = !!p.popular;
-              var isFree = p.id === 'free';
-              var isPremium = p.id === 'premium';
+              const popular = !!p.popular;
+              const isFree = p.id === 'free';
+              const isPremium = p.id === 'premium';
               return (
                 <div key={p.id} className="group relative rounded-[24px] p-8 flex flex-col gap-6 transition-all duration-300 hover:-translate-y-1"
                   style={Object.assign(
@@ -495,7 +495,7 @@ export default function Landing({ onEnter }) {
 
                   <div className="flex flex-col gap-3 pt-1">
                     {p.features.map(function(feat) {
-                      var ladder = feat.indexOf('Tudo do') === 0;
+                      const ladder = feat.indexOf('Tudo do') === 0;
                       if (ladder) {
                         return (
                           <div key={feat} className="flex items-center gap-2 pb-2 mb-1" style={{ borderBottom: '1px dashed rgba(10,37,64,0.1)' }}>
@@ -538,7 +538,7 @@ export default function Landing({ onEnter }) {
         <h2 className="font-display font-semibold text-center mb-12" style={{ color: NAVY, fontSize: 'clamp(1.6rem, 4vw, 2.25rem)', letterSpacing: '-0.5px' }}>Perguntas frequentes</h2>
         <div className="flex flex-col gap-3">
           {FAQ.map(function(item, idx) {
-            var isOpen = openFaq === idx;
+            const isOpen = openFaq === idx;
             return (
               <div key={item.q} className="rounded-2xl overflow-hidden transition-all duration-200 hover:border-[#002f59]/20" style={{ border: '1px solid ' + (isOpen ? 'rgba(0,47,89,0.15)' : 'rgba(10,37,64,0.07)'), background: '#fff' }}>
                 <button onClick={function() { toggleFaq(idx); }} className="w-full flex items-center justify-between px-5 py-4 text-left min-h-[44px]" style={{ color: NAVY }}>
@@ -547,7 +547,7 @@ export default function Landing({ onEnter }) {
                     <path d="M19 9l-7 7-7-7" />
                   </svg>
                 </button>
-                <div className="overflow-hidden transition-all duration-200" style={{ maxHeight: isOpen ? '200px' : '0px', opacity: isOpen ? 1 : 0 }}>
+                <div style={{ maxHeight: isOpen ? '400px' : '0', opacity: isOpen ? 1 : 0, overflow: 'hidden', transition: 'max-height .3s ease, opacity .2s ease' }}>
                   <p className="text-sm px-5 pb-4 leading-relaxed" style={{ color: MUTED }}>{item.a}</p>
                 </div>
               </div>
@@ -589,7 +589,7 @@ export default function Landing({ onEnter }) {
       <footer className="max-w-6xl mx-auto px-5 py-12" style={{ borderTop: '1px solid rgba(10,37,64,0.06)' }}>
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2.5">
-            <img src="/icon-192.svg" alt="" className="w-6 h-6" />
+            <img src="/icon-192.svg" alt="" loading="lazy" decoding="async" className="w-6 h-6" />
             <span className="font-display text-sm font-semibold" style={{ color: NAVY }}>Financia</span>
           </div>
           <p className="text-xs" style={{ color: MUTED }}>Gestao financeira para pequenos negocios brasileiros</p>

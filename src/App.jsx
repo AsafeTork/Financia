@@ -57,6 +57,8 @@ export default function App() {
   const [showLogin, setShowLogin]       = useState(false);
   const [showUpgrade, setShowUpgrade]   = useState(false);
   const [onboardingNeeded, setOnboardingNeeded] = useState(false);
+  const [announceMsg, setAnnounceMsg]   = useState('');
+  const firstRender                     = useRef(true);
   const onboardingRef                   = useRef(null);
   const toastId                         = useRef(0);
   const toastTimeoutsRef                = useRef([]);
@@ -188,6 +190,23 @@ export default function App() {
     };
   }, []);
 
+  useEffect(function() {
+    if (firstRender.current) {
+      firstRender.current = false;
+      return;
+    }
+    var names = { dashboard:'Dashboard', income:'Vendas e Ganhos', expense:'Despesas', inventory:'Estoque', report:'Relatório', email:'Comunicar', settings:'Configurações', planos:'Planos', brandstudio:'Brand Studio' };
+    var name = names[path] || path;
+    setAnnounceMsg('');
+    requestAnimationFrame(function() {
+      setAnnounceMsg(name);
+    });
+    var main = document.getElementById('main-content');
+    if (main) main.focus();
+    var t = setTimeout(function() { setAnnounceMsg(''); }, 3000);
+    return function() { clearTimeout(t); };
+  }, [path]);
+
   const confirm = useCallback(function(msg, onOk) { setConfirmData({msg:msg, onOk:onOk}); }, []);
 
   const enforceLimit = useCallback(function(kind, currentCount) {
@@ -305,6 +324,7 @@ const currentView = sessionViews.includes(path) ? path : 'dashboard';
 
   return (
     <div className="min-h-screen flex overflow-x-hidden" style={{background:'var(--bg-page)'}}>
+      <a href="#main-content" onClick={function(e){e.preventDefault();var el=document.getElementById('main-content');if(el){el.setAttribute('tabindex','-1');el.focus();el.scrollIntoView();}}} className="skip-link">Pular para conteúdo</a>
       <Offline/>
       <WidgetErrorBoundary><UpdateBanner brand={appBrand}/></WidgetErrorBoundary>
       <SyncBadge status={syncStatus}/>
@@ -314,7 +334,7 @@ const currentView = sessionViews.includes(path) ? path : 'dashboard';
       </div>
       <div className="flex-1 lg:ml-64 flex flex-col min-h-screen min-w-0 w-full">
         <WidgetErrorBoundary><Header brand={appBrand} syncStatus={syncStatus} theme={effectiveTheme} onToggleTheme={toggleTheme} onMenuOpen={handleOpenSidebar}/></WidgetErrorBoundary>
-        <main className="flex-1 p-4 lg:p-8 max-w-2xl w-full mx-auto pb-24 lg:pb-8 min-w-0 overflow-x-hidden">
+        <main id="main-content" tabIndex="-1" className="flex-1 p-4 lg:p-8 max-w-2xl w-full mx-auto pb-24 lg:pb-8 min-w-0 overflow-x-hidden">
           <FeatureErrorBoundary featureName={currentView} key={location.pathname}>
             <AppRoutes tx={tx} products={products} losses={losses} brand={appBrand} planInfo={planInfo}
               onNav={navTo} toast={toast} confirm={confirm} uid={session.user.id}
@@ -331,6 +351,7 @@ const currentView = sessionViews.includes(path) ? path : 'dashboard';
       <Toast toasts={toasts} onDismiss={dismissToast}/>
       {confirmData && <Confirm msg={confirmData.msg} onOk={handleConfirmOk} onCancel={handleCancel}/>}
       {showUpgrade && <UpgradeModal reason={typeof showUpgrade === 'object' ? showUpgrade : null} brand={appBrand} onClose={handleCloseUpgrade} onNav={handleNav}/>}
+      <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">{announceMsg}</div>
     </div>
   );
 }

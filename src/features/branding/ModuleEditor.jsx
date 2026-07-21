@@ -125,7 +125,7 @@ function renderField(path, prop, label, value, onChange) {
       <div key={path} className="flex flex-col gap-1">
         <label htmlFor={fieldId} className="text-[11px] font-medium" style={{color:'var(--text-sub, #475569)'}}>{labelFromKey(label)}</label>
         <div className="flex items-center gap-2">
-          {value && <img src={value} alt="" className="w-9 h-9 rounded-lg object-cover flex-shrink-0" style={{border:'1px solid var(--border, #e2e8f0)'}} />}
+          {value && <img src={value} alt="" decoding="async" className="w-9 h-9 rounded-lg object-cover flex-shrink-0" style={{border:'1px solid var(--border, #e2e8f0)'}} />}
           <input type="text" id={fieldId} value={value || ''} onChange={e => onChange(e.target.value)}
             placeholder="URL ou upload"
             className="flex-1 min-w-0 rounded-lg px-2.5 py-1.5 text-[11px] font-mono focus:outline-none"

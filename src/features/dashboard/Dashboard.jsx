@@ -117,8 +117,8 @@ export default function Dashboard({ tx, products, brand, onNav, planInfo, losses
             ].map(function(step, idx) {
               var done = false;
               return (
-                <div key={step.n} className="flex items-start gap-3 rounded-xl px-4 py-3 transition-all duration-200" style={{background: done ? 'rgba(59,191,160,0.06)' : 'var(--bg-subtle)'}}>
-                  <span className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0 transition-all duration-300" style={{background: done ? '#3bbfa0' : brand.color}}>
+                <div key={step.n} className="flex items-start gap-3 rounded-xl px-4 py-3 transition-colors duration-200" style={{background: done ? 'rgba(59,191,160,0.06)' : 'var(--bg-subtle)'}}>
+                  <span className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0 transition-colors duration-300" style={{background: done ? '#3bbfa0' : brand.color}}>
                     {done ? <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"><path d="M5 13l4 4L19 7"/></svg> : step.n}
                   </span>
                   <div className="flex-1 min-w-0">
@@ -168,7 +168,7 @@ export default function Dashboard({ tx, products, brand, onNav, planInfo, losses
             { icon:'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z', label:'Relatorios', desc:'Exporte PDF e Excel com dados organizados', action:'Ver relatorios', nav:'report', color:'#3b82f6' },
           ].map(function(k) {
             return (
-              <div key={k.label} className="rounded-[20px] p-4 sm:p-5 hover:-translate-y-0.5 transition-all duration-200" style={{background:'var(--bg-card)', border:'1px solid var(--border)', boxShadow:'var(--shadow-sm)'}}>
+              <div key={k.label} className="rounded-[20px] p-4 sm:p-5 hover:-translate-y-0.5" style={{background:'var(--bg-card)', border:'1px solid var(--border)', boxShadow:'var(--shadow-sm)', transition:'background-color .15s ease, transform .12s ease'}}>
                 <div className="w-9 h-9 rounded-xl flex items-center justify-center mb-3" style={{background: brandAlpha(k.color, 0.1)}}>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={k.color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d={k.icon}/></svg>
                 </div>

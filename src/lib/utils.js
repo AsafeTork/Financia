@@ -31,6 +31,7 @@ export const safe = function(s) {
 };
 export const isDarkTheme = function() { return document.documentElement.getAttribute('data-theme') === 'dark'; };
 export const isUrl = function(s) { return !!(s && (s.startsWith('http') || s.startsWith('data:') || s.startsWith('/'))); };
+export const isValidUrl = function(str) { if (!str) return false; if (str.startsWith('data:')) return true; try { var u = new URL(str); return u.protocol === 'https:' || u.protocol === 'http:'; } catch { return false; } };
 export const genPwd = function() { const c = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#'; return Array.from({ length: 12 }, () => c[Math.floor(Math.random() * c.length)]).join(''); };
 let _id = 1;
 export const uid = function() { return crypto.randomUUID(); };

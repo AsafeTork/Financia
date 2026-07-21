@@ -2,7 +2,7 @@ import { sb } from './supabase.js';
 import { now } from './utils.js';
 import { ldb, toLocal, getLastSync, setLastSync, FIELD_MAP, pickFields } from './dexie.js';
 
-const PROFILE_WRITE_FIELDS = ['user_id','name','logo','color','color_secondary','color_accent','theme','logo_url','white_label','phone','niche','custom_palette','visual_version'];
+const PROFILE_WRITE_FIELDS = ['user_id','name','logo','color','color_secondary','color_accent','theme','logo_url','white_label','phone','niche','custom_palette','visual_version','brand_config'];
 
 var validHex = function(v) { return typeof v === 'string' && /^#[0-9a-fA-F]{6}$/.test(v); };
 

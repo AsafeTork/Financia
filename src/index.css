@@ -24,10 +24,10 @@ body { background: var(--bg-page, #f8fafc); color: var(--text-main, #0f172a); }
 .anim-out   { animation: toastFadeOut .25s cubic-bezier(.16,1,.3,1) forwards; }
 
 /* Transicoes globais */
-a, button { transition: opacity .15s ease, background-color .15s ease, color .15s ease, box-shadow .15s ease, transform .12s ease; }
+a, button { transition: opacity .15s ease, color .15s ease, transform .12s ease; }
 
 /* Tato no toque/clique */
-button:active:not(:disabled), a:active { transform: scale(.97); }
+.btn:active { transform: scale(.97); }
 
 /* Foco acessivel com a cor da marca (segue o raio do proprio elemento) */
 button:focus-visible, a:focus-visible, [role="button"]:focus-visible {
@@ -46,7 +46,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible {
 html { scroll-behavior: smooth; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
-  button:active:not(:disabled), a:active { transform: none; }
+  .btn:active { transform: none; }
 }
 
 /* Focus rings com brand color */
@@ -332,7 +332,7 @@ input:focus, select:focus, textarea:focus {
   position: absolute;
   animation: moneyFloat var(--dur, 6s) ease-in-out infinite;
   animation-delay: var(--delay, 0s);
-  transition: transform .25s ease, filter .25s ease;
+  transition: transform .25s ease;
   will-change: transform;
 }
 .money-note:hover {
@@ -342,4 +342,8 @@ input:focus, select:focus, textarea:focus {
 }
 @media (prefers-reduced-motion: reduce) {
   .money-note { animation: none; }
+
+main:focus{outline:none}
+.skip-link{position:fixed;top:0;left:1rem;z-index:9999;padding:.75rem 1.5rem;background:#002f59;color:#fff;border-radius:0 0 .5rem .5rem;font-size:.875rem;font-weight:600;text-decoration:none;transition:transform .2s;transform:translateY(-100%)}.skip-link:focus{transform:translateY(0)}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border-width:0}
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 import { NAV } from '../../lib/constants.js';
-function isValidUrl(str) { if (!str) return false; try { var u = new URL(str); return u.protocol === 'https:' || u.protocol === 'http:'; } catch { return false; } }
+import { isValidUrl } from '../../lib/utils.js';
 
 function Sidebar({ view, onNav, brand, open, onClose, isAdmin }) {
   var onlineState = React.useState(true);
@@ -22,9 +22,9 @@ function Sidebar({ view, onNav, brand, open, onClose, isAdmin }) {
     return (
       <button key={item.key} data-testid={'sidebar-link-' + item.key} onClick={function() { onNav(item.key); onClose(); }}
         aria-current={active ? 'page' : undefined}
-        className={'relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 w-full text-left ' + (active ? 'text-white' : 'text-white/55 hover:text-white hover:bg-white/5 hover:translate-x-0.5')}
+        className={'relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors duration-150 w-full text-left ' + (active ? 'text-white' : 'text-white/55 hover:text-white hover:bg-white/5 hover:translate-x-0.5')}
         style={active ? {background: 'rgba(255,255,255,0.14)', boxShadow: '0 2px 8px rgba(0,0,0,0.15)'} : {}}>
-        {active && <span className="absolute left-0 top-1/2 h-5 w-1 rounded-r-full bg-white transition-all duration-200" style={{transform:'translateY(-50%)'}}/>}
+        {active && <span className="absolute left-0 top-1/2 h-5 w-1 rounded-r-full bg-white transition-colors duration-150" style={{transform:'translateY(-50%)'}}/>}
         <svg className="w-5 h-5 flex-shrink-0 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"
           style={{transform: active ? 'scale(1.05)' : 'scale(1)'}}>
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={active ? 2 : 1.6} d={item.d}/>
@@ -43,7 +43,7 @@ function Sidebar({ view, onNav, brand, open, onClose, isAdmin }) {
 
         <div className="px-5 py-5 flex items-center gap-3" style={{borderBottom:'1px solid rgba(255,255,255,0.08)'}}>
           {isValidUrl(brand?.logo_url)
-            ? <img src={brand.logo_url} alt="logo" className="w-10 h-10 rounded-xl object-cover flex-shrink-0"/>
+            ? <img src={brand.logo_url} alt="logo" fetchpriority="high" decoding="sync" className="w-10 h-10 rounded-xl object-cover flex-shrink-0"/>
             : <div className="w-10 h-10 rounded-xl flex items-center justify-center text-base flex-shrink-0" style={{background:'rgba(255,255,255,0.15)'}}>
                 <span className="text-white font-bold">{(brand?.logo || 'F')[0]}</span>
               </div>

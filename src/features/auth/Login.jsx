@@ -152,8 +152,8 @@ export default function Login({ brand }) {
         </div>
         <div className="relative anim-up">
           {brandLogo
-            ? <img src={brandLogo} alt="logo" className="w-12 h-12 rounded-2xl object-cover" style={{ border: '2px solid ' + onBrandBorder }} />
-            : <img src="/icon-192.svg" alt="" className="w-12 h-12" />}
+            ? <img src={brandLogo} alt="logo" fetchpriority="high" decoding="sync" className="w-12 h-12 rounded-2xl object-cover" style={{ border: '2px solid ' + onBrandBorder }} />
+            : <img src="/icon-192.svg" alt="" fetchpriority="high" decoding="sync" className="w-12 h-12" />}
           <p className="font-display font-semibold text-2xl mt-4" style={{ color: onBrand, letterSpacing: '-0.3px' }}>{brandName}</p>
         </div>
         <div className="relative">
@@ -182,8 +182,8 @@ export default function Login({ brand }) {
 
           <div className="lg:hidden text-center mb-8">
             {brandLogo
-              ? <img src={brandLogo} alt="logo" className="w-16 h-16 rounded-2xl object-cover mx-auto" style={{ border: '3px solid rgba(0,0,0,0.06)' }} />
-              : <img src="/icon-192.svg" alt="" className="w-16 h-16 mx-auto" />}
+              ? <img src={brandLogo} alt="logo" fetchpriority="high" decoding="sync" className="w-16 h-16 rounded-2xl object-cover mx-auto" style={{ border: '3px solid rgba(0,0,0,0.06)' }} />
+              : <img src="/icon-192.svg" alt="" fetchpriority="high" decoding="sync" className="w-16 h-16 mx-auto" />}
             <p className="font-display font-semibold text-2xl mt-3" style={{ color: brandText, letterSpacing: '-0.3px' }}>{brandName}</p>
           </div>
 
