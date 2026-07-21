@@ -90,6 +90,8 @@ type: REFERENCE
 | `ROADMAP_ATUALIZADO.md` | Roadmap atual |
 | `CHANGELOG.md` | Changelog do projeto (humano) |
 | `AUDITORIA_GERAL.md` | **Esta auditoria** |
+| `IMPLEMENTACAO_ETAPA_1.md` | Relatório da Etapa 1 (limpeza da raiz) |
+| `IMPLEMENTACAO_ETAPA_2.md` | Relatório da Etapa 2 (eliminar duplicatas) |
 
 ## Skills de Agente (.agents/skills/)
 

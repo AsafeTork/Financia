@@ -139,37 +139,19 @@ raiz/                         # 20+ arquivos md soltos
 | `docs/PROMPT_UNIVERSAL.md` | 🗑️ Obsoleto | Marcado deprecated, substituído por EXECUTOR_PROMPT.md |
 | `docs/AI_CONTEXT.md` | 🗑️ Obsoleto | Marcado deprecated |
 
-### Duplicatas
+### Duplicatas (Resolvido — raiz limpa)
 
-| Par | Tipo | Ação Recomendada |
-|-----|------|------------------|
-| `docs/AI_BRAND_SCHEMA.md` ↔ `docs/ai/AI_BRAND_SCHEMA.md` | 🔀 Duplicado | Manter apenas `docs/ai/AI_BRAND_SCHEMA.md` |
-| `CHANGELOG_AI.md` (raiz) ↔ `docs/CHANGELOG_AI.md` | 🔀 Duplicado | Manter apenas `docs/CHANGELOG_AI.md` |
-| `EXECUTION_STATE.md` (raiz) ↔ `docs/EXECUTION_STATE.md` | 🔀 Duplicado | Manter apenas `docs/EXECUTION_STATE.md` |
-| `WORKSPACE.md` (raiz) ↔ `docs/WORKSPACE.md` | 🔀 Duplicado | Manter apenas `docs/WORKSPACE.md` |
-| `MASTER_REFACTOR_PLAN.md` (raiz) ↔ `docs/ARCHITECTURE/MASTER_REFACTOR_PLAN.md` | 🔀 Duplicado | Conteúdos diferentes — arquivar raiz |
-| `CHANGELOG.md` (raiz) ↔ `docs/CHANGELOG_AI.md` | 🔀 Duplicado Parcial | CHANGELOG.md é versão humana, CHANGELOG_AI.md é versão IA |
+| Par | Realidade | Ação |
+|-----|-----------|------|
+| `docs/AI_BRAND_SCHEMA.md` ↔ `docs/ai/AI_BRAND_SCHEMA.md` | ❌ **Não são duplicatas** — 9.4KB vs 2.7KB, conteúdos diferentes (português AI vs inglês schema) | Manter ambos |
+| `CHANGELOG_AI.md` (raiz) ↔ `docs/CHANGELOG_AI.md` | ✅ Resolvido — raiz removida | — |
+| `EXECUTION_STATE.md` (raiz) ↔ `docs/EXECUTION_STATE.md` | ✅ Resolvido — raiz removida | — |
+| `WORKSPACE.md` (raiz) ↔ `docs/WORKSPACE.md` | ✅ Resolvido — raiz removida | — |
+| `MASTER_REFACTOR_PLAN.md` (raiz) ↔ `docs/ARCHITECTURE/MASTER_REFACTOR_PLAN.md` | ✅ Resolvido na Etapa 1 | — |
 
-### Documentos Órfãos na Raiz (devem ser movidos para docs/ ou archive)
+### Documentos na Raiz (resolvido — Etapas 1 e 2 concluídas)
 
-| Arquivo | Classificação | Ação |
-|---------|--------------|------|
-| `01_PRODUCT_VISION.md` | 🗑️ Obsoleto | Arquivar — visão inicial não reflete arquitetura atual |
-| `BRANDING_MASTER_AUDIT.md` | 🗑️ Obsoleto | Arquivar — substituído por `docs/BRANDING_DIAGNOSTICO.md` |
-| `DATABASE_MASTER_AUDIT.md` | 🗑️ Obsoleto | Arquivar — substituído por `docs/Banco/` |
-| `DESIGN_SYSTEM_AUDIT.md` | 🗑️ Obsoleto | Arquivar — auditoria antiga |
-| `FRONTEND_MASTER_AUDIT.md` | 🗑️ Obsoleto | Arquivar — substituído por `docs/Frontend/` |
-| `IMPLEMENTATION_BACKLOG.md` | 🗑️ Obsoleto | Arquivar — sistema PHASE 0-10, substituído por F1-F7 |
-| `MASTER_REFACTOR_PLAN.md` (raiz) | 🗑️ Obsoleto | Arquivar — substituído por `docs/ARCHITECTURE/MASTER_REFACTOR_PLAN.md` |
-| `MATRIZ_CONSOLIDACAO.md` | 🗑️ Obsoleto | Arquivar — matriz do refactor/v2 |
-| `QA_MASTER_AUDIT.md` | 🗑️ Obsoleto | Arquivar — substituído por `docs/QA/` |
-| `ROADMAP.md` | 🗑️ Obsoleto | Arquivar — sistema PHASE 0-10 |
-| `UX_MASTER_AUDIT.md` | 🗑️ Obsoleto | Arquivar — substituído por `docs/UX-AUDIT-REFERENCE.md` |
-| `BACKLOG_ATUALIZADO.md` | 📘 Útil | **Mover para** `docs/BACKLOG_ATUALIZADO.md` |
-| `ROADMAP_ATUALIZADO.md` | 📘 Útil | **Mover para** `docs/ROADMAP_ATUALIZADO.md` |
-| `PLANO_OTIMIZACAO_VALIDACAO.md` | 📘 Útil | **Mover para** `docs/Performance/PLANO_OTIMIZACAO_VALIDACAO.md` |
-| `CHANGELOG.md` | 📜 Histórico | **Mover para** `docs/CHANGELOG.md` |
-| `README.md` | ✅ Fonte Oficial | **Manter** na raiz (padrão de projetos) |
+Raiz contém apenas: `CLAUDE.md`, `README.md`.
 
 ### Documentos em Archive (já mortos — manter)
 
@@ -292,19 +274,19 @@ raiz/                         # 20+ arquivos md soltos
 
 **Documentos atualizados:** `docs/INDEX.md`, `docs/AUDITORIA_GERAL.md`
 
-### Etapa 2: Eliminar Duplicatas (15 min)
+### Etapa 2: Eliminar Duplicatas ✅ (Concluída em 2026-07-20)
 
-**Objetivo:** Resolver 4 pares de duplicatas, mantendo apenas uma versão oficial.
+**Resultado:** 3 arquivos removidos da raiz. 1 par corrigido (não era duplicata).
 
-**Arquivos envolvidos:**
-- Remover `docs/AI_BRAND_SCHEMA.md` (manter `docs/ai/AI_BRAND_SCHEMA.md`)
-- Remover `CHANGELOG_AI.md` (raiz) (manter `docs/CHANGELOG_AI.md`)
-- Remover `EXECUTION_STATE.md` (raiz) (manter `docs/EXECUTION_STATE.md`)
-- Remover `WORKSPACE.md` (raiz) (conteúdo diferente — analisar e arquivar se obsoleto)
-- Confirmar que `MASTER_REFACTOR_PLAN.md` (raiz) ≠ `docs/ARCHITECTURE/MASTER_REFACTOR_PLAN.md`
+**Arquivos removidos:**
+- `CHANGELOG_AI.md` (raiz) — desatualizado (2.4KB vs 20.8KB em `docs/`)
+- `EXECUTION_STATE.md` (raiz) — sem metadados (2.4KB vs 7.0KB em `docs/`)
+- `WORKSPACE.md` (raiz) — conteúdo divergente (3.6KB vs 9.4KB em `docs/`)
 
-**Riscos:** Baixo — conteúdo idêntico.
-**Critérios de conclusão:** Nenhum arquivo markdown duplicado no projeto.
+**Correção de diagnóstico:**
+- `docs/AI_BRAND_SCHEMA.md` vs `docs/ai/AI_BRAND_SCHEMA.md` ❌ **não são duplicatas** — 9.4KB vs 2.7KB, propósitos distintos. Ambos mantidos.
+
+**Riscos:** Nenhum — versões oficiais preservadas em `docs/`.
 
 ### Etapa 3: Arquivar Deprecados (5 min)
 
@@ -365,7 +347,7 @@ raiz/                         # 20+ arquivos md soltos
 - [x] Etapa 1: Mover 4 documentos para `docs/`
   - `docs/INDEX.md` atualizado com lista de arquivos no archive
   - `docs/AUDITORIA_GERAL.md` atualizado com status concluído
-- [ ] Etapa 2: Remover 4-5 pares de duplicatas
+- [x] Etapa 2: Remover 3 duplicatas da raiz + corrigir falso positivo AI_BRAND_SCHEMA
 - [ ] Etapa 3: Arquivar 2 deprecados
 - [ ] Etapa 4: Criar `docs/INDEX.md`
 - [ ] Etapa 5: Atualizar `docs/ARCHITECTURE.md`
@@ -392,7 +374,7 @@ raiz/                         # 20+ arquivos md soltos
 
 ### Organização: 5/10
 
-**Evidências:** Diretórios bem estruturados (src/features, src/lib, src/shared). 15 documentos removidos da raiz (Etapa 1 concluída), 5 arquivos markdown na raiz. Ainda: 4 pares de duplicatas pendentes, documentos com metadados inconsistentes. Organização melhorou mas ainda há trabalho.
+**Evidências:** Diretórios bem estruturados (src/features, src/lib, src/shared). 15 documentos removidos da raiz (Etapa 1), 3 duplicatas eliminadas (Etapa 2). Raiz contém apenas CLAUDE.md e README.md. Ainda: documentos com metadados inconsistentes pendentes.
 
 ### Escalabilidade: 6/10
 
@@ -436,7 +418,7 @@ raiz/                         # 20+ arquivos md soltos
 
 2. **Documentos órfãos na raiz:** `ls *.md` mostra 20 arquivos na raiz. Somente `CLAUDE.md` e `README.md` deveriam estar lá.
 
-3. **Duplicatas confirmadas:** `diff docs/AI_BRAND_SCHEMA.md docs/ai/AI_BRAND_SCHEMA.md` — arquivos idênticos. `diff CHANGELOG_AI.md docs/CHANGELOG_AI.md` — raiz está desatualizado (contém apenas entrada inicial).
+3. **Duplicatas:** `CHANGELOG_AI.md`, `EXECUTION_STATE.md`, `WORKSPACE.md` — versões da raiz removidas (oficiais em `docs/`). `AI_BRAND_SCHEMA.md` — **corrigido**: não era duplicata, conteúdos distintos.
 
 4. **Metadados divergentes:** `WORKSPACE.md` lista EXECUTION_STATE.md como DRAFT, mas o próprio EXECUTION_STATE.md tem cabeçalho APPROVED. Resolvido na reconciliação mas ainda há resquícios.
 
@@ -447,7 +429,6 @@ raiz/                         # 20+ arquivos md soltos
 ## Próximas Ações Imediatas
 
 1. ✅ ~~Executar Etapa 1 (limpeza da raiz) — mover 11 obsoletos para archive, 4 para docs/~~
-2. Executar Etapa 2 (eliminar duplicatas)
-3. Executar Etapa 3 (arquivar deprecados)
-4. Executar Etapa 4 (criar docs/INDEX.md)
-5. Revisar este relatório e promover para APPROVED
+2. ✅ ~~Executar Etapa 2 (eliminar duplicatas)~~
+3. Executar Etapa 3 (arquivar deprecados em `docs/`)
+4. Revisar este relatório e promover para APPROVED
