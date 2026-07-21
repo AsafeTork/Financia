@@ -327,7 +327,7 @@ const currentView = sessionViews.includes(path) ? path : 'dashboard';
           </FeatureErrorBoundary>
         </main>
       </div>
-      <WidgetErrorBoundary><BottomNav view={currentView} onNav={navTo} brand={appBrand}/></WidgetErrorBoundary>
+      <WidgetErrorBoundary><BottomNav view={currentView} onNav={navTo} brand={appBrand} isAdmin={isAdminDB}/></WidgetErrorBoundary>
       <Toast toasts={toasts} onDismiss={dismissToast}/>
       {confirmData && <Confirm msg={confirmData.msg} onOk={handleConfirmOk} onCancel={handleCancel}/>}
       {showUpgrade && <UpgradeModal reason={typeof showUpgrade === 'object' ? showUpgrade : null} brand={appBrand} onClose={handleCloseUpgrade} onNav={handleNav}/>}

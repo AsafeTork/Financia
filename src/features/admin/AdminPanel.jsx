@@ -263,13 +263,19 @@ export default function AdminPanel({ toast, confirm, session, brand }) {
   };
 
   const handleImpersonate = function(c) {
-    sessionStorage.setItem('_imp', JSON.stringify({
-      uid: c.user_id,
-      exp: Date.now() + 30000
-    }));
-    window.open(window.location.origin + window.location.pathname + '?imp=1', '_blank');
-    setTimeout(function() { sessionStorage.removeItem('_imp'); }, 30000);
-    toast('Abrindo conta de ' + c.name, 'success');
+    sb.functions.invoke('admin-impersonate', { body: { target_uid: c.user_id } })
+      .then(function(res) {
+        if (!res || !res.data || !res.data.access_token) {
+          if (toast) toast('Erro ao gerar acesso: resposta inválida', 'error');
+          return;
+        }
+        var hash = '#access_token=' + encodeURIComponent(res.data.access_token)
+          + '&refresh_token=' + encodeURIComponent(res.data.refresh_token);
+        window.open(window.location.origin + '/' + hash, '_blank');
+      })
+      .catch(function(err) {
+        if (toast) toast('Erro ao acessar conta: ' + (err.message || 'tente novamente'), 'error');
+      });
   };
 
   const handleBuildClientApk = function(c) {
