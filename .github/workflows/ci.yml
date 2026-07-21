@@ -25,7 +25,14 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci || npm install --legacy-peer-deps
-      - run: npm run lint
+      - name: Lint
+        run: npx eslint src/ 2>&1 | tee lint-output.txt; EXIT_CODE=${PIPESTATUS[0]}; echo "LINT_EXIT_CODE=$EXIT_CODE"; exit $EXIT_CODE
+      - name: Upload lint output
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-output
+          path: lint-output.txt
       - run: npm run typecheck
 
   unit-tests:
