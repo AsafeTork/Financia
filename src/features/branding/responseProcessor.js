@@ -44,7 +44,7 @@ function buildProposedBrand(normalized, currentBrand, originalJson) {
     color: pal.primary || '#002f59',
     color_secondary: pal.secondary || '#e8f0f7',
     color_accent: pal.accent || '#1a6b5c',
-    theme: pal.mode || (currentBrand && currentBrand.theme) || 'light',
+    theme: (originalJson.modules && originalJson.modules.palette && originalJson.modules.palette.mode) || (currentBrand && currentBrand.theme) || 'light',
     brand_config: JSON.stringify(originalJson),
     visual_version: ((currentBrand && currentBrand.visual_version) || 0) + 1,
     custom_palette: true,
