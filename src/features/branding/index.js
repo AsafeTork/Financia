@@ -11,7 +11,7 @@ export { default as processResponse, requiresServiceRole, updateBrandConfig } fr
 export { enterPreviewMode, exitPreviewMode } from '../../shared/hooks/useBrandAppearance.js';
 export { listPresets, getPreset, savePreset, deletePreset, duplicatePreset, toggleFavoritePreset, exportPreset, importPreset, getPresetCategories, OFFICIAL_PRESETS, loadPresetsFromDb } from './presets.js';
 export { getPlanTheme, getPlanThemeConfig, listPlanThemes, resolveBrandForPlan, applyPlanOverride } from './planThemes.js';
-export { generateLogoSvg, logoSvgToDataUrl, buildCheckPath, LOGO_ELEMENTS, CHECK_NORM } from './logoUtils.js';
+export { generateLogoSvg, logoSvgToDataUrl, buildCheckPath } from './logoUtils.js';
 export {
   DEFAULT_PALETTE_FIELDS,
   OFFICIAL_LOGO_COLORS,
