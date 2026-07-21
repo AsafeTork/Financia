@@ -3,7 +3,7 @@ import { Card } from './ui.jsx';
 import { fmt as _fmt, brandAlpha } from '../../lib/utils.js';
 import { askAI } from '../../lib/aiClient.js';
 
-function yieldToMain() {
+function _yieldToMain() {
   if (globalThis.scheduler?.yield) return globalThis.scheduler.yield();
   return new Promise(function(r) {
     var ch = new MessageChannel();

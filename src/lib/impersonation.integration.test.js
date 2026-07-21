@@ -1,8 +1,8 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-const mockAdminId = 'admin-123';
+const _mockAdminId = 'admin-123';
 const mockTargetId = 'target-user-456';
-const mockTargetEmail = 'target@example.com';
+const _mockTargetEmail = 'target@example.com';
 const mockAccessToken = 'mock-access-token-xxx';
 const mockRefreshToken = 'mock-refresh-token-yyy';
 

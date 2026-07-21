@@ -12,7 +12,7 @@ function Header({ brand, onMenuOpen, syncStatus, theme, onToggleTheme }) {
       <div className="flex items-center justify-between px-4 h-14">
         <div className="flex items-center gap-2.5 min-w-0 flex-1">
           {isValidUrl(brand.logo_url)
-            ? <img src={brand.logo_url} alt="" fetchpriority="high" decoding="sync" className="w-8 h-8 rounded-lg object-cover flex-shrink-0" style={{border:'2px solid rgba(0,0,0,0.15)'}}/>
+            ? <img src={brand.logo_url} alt="" fetchPriority="high" decoding="sync" className="w-8 h-8 rounded-lg object-cover flex-shrink-0" style={{border:'2px solid rgba(0,0,0,0.15)'}}/>
             : <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{background:'rgba(0,0,0,' + overlayAlpha + ')', border:'2px solid rgba(0,0,0,0.15)'}}>
                 <span className="font-bold text-sm" style={{color: textColor}}>{(brand.logo || 'F')[0]}</span>
               </div>

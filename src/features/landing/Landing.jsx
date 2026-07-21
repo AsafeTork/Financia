@@ -122,7 +122,7 @@ export default function Landing({ onEnter }) {
       <header className="sticky top-0 z-50" style={{ background: 'rgba(255,255,255,0.80)', backdropFilter: 'blur(16px) saturate(1.8)', WebkitBackdropFilter: 'blur(16px) saturate(1.8)', borderBottom: '1px solid rgba(10,37,64,0.06)' }}>
         <div className="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <img src="/icon-192.svg" alt="Financia" fetchpriority="high" decoding="sync" className="w-7 h-7" />
+            <img src="/icon-192.svg" alt="Financia" fetchPriority="high" decoding="sync" className="w-7 h-7" />
             <span className="font-display text-lg font-semibold" style={{ color: NAVY, letterSpacing: '-0.3px' }}>Financia</span>
           </div>
           <nav className="hidden md:flex items-center gap-6 text-sm" style={{ color: MUTED }}>
