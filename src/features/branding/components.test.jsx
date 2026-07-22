@@ -63,12 +63,12 @@ describe('PlanTabsEditor', function() {
     expect(screen.getByText('Paleta de cores — Pro')).toBeInTheDocument();
   });
 
-  it('atualiza cor ao mudar input color', async function() {
+it('atualiza cor ao mudar input color', async function() {
     const user = userEvent.setup();
     render(<PlanTabsEditor {...defaultProps} />);
     const colorInput = screen.getByLabelText('Primaria');
     await user.click(colorInput);
-    await user.keyboard('[Control>a]');
+    await user.keyboard('[Control+A]');
     await user.keyboard('#ff0000');
     await user.keyboard('{Enter}');
     expect(colorInput.value).toBe('#ff0000');
@@ -101,12 +101,12 @@ describe('PlanTabsEditor', function() {
     expect(screen.getByLabelText('Primaria').value).toBe('#111111');
   });
 
-  it('salva configuracao do plano', async function() {
+it('salva configuracao do plano', async function() {
     const user = userEvent.setup();
     render(<PlanTabsEditor {...defaultProps} />);
     const colorInput = screen.getByLabelText('Primaria');
     await user.click(colorInput);
-    await user.keyboard('[Control>a]');
+    await user.keyboard('[Control+A]');
     await user.keyboard('#ff0000');
     await user.keyboard('{Enter}');
     const saveButton = screen.getByText('Salvar configuracao do plano Free');
@@ -150,12 +150,12 @@ describe('PlanTabsEditor', function() {
     expect(saveButton.disabled).toBe(true);
   });
 
-  it('habilita botao salvar apos mudanca', async function() {
+it('habilita botao salvar apos mudanca', async function() {
     const user = userEvent.setup();
     render(<PlanTabsEditor {...defaultProps} />);
     const colorInput = screen.getByLabelText('Primaria');
     await user.click(colorInput);
-    await user.keyboard('[Control>a]');
+    await user.keyboard('[Control+A]');
     await user.keyboard('#ff0000');
     await user.keyboard('{Enter}');
     const saveButton = screen.getByText('Salvar configuracao do plano Free');
@@ -178,7 +178,7 @@ describe('BrandGlobalEditor', function() {
     expect(screen.getByLabelText('Titulo da aplicacao (aba do navegador)')).toHaveValue('App Title');
   });
 
-  it('atualiza campo ao digitar', async function() {
+it('atualiza campo ao digitar', async function() {
     const user = userEvent.setup();
     const brandGlobal = { name: 'Test', short_name: '', app_title: '' };
     const setField = vi.fn();
@@ -325,7 +325,7 @@ describe('ModuleEditor', function() {
     render(<ModuleEditor mod={mod} brandConfig={brandConfig} onApply={onApply} brandColor="#002f59" />);
     const primaryInput = screen.getByLabelText('Primary');
     await user.click(primaryInput);
-    await user.keyboard('[Control>a]');
+    await user.keyboard('[Control+A]');
     await user.keyboard('#ff0000');
     await user.keyboard('{Enter}');
     expect(screen.getByText('Aplicar Paleta de cores')).toBeInTheDocument();
