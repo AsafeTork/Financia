@@ -244,6 +244,3 @@ describe('Contraste e Cores - Verificacao Basica', function() {
     expect(tabs.length).toBeGreaterThanOrEqual(1);
   });
 });
-    expect(tabs.length).toBeGreaterThanOrEqual(1);
-  });
-});
