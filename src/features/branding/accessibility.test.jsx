@@ -219,14 +219,13 @@ describe('Acessibilidade - LogoSchemes', function() {
 
 describe('Contraste e Cores - Verificacao Basica', function() {
 
-it('usa variaveis CSS para cores (nao hardcoded)', function() {
+  it('usa variaveis CSS para cores (nao hardcoded)', function() {
     render(<BrandGlobalEditor brandGlobal={{ name: '', short_name: '', app_title: '', logo_url: '', secondary_logo_url: '', favicon_url: '', login_logo_url: '', login_bg: '', login_text: '', secondary_logo_position: 'right', secondary_logo_size: 40 }} setField={mockSetField} onSave={vi.fn()} brandColor="#002f59" />);
     const inputs = screen.getAllByRole('textbox');
     inputs.forEach(input => {
       const borderStyle = input.style.border || '';
       expect(borderStyle).toMatch(/var\(--border\)/);
     });
-  });
   });
 
   it('botoes primarios usam brandColor', function() {
@@ -242,6 +241,9 @@ it('usa variaveis CSS para cores (nao hardcoded)', function() {
   it('focus visible em elementos interativos', function() {
     render(<PlanTabsEditor brandConfig={{ planOverrides: {} }} onSavePlan={vi.fn()} onCopyJSON={vi.fn()} onCopyDocs={vi.fn()} brandColor="#002f59" toast={vi.fn()} />);
     const tabs = screen.getAllByRole('tab');
+    expect(tabs.length).toBeGreaterThanOrEqual(1);
+  });
+});
     expect(tabs.length).toBeGreaterThanOrEqual(1);
   });
 });
