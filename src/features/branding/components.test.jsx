@@ -67,8 +67,10 @@ describe('PlanTabsEditor', function() {
     const user = userEvent.setup();
     render(<PlanTabsEditor {...defaultProps} />);
     const colorInput = screen.getByLabelText('Primaria');
-    await user.clear(colorInput);
-    await user.type(colorInput, '#ff0000');
+    await user.click(colorInput);
+    await user.keyboard('[Control>A]');
+    await user.keyboard('#ff0000');
+    await user.keyboard('{Enter}');
     expect(colorInput.value).toBe('#ff0000');
   });
 
@@ -95,7 +97,7 @@ describe('PlanTabsEditor', function() {
       info: '#2563eb',
     }, null, 2);
     await user.clear(jsonTextarea);
-    await user.type(jsonTextarea, newJson);
+    await user.fill(jsonTextarea, newJson);
     expect(screen.getByLabelText('Primaria').value).toBe('#111111');
   });
 
@@ -103,8 +105,10 @@ describe('PlanTabsEditor', function() {
     const user = userEvent.setup();
     render(<PlanTabsEditor {...defaultProps} />);
     const colorInput = screen.getByLabelText('Primaria');
-    await user.clear(colorInput);
-    await user.type(colorInput, '#ff0000');
+    await user.click(colorInput);
+    await user.keyboard('[Control>A]');
+    await user.keyboard('#ff0000');
+    await user.keyboard('{Enter}');
     const saveButton = screen.getByText('Salvar configuracao do plano Free');
     expect(saveButton.disabled).toBe(false);
     await user.click(saveButton);
@@ -150,8 +154,10 @@ describe('PlanTabsEditor', function() {
     const user = userEvent.setup();
     render(<PlanTabsEditor {...defaultProps} />);
     const colorInput = screen.getByLabelText('Primaria');
-    await user.clear(colorInput);
-    await user.type(colorInput, '#ff0000');
+    await user.click(colorInput);
+    await user.keyboard('[Control>A]');
+    await user.keyboard('#ff0000');
+    await user.keyboard('{Enter}');
     const saveButton = screen.getByText('Salvar configuracao do plano Free');
     expect(saveButton.disabled).toBe(false);
   });
@@ -318,8 +324,10 @@ describe('ModuleEditor', function() {
     const onApply = vi.fn();
     render(<ModuleEditor mod={mod} brandConfig={brandConfig} onApply={onApply} brandColor="#002f59" />);
     const primaryInput = screen.getByLabelText('Primary');
-    await user.clear(primaryInput);
-    await user.type(primaryInput, '#ff0000');
+    await user.click(primaryInput);
+    await user.keyboard('[Control>A]');
+    await user.keyboard('#ff0000');
+    await user.keyboard('{Enter}');
     expect(screen.getByText('Aplicar Paleta de cores')).toBeInTheDocument();
   });
 

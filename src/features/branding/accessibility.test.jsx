@@ -223,13 +223,15 @@ describe('Contraste e Cores - Verificacao Basica', function() {
     render(<BrandGlobalEditor brandGlobal={{ name: '', short_name: '', app_title: '', logo_url: '', secondary_logo_url: '', favicon_url: '', login_logo_url: '', login_bg: '', login_text: '', secondary_logo_position: 'right', secondary_logo_size: 40 }} setField={mockSetField} onSave={vi.fn()} brandColor="#002f59" />);
     const inputs = screen.getAllByRole('textbox');
     inputs.forEach(input => {
-      expect(input.style.border).toContain('var(--border)');
+      const borderStyle = input.style.border || '';
+      expect(borderStyle).toMatch(/var\(--border\)/);
     });
   });
 
   it('botoes primarios usam brandColor', function() {
-    render(<BrandStudioView brand={mockBrand} planInfo={mockPlanInfo} onSave={mockOnSave} toast={mockToast} onNav={mockOnNav} />);
+    render(<BrandStudioView brand={mockBrand} planInfo={mockPlanInfo} onSave={mockOnSave} toast={mockToast} onNav={mockOnNav} isAdmin={true} />);
     const saveButtons = screen.getAllByRole('button', { name: /salvar/i });
+    expect(saveButtons.length).toBeGreaterThan(0);
     saveButtons.forEach(btn => {
       const style = btn.getAttribute('style') || '';
       expect(style).toMatch(/#002f59|rgb\(0, 47, 89\)/);

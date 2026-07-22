@@ -8,6 +8,16 @@ Em caso de conflito: **CLAUDE.md SEMPRE prevalece**.
 
 ## 0. FILOSOFIA CENTRAL
 
+### Regra Suprema: Zero Testes e Builds Locais
+Node.js e npm não estão disponíveis neste ambiente. Foram removidos intencionalmente.
+**NENHUM agente pode executar testes, build, lint ou qualquer comando Node.js localmente.**
+Todo teste e validação deve ser feito exclusivamente via:
+- **Render logs** — ver logs do deploy, erros de runtime, requisições
+- **GitHub Actions** — logs de CI, lint, typecheck, testes unitários, Playwright
+- **URL do produto final** — testar a aplicação ao vivo em https://financiabr.me
+
+Qualquer agente que tentar rodar `npm`, `node`, `npx`, `vitest`, `playwright` localmente será considerado em DESOBEDIÊNCIA. Esta regra não tem exceção.
+
 **O Integrador pensa. O Executor executa. Os Subagentes implementam. Nenhum outro agente decide arquitetura.**
 
 ### Princípios Fundamentais
