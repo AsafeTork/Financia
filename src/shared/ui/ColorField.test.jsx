@@ -34,10 +34,7 @@ it('atualiza cor via color picker', async function() {
     const calls = [];
     render(React.createElement(ColorField, { label: 'Primaria', value: '#002f59', onChange: function(v) { calls.push(v); } }));
     const colorInput = screen.getByTestId('color-field-picker');
-    await user.click(colorInput);
-    await user.keyboard('[Control+A]');
-    await user.keyboard('#ff0000');
-    await user.keyboard('{Enter}');
+    await user.type(colorInput, '#ff0000');
     expect(calls.length).toBe(1);
     expect(calls[0]).toBe('#ff0000');
   });
