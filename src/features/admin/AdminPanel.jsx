@@ -45,6 +45,23 @@ export default function AdminPanel({ toast, confirm, session, brand }) {
   const [editClient, setEditClient] = useState(null);
   const [_copied, setCopied] = useState(null);
   const [search, setSearch] = useState('');
+  const [debug, setDebug] = useState(function() {
+    try { return localStorage.getItem('financia_debug_mode') === '1'; } catch { return false; }
+  });
+  const toggleDebug = useCallback(function() {
+    setDebug(function(prev) {
+      const next = !prev;
+      try { localStorage.setItem('financia_debug_mode', next ? '1' : '0'); } catch {}
+      if (next) {
+        console.log('%c[DEBUG] Modo debug ativado', 'color:#6b21a8;font-weight:bold');
+        console.log('[DEBUG] User:', session?.user?.email);
+        console.log('[DEBUG] Admin:', true);
+      } else {
+        console.log('%c[DEBUG] Modo debug desativado', 'color:#6b21a8;font-weight:bold');
+      }
+      return next;
+    });
+  }, [session]);
   const [planFilter, setPlanFilter] = useState('all');
   const [usage, setUsage] = useState({});
   const [stripeOv, setStripeOv] = useState(null);
@@ -530,6 +547,24 @@ export default function AdminPanel({ toast, confirm, session, brand }) {
           toast={toast}
         />
       )}
+
+      <div className="rounded-2xl p-4" style={{background:'var(--bg-card)', border:'1px solid var(--border)', borderTop:'3px solid #6b21a8'}}>
+        <SectionHead color="#6b21a8" title="Debug Mode" icon="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        <p className="text-xs mb-3" style={{color:'var(--text-muted)'}}>Ativa logs detalhados no console do navegador para depuração.</p>
+        <label className="flex items-center gap-3 cursor-pointer">
+          <div className="relative">
+            <input type="checkbox" className="sr-only peer" checked={debug} onChange={toggleDebug} />
+            <div className="w-10 h-6 rounded-full transition-colors peer-checked:bg-purple-600 bg-gray-300" />
+            <div className="absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform peer-checked:translate-x-4" />
+          </div>
+          <span className="text-sm font-medium" style={{color:'var(--text-main)'}}>{debug ? 'Ativado' : 'Desativado'}</span>
+        </label>
+        {debug && (
+          <div className="mt-3 rounded-lg p-3 text-xs" style={{background:'#fef9c3', border:'1px solid #eab308', color:'#713f12'}}>
+            Logs de depuração ativos no console (F12 → Console). Não mantenha ativo em produção.
+          </div>
+        )}
+      </div>
     </div>
   );
 }

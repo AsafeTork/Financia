@@ -109,7 +109,34 @@ test.setTimeout(600000);
 test.describe('Production Audit - All Browsers', () => {
   test('full audit on chromium', async ({ page }) => {
     await captureConsole(page, 'chromium-setup');
-    await page.goto(PROD_URL, { waitUntil: 'domcontentloaded', timeout: 20000 });
+
+    // Login with admin credentials from env vars
+    const adminEmail = process.env.PLAYWRIGHT_USERNAME || 'admin@gestao.com';
+    const adminPass = process.env.PLAYWRIGHT_PASSWORD || '';
+
+    if (adminPass) {
+      await page.goto(`${PROD_URL}/login`, { waitUntil: 'domcontentloaded', timeout: 20000 }).catch(() => {});
+      await page.goto(PROD_URL, { waitUntil: 'domcontentloaded', timeout: 20000 }).catch(() => {});
+      const emailInput = page.locator('input[type="email"], input[name="email"], input[placeholder*="email" i]').first();
+      const passInput = page.locator('input[type="password"], input[name="password"]').first();
+      const submitBtn = page.locator('button[type="submit"], button:has-text("Entrar"), button:has-text("Login")').first();
+
+      if (await emailInput.isVisible({ timeout: 3000 }).catch(() => false)) {
+        await emailInput.fill(adminEmail);
+        if (await passInput.isVisible({ timeout: 1000 }).catch(() => false)) {
+          await passInput.fill(adminPass);
+          await submitBtn.click({ timeout: 5000 }).catch(() => {});
+          await page.waitForTimeout(3000);
+        }
+      }
+    }
+
+    // Enable debug mode via localStorage
+    await page.evaluate(() => {
+      localStorage.setItem('financia_debug_mode', '1');
+    });
+
+    // Set debug_mode in session metadata
     await captureConsole(page, `chromium-${ROUTES[0].label}`);
 
     for (const r of ROUTES) {

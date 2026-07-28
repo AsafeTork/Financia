@@ -36,6 +36,26 @@ function Loader({ text }) {
   );
 }
 
+function DebugBadge() {
+  const [show, setShow] = React.useState(function() {
+    try { return localStorage.getItem('financia_debug_mode') === '1'; } catch { return false; }
+  });
+  React.useEffect(function() {
+    function check() { try { setShow(localStorage.getItem('financia_debug_mode') === '1'); } catch {} }
+    window.addEventListener('storage', check);
+    window.addEventListener('financia-debug-change', check);
+    return function() { window.removeEventListener('storage', check); window.removeEventListener('financia-debug-change', check); };
+  }, []);
+  if (!show) return null;
+  return (
+    <div className="fixed bottom-4 right-4 z-50 flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-lg"
+      style={{background:'#6b21a8', color:'#fff'}}>
+      <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+      DEBUG
+    </div>
+  );
+}
+
 export default function App() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -327,6 +347,7 @@ const currentView = sessionViews.includes(path) ? path : 'dashboard';
       <a href="#main-content" onClick={function(e){e.preventDefault();var el=document.getElementById('main-content');if(el){el.setAttribute('tabindex','-1');el.focus();el.scrollIntoView();}}} className="skip-link">Pular para conteúdo</a>
       <Offline/>
       <WidgetErrorBoundary><UpdateBanner brand={appBrand}/></WidgetErrorBoundary>
+      <DebugBadge/>
       <SyncBadge status={syncStatus}/>
       <WidgetErrorBoundary><Sidebar view={currentView} onNav={navTo} brand={appBrand} open={sidebarOpen} isAdmin={isAdminDB} onClose={handleCloseSidebar}/></WidgetErrorBoundary>
       <div className="hidden lg:block fixed top-4 right-4 z-30">
