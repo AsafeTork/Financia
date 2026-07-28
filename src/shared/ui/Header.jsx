@@ -3,10 +3,10 @@ import { luminance, isValidUrl } from '../../lib/utils.js';
 import ThemeToggle from './ThemeToggle.jsx';
 
 function Header({ brand, onMenuOpen, syncStatus, theme, onToggleTheme }) {
-  var dotColor = syncStatus === 'ok' ? '#22c55e' : syncStatus === 'error' ? '#ef4444' : '#94a3b8';
-  var lum = luminance(brand.color || '#002f59');
-  var textColor = lum > 0.4 ? '#111827' : '#ffffff';
-  var overlayAlpha = lum > 0.4 ? '0.08' : '0.18';
+  const dotColor = syncStatus === 'ok' ? '#22c55e' : syncStatus === 'error' ? '#ef4444' : '#94a3b8';
+  const lum = luminance(brand.color || '#002f59');
+  const textColor = lum > 0.4 ? '#111827' : '#ffffff';
+  const overlayAlpha = lum > 0.4 ? '0.08' : '0.18';
   return (
     <header data-testid="header" className="sticky top-0 z-20 lg:hidden shadow-sm" style={{background: brand.color || '#002f59'}}>
       <div className="flex items-center justify-between px-4 h-14">

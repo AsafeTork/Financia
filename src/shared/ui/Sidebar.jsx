@@ -3,22 +3,20 @@ import { NAV } from '../../lib/constants.js';
 import { isValidUrl } from '../../lib/utils.js';
 
 function Sidebar({ view, onNav, brand, open, onClose, isAdmin }) {
-  var onlineState = React.useState(true);
-  var online = onlineState[0];
-  var setOnline = onlineState[1];
+  const [online, setOnline] = React.useState(true);
   React.useEffect(function() {
-    var up = function() { setOnline(true); };
-    var down = function() { setOnline(false); };
+    const up = function() { setOnline(true); };
+    const down = function() { setOnline(false); };
     window.addEventListener('online', up);
     window.addEventListener('offline', down);
     return function() { window.removeEventListener('online', up); window.removeEventListener('offline', down); };
   }, [setOnline]);
-  var navItems = NAV.filter(function(v) { return !v.adminOnly || isAdmin; });
-  var mainItems = navItems.filter(function(v) { return v.key !== 'settings'; });
-  var settingsItem = navItems.find(function(v) { return v.key === 'settings'; });
+  const navItems = NAV.filter(function(v) { return !v.adminOnly || isAdmin; });
+  const mainItems = navItems.filter(function(v) { return v.key !== 'settings'; });
+  const settingsItem = navItems.find(function(v) { return v.key === 'settings'; });
 
   function NavBtn(item) {
-    var active = view === item.key;
+    const active = view === item.key;
     return (
       <button key={item.key} data-testid={'sidebar-link-' + item.key} onClick={function() { onNav(item.key); onClose(); }}
         aria-current={active ? 'page' : undefined}

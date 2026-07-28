@@ -187,11 +187,13 @@ export function enterPreviewMode(proposedBrand) {
 }
 
 /**
- * Exits preview mode by clearing all inline styles.
+ * Exits preview mode by removing only preview-specific CSS variables.
+ * Does NOT clear all inline styles (which would break the UI).
  */
 export function exitPreviewMode() {
   const el = document.documentElement;
-  el.style.cssText = '';
+  const previewKeys = ['--brand', '--brand-soft', '--brand-secondary', '--brand-accent', '--brand-accent-soft', '--brand-grad'];
+  previewKeys.forEach(k => el.style.removeProperty(k));
 }
 
 export default function useBrandAppearance(brand, planInfo) {

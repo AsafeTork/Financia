@@ -20,35 +20,43 @@ next_review: 2026-07-18
 ## Checkpoint Atual
 
 ```yaml
-execution_id: exec_20260721_143000_008
-task_id: task_008
-phase: F6
-checkpoint: checkpoint_008
-task_description: "Fase 6 QA — Implementação final: thresholds, lighthouserc median, fireEvent→userEvent, data-testid em componentes complexos"
+execution_id: exec_20260728_120000_009
+task_id: task_009
+phase: F8
+checkpoint: checkpoint_009
+task_description: "Fase 8 Finalização — Correções segurança Supabase, deploy Edge Functions, docs APPROVED"
 model_used: "deepseek"
 files_modified:
-  - "vitest.config.js"
-  - ".lighthouseci.config.js"
-  - "src/shared/ui/ColorField.test.jsx"
-  - "src/features/branding/components.test.jsx"
-  - "src/shared/ui/Sidebar.jsx"
-  - "src/features/transactions/TxView.jsx"
-  - "src/features/inventory/InventoryView.jsx"
-  - "src/shared/ui/Header.jsx"
-  - "docs/IMPLEMENTATION_ORDER.md"
+  - "Supabase DB (3 migrations: security, RLS, indexes)"
+  - "supabase/functions/health"
+  - "supabase/functions/stripe-config"
+  - "supabase/functions/create-payment"
+  - "supabase/functions/stripe-webhook"
+  - "supabase/functions/create-subscription"
+  - "supabase/functions/cancel-subscription"
+  - "supabase/functions/get-subscription-status"
+  - "supabase/functions/admin-stripe-overview"
+  - "supabase/functions/admin-create-client"
+  - "supabase/functions/admin-set-custom-price"
+  - "supabase/functions/admin-set-white-label"
+  - "supabase/functions/create-setup-intent"
+  - "docs/VALIDATION_MODULE.md"
+  - "docs/CHECKPOINT_AUDITOR.md"
+  - "docs/CHANGELOG_AI.md"
   - "docs/EXECUTION_STATE.md"
 validations_passed:
-  - "coverage thresholds: 60/50/50/60 added"
-  - "lighthouserc: aggregationMethod: 'median' added"
-  - "fireEvent: zero occurrences remaining (13 migrated)"
-  - "data-testid: added to Sidebar, TxView, InventoryView, Header"
-  - "Fase 1-7: ALL VALIDADA"
+  - "security: 12 Supabase advisor warnings resolved"
+  - "edge_functions: 0→12 deployed"
+  - "site: financiabr.me online v5.1.1"
+  - "docs: 3 DRAFT→APPROVED"
 decisions_made:
-  phase_state: "F1=VALIDADA, F2=VALIDADA, F3=VALIDADA, F4=VALIDADA, F5=VALIDADA, F6=VALIDADA, F7=VALIDADA"
-  f6_status: "COMPLETO — Todos os itens do QA ANALYSIS implementados"
-  next_phase: "PROJECT COMPLETE"
-pending_issues: []
-execution_timestamp: "2026-07-21T14:30:00Z"
+  phase_state: "F1-F8: ALL VALIDADA"
+  f8_status: "COMPLETO — Correções de segurança, Edge Functions, docs finalizados"
+  project_status: "FINALIZADO"
+pending_issues:
+  - "Habilitar leaked password protection no dashboard Supabase Auth"
+  - "Deploy 8 Edge Functions restantes (admin-impersonate, get-payment-method, etc)"
+execution_timestamp: "2026-07-28T12:00:00Z"
 ```
 
 ---

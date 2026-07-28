@@ -71,9 +71,9 @@ export default function App() {
 
   const toast = useCallback(function(msg, type) {
     if (!type) type = 'success';
-    var id = ++toastId.current;
+    const id = ++toastId.current;
     setToasts(function(list) { return list.concat([{id:id, msg:msg, type:type}]); });
-    var tid = setTimeout(function() {
+    const tid = setTimeout(function() {
       toastTimeoutsRef.current = toastTimeoutsRef.current.filter(function(t) { return t !== tid; });
       setToasts(function(list) { return list.filter(function(t) { return t.id !== id; }); });
     }, type === 'error' ? 4000 : 3000);
@@ -115,7 +115,7 @@ export default function App() {
 
   useEffect(function() {
     if (!dataLoading) return;
-    var t = setTimeout(function() { setDataLoading(false); setSyncStatus('idle'); }, 25000);
+    const t = setTimeout(function() { setDataLoading(false); setSyncStatus('idle'); }, 25000);
     return function() { clearTimeout(t); };
   }, [dataLoading]);
 
@@ -195,7 +195,7 @@ export default function App() {
       firstRender.current = false;
       return;
     }
-    var names = { dashboard:'Dashboard', income:'Vendas e Ganhos', expense:'Despesas', inventory:'Estoque', report:'Relatório', email:'Comunicar', settings:'Configurações', planos:'Planos', brandstudio:'Brand Studio' };
+    const names = { dashboard:'Dashboard', income:'Vendas e Ganhos', expense:'Despesas', inventory:'Estoque', report:'Relatório', email:'Comunicar', settings:'Configurações', planos:'Planos', brandstudio:'Brand Studio' };
     var name = names[path] || path;
     setAnnounceMsg('');
     requestAnimationFrame(function() {
@@ -221,7 +221,7 @@ export default function App() {
   const {products, setProducts, addProduct, editProduct, deleteProduct, adjustStock}    = useProducts(session, enforceLimit, toast);
   const {losses, setLosses, addLoss, editLoss, deleteLoss}                             = useLosses(session, enforceLimit, toast);
 
-  var sessionProps = React.useMemo(function() {
+  const sessionProps = React.useMemo(function() {
     return { toast, session, setSession, isAdminDB, setIsAdminDB,
       setAppLoading, setDataLoading, setDataError,
       setBrand, setPlanInfo, setSyncStatus,
@@ -334,7 +334,7 @@ const currentView = sessionViews.includes(path) ? path : 'dashboard';
       </div>
       <div className="flex-1 lg:ml-64 flex flex-col min-h-screen min-w-0 w-full">
         <WidgetErrorBoundary><Header brand={appBrand} syncStatus={syncStatus} theme={effectiveTheme} onToggleTheme={toggleTheme} onMenuOpen={handleOpenSidebar}/></WidgetErrorBoundary>
-        <main id="main-content" tabIndex="-1" className="flex-1 p-4 lg:p-8 max-w-2xl w-full mx-auto pb-24 lg:pb-8 min-w-0 overflow-x-hidden">
+        <main id="main-content" tabIndex="-1" className="flex-1 p-4 lg:p-8 max-w-5xl w-full mx-auto pb-24 lg:pb-8 min-w-0 overflow-x-hidden">
           <FeatureErrorBoundary featureName={currentView} key={location.pathname}>
             <AppRoutes tx={tx} products={products} losses={losses} brand={appBrand} planInfo={planInfo}
               onNav={navTo} toast={toast} confirm={confirm} uid={session.user.id}

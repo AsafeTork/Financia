@@ -71,9 +71,9 @@ Criados pelo Executor conforme necessário. Cada um atua em UMA área:
 | `docs/EXECUTOR_PROMPT.md` | APPROVED | Integrador | 2.1 | Integrador | true | 1 |
 | `docs/EXECUTION_STATE.md` | APPROVED | Integrador | 1.1 | Integrador | true | 1-7 |
 | `docs/SCRATCH_PAD.md` | DRAFT | Integrador | 1.0 | — | false | 1-7 |
-| `docs/VALIDATION_MODULE.md` | DRAFT | Integrador | 1.0 | — | false | 1-7 |
-| `docs/CHECKPOINT_AUDITOR.md` | DRAFT | Integrador | 1.0 | — | false | 1-7 |
-| `docs/CHANGELOG_AI.md` | DRAFT | Integrador | 1.0 | — | false | 1-7 |
+| `docs/VALIDATION_MODULE.md` | APPROVED | Integrador | 1.1 | Integrador | true | 1-7 |
+| `docs/CHECKPOINT_AUDITOR.md` | APPROVED | Integrador | 1.1 | Integrador | true | 1-7 |
+| `docs/CHANGELOG_AI.md` | APPROVED | Integrador | 1.1 | Integrador | true | 1-7 |
 
 ### REPORT (não bloqueiam)
 
@@ -152,18 +152,29 @@ Cada fase segue o workflow v2.1:
 | Fase 4 | ✅ **FRONTEND** | ARIA, Error handling, Code-split, var→const, schemaRegistry simplificado | Fase 1 |
 | Fase 5 | ✅ **SUPABASE/BACKEND** | PR-01 a PR-05 + EF-03 + EF-05 + Stripe Refactor concluídos e testados | Fase 1 |
 | Fase 6 | ✅ **QA** | Playwright E2E, LHCI, MSW, thresholds 60/50/50/60, PWA offline, IndexedDB recovery, multi-tab sync, Stripe Elements, screen reader (Guidepup), memory leak — todos implementados | Fase 1 |
-| Fase 7 | ✅ **INTEGRAÇÃO** | Merge final, deploy readiness, validação completa — APROVADA | Fases 3, 5, 6 |
+| Fase 8 | ✅ **FINALIZAÇÃO** | Correções de segurança Supabase, 12 Edge Functions deployadas, docs promovidos para APPROVED | Fase 7 |
 
 - **Build:** ✅ Passando
 - **Lint:** ✅ 0 erros, 1 warning (pre-existing)
 - **Testes:** ✅ 471+ passed (core)
-- **Documentos:** 33 ativos em `docs/`, 12 em `docs/archive/`
+- **Supabase Security:** ✅ 12/12 advisories resolvidos
+- **Edge Functions:** ✅ 12 deployadas (0→12)
+- **Edge Functions pendentes:** 8 (admin-impersonate, get-payment-method, set-default-payment-method, remove-payment-method, send-custom-email, update-brand-config, ai, trigger-apk-build, admin-job-runner)
+- **Site:** ✅ Online em https://financiabr.me
+- **Documentos:** 36 ativos em `docs/`, 12 em `docs/archive/`
 
 ---
 
 ## 4. Bloqueios Atuais
 
-**Nenhum** — Todas as 7 fases implementadas e validadas.
+**Nenhum** — Projeto finalizado.
+
+## 5. Pendências Baixa Prioridade
+
+| Item | Severidade | Responsável |
+|------|-----------|-------------|
+| Habilitar leaked password protection no dashboard Supabase Auth | Baixa | Administrador |
+| Deploy 8 Edge Functions restantes (admin-impersonate, get-payment-method, etc) | Baixa | Executor |
 
 ---
 
@@ -184,4 +195,6 @@ Cada fase segue o workflow v2.1:
 
 ## 7. Próximas Ações
 
-1. Promover SCRATCH_PAD.md, VALIDATION_MODULE.md, CHECKPOINT_AUDITOR.md, CHANGELOG_AI.md para APPROVED ou arquivar
+1. Habilitar leaked password protection no dashboard Supabase Auth
+2. Deploy das 8 Edge Functions restantes
+3. Nada mais — projeto completo

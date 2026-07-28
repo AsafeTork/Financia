@@ -12,8 +12,8 @@ const PlansView     = lazy(function() { return import('../features/plans/PlansVi
 const BrandStudioView = lazy(function() { return import('../features/branding/BrandStudioView.jsx'); });
 
 export default function AppRoutes(props) {
-  var { tx, products, losses, brand, planInfo, onNav, toast, confirm, uid, addTx, editTx, deleteTx, addGenerated, onDeductStock, addProduct, editProduct, deleteProduct, addLoss, editLoss, deleteLoss, adjustStock, saveBrand, savePhone, session, isAdmin, dataLoading } = props;
-  var noop = function() {};
+  const { tx, products, losses, brand, planInfo, onNav, toast, confirm, uid, addTx, editTx, deleteTx, addGenerated, onDeductStock, addProduct, editProduct, deleteProduct, addLoss, editLoss, deleteLoss, adjustStock, saveBrand, savePhone, session, isAdmin, dataLoading } = props;
+  const noop = function() {};
   return (
     <Suspense fallback={<PageSkeleton/>}>
       <Routes>

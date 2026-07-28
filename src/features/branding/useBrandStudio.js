@@ -52,7 +52,7 @@ export default function useBrandStudio(brand, planInfo, onSave, toast) {
       if (truncated.length > 20) truncated.shift();
       return truncated;
     });
-    setHistoryIndex(i => Math.min(i + 1, 19));
+    setHistoryIndex(prev => Math.min(prev + 1, 19));
   }, [brand, historyIndex]);
 
   const undo = useCallback(() => {
@@ -154,12 +154,22 @@ export default function useBrandStudio(brand, planInfo, onSave, toast) {
 
   // Add the missing copy functions that BrandStudioView expects
   const copyPrompt = useCallback(() => {
-    if (toast) toast('Funcao de copiar documentacao nao implementada', 'warning');
-  }, [toast]);
+    const doc = brandConfig ? JSON.stringify(brandConfig, null, 2) : '';
+    navigator.clipboard.writeText(doc).then(() => {
+      if (toast) toast('Documentação copiada!', 'success');
+    }).catch(() => {
+      if (toast) toast('Não foi possível copiar. Tente manualmente.', 'warning');
+    });
+  }, [brandConfig, toast]);
 
   const copyCurrentJSON = useCallback(() => {
-    if (toast) toast('Funcao de copiar JSON nao implementada', 'warning');
-  }, [toast]);
+    const json = brandConfig ? JSON.stringify(brandConfig, null, 2) : '{}';
+    navigator.clipboard.writeText(json).then(() => {
+      if (toast) toast('JSON copiado!', 'success');
+    }).catch(() => {
+      if (toast) toast('Não foi possível copiar. Tente manualmente.', 'warning');
+    });
+  }, [brandConfig, toast]);
 
   return {
     brandConfig, allPresets, presetCats, history, historyIndex,
