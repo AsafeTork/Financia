@@ -2,7 +2,7 @@ services:
   - type: web
     name: financia
     env: static
-    buildCommand: npm install && npm run build
+    buildCommand: npm install && npm run validate:full
     staticPublishPath: ./dist
 
     # ── Headers de cache: HTML nunca cacheado, assets imutaveis (hash) ──
