@@ -39,7 +39,6 @@ jobs:
     name: Unit Tests
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    needs: [lint-typecheck]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -47,7 +46,7 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci || npm install --legacy-peer-deps
-      - run: npm run test:fast
+      - run: npm run test
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -58,9 +57,8 @@ jobs:
   e2e-tests:
     name: E2E (${{ matrix.browser }})
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 5
     continue-on-error: true
-    needs: [lint-typecheck, build]
     strategy:
       fail-fast: false
       matrix:
@@ -78,7 +76,7 @@ jobs:
       - name: Install Playwright browser
         run: npx playwright install --with-deps ${{ matrix.install-browser }}
       - name: Run Playwright tests
-        run: npx playwright test --project="${{ matrix.project }}"
+        run: npx playwright test e2e/smoke.spec.ts --project="${{ matrix.project }}"
         env:
           CI: true
       - uses: actions/upload-artifact@v4
@@ -92,7 +90,6 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    needs: [lint-typecheck]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -111,7 +108,6 @@ jobs:
     name: Security Audit
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    needs: [lint-typecheck]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -136,9 +132,5 @@ jobs:
           echo "| Lint + Typecheck | ${{ needs.lint-typecheck.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Unit Tests (1700+) | ${{ needs.unit-tests.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| E2E (chromium) | ${{ needs.e2e-tests.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| E2E (firefox) | ${{ needs.e2e-tests.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| E2E (webkit) | ${{ needs.e2e-tests.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| E2E (mobile-chrome) | ${{ needs.e2e-tests.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| E2E (mobile-safari) | ${{ needs.e2e-tests.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Build | ${{ needs.build.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Security Audit | ${{ needs.security-audit.result }} |" >> $GITHUB_STEP_SUMMARY

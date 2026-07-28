@@ -70,8 +70,7 @@ it('atualiza cor ao mudar input color', function() {
     expect(colorInput.value).toBe('#ff0000');
   });
 
-  it('aplica JSON e atualiza form', async function() {
-    const user = userEvent.setup();
+  it('aplica JSON e atualiza form', function() {
     render(<PlanTabsEditor {...defaultProps} />);
     const jsonTextarea = screen.getByLabelText('JSON');
     const newJson = JSON.stringify({
@@ -92,8 +91,7 @@ it('atualiza cor ao mudar input color', function() {
       danger: '#dc2626',
       info: '#2563eb',
     }, null, 2);
-    await user.clear(jsonTextarea);
-    await user.type(jsonTextarea, newJson, { delay: 0 });
+    fireEvent.change(jsonTextarea, { target: { value: newJson } });
     expect(screen.getByLabelText('Primaria').value).toBe('#111111');
   });
 
