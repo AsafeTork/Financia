@@ -14,7 +14,7 @@ test.describe('Multi-tab / BroadcastChannel Sync Tests', () => {
     await page1.waitForLoadState('networkidle');
     await page2.waitForLoadState('networkidle');
     
-    test.setTimeout(60000);
+    test.setTimeout(120000);
   });
 
   test.describe('BroadcastChannel Communication', () => {

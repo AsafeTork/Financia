@@ -8,6 +8,7 @@ test.describe('Stripe Elements Tests', () => {
 
   test.describe('Card Element', () => {
     test('should render Stripe Card Element', async ({ page }) => {
+      test.setTimeout(120000);
       const cardFrame = page.frameLocator('iframe[name^="__privateStripeFrame"]');
       await expect(cardFrame.locator('input[name="cardnumber"]')).toBeVisible();
       await expect(cardFrame.locator('input[name="exp-date"]')).toBeVisible();

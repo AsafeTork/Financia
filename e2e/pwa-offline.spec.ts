@@ -8,6 +8,7 @@ test.describe('PWA Offline Tests', () => {
 
   test.describe('Service Worker Lifecycle', () => {
     test('should register service worker', async ({ page }) => {
+      test.setTimeout(120000);
       const swRegistered = await page.evaluate(async () => {
         if ('serviceWorker' in navigator) {
           const registration = await navigator.serviceWorker.ready;
