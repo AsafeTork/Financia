@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import PlanTabsEditor from './PlanTabsEditor.jsx';
 import BrandGlobalEditor from './BrandGlobalEditor.jsx';
@@ -63,12 +63,10 @@ describe('PlanTabsEditor', function() {
     expect(screen.getByText('Paleta de cores — Pro')).toBeInTheDocument();
   });
 
-it('atualiza cor ao mudar input color', async function() {
-    const user = userEvent.setup();
+it('atualiza cor ao mudar input color', function() {
     render(<PlanTabsEditor {...defaultProps} />);
     const colorInput = screen.getByLabelText('Primaria');
-    // For input type=color, set value directly
-    await user.type(colorInput, '#ff0000');
+    fireEvent.change(colorInput, { target: { value: '#ff0000' } });
     expect(colorInput.value).toBe('#ff0000');
   });
 
@@ -103,7 +101,7 @@ it('salva configuracao do plano', async function() {
     const user = userEvent.setup();
     render(<PlanTabsEditor {...defaultProps} />);
     const colorInput = screen.getByLabelText('Primaria');
-    await user.type(colorInput, '#ff0000');
+    fireEvent.change(colorInput, { target: { value: '#ff0000' } });
     const saveButton = screen.getByText('Salvar configuracao do plano Free');
     expect(saveButton.disabled).toBe(false);
     await user.click(saveButton);
@@ -145,11 +143,10 @@ it('salva configuracao do plano', async function() {
     expect(saveButton.disabled).toBe(true);
   });
 
-it('habilita botao salvar apos mudanca', async function() {
-    const user = userEvent.setup();
+it('habilita botao salvar apos mudanca', function() {
     render(<PlanTabsEditor {...defaultProps} />);
     const colorInput = screen.getByLabelText('Primaria');
-    await user.type(colorInput, '#ff0000');
+    fireEvent.change(colorInput, { target: { value: '#ff0000' } });
     const saveButton = screen.getByText('Salvar configuracao do plano Free');
     expect(saveButton.disabled).toBe(false);
   });
@@ -170,15 +167,13 @@ describe('BrandGlobalEditor', function() {
     expect(screen.getByLabelText('Titulo da aplicacao (aba do navegador)')).toHaveValue('App Title');
   });
 
-it('atualiza campo ao digitar', async function() {
-    const user = userEvent.setup();
+it('atualiza campo ao digitar', function() {
     const brandGlobal = { name: 'Test', short_name: '', app_title: '' };
     const setField = vi.fn();
     render(<BrandGlobalEditor brandGlobal={brandGlobal} setField={setField} onSave={mockOnSavePlan} brandColor="#002f59" />);
     const input = screen.getByLabelText('Nome do app');
-    await user.clear(input);
-    await user.type(input, 'Novo Nome', { delay: 0 });
-    expect(setField).toHaveBeenCalled();
+    fireEvent.change(input, { target: { value: 'Novo Nome' } });
+    expect(setField).toHaveBeenCalledWith('name', 'Novo Nome');
   });
 
   it('renderiza upload de logos', function() {
@@ -306,8 +301,7 @@ describe('ModuleEditor', function() {
     expect(screen.getByText('Upload')).toBeInTheDocument();
   });
 
-  it('mostra botao aplicar quando ha mudancas', async function() {
-    const user = userEvent.setup();
+  it('mostra botao aplicar quando ha mudancas', function() {
     const mod = {
       name: 'palette',
       def: { description: 'Paleta de cores', schema: { properties: { primary: { type: 'string', pattern: '^#[0-9a-fA-F]{6}$' } } } },
@@ -316,7 +310,7 @@ describe('ModuleEditor', function() {
     const onApply = vi.fn();
     render(<ModuleEditor mod={mod} brandConfig={brandConfig} onApply={onApply} brandColor="#002f59" />);
     const primaryInput = screen.getByLabelText('Primary');
-    await user.type(primaryInput, '#ff0000');
+    fireEvent.change(primaryInput, { target: { value: '#ff0000' } });
     expect(screen.getByText('Aplicar Paleta de cores')).toBeInTheDocument();
   });
 

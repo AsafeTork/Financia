@@ -1,7 +1,6 @@
 // @vitest-environment jsdom
 import { describe, it, expect, afterEach, vi } from 'vitest';
-import { render, screen, cleanup } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { render, screen, cleanup, fireEvent } from '@testing-library/react';
 import React from 'react';
 import ColorField from './ColorField.jsx';
 
@@ -29,13 +28,11 @@ describe('ColorField', function() {
     expect(textInput).toBeTruthy();
   });
 
-it('atualiza cor via color picker', async function() {
-    const user = userEvent.setup();
+it('atualiza cor via color picker', function() {
     const calls = [];
     render(React.createElement(ColorField, { label: 'Primaria', value: '#002f59', onChange: function(v) { calls.push(v); } }));
     const colorInput = screen.getByTestId('color-field-picker');
-    await user.clear(colorInput);
-    await user.type(colorInput, '#ff0000');
+    fireEvent.change(colorInput, { target: { value: '#ff0000' } });
     expect(calls.length).toBeGreaterThanOrEqual(1);
     expect(calls[calls.length - 1]).toBe('#ff0000');
   });

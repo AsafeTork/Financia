@@ -2,6 +2,8 @@ import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
 test.describe('Accessibility - Automated (axe-core)', () => {
+  test.setTimeout(120000);
+
   test('landing page - no critical violations', async ({ page }) => {
     await page.goto('/');
     const results = await new AxeBuilder({ page }).analyze();

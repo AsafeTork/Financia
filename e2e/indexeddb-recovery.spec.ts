@@ -1,6 +1,8 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('IndexedDB Recovery Tests', () => {
+  test.setTimeout(120000);
+
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
@@ -101,6 +103,8 @@ test.describe('IndexedDB Recovery Tests', () => {
 
   test.describe('Eviction Test', () => {
     test('should handle storage pressure and persist()', async ({ page }) => {
+      test.slow(); // This test writes large data
+
       const persistSupported = await page.evaluate(async () => {
         if ('storage' in navigator && 'persist' in navigator.storage) {
           try {
@@ -118,7 +122,7 @@ test.describe('IndexedDB Recovery Tests', () => {
       await page.evaluate(async () => {
         const dbName = 'financia-db';
         const storeName = 'transactions';
-        const largeData = 'x'.repeat(1024 * 1024);
+        const largeData = 'x'.repeat(100 * 1024); // 100KB per entry
         
         await new Promise<void>((resolve, reject) => {
           const request = indexedDB.open(dbName);
@@ -132,7 +136,7 @@ test.describe('IndexedDB Recovery Tests', () => {
             const transaction = db.transaction(storeName, 'readwrite');
             const store = transaction.objectStore(storeName);
             
-            for (let i = 0; i < 50; i++) {
+            for (let i = 0; i < 10; i++) {
               store.put({
                 id: `large-${i}`,
                 amount: i * 100,

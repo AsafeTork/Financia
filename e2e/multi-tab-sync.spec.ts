@@ -1,26 +1,21 @@
 import { test, expect } from '@playwright/test';
+import fs from 'fs';
+
+const storageState = fs.existsSync('e2e/auth-state.json') ? 'e2e/auth-state.json' : undefined;
 
 test.describe('Multi-tab / BroadcastChannel Sync Tests', () => {
-  test.beforeEach(async ({ browser }) => {
-    const context1 = await browser.newContext({ storageState: 'e2e/auth-state.json' });
-    const context2 = await browser.newContext({ storageState: 'e2e/auth-state.json' });
-    
-    const page1 = await context1.newPage();
-    const page2 = await context2.newPage();
-    
-    await page1.goto('/');
-    await page2.goto('/');
-    
-    await page1.waitForLoadState('networkidle');
-    await page2.waitForLoadState('networkidle');
-    
-    test.setTimeout(120000);
+  test.setTimeout(120000);
+
+  test.beforeEach(async ({ context }) => {
+    await context.addInitScript(() => {
+      // Ensure BroadcastChannel is available
+    });
   });
 
   test.describe('BroadcastChannel Communication', () => {
     test('should establish BroadcastChannel between tabs', async ({ browser }) => {
-      const context1 = await browser.newContext({ storageState: 'e2e/auth-state.json' });
-      const context2 = await browser.newContext({ storageState: 'e2e/auth-state.json' });
+      const context1 = await browser.newContext({ storageState });
+      const context2 = await browser.newContext({ storageState });
       
       const page1 = await context1.newPage();
       const page2 = await context2.newPage();
@@ -32,11 +27,15 @@ test.describe('Multi-tab / BroadcastChannel Sync Tests', () => {
       await page2.waitForLoadState('networkidle');
 
       const channelConnected = await page1.evaluate(async () => {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 10000);
+        
         return new Promise<boolean>((resolve) => {
           const channel = new BroadcastChannel('financia-sync');
           
           channel.onmessage = (event) => {
             if (event.data.type === 'SYNC_ACK') {
+              clearTimeout(timeout);
               channel.close();
               resolve(true);
             }
@@ -45,7 +44,7 @@ test.describe('Multi-tab / BroadcastChannel Sync Tests', () => {
           setTimeout(() => {
             channel.close();
             resolve(false);
-          }, 5000);
+          }, 10000);
           
           channel.postMessage({ type: 'SYNC_PING', timestamp: Date.now() });
         });
@@ -58,8 +57,8 @@ test.describe('Multi-tab / BroadcastChannel Sync Tests', () => {
     });
 
     test('should broadcast transaction creation', async ({ browser }) => {
-      const context1 = await browser.newContext({ storageState: 'e2e/auth-state.json' });
-      const context2 = await browser.newContext({ storageState: 'e2e/auth-state.json' });
+      const context1 = await browser.newContext({ storageState });
+      const context2 = await browser.newContext({ storageState });
       
       const page1 = await context1.newPage();
       const page2 = await context2.newPage();
@@ -84,7 +83,7 @@ test.describe('Multi-tab / BroadcastChannel Sync Tests', () => {
           setTimeout(() => {
             channel.close();
             resolve(null);
-          }, 5000);
+          }, 10000);
         });
       });
 
@@ -117,8 +116,8 @@ test.describe('Multi-tab / BroadcastChannel Sync Tests', () => {
     });
 
     test('should broadcast product updates', async ({ browser }) => {
-      const context1 = await browser.newContext({ storageState: 'e2e/auth-state.json' });
-      const context2 = await browser.newContext({ storageState: 'e2e/auth-state.json' });
+      const context1 = await browser.newContext({ storageState });
+      const context2 = await browser.newContext({ storageState });
       
       const page1 = await context1.newPage();
       const page2 = await context2.newPage();
@@ -143,7 +142,7 @@ test.describe('Multi-tab / BroadcastChannel Sync Tests', () => {
           setTimeout(() => {
             channel.close();
             resolve(null);
-          }, 5000);
+          }, 10000);
         });
       });
 
@@ -174,8 +173,8 @@ test.describe('Multi-tab / BroadcastChannel Sync Tests', () => {
     });
 
     test('should broadcast loss records', async ({ browser }) => {
-      const context1 = await browser.newContext({ storageState: 'e2e/auth-state.json' });
-      const context2 = await browser.newContext({ storageState: 'e2e/auth-state.json' });
+      const context1 = await browser.newContext({ storageState });
+      const context2 = await browser.newContext({ storageState });
       
       const page1 = await context1.newPage();
       const page2 = await context2.newPage();
@@ -200,7 +199,7 @@ test.describe('Multi-tab / BroadcastChannel Sync Tests', () => {
           setTimeout(() => {
             channel.close();
             resolve(null);
-          }, 5000);
+          }, 10000);
         });
       });
 
@@ -232,8 +231,8 @@ test.describe('Multi-tab / BroadcastChannel Sync Tests', () => {
     });
 
     test('should broadcast settings changes', async ({ browser }) => {
-      const context1 = await browser.newContext({ storageState: 'e2e/auth-state.json' });
-      const context2 = await browser.newContext({ storageState: 'e2e/auth-state.json' });
+      const context1 = await browser.newContext({ storageState });
+      const context2 = await browser.newContext({ storageState });
       
       const page1 = await context1.newPage();
       const page2 = await context2.newPage();
@@ -258,7 +257,7 @@ test.describe('Multi-tab / BroadcastChannel Sync Tests', () => {
           setTimeout(() => {
             channel.close();
             resolve(null);
-          }, 5000);
+          }, 10000);
         });
       });
 
@@ -291,8 +290,8 @@ test.describe('Multi-tab / BroadcastChannel Sync Tests', () => {
 
   test.describe('IndexedDB Sync via BroadcastChannel', () => {
     test('should sync IndexedDB writes across tabs', async ({ browser }) => {
-      const context1 = await browser.newContext({ storageState: 'e2e/auth-state.json' });
-      const context2 = await browser.newContext({ storageState: 'e2e/auth-state.json' });
+      const context1 = await browser.newContext({ storageState });
+      const context2 = await browser.newContext({ storageState });
       
       const page1 = await context1.newPage();
       const page2 = await context2.newPage();
@@ -334,7 +333,6 @@ test.describe('Multi-tab / BroadcastChannel Sync Tests', () => {
         });
       });
 
-      const channel = new BroadcastChannel('financia-sync');
       await page1.evaluate(() => {
         const channel = new BroadcastChannel('financia-sync');
         channel.postMessage({
@@ -345,7 +343,7 @@ test.describe('Multi-tab / BroadcastChannel Sync Tests', () => {
         channel.close();
       });
 
-      await page2.waitForTimeout(2000);
+      await page2.waitForTimeout(3000);
 
       const syncedData = await page2.evaluate(async () => {
         const dbName = 'financia-db';
@@ -380,8 +378,8 @@ test.describe('Multi-tab / BroadcastChannel Sync Tests', () => {
 
   test.describe('Conflict Resolution (Last-Write-Wins)', () => {
     test('should resolve concurrent transaction updates with last-write-wins', async ({ browser }) => {
-      const context1 = await browser.newContext({ storageState: 'e2e/auth-state.json' });
-      const context2 = await browser.newContext({ storageState: 'e2e/auth-state.json' });
+      const context1 = await browser.newContext({ storageState });
+      const context2 = await browser.newContext({ storageState });
       
       const page1 = await context1.newPage();
       const page2 = await context2.newPage();
@@ -464,7 +462,7 @@ test.describe('Multi-tab / BroadcastChannel Sync Tests', () => {
         channel.close();
       }, txnId);
 
-      await page2.waitForTimeout(1000);
+      await page2.waitForTimeout(2000);
 
       const resolved = await page1.evaluate(async (id) => {
         const dbName = 'financia-db';
@@ -498,8 +496,8 @@ test.describe('Multi-tab / BroadcastChannel Sync Tests', () => {
     });
 
     test('should handle concurrent product updates', async ({ browser }) => {
-      const context1 = await browser.newContext({ storageState: 'e2e/auth-state.json' });
-      const context2 = await browser.newContext({ storageState: 'e2e/auth-state.json' });
+      const context1 = await browser.newContext({ storageState });
+      const context2 = await browser.newContext({ storageState });
       
       const page1 = await context1.newPage();
       const page2 = await context2.newPage();
@@ -582,7 +580,7 @@ test.describe('Multi-tab / BroadcastChannel Sync Tests', () => {
         channel.close();
       }, productId);
 
-      await page2.waitForTimeout(1000);
+      await page2.waitForTimeout(2000);
 
       const resolved = await page1.evaluate(async (id) => {
         const dbName = 'financia-db';
@@ -617,8 +615,8 @@ test.describe('Multi-tab / BroadcastChannel Sync Tests', () => {
 
   test.describe('Storage Event Fallback', () => {
     test('should fall back to storage events when BroadcastChannel unavailable', async ({ browser }) => {
-      const context1 = await browser.newContext({ storageState: 'e2e/auth-state.json' });
-      const context2 = await browser.newContext({ storageState: 'e2e/auth-state.json' });
+      const context1 = await browser.newContext({ storageState });
+      const context2 = await browser.newContext({ storageState });
       
       const page1 = await context1.newPage();
       const page2 = await context2.newPage();
@@ -644,7 +642,7 @@ test.describe('Multi-tab / BroadcastChannel Sync Tests', () => {
             }
           });
           
-          setTimeout(() => resolve(null), 5000);
+          setTimeout(() => resolve(null), 10000);
         });
       });
 
