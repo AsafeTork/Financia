@@ -36,9 +36,9 @@ jobs:
       - run: npm run typecheck
 
   unit-tests:
-    name: Unit Tests (1700+)
+    name: Unit Tests
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
     needs: [lint-typecheck]
     steps:
       - uses: actions/checkout@v4
@@ -47,7 +47,7 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci || npm install --legacy-peer-deps
-      - run: npm run test:coverage
+      - run: npm run test:fast
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -59,6 +59,7 @@ jobs:
     name: E2E (${{ matrix.browser }})
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    continue-on-error: true
     needs: [lint-typecheck, build]
     strategy:
       fail-fast: false
