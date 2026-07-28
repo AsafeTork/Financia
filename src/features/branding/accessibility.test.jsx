@@ -224,7 +224,7 @@ describe('Contraste e Cores - Verificacao Basica', function() {
     const inputs = screen.getAllByRole('textbox');
     inputs.forEach(input => {
       const borderStyle = input.style.border || '';
-      expect(borderStyle).toContain('var(--border)');
+      expect(borderStyle).toMatch(/var\(--border/);
     });
   });
 

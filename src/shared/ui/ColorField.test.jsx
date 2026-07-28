@@ -46,7 +46,7 @@ it('atualiza cor via color picker', function() {
   it('swatch exibe a cor atual', function() {
     const { container } = render(React.createElement(ColorField, { label: 'Primaria', value: '#002f59', onChange: function() {} }));
     const swatch = container.querySelector('[data-testid="color-field-preview"]');
-    expect(swatch.style.background).toBe('#002f59');
+    expect(swatch.style.background).toBe('rgb(0, 47, 89)');
   });
 
   it('renderiza com valor vazio', function() {
@@ -65,7 +65,7 @@ it('atualiza cor via color picker', function() {
   it('mostra preview da cor com data-testid', function() {
     render(React.createElement(ColorField, { label: 'Primaria', value: '#ff0000', onChange: function() {} }));
     const preview = screen.getByTestId('color-field-preview');
-    expect(preview.style.background).toBe('#ff0000');
+    expect(preview.style.background).toBe('rgb(255, 0, 0)');
   });
 
   it('color picker tem data-testid', function() {
