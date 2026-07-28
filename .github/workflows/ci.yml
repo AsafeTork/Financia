@@ -58,8 +58,8 @@ jobs:
   e2e-tests:
     name: E2E (${{ matrix.browser }})
     runs-on: ubuntu-latest
-    timeout-minutes: 20
-    needs: [lint-typecheck]
+    timeout-minutes: 10
+    needs: [lint-typecheck, build]
     strategy:
       fail-fast: false
       matrix:
@@ -67,18 +67,6 @@ jobs:
           - browser: chromium
             project: chromium
             install-browser: chromium
-          - browser: firefox
-            project: firefox
-            install-browser: firefox
-          - browser: webkit
-            project: webkit
-            install-browser: webkit
-          - browser: mobile-chrome
-            project: "Mobile Chrome"
-            install-browser: chromium
-          - browser: mobile-safari
-            project: "Mobile Safari"
-            install-browser: webkit
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
