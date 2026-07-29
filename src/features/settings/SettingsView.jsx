@@ -15,6 +15,7 @@ import { triggerApkBuild } from '../../lib/sync.js';
 import ColorField from '../../shared/ui/ColorField.jsx';
 
 export default function SettingsView({ brand, session, planInfo, onSave, onSavePhone, toast, confirm, isAdmin, onNav }) {
+  var hasWhiteLabel = !!(brand && brand.white_label);
   var [tab, setTab] = useState(function() {
     try {
       var hint = sessionStorage.getItem('financia_settings_tab');
@@ -43,55 +44,51 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
   var [phoneSaving, setPhoneSaving] = useState(false);
   var initParsed = parsePhone(brand.phone);
   var initE164 = buildPhone(initParsed.iso, initParsed.digits).e164;
-  React.  useEffect(function() {
+  var effectiveTab = React.useMemo(function() {
     var canBrand = isAdmin || hasWhiteLabel;
-    if (tab === 'account' && isAdmin) {
-      setTab('clients');
-    } else if (tab === 'clients' && !isAdmin) {
-      setTab('account');
-    } else if (tab === 'brandstudio' && !canBrand) {
-      setTab('account');
-    } else if (tab === 'appearance' && !hasWhiteLabel) {
-      setTab('account');
-    }
+    if (tab === 'account' && isAdmin) return 'clients';
+    if (tab === 'clients' && !isAdmin) return 'account';
+    if (tab === 'brandstudio' && !canBrand) return 'account';
+    if (tab === 'appearance' && !hasWhiteLabel) return 'account';
+    return tab;
   }, [isAdmin, hasWhiteLabel, tab]);
 
-  // Busca o cartao salvo ao abrir a aba Assinatura (e apos trocar/remover).
-  React.useEffect(function() {
-    if (tab !== 'subscription') return;
-    var alive = true;
-    setCardLoading(true);
-    setPaymentLoading(true);
-    sb.functions.invoke('get-payment-method', { body: {} }).then(function(result) {
-      if (!alive) return;
-      var data = result && result.data ? result.data : null;
-      setSavedCard(data && data.card ? data.card : null);
-      setCardLoading(false);
-      setPaymentLoading(false);
-    }).catch(function() {
-      if (!alive) return;
-      setSavedCard(null);
-      setCardLoading(false);
-      setPaymentLoading(false);
-      if (toast) toast('Erro ao carregar forma de pagamento.', 'error');
-    });
-    return function() { alive = false; };
-  }, [tab, cardReload]);
+   // Busca o cartao salvo ao abrir a aba Assinatura (e apos trocar/remover).
+   React.useEffect(function() {
+     if (effectiveTab !== 'subscription') return;
+     var alive = true;
+     setCardLoading(true);
+     setPaymentLoading(true);
+     sb.functions.invoke('get-payment-method', { body: {} }).then(function(result) {
+       if (!alive) return;
+       var data = result && result.data ? result.data : null;
+       setSavedCard(data && data.card ? data.card : null);
+       setCardLoading(false);
+       setPaymentLoading(false);
+     }).catch(function() {
+       if (!alive) return;
+       setSavedCard(null);
+       setCardLoading(false);
+       setPaymentLoading(false);
+       if (toast) toast('Erro ao carregar forma de pagamento.', 'error');
+     });
+     return function() { alive = false; };
+   }, [effectiveTab, cardReload]);
 
-  // Busca status da assinatura Stripe na aba Assinatura.
-  React.useEffect(function() {
-    if (tab !== 'subscription') return;
-    if (planId === 'free') { setSubStatus(null); setSubLoading(false); return; }
-    var alive = true;
-    setSubLoading(true);
-    sb.functions.invoke('get-subscription-status', { body: {} }).then(function(res) {
-      if (!alive) return;
-      var d = res && res.data ? res.data : null;
-      setSubStatus(d && d.status ? d.status : null);
-      if (alive) setSubLoading(false);
-    }).catch(function() { if (alive) { setSubStatus(null); setSubLoading(false); if (toast) toast('Erro ao carregar status da assinatura.', 'error'); } });
-    return function() { alive = false; };
-  }, [tab, planId]);
+   // Busca status da assinatura Stripe na aba Assinatura.
+   React.useEffect(function() {
+     if (effectiveTab !== 'subscription') return;
+     if (planId === 'free') { setSubStatus(null); setSubLoading(false); return; }
+     var alive = true;
+     setSubLoading(true);
+     sb.functions.invoke('get-subscription-status', { body: {} }).then(function(res) {
+       if (!alive) return;
+       var d = res && res.data ? res.data : null;
+       setSubStatus(d && d.status ? d.status : null);
+       if (alive) setSubLoading(false);
+     }).catch(function() { if (alive) { setSubStatus(null); setSubLoading(false); if (toast) toast('Erro ao carregar status da assinatura.', 'error'); } });
+     return function() { alive = false; };
+   }, [effectiveTab, planId]);
 
   const savePhone = async function() {
     setPhoneSaving(true);
@@ -109,7 +106,6 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
     setPwSaving(false);
   };
 
-  var hasWhiteLabel = !!(brand && brand.white_label);
   var [appForm, setAppForm] = useState(function() {
     return {
       name: brand.name || '',
@@ -120,7 +116,7 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
       logo_url: brand.logo_url || '',
     };
   });
-  var appearanceTab = tab === 'appearance';
+  var appearanceTab = effectiveTab === 'appearance';
   React.useEffect(function() {
     if (!appearanceTab) return;
     setAppForm(function(f) {
@@ -210,7 +206,7 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
 
       <div className="flex border-b overflow-x-auto" role="tablist" aria-label="Configurações" style={{borderColor:'var(--border)'}}>
         {tabs.map(function(t, idx) {
-          var active = tab === t.key;
+          var active = effectiveTab === t.key;
           return (
             <button key={t.key} role="tab" aria-selected={active} aria-controls={'tabpanel-' + t.key} id={'tab-' + t.key}
               onClick={function() { setTab(t.key); }}
@@ -231,7 +227,7 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
           );
         })}
       </div>
-{tab === 'account' && (
+{effectiveTab === 'account' && (
         <Card id="tabpanel-account" role="tabpanel" aria-labelledby="tab-account" className="p-6 flex flex-col gap-4">
           <div className="flex items-center gap-3 p-4 rounded-xl" style={{background:'var(--bg-subtle)'}}>
             <div className="w-10 h-10 rounded-xl flex-shrink-0 overflow-hidden" style={{background:brand.color}}>
@@ -282,7 +278,7 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
         </Card>
       )}
 
-      {tab === 'subscription' && (
+      {effectiveTab === 'subscription' && (
         <Card id="tabpanel-subscription" role="tabpanel" aria-labelledby="tab-subscription" className="p-6 flex flex-col gap-4">
           <div className="rounded-2xl p-5" style={{background:'var(--brand-soft)', border:'1px solid var(--border)'}}>
             <div className="flex items-center justify-between gap-3">
@@ -364,7 +360,7 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
           onClose={function() { setCardOpen(false); setCardReload(function(k) { return k + 1; }); }} />
       )}
 
-      {tab === 'appearance' && hasWhiteLabel && (
+      {effectiveTab === 'appearance' && hasWhiteLabel && (
         <Card id="tabpanel-appearance" role="tabpanel" aria-labelledby="tab-appearance" className="p-6 flex flex-col gap-5">
           <div>
             <p className="text-sm font-semibold mb-1" style={{color:'var(--text-main)'}}>Identidade visual</p>
@@ -442,11 +438,11 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
         </Card>
       )}
 
-      {tab === 'brandstudio' && (
+      {effectiveTab === 'brandstudio' && (
         <div id="tabpanel-brandstudio" role="tabpanel" aria-labelledby="tab-brandstudio"><BrandStudioView brand={brand} planInfo={planInfo} onSave={onSave} toast={toast} onNav={onNav} isAdmin={isAdmin} /></div>
       )}
 
-      {tab === 'clients' && (
+      {effectiveTab === 'clients' && (
         <div id="tabpanel-clients" role="tabpanel" aria-labelledby="tab-clients" className="flex flex-col gap-4">
           <GhTokenCard toast={toast}/>
           <Card className="p-6"><AdminPanel toast={toast} confirm={confirm} session={session} brand={brand}/></Card>
