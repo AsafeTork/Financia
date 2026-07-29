@@ -33,6 +33,34 @@ function applyTokenDiff(el, tokens) {
   }
 }
 
+const THEME_CONTROLLED_VARS = new Set([
+  '--bg-page', '--bg-card', '--bg-subtle', '--bg-input', '--surface',
+  '--text-main', '--text-sub', '--text-muted',
+  '--border', '--border-md',
+  '--shadow-sm', '--shadow-md', '--shadow-lg',
+]);
+
+function applyBrandThemeVars(el, tokens) {
+  const isDark = el.getAttribute('data-theme') === 'dark';
+  if (!isDark) {
+    applyTokenDiff(el, tokens);
+    return;
+  }
+  for (const k of THEME_CONTROLLED_VARS) {
+    if (Object.prototype.hasOwnProperty.call(tokens, k)) {
+      el.style.removeProperty(k);
+    }
+  }
+  const brandOnly = {};
+  for (const k in tokens) {
+    if (!Object.prototype.hasOwnProperty.call(tokens, k)) continue;
+    if (!THEME_CONTROLLED_VARS.has(k)) {
+      brandOnly[k] = tokens[k];
+    }
+  }
+  applyTokenDiff(el, brandOnly);
+}
+
 function collectTokensFromBrand(b) {
   const primary = b.color || '#002f59';
   const derived = deriveCores(primary);
@@ -165,7 +193,7 @@ function collectTokensFromBrand(b) {
 export function applyBrandVars(b) {
   const el = document.documentElement;
   const tokens = collectTokensFromBrand(b);
-  applyTokenDiff(el, tokens);
+  applyBrandThemeVars(el, tokens);
 }
 
 /**
@@ -183,7 +211,7 @@ export function applyBrandStudioConfig(b) {
 export function enterPreviewMode(proposedBrand) {
   const el = document.documentElement;
   const previewTokens = collectTokensFromBrand(proposedBrand);
-  applyTokenDiff(el, previewTokens);
+  applyBrandThemeVars(el, previewTokens);
 }
 
 /**
@@ -234,13 +262,14 @@ export default function useBrandAppearance(brand, planInfo) {
       }
       savedCampaignRef.current = null;
     }
-  }, [appBrand, effectiveTheme]);
+  }, [appBrand]);
 
   useEffect(() => {
     const el = document.documentElement;
     const theme = effectiveTheme === 'dark' ? 'dark' : 'light';
     el.setAttribute('data-theme', theme);
-  }, [effectiveTheme]);
+    applyBrandVars(appBrand);
+  }, [effectiveTheme, appBrand]);
 
   const checkCampaigns = useCallback((campaigns) => {
     if (!campaigns || campaigns.length === 0) return;
@@ -273,8 +302,10 @@ function applyCampaignOverride(campaign) {
   if (override.palette) {
     const pal = override.palette;
     if (pal.primary) el.style.setProperty('--brand', pal.primary);
-    if (pal.bgPage) el.style.setProperty('--bg-page', pal.bgPage);
-    if (pal.bgCard) el.style.setProperty('--bg-card', pal.bgCard);
-    if (pal.textMain) el.style.setProperty('--text-main', pal.textMain);
+    if (el.getAttribute('data-theme') !== 'dark') {
+      if (pal.bgPage) el.style.setProperty('--bg-page', pal.bgPage);
+      if (pal.bgCard) el.style.setProperty('--bg-card', pal.bgCard);
+      if (pal.textMain) el.style.setProperty('--text-main', pal.textMain);
+    }
   }
 }

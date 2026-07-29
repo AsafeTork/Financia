@@ -59,7 +59,7 @@ export default function TermsOfService({ onNav }) {
             <span className="font-display text-lg font-semibold" style={{ color: INK }}>Financia</span>
           </a>
           <button
-            onClick={function() { window.history.back(); }}
+            onClick={function() { onNav(''); }}
             className="flex items-center gap-1.5 text-sm font-medium px-4 min-h-[44px] rounded-xl transition hover:bg-black/5"
             style={{ color: MUTED }}
           >

@@ -105,7 +105,7 @@ export default function App() {
   const navTo = useCallback(function(v) {
     const go = function() { navigate('/' + v); };
     if (typeof document !== 'undefined' && document.startViewTransition) {
-      document.startViewTransition(function() { flushSync(go); }).catch(function(){});
+      document.startViewTransition(function() { flushSync(go); }).catch(function(e) { console.warn('View transition failed:', e); });
     } else {
       go();
     }
@@ -128,10 +128,6 @@ export default function App() {
       el.setAttribute('data-plan-prev', plan);
     }
   }, [planInfo, session, toast]);
-
-  useEffect(function() {
-    document.documentElement.setAttribute('data-theme', session ? effectiveTheme : 'light');
-  }, [effectiveTheme, session]);
 
   useEffect(function() {
     if (!dataLoading) return;
@@ -176,7 +172,7 @@ export default function App() {
         clearTimeout(timer);
         buffer = [];
         const hash = routes[key];
-        if (hash) { e.preventDefault(); navigate('/' + hash); }
+        if (hash) { e.preventDefault(); navTo(hash); }
         return;
       }
       buffer = [];
@@ -292,7 +288,7 @@ const currentView = sessionViews.includes(path) ? path : 'dashboard';
     return (
       <FeatureErrorBoundary featureName="Landing">
         <Suspense fallback={<Loader/>}>
-          <Landing brand={brand} onEnter={function() { navigate('/'); setShowLogin(true); }} onNav={navTo}/>
+          <Landing brand={brand} onEnter={function() { navTo(''); setShowLogin(true); }} onNav={navTo}/>
         </Suspense>
       </FeatureErrorBoundary>
     );
