@@ -10,10 +10,10 @@ export function useDataLoader(props) {
   var loadFromLocal = useCallback(async function(userId) {
     var results = await Promise.all([
       ldb.profiles.get(userId),
-      ldb.products.where('user_id').equals(userId).filter(function(r) { return !r._deleted; }).sortBy('created_at'),
-      ldb.transactions.where('user_id').equals(userId).filter(function(r) { return !r._deleted; }).reverse().sortBy('date'),
-      ldb.losses.where('user_id').equals(userId).filter(function(r) { return !r._deleted; }).reverse().sortBy('date'),
-      ldb.meta.get('role_' + userId),
+      ldb.products.where('[user_id+_deleted]').equals([userId, 0]).sortBy('created_at'),
+      ldb.transactions.where('[user_id+_deleted]').equals([userId, 0]).reverse().sortBy('date'),
+      ldb.losses.where('[user_id+_deleted]').equals([userId, 0]).reverse().sortBy('date'),
+      ldb.meta.get('role_' + userId).catch(function() { return null; }),
     ]);
     var profile = results[0], prods = results[1], txs = results[2], lss = results[3], roleMeta = results[4];
     if (profile) {

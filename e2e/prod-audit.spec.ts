@@ -229,8 +229,8 @@ test.describe('Production Audit - All Browsers', () => {
     }
 
     await page.evaluate(() => {
-      localStorage.setItem('financia_debug_mode', '1');
-    });
+      try { localStorage.setItem('financia_debug_mode', '1'); } catch (e) { console.warn('localStorage not available (cross-origin?):', e); }
+    }).catch(e => collector.add({ message: `localStorage access failed: ${e}`, source: 'audit' }));
 
     for (const r of ROUTES) {
       const fullUrl = r.path === '/' ? PROD_URL : `${PROD_URL}${r.path}`;

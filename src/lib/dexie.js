@@ -29,6 +29,16 @@ ldb.version(3).stores({
   brand_logo_schemes: 'id, name, createdAt',
 });
 
+ldb.version(4).stores({
+  transactions: 'id, user_id, [user_id+_deleted], date, updated_at, _synced, _deleted',
+  products:     'id, user_id, [user_id+_deleted], category, updated_at, _synced, _deleted',
+  losses:       'id, user_id, [user_id+_deleted], date, updated_at, _synced, _deleted',
+  profiles:     'user_id, updated_at, _synced',
+  meta:         'key',
+  brand_presets: 'id, name, category, favorite, updated_at',
+  brand_logo_schemes: 'id, name, createdAt',
+});
+
 export const toLocal = function(row, extra) {
   if (!extra) extra = {};
   var base = { _synced: 1, _deleted: 0, _updated_at: row.updated_at || row.created_at || now() };

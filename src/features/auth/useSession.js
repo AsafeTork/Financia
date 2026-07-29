@@ -30,17 +30,27 @@ export function useSession(p) {
   var rtCtx = { uidRef, channelRef, debounceRef, retryRef, retryDelayRef, runSync, reconnectRef };
   useRealtime({ setPlanInfo: p.setPlanInfo }, rtCtx);
 
-  var onSessionEnd = function() {
+  var setDataLoading = p.setDataLoading;
+  var setDataError = p.setDataError;
+  var setSyncStatus = p.setSyncStatus;
+  var setIsAdminDB = p.setIsAdminDB;
+  var setBrand = p.setBrand;
+  var setPlanInfo = p.setPlanInfo;
+  var setProducts = p.setProducts;
+  var setTx = p.setTx;
+  var setLosses = p.setLosses;
+
+  var onSessionEnd = useCallback(function() {
     ++loadingRef.current;
-    p.setDataLoading(false);
+    setDataLoading(false);
     uidRef.current = null;
     if (debounceRef.current) clearTimeout(debounceRef.current);
     if (retryRef.current) clearTimeout(retryRef.current);
     if (channelRef.current) { sb.removeChannel(channelRef.current); channelRef.current = null; }
-    p.setTx([]); p.setProducts([]); p.setLosses([]);
-    p.setBrand(INIT_BRAND); p.setPlanInfo(INIT_PLAN);
-    p.setIsAdminDB(false); sessionStorage.removeItem('is_admin');
-  };
+    setTx([]); setProducts([]); setLosses([]);
+    setBrand(INIT_BRAND); setPlanInfo(INIT_PLAN);
+    setIsAdminDB(false); sessionStorage.removeItem('is_admin');
+  }, [setDataLoading, setTx, setProducts, setLosses, setBrand, setPlanInfo, setIsAdminDB]);
 
   var authProps = {
     setSession: p.setSession, setAppLoading: p.setAppLoading, toast: p.toast,
@@ -59,48 +69,48 @@ export function useSession(p) {
     var token = ++loadingRef.current;
     var syncStatusToken = {};
     uidRef.current = userId;
-    p.setDataError(null);
+    setDataError(null);
     var localDone = false;
     var loadTimeout = setTimeout(function() {
-      if (!localDone && loadingRef.current === token) p.setDataLoading(true);
+      if (!localDone && loadingRef.current === token) setDataLoading(true);
     }, 150);
     try {
       await loadFromLocal(userId);
       localDone = true;
       clearTimeout(loadTimeout);
       if (loadingRef.current !== token) return;
-      p.setDataLoading(false);
+      setDataLoading(false);
       if (typeof reconnectRef.current === 'function') reconnectRef.current(userId);
       if (navigator.onLine) {
-        p.setSyncStatus('syncing');
+        setSyncStatus('syncing');
         var res = await Promise.all([syncAll(userId), fetchRole(userId)]);
         if (loadingRef.current !== token) return;
         var ok = res[0], admin = res[1];
-        p.setIsAdminDB(admin);
+        setIsAdminDB(admin);
         if (!admin) sessionStorage.removeItem('is_admin');
         if (ok) {
           await loadFromLocal(userId);
           if (loadingRef.current !== token) return;
-          p.setSyncStatus('ok');
+          setSyncStatus('ok');
           var st1 = {};
           syncStatusToken = st1;
-          setTimeout(function() { if (syncStatusToken === st1) p.setSyncStatus('idle'); }, 3000);
+          setTimeout(function() { if (syncStatusToken === st1) setSyncStatus('idle'); }, 3000);
         } else {
-          p.setSyncStatus('error');
+          setSyncStatus('error');
           var st2 = {};
           syncStatusToken = st2;
-          setTimeout(function() { if (syncStatusToken === st2) p.setSyncStatus('idle'); }, 5000);
+          setTimeout(function() { if (syncStatusToken === st2) setSyncStatus('idle'); }, 5000);
         }
       }
     } catch {
       localDone = true;
       clearTimeout(loadTimeout);
       if (loadingRef.current !== token) return;
-      p.setDataLoading(false);
-      p.setSyncStatus('error');
+      setDataLoading(false);
+      setSyncStatus('error');
       var st3 = {};
       syncStatusToken = st3;
-      setTimeout(function() { if (syncStatusToken === st3) p.setSyncStatus('idle'); }, 5000);
+      setTimeout(function() { if (syncStatusToken === st3) setSyncStatus('idle'); }, 5000);
       if (navigator.onLine) {
         try {
           var allRes = await Promise.all([
@@ -113,8 +123,8 @@ export function useSession(p) {
           var pr = allRes[0], pdr = allRes[1], txr = allRes[2], lr = allRes[3], roleRes = allRes[4];
           if (pr.data) {
             var prof = pr.data;
-            p.setBrand({name:prof.name, logo:prof.logo, color:prof.color, color_secondary:prof.color_secondary||null, color_accent:prof.color_accent||null, theme:prof.theme||'light', logo_url:prof.logo_url||null, phone:prof.phone||'', white_label:!!prof.white_label, niche:prof.niche||'', visual_version:prof.visual_version||0, custom_palette:!!prof.custom_palette, brand_config:prof.brand_config||null});
-            p.setPlanInfo({
+            setBrand({name:prof.name, logo:prof.logo, color:prof.color, color_secondary:prof.color_secondary||null, color_accent:prof.color_accent||null, theme:prof.theme||'light', logo_url:prof.logo_url||null, phone:prof.phone||'', white_label:!!prof.white_label, niche:prof.niche||'', visual_version:prof.visual_version||0, custom_palette:!!prof.custom_palette, brand_config:prof.brand_config||null});
+            setPlanInfo({
               plan:prof.plan||'free',
               plan_expires_at:prof.plan_expires_at||null,
               plan_activated_by:prof.plan_activated_by||null,
@@ -125,31 +135,31 @@ export function useSession(p) {
             await ldb.profiles.put(toLocal(prof));
           }
           if (pdr.data) {
-            p.setProducts(pdr.data);
+            setProducts(pdr.data);
             await ldb.products.bulkPut(pdr.data.map(function(r) { return toLocal(r, {user_id:userId}); }));
           }
           if (txr.data) {
             var mappedTx = txr.data.map(function(t) { return Object.assign({}, t, {desc:t.description, cat:t.category}); });
-            p.setTx(mappedTx);
+            setTx(mappedTx);
             await ldb.transactions.bulkPut(txr.data.map(function(r) { return toLocal(r, {user_id:userId, desc:r.description, cat:r.category}); }));
           }
           if (lr.data) {
             var mappedL = lr.data.map(function(l) { return Object.assign({}, l, {desc:l.description}); });
-            p.setLosses(mappedL);
+            setLosses(mappedL);
             await ldb.losses.bulkPut(lr.data.map(function(r) { return toLocal(r, {user_id:userId, desc:r.description}); }));
           }
           var roleData = roleRes && roleRes.data ? roleRes.data : null;
-          p.setIsAdminDB(roleData && roleData.role === 'admin');
+          setIsAdminDB(roleData && roleData.role === 'admin');
           await setLastSync(now(), userId);
-        } catch { p.setDataError('Erro ao carregar dados.'); }
+        } catch { setDataError('Erro ao carregar dados.'); }
       } else {
-        p.setDataError('Sem conexão e sem dados locais. Conecte-se pelo menos uma vez.');
+        setDataError('Sem conexão e sem dados locais. Conecte-se pelo menos uma vez.');
       }
     } finally {
       clearTimeout(loadTimeout);
-      if (loadingRef.current === token) p.setDataLoading(false);
+      if (loadingRef.current === token) setDataLoading(false);
     }
-  }, [loadFromLocal, fetchRole, p]);
+  }, [loadFromLocal, fetchRole, setDataError, setDataLoading, setSyncStatus, setIsAdminDB, setBrand, setPlanInfo, setProducts, setTx, setLosses]);
 
   return {saveBrand, savePhone, loadData};
 }

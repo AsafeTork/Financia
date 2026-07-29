@@ -14,7 +14,8 @@ const syncTable = async function(uid, table, ldbTable, mapLocal) {
   const unsynced = await ldbTable.where('user_id').equals(uid).and(r => r._synced === 0).toArray();
   const toDeleteIds = [];
   const toMarkSynced = [];
-  for (const row of unsynced) {
+
+  await Promise.allSettled(unsynced.map(async function(row) {
     try {
       if (row._deleted) {
         await sb.from(table).delete().eq('id', row.id);
@@ -28,7 +29,8 @@ const syncTable = async function(uid, table, ldbTable, mapLocal) {
         if (!error) toMarkSynced.push(row.id);
       }
     } catch (_) { void _; }
-  }
+  }));
+
   if (toDeleteIds.length > 0) await ldbTable.bulkDelete(toDeleteIds);
   if (toMarkSynced.length > 0) await ldbTable.where('id').anyOf(toMarkSynced).modify({ _synced: 1 });
 
@@ -56,8 +58,7 @@ const syncTable = async function(uid, table, ldbTable, mapLocal) {
 const syncProfiles = async function(uid) {
   if (!navigator.onLine) return true;
   const unsynced = await ldb.profiles.where('user_id').equals(uid).and(r => r._synced === 0).toArray();
-  var ok = true;
-  for (const row of unsynced) {
+  var results = await Promise.allSettled(unsynced.map(async function(row) {
     const clean = {};
     PROFILE_WRITE_FIELDS.forEach(function(k) { if (row[k] !== undefined) clean[k] = row[k]; });
     if (clean.color && !validHex(clean.color)) clean.color = '#002f59';
@@ -66,8 +67,10 @@ const syncProfiles = async function(uid) {
     clean.updated_at = row.updated_at || now();
     var { error } = await sb.from('company_profiles').upsert(clean, { onConflict: 'user_id' });
     if (!error) await ldb.profiles.update(uid, { _synced: 1 });
-    else { await ldb.profiles.update(uid, { _synced: 1 }); ok = false; }
-  }
+    else { await ldb.profiles.update(uid, { _synced: 1 }); return false; }
+    return true;
+  }));
+  var ok = results.every(function(r) { return r.status === 'fulfilled' && r.value !== false; });
   if (!ok) return false;
   const { data, error: profPullErr } = await sb.from('company_profiles').select('*').eq('user_id', uid).maybeSingle();
   if (profPullErr) return false;

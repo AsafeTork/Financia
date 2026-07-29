@@ -22,7 +22,11 @@ export function applyEdit(list, id, upd) {
 }
 
 export async function countLimit(ldb, table, userId) {
-  return await ldb[table].where('user_id').equals(userId).filter(function(r) { return !r._deleted; }).count();
+  try {
+    return await ldb[table].where('[user_id+_deleted]').equals([userId, 0]).count();
+  } catch {
+    return await ldb[table].where('user_id').equals(userId).filter(function(r) { return !r._deleted; }).count();
+  }
 }
 
 export async function dexiePut(ldb, table, row, toast) {
