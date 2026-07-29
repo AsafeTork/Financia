@@ -76,14 +76,18 @@ describe('countLimit', function() {
   it('conta only non-deleted', async function() {
     const ldb = {
       items: {
-        where: function() {
+        where: function(key) {
           let filterFn;
+          const isCompound = key === '[user_id+_deleted]';
           return {
-            equals: function() {
+            equals: function(val) {
               const api = {
                 filter: function(fn) { filterFn = fn; return api; },
                 count: function() {
                   const rows = [{ _deleted: 0 }, { _deleted: 1 }, { _deleted: 0 }];
+                  if (isCompound && Array.isArray(val)) {
+                    return Promise.resolve(rows.filter(function(r) { return r._deleted === 0; }).length);
+                  }
                   return Promise.resolve(rows.filter(filterFn || Boolean).length);
                 },
               };

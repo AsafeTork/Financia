@@ -288,7 +288,7 @@ jobs:
     name: Deploy Edge Functions
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    if: github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push' && secrets.SUPABASE_ACCESS_TOKEN != ''
     needs: [build]
     steps:
       - uses: actions/checkout@v4
@@ -315,10 +315,6 @@ jobs:
           echo "| E2E (chromium) | ${{ needs.e2e-tests.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Build | ${{ needs.build.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Security Audit | ${{ needs.security-audit.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Prod Audit (chromium) | ${{ fromJson(needs.prod-audit.results)['0'] }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Prod Audit (firefox) | ${{ fromJson(needs.prod-audit.results)['1'] }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Prod Audit (webkit) | ${{ fromJson(needs.prod-audit.results)['2'] }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Prod Audit (mobile-chrome) | ${{ fromJson(needs.prod-audit.results)['3'] }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Prod Audit (mobile-safari) | ${{ fromJson(needs.prod-audit.results)['4'] }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Prod Audit | ${{ needs.prod-audit.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Extract Errors | ${{ needs.extract-errors.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Deploy Edge Functions | ${{ needs.deploy-edge-functions.result }} |" >> $GITHUB_STEP_SUMMARY
