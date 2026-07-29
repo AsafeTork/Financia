@@ -5,7 +5,7 @@ import { fmt, fmtDate, monthLabel, today, brandAlpha } from '../../lib/utils.js'
 import { effectivePlan } from '../../lib/constants.js';
 import { exportPDF, exportXLS } from '../../lib/exporters.js';
 
-export default function ReportView({ tx, brand, toast, onNav, planInfo }) {
+export default React.memo(function ReportView({ tx, brand, toast, onNav, planInfo }) {
   var accentColor = (brand && brand.color) || '#1a6b5c';
   var paid = effectivePlan(planInfo) !== 'free';
 
@@ -238,4 +238,4 @@ export default function ReportView({ tx, brand, toast, onNav, planInfo }) {
       </Card>
     </div>
   );
-}
+});

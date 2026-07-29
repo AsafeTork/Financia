@@ -178,7 +178,7 @@ function LogoTabContent({ brand, bs, brandColor, applyLogoScheme, toast }) {
   );
 }
 
-export default function BrandStudioView({ brand, planInfo, onSave, toast, onNav, isAdmin }) {
+export default React.memo(function BrandStudioView({ brand, planInfo, onSave, toast, onNav, isAdmin }) {
   const hasWhiteLabel = !!(brand && brand.white_label);
   const canAccess = isAdmin || hasWhiteLabel;
   const bs = useBrandStudio(brand, planInfo, onSave, toast);
@@ -274,4 +274,4 @@ export default function BrandStudioView({ brand, planInfo, onSave, toast, onNav,
       )}
     </div>
   );
-}
+});

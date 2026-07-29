@@ -1,6 +1,6 @@
+import React from 'react';
 
-
-export default function SyncBadge({ status }) {
+export default React.memo(function SyncBadge({ status }) {
   if (status === 'idle') return null;
   const cfgMap = {
     syncing: { bg: '#2563eb',          text: 'Sincronizando...',     icon: '~' },
@@ -15,4 +15,4 @@ export default function SyncBadge({ status }) {
       {cfg.text}
     </div>
   );
-}
+});

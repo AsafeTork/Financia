@@ -5,7 +5,7 @@ import { brandAlpha } from '../../lib/utils.js';
 import { askAI } from '../../lib/aiClient.js';
 import { sb } from '../../lib/supabase.js';
 
-export default function EmailView({ brand, toast }) {
+export default React.memo(function EmailView({ brand, toast }) {
   const [to, setTo] = useState('');
   const [subject, setSubject] = useState('');
   const [body, setBody] = useState('');
@@ -123,4 +123,4 @@ export default function EmailView({ brand, toast }) {
       </Card>
     </div>
   );
-}
+});

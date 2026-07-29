@@ -208,13 +208,13 @@ export default function App() {
     const names = { dashboard:'Dashboard', income:'Vendas e Ganhos', expense:'Despesas', inventory:'Estoque', report:'Relatório', email:'Comunicar', settings:'Configurações', planos:'Planos', brandstudio:'Brand Studio' };
     var name = names[path] || path;
     setAnnounceMsg('');
-    requestAnimationFrame(function() {
+    var rafId = requestAnimationFrame(function() {
       setAnnounceMsg(name);
     });
     var main = document.getElementById('main-content');
     if (main) main.focus();
     var t = setTimeout(function() { setAnnounceMsg(''); }, 3000);
-    return function() { clearTimeout(t); };
+    return function() { cancelAnimationFrame(rafId); clearTimeout(t); };
   }, [path]);
 
   const confirm = useCallback(function(msg, onOk) { setConfirmData({msg:msg, onOk:onOk}); }, []);
