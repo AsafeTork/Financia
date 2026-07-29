@@ -42,7 +42,7 @@ export default function useBrandStudio(brand, planInfo, onSave, toast) {
   }, [historyIndex, history]);
 
   // Fixed: added proper dependencies
-  const presetCats = useMemo(() => getPresetCategories(), [allPresets]);
+  const presetCats = useMemo(() => getPresetCategories(), []);
 
   const saveToHistory = useCallback((b) => {
     const entry = JSON.parse(JSON.stringify(b || brand));

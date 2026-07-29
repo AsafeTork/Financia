@@ -1,10 +1,10 @@
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { sb } from '../../lib/supabase.js';
 
 export function useImpersonation(props) {
   var { toast } = props;
 
-  useEffect(function() {
+  var handleImpersonation = useCallback(function() {
     var hash = window.location.hash;
     if (!hash || !hash.includes('access_token')) return;
     try {
@@ -25,5 +25,7 @@ export function useImpersonation(props) {
     } catch (_) {
       window.location.hash = '';
     }
-  }, []);
+  }, [toast]);
+
+  useEffect(handleImpersonation, [handleImpersonation]);
 }

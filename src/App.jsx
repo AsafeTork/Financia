@@ -183,7 +183,7 @@ export default function App() {
 
     document.addEventListener('keydown', onKeyDown);
     return function() { document.removeEventListener('keydown', onKeyDown); };
-  }, [navigate]);
+  }, [navigate, navTo]);
 
   useEffect(function() {
     if (!session) { onboardingRef.current = null; setOnboardingNeeded(false); return; }

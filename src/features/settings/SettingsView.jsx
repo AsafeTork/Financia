@@ -54,7 +54,7 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
   }, [isAdmin, hasWhiteLabel, tab]);
 
    // Busca o cartao salvo ao abrir a aba Assinatura (e apos trocar/remover).
-   React.useEffect(function() {
+   var loadPayment = React.useCallback(function() {
      if (effectiveTab !== 'subscription') return;
      var alive = true;
      setCardLoading(true);
@@ -73,10 +73,12 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
        if (toast) toast('Erro ao carregar forma de pagamento.', 'error');
      });
      return function() { alive = false; };
-   }, [effectiveTab, cardReload]);
+   }, [effectiveTab, cardReload, setPaymentLoading, toast]);
+
+   React.useEffect(function() { return loadPayment(); }, [loadPayment]);
 
    // Busca status da assinatura Stripe na aba Assinatura.
-   React.useEffect(function() {
+   var loadSubscription = React.useCallback(function() {
      if (effectiveTab !== 'subscription') return;
      if (planId === 'free') { setSubStatus(null); setSubLoading(false); return; }
      var alive = true;
@@ -88,7 +90,9 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
        if (alive) setSubLoading(false);
      }).catch(function() { if (alive) { setSubStatus(null); setSubLoading(false); if (toast) toast('Erro ao carregar status da assinatura.', 'error'); } });
      return function() { alive = false; };
-   }, [effectiveTab, planId]);
+   }, [effectiveTab, planId, setSubLoading, toast]);
+
+   React.useEffect(function() { return loadSubscription(); }, [loadSubscription]);
 
   const savePhone = async function() {
     setPhoneSaving(true);
