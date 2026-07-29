@@ -184,13 +184,6 @@ async function handler(req: Request, logger: Logger): Promise<Response> {
     const message = err?.message || String(err);
     return corsResponse({ error: String(message) }, 500);
   }
-});
-
-function corsResponse(body: any, status = 200): Response {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type' },
-  });
 }
 
 Deno.serve(async (req) => {
@@ -317,36 +310,6 @@ async function handler(req: Request, logger: any): Promise<Response> {
   }
 }
 
-function corsResponse(body: any, status = 200): Response {
-  return new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type' } });
-}
-
-async function findOrCreateCustomer(stripe: any, email: string | undefined, userId: string) {
-  if (email) {
-    const existing = await stripe.customers.list({ email, limit: 20 });
-    for (const c of existing.data) {
-      if (c.metadata?.user_id === userId) return c;
-    }
-    return existing.data[0] || await stripe.customers.create({ email: email || undefined, metadata: { user_id: userId } });
-  }
-  return stripe.customers.create({ metadata: { user_id: userId } });
-}
-
-async function getActiveSubscription(stripe: any, customerId: string) {
-  const subs = await stripe.subscriptions.list({ customer: customerId, status: 'all', limit: 20 });
-  for (const s of subs.data) { if (['active', 'trialing', 'past_due', 'unpaid'].includes(s.status)) return s; }
-  return null;
-}
-
-function planOfSub(sub: any): string {
-  const m = sub.metadata || {};
-  if (m.plan_id === 'pro' || m.plan_id === 'premium') return m.plan_id;
-  const item = sub.items?.data?.[0];
-  const pm = item?.price?.metadata || {};
-  if (pm.plan_id === 'pro' || pm.plan_id === 'premium') return pm.plan_id;
-  return 'pro';
-}
-
 async function findOrCreateProduct(stripe: any, planId: string) {
   try { const found = await stripe.products.search({ query: "active:'true' AND metadata['plan_id']:'" + planId + "'", limit: 1 }); if (found.data.length > 0) return found.data[0].id; } catch {}
   return (await stripe.products.create({ name: 'Financia ' + planId, metadata: { plan_id: planId } })).id;
@@ -367,8 +330,4 @@ async function customPriceId(stripe: any, planId: string, cents: number, userId:
   if (found.data.length > 0) return found.data[0].id;
   const productId = await findOrCreateProduct(stripe, planId);
   return (await stripe.prices.create({ currency: 'brl', unit_amount: cents, recurring: { interval: 'month' }, product: productId, lookup_key: lookupKey, metadata: { plan_id: planId, custom_for: userId } })).id;
-}
-
-function corsResponse(body: any, status = 200): Response {
-  return new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type' } });
 }
