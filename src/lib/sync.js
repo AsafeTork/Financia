@@ -34,13 +34,23 @@ const syncTable = async function(uid, table, ldbTable, mapLocal) {
   if (toDeleteIds.length > 0) await ldbTable.bulkDelete(toDeleteIds);
   if (toMarkSynced.length > 0) await ldbTable.where('id').anyOf(toMarkSynced).modify({ _synced: 1 });
 
-  const { data: remote, error: pullErr } = await sb.from(table).select('*')
-    .eq('user_id', uid)
-    .gte('updated_at', lastSync)
-    .limit(500);
-  if (pullErr) return false;
-  if (!remote || remote.length === 0) return true;
+  var selectFields = (FIELD_MAP[table] || ['id']).join(', ');
+  var allRemote = [];
+  var cursor = null;
+  while (true) {
+    var query = sb.from(table).select(selectFields).eq('user_id', uid).gte('updated_at', lastSync).order('updated_at', {ascending:true}).limit(500);
+    if (cursor) query = query.gt('updated_at', cursor);
+    var batch = await query;
+    if (batch.error) return false;
+    var rows = batch.data || [];
+    if (rows.length === 0) break;
+    allRemote = allRemote.concat(rows);
+    if (rows.length < 500) break;
+    cursor = rows[rows.length - 1].updated_at;
+  }
+  if (allRemote.length === 0) return true;
 
+  var remote = allRemote;
   const remoteIds = remote.map(function(r) { return r.id; });
   const existingArr = await ldbTable.bulkGet(remoteIds);
   const rowsToPut = [];
@@ -72,7 +82,8 @@ const syncProfiles = async function(uid) {
   }));
   var ok = results.every(function(r) { return r.status === 'fulfilled' && r.value !== false; });
   if (!ok) return false;
-  const { data, error: profPullErr } = await sb.from('company_profiles').select('*').eq('user_id', uid).maybeSingle();
+  var PROFILE_READ_FIELDS = 'user_id,name,logo,color,color_secondary,color_accent,theme,logo_url,white_label,phone,niche,custom_palette,visual_version,brand_config';
+  const { data, error: profPullErr } = await sb.from('company_profiles').select(PROFILE_READ_FIELDS).eq('user_id', uid).maybeSingle();
   if (profPullErr) return false;
   if (data) {
     var localRow = await ldb.profiles.get(uid);
@@ -104,7 +115,8 @@ export const syncAll = async function(uid) {
 
 export const fetchClients = async function() {
   try {
-    const { data } = await sb.from('company_profiles').select('*').order('user_id');
+    var PROFILE_READ_FIELDS = 'user_id,name,logo,color,color_secondary,color_accent,theme,logo_url,white_label,phone,niche,custom_palette,visual_version,brand_config,plan,plan_expires_at,plan_activated_by,custom_price_cents_pro,custom_price_cents_premium,custom_price_cents_white_label,segment,created_at,updated_at';
+    const { data } = await sb.from('company_profiles').select(PROFILE_READ_FIELDS).order('user_id');
     return data || [];
   } catch { return []; }
 };

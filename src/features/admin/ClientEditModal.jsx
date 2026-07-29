@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { sb } from '../../lib/supabase.js';
-import { hexToRgb, luminance, deriveCores, lightenHex, fmt } from '../../lib/utils.js';
+import { luminance, deriveCores, lightenHex, fmt } from '../../lib/utils.js';
 import { THEME_PRESETS, WHITELABEL, waLinkTo } from '../../lib/constants.js';
 import ColorField from '../../shared/ui/ColorField.jsx';
 import { setClientCustomPrice, setClientWhiteLabel } from '../../lib/sync.js';
@@ -114,11 +114,6 @@ export default function ClientEditModal({ client, adminEmail, onSave, onClose, t
     if (!colorSecondary) {/* auto-derive — shown via effectiveSecondary */}
   };
 
-  var colorDistance = function(h1, h2) {
-    var a = hexToRgb(h1); var b2 = hexToRgb(h2);
-    return Math.sqrt(Math.pow(a.r - b2.r, 2) + Math.pow(a.g - b2.g, 2) + Math.pow(a.b - b2.b, 2));
-  };
-
   var extractColorsFromImage = function(url) {
     var img = new Image();
     img.crossOrigin = 'anonymous';
@@ -126,42 +121,16 @@ export default function ClientEditModal({ client, adminEmail, onSave, onClose, t
       try {
         var cv = document.createElement('canvas'); cv.width = 50; cv.height = 50;
         var ctx = cv.getContext('2d'); ctx.drawImage(img, 0, 0, 50, 50);
-        var px = ctx.getImageData(0, 0, 50, 50).data;
-        var buckets = {};
-        for (var i = 0; i < px.length; i += 4) {
-          if (px[i + 3] < 128) continue;
-          var r = Math.round(px[i] / 48) * 48;
-          var g = Math.round(px[i + 1] / 48) * 48;
-          var b = Math.round(px[i + 2] / 48) * 48;
-          if (r > 240 && g > 240 && b > 240) continue;
-          var k = r + ',' + g + ',' + b;
-          buckets[k] = (buckets[k] || 0) + 1;
-        }
-        var sorted = Object.entries(buckets)
-          .sort(function(a, b2) { return b2[1] - a[1]; })
-          .map(function(pair) {
-            var parts = pair[0].split(',').map(Number);
-            return '#' + parts.map(function(v) { return v.toString(16).padStart(2, '0'); }).join('');
-          });
-        var deduped = [];
-        for (var j = 0; j < sorted.length; j++) {
-          var ok = true;
-          for (var k2 = 0; k2 < deduped.length; k2++) {
-            if (colorDistance(sorted[j], deduped[k2]) < 30) { ok = false; break; }
-          }
-          if (ok) deduped.push(sorted[j]);
-        }
-        var dark = null; var mid = null; var light = null;
-        for (var m = 0; m < deduped.length; m++) {
-          var lum = luminance(deduped[m]);
-          if (!dark && lum < 0.15) { dark = deduped[m]; }
-          else if (!mid && lum >= 0.15 && lum <= 0.5) { mid = deduped[m]; }
-          else if (!light && lum > 0.5) { light = deduped[m]; }
-        }
-        var primary = dark || deduped[0] || '#002f59';
-        var secondary = mid || lightenHex(primary, 0.78);
-        var accent = light || lightenHex(primary, 0.92);
-        setExtractedColors([primary, secondary, accent]);
+        var imageData = ctx.getImageData(0, 0, 50, 50);
+        var workerUrl = new URL('../../workers/color-extract.worker.js', import.meta.url);
+        var worker = new Worker(workerUrl, { type: 'module' });
+        worker.onmessage = function(e) {
+          var result = e.data;
+          var dark = result.primary, mid = result.secondary, light = result.accent;
+          setExtractedColors([dark, mid, light]);
+          worker.terminate();
+        };
+        worker.postMessage({ data: Array.from(imageData.data), width: 50, height: 50 });
       } catch (_) { void _; }
     };
     img.src = url;

@@ -2,9 +2,10 @@
 import { Empty, Skeleton } from '../../shared/ui/ui.jsx';
 import { sb } from '../../lib/supabase.js';
 import { triggerApkBuild, fetchClients, deleteClient, fetchClientUsage, fetchDbStats, fetchStripeOverview } from '../../lib/sync.js';
-import { luminance, lightenHex, fmtDate, formatBytes, dbUsage, fmt } from '../../lib/utils.js';
+import { fmtDate, formatBytes, dbUsage, fmt } from '../../lib/utils.js';
 import { GH_REPO, effectivePlan, PRICING_PLANS, waLinkTo, APP_URL } from '../../lib/constants.js';
 import { generateLogoSvg, logoSvgToDataUrl } from '../branding/logoUtils.js';
+import { useDebouncedValue } from '../../shared/hooks/useDebouncedValue.js';
 
 // Limite de armazenamento do plano Supabase (free = 500 MB). Base do alerta de uso.
 var DB_LIMIT_BYTES = 500 * 1024 * 1024;
@@ -45,6 +46,7 @@ export default function AdminPanel({ toast, confirm, session, brand }) {
   const [editClient, setEditClient] = useState(null);
   const [_copied, setCopied] = useState(null);
   const [search, setSearch] = useState('');
+  const debouncedSearch = useDebouncedValue(search, 250);
   const [debug, setDebug] = useState(function() {
     try { return localStorage.getItem('financia_debug_mode') === '1'; } catch { return false; }
   });
@@ -55,7 +57,6 @@ export default function AdminPanel({ toast, confirm, session, brand }) {
       window.dispatchEvent(new CustomEvent('financia-debug-change', { detail: { debug: next } }));
       if (next) {
         console.log('%c[DEBUG] Modo debug ativado', 'color:#6b21a8;font-weight:bold');
-        console.log('[DEBUG] User:', session?.user?.email);
         console.log('[DEBUG] Admin:', true);
       } else {
         console.log('%c[DEBUG] Modo debug desativado', 'color:#6b21a8;font-weight:bold');
@@ -162,8 +163,8 @@ export default function AdminPanel({ toast, confirm, session, brand }) {
 
   const visibleClients = clients.filter(function(c) {
     if (planFilter !== 'all' && effectivePlan(c) !== planFilter) return false;
-    if (!search.trim()) return true;
-    var q = search.toLowerCase();
+    if (!debouncedSearch.trim()) return true;
+    var q = debouncedSearch.toLowerCase();
     return [(c.name || ''), (c.email || ''), (c.user_id || '')].some(function(v) { return v.toLowerCase().indexOf(q) !== -1; });
   });
 
@@ -171,31 +172,15 @@ export default function AdminPanel({ toast, confirm, session, brand }) {
     try {
       const cv = document.createElement('canvas'); cv.width = 50; cv.height = 50;
       const ctx = cv.getContext('2d'); ctx.drawImage(img, 0, 0, 50, 50);
-      const d = ctx.getImageData(0, 0, 50, 50).data;
-      const buckets = {};
-      for (var i = 0; i < d.length; i += 4) {
-        if (d[i+3] < 128) continue;
-        const r = Math.round(d[i]/48)*48, g = Math.round(d[i+1]/48)*48, b = Math.round(d[i+2]/48)*48;
-        if (r > 230 && g > 230 && b > 230) continue;
-        const k = r + ',' + g + ',' + b; buckets[k] = (buckets[k] || 0) + 1;
-      }
-      const allHexes = Object.entries(buckets)
-        .sort(function(a, b) { return b[1] - a[1]; })
-        .map(function(pair) {
-          const parts = pair[0].split(',').map(Number);
-          return '#' + parts.map(function(v) { return v.toString(16).padStart(2, '0'); }).join('');
-        });
-      var dark = null; var mid = null; var light = null;
-      for (var j = 0; j < allHexes.length; j++) {
-        const lum = luminance(allHexes[j]);
-        if (!dark && lum < 0.2) dark = allHexes[j];
-        else if (!mid && lum >= 0.2 && lum <= 0.6) mid = allHexes[j];
-        else if (!light && lum > 0.6) light = allHexes[j];
-      }
-      const primary = dark || allHexes[0] || '#002f59';
-      const secondary = mid || lightenHex(primary, 0.78);
-      const accent = light || lightenHex(primary, 0.92);
-      setForm(function(f) { return Object.assign({}, f, {primaryColor:primary, secondaryColor:secondary, accentColor:accent, colors:allHexes.slice(0,5)}); });
+      const imageData = ctx.getImageData(0, 0, 50, 50);
+      var workerUrl = new URL('../../workers/color-extract.worker.js', import.meta.url);
+      var worker = new Worker(workerUrl, { type: 'module' });
+      worker.onmessage = function(e) {
+        var result = e.data;
+        setForm(function(f) { return Object.assign({}, f, {primaryColor:result.primary, secondaryColor:result.secondary, accentColor:result.accent, colors:result.all}); });
+        worker.terminate();
+      };
+      worker.postMessage({ data: Array.from(imageData.data), width: 50, height: 50 });
     } catch(_) { void _; }
   };
 

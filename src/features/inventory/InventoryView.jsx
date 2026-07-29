@@ -5,6 +5,7 @@ import { PSearch } from '../../shared/ui/SaleForm.jsx';
 import { fmt, fmtDate, today, safe, uid, brandAlpha } from '../../lib/utils.js';
 import { effectivePlan } from '../../lib/constants.js';
 import { exportPDF, exportXLS } from '../../lib/exporters.js';
+import { useDebouncedValue } from '../../shared/hooks/useDebouncedValue.js';
 
 var INIT_PF = {name:'', category:'', price:'', cost:'', stock:''};
 
@@ -51,9 +52,10 @@ function reducer(state, action) {
   }
 }
 
-export default function InventoryView({ products, losses, onAddProduct, onEditProduct, onDeleteProduct, onAddLoss, onEditLoss, onDeleteLoss, onAdjustStock, brand, toast, confirm, planInfo, onNav }) {
+export default React.memo(function InventoryView({ products, losses, onAddProduct, onEditProduct, onDeleteProduct, onAddLoss, onEditLoss, onDeleteLoss, onAdjustStock, brand, toast, confirm, planInfo, onNav }) {
   const [state, dispatch] = useReducer(reducer, null, initState);
   const {tab, search, collapsed, pm, editP, lm, editL, sm, pf, lf, sq, saving} = state;
+  var debouncedSearch = useDebouncedValue(search, 250);
   var paid = effectivePlan(planInfo) !== 'free';
 
   var doExport = function(kind) {
@@ -136,8 +138,8 @@ export default function InventoryView({ products, losses, onAddProduct, onEditPr
   };
 
   const listMemo = useMemo(function() {
-    var disp = search.trim()
-      ? products.filter(function(p) { return [p.name, p.category, p.id].filter(Boolean).some(function(v) { return v.toLowerCase().indexOf(search.toLowerCase()) !== -1; }); })
+    var disp = debouncedSearch.trim()
+      ? products.filter(function(p) { return [p.name, p.category, p.id].filter(Boolean).some(function(v) { return v.toLowerCase().indexOf(debouncedSearch.toLowerCase()) !== -1; }); })
       : products;
     var grouped = Object.entries(
       disp.reduce(function(a, p) { var k = p.category || 'Sem categoria'; if (!a[k]) a[k] = []; a[k].push(p); return a; }, {})
@@ -147,7 +149,7 @@ export default function InventoryView({ products, losses, onAddProduct, onEditPr
       return pair1[0].localeCompare(pair2[0]);
     });
     return {disp: disp, grouped: grouped};
-  }, [products, search]);
+  }, [products, debouncedSearch]);
 
   const disp    = listMemo.disp;
   const grouped = listMemo.grouped;
@@ -395,4 +397,4 @@ export default function InventoryView({ products, losses, onAddProduct, onEditPr
       )}
     </div>
   );
-}
+})

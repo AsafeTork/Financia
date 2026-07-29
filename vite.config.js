@@ -32,7 +32,7 @@ export default defineConfig(async function() {
     build: {
       outDir: 'dist',
       emptyOutDir: true,
-      target: 'es2020',
+      target: 'es2022',
       rollupOptions: {
         output: {
           compact: true,
@@ -66,9 +66,6 @@ export default defineConfig(async function() {
             
             // nodemailer - EXCLUDE from vendor (Node.js only)
             if (id.includes('node_modules/nodemailer')) return 'nodemailer';
-            
-            // Scheduler - separate chunk (no deps)
-            if (id.includes('node_modules/scheduler')) return 'vendor-scheduler';
             
             // Everything else from node_modules
             if (id.includes('node_modules')) return 'vendor';

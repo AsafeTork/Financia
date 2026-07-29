@@ -1,10 +1,10 @@
-﻿import React, { useState } from 'react';
+﻿import React, { useState, lazy, Suspense } from 'react';
 import { Card, Inp, Spin, PageHead, Modal } from '../../shared/ui/ui.jsx';
 import PhoneInput, { parsePhone, buildPhone } from '../../shared/ui/PhoneInput.jsx';
 import { updatePassword, signOut as doSignOut } from '../../lib/auth.js';
 import { effectivePlan, PRICING_PLANS, waLink, SUPPORT_EMAIL } from '../../lib/constants.js';
-import AdminPanel from '../admin/AdminPanel.jsx';
-import BrandStudioView from '../branding/BrandStudioView.jsx';
+var AdminPanel = lazy(function() { return import('../admin/AdminPanel.jsx'); });
+var BrandStudioView = lazy(function() { return import('../branding/BrandStudioView.jsx'); });
 import GhTokenCard from '../admin/GhTokenCard.jsx';
 import InstallButton from '../../shared/ui/InstallButton.jsx';
 import UpdateCardModal from '../../shared/ui/UpdateCardModal.jsx';
@@ -14,7 +14,7 @@ import { fmt, isValidUrl } from '../../lib/utils.js';
 import { triggerApkBuild } from '../../lib/sync.js';
 import ColorField from '../../shared/ui/ColorField.jsx';
 
-export default function SettingsView({ brand, session, planInfo, onSave, onSavePhone, toast, confirm, isAdmin, onNav }) {
+export default React.memo(function SettingsView({ brand, session, planInfo, onSave, onSavePhone, toast, confirm, isAdmin, onNav }) {
   var hasWhiteLabel = !!(brand && brand.white_label);
   var [tab, setTab] = useState(function() {
     try {
@@ -443,13 +443,13 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
       )}
 
       {effectiveTab === 'brandstudio' && (
-        <div id="tabpanel-brandstudio" role="tabpanel" aria-labelledby="tab-brandstudio"><BrandStudioView brand={brand} planInfo={planInfo} onSave={onSave} toast={toast} onNav={onNav} isAdmin={isAdmin} /></div>
+        <div id="tabpanel-brandstudio" role="tabpanel" aria-labelledby="tab-brandstudio"><Suspense fallback={<Spin/>}><BrandStudioView brand={brand} planInfo={planInfo} onSave={onSave} toast={toast} onNav={onNav} isAdmin={isAdmin} /></Suspense></div>
       )}
 
       {effectiveTab === 'clients' && (
         <div id="tabpanel-clients" role="tabpanel" aria-labelledby="tab-clients" className="flex flex-col gap-4">
           <GhTokenCard toast={toast}/>
-          <Card className="p-6"><AdminPanel toast={toast} confirm={confirm} session={session} brand={brand}/></Card>
+          <Card className="p-6"><Suspense fallback={<Spin/>}><AdminPanel toast={toast} confirm={confirm} session={session} brand={brand}/></Suspense></Card>
         </div>
       )}
 
@@ -463,4 +463,4 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
 
     </div>
   );
-}
+})

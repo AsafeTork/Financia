@@ -11,6 +11,29 @@ import { useRealtime } from '../../shared/hooks/useRealtime.js';
 import { useBrandManager } from '../../shared/hooks/useBrandManager.js';
 import { useImpersonation } from './useImpersonation.js';
 
+var TX_FIELDS = ['id','type','description','amount','date','method','category','items','user_id','registered_by','updated_at'];
+var PRD_FIELDS = ['id','name','category','price','cost','stock','user_id','registered_by','updated_at'];
+var LSS_FIELDS = ['id','description','qty','reason','date','user_id','registered_by','updated_at'];
+
+async function paginatedFetch(table, fields, orderBy, opts) {
+  var all = [];
+  var ascending = opts && opts.ascending || false;
+  var query = sb.from(table).select(fields.join(',')).order(orderBy, {ascending: ascending});
+  var batch = await query.limit(500);
+  var rows = batch.data || [];
+  all = all.concat(rows);
+  while (rows.length === 500) {
+    var lastVal = rows[rows.length - 1][orderBy];
+    query = sb.from(table).select(fields.join(',')).order(orderBy, {ascending: ascending});
+    if (ascending) query = query.gt(orderBy, lastVal);
+    else query = query.lt(orderBy, lastVal);
+    batch = await query.limit(500);
+    rows = batch.data || [];
+    all = all.concat(rows);
+  }
+  return all;
+}
+
 export function useSession(p) {
   var uidRef        = useRef(null);
   var loadingRef    = useRef(0);
@@ -113,11 +136,12 @@ export function useSession(p) {
       setTimeout(function() { if (syncStatusToken === st3) setSyncStatus('idle'); }, 5000);
       if (navigator.onLine) {
         try {
+          var PROFILE_READ = 'user_id,name,logo,color,color_secondary,color_accent,theme,logo_url,white_label,phone,niche,custom_palette,visual_version,brand_config,plan,plan_expires_at,plan_activated_by,custom_price_cents,custom_price_cents_pro,custom_price_cents_premium';
           var allRes = await Promise.all([
-            sb.from('company_profiles').select('*').eq('user_id', userId).maybeSingle(),
-            sb.from('products').select('*').order('created_at').limit(500),
-            sb.from('transactions').select('*').order('date', {ascending:false}).limit(500),
-            sb.from('losses').select('*').order('date', {ascending:false}).limit(500),
+            sb.from('company_profiles').select(PROFILE_READ).eq('user_id', userId).maybeSingle(),
+            paginatedFetch('products', PRD_FIELDS, 'created_at', {ascending:true}),
+            paginatedFetch('transactions', TX_FIELDS, 'date', {ascending:false}),
+            paginatedFetch('losses', LSS_FIELDS, 'date', {ascending:false}),
             sb.from('user_roles').select('role').eq('user_id', userId).maybeSingle(),
           ]);
           var pr = allRes[0], pdr = allRes[1], txr = allRes[2], lr = allRes[3], roleRes = allRes[4];
@@ -134,19 +158,22 @@ export function useSession(p) {
             });
             await ldb.profiles.put(toLocal(prof));
           }
-          if (pdr.data) {
-            setProducts(pdr.data);
-            await ldb.products.bulkPut(pdr.data.map(function(r) { return toLocal(r, {user_id:userId}); }));
+          var prodRows = pdr || [];
+          if (prodRows.length > 0) {
+            setProducts(prodRows);
+            await ldb.products.bulkPut(prodRows.map(function(r) { return toLocal(r, {user_id:userId}); }));
           }
-          if (txr.data) {
-            var mappedTx = txr.data.map(function(t) { return Object.assign({}, t, {desc:t.description, cat:t.category}); });
+          var txRows = txr || [];
+          if (txRows.length > 0) {
+            var mappedTx = txRows.map(function(t) { return Object.assign({}, t, {desc:t.description, cat:t.category}); });
             setTx(mappedTx);
-            await ldb.transactions.bulkPut(txr.data.map(function(r) { return toLocal(r, {user_id:userId, desc:r.description, cat:r.category}); }));
+            await ldb.transactions.bulkPut(txRows.map(function(r) { return toLocal(r, {user_id:userId, desc:r.description, cat:r.category}); }));
           }
-          if (lr.data) {
-            var mappedL = lr.data.map(function(l) { return Object.assign({}, l, {desc:l.description}); });
+          var lossRows = lr || [];
+          if (lossRows.length > 0) {
+            var mappedL = lossRows.map(function(l) { return Object.assign({}, l, {desc:l.description}); });
             setLosses(mappedL);
-            await ldb.losses.bulkPut(lr.data.map(function(r) { return toLocal(r, {user_id:userId, desc:r.description}); }));
+            await ldb.losses.bulkPut(lossRows.map(function(r) { return toLocal(r, {user_id:userId, desc:r.description}); }));
           }
           var roleData = roleRes && roleRes.data ? roleRes.data : null;
           setIsAdminDB(roleData && roleData.role === 'admin');

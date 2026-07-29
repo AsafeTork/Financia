@@ -6,7 +6,7 @@ import AiInsightsCard from '../../shared/ui/AiInsightsCard.jsx';
 import { fmt, fmtDate, today, prevDays, brandAlpha } from '../../lib/utils.js';
 import { PLAN_LIMITS, effectivePlan } from '../../lib/constants.js';
 
-export default function Dashboard({ tx, products, brand, onNav, planInfo, lossesCount, onUpgrade, loading }) {
+export default React.memo(function Dashboard({ tx, products, brand, onNav, planInfo, lossesCount, onUpgrade, loading }) {
   var [period, setPeriod] = useState('month');
   var periods = [
     { v:'month',    l:'Mês atual' },
@@ -307,4 +307,4 @@ export default function Dashboard({ tx, products, brand, onNav, planInfo, losses
       </Card>
     </div>
   );
-}
+})

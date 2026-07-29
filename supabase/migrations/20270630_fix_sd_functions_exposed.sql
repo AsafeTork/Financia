@@ -81,12 +81,17 @@ BEGIN
     RAISE EXCEPTION 'forbidden';
   END IF;
   
-  -- Delete from auth.users
-  DELETE FROM auth.users WHERE id = target_uid;
-  
-  -- Delete related data
-  DELETE FROM public.company_profiles WHERE id = target_uid;
+  -- Delete dependent data FIRST (before auth.users)
+  DELETE FROM public.company_profiles WHERE user_id = target_uid;
   DELETE FROM public.impersonation_sessions WHERE target_uid = target_uid;
+  DELETE FROM public.transactions WHERE user_id = target_uid;
+  DELETE FROM public.products WHERE user_id = target_uid;
+  DELETE FROM public.losses WHERE user_id = target_uid;
+  DELETE FROM public.user_roles WHERE user_id = target_uid;
+  DELETE FROM public.stripe_webhook_dlq WHERE user_id = target_uid;
+  
+  -- Finally delete auth.users (after all dependent data)
+  DELETE FROM auth.users WHERE id = target_uid;
 END;
 $$;
 

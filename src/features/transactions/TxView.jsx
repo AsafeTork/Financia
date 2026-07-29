@@ -7,8 +7,9 @@ import { isRecurringId, getRecurring, setRecurring, buildRecurringRow, periodOf 
 import { effectivePlan } from '../../lib/constants.js';
 import { exportPDF, exportXLS } from '../../lib/exporters.js';
 import { useVirtualizer } from '@tanstack/react-virtual';
+import { useDebouncedValue } from '../../shared/hooks/useDebouncedValue.js';
 
-export default function TxView({ type, tx, products, onAdd, onEdit, onDelete, onDeductStock, onAddGenerated, uid: userId, brand, toast, confirm, planInfo, onNav }) {
+export default React.memo(function TxView({ type, tx, products, onAdd, onEdit, onDelete, onDeductStock, onAddGenerated, uid: userId, brand, toast, confirm, planInfo, onNav }) {
   var isIncome = type === 'income';
   var accentColor = isIncome ? brand.color : '#ef4444';
   var accentBg    = isIncome ? brandAlpha(brand.color, 0.08) : 'rgba(239,68,68,0.06)';
@@ -18,6 +19,7 @@ export default function TxView({ type, tx, products, onAdd, onEdit, onDelete, on
   var [editItem, setEditItem] = useState(null);
   var [saving, setSaving]     = useState(false);
   var [search, setSearch]     = useState('');
+  var debouncedSearch = useDebouncedValue(search, 250);
   var [dateFrom, setDateFrom] = useState('');
   var [dateTo, setDateTo]     = useState('');
   var [form, setForm] = useState({desc:'', amount:'', date:today(), cat:'Fixo', method:'PIX', fixo:false, day:'5'});
@@ -27,7 +29,7 @@ export default function TxView({ type, tx, products, onAdd, onEdit, onDelete, on
 
   var memo = useMemo(function() {
     var f = tx.filter(function(t) { return t.type === type; });
-    if (search)   f = f.filter(function(t) { return t.desc.toLowerCase().indexOf(search.toLowerCase()) !== -1; });
+    if (debouncedSearch)   f = f.filter(function(t) { return t.desc.toLowerCase().indexOf(debouncedSearch.toLowerCase()) !== -1; });
     if (dateFrom) f = f.filter(function(t) { return t.date >= dateFrom; });
     if (dateTo)   f = f.filter(function(t) { return t.date <= dateTo; });
     f.sort(function(a, b) { return b.date.localeCompare(a.date); });
@@ -48,7 +50,7 @@ export default function TxView({ type, tx, products, onAdd, onEdit, onDelete, on
       });
     });
     return {filtered: f, total: total, grouped: grouped, groupOrder: groupOrder, flatRows: flatRows};
-  }, [tx, type, search, dateFrom, dateTo]);
+  }, [tx, type, debouncedSearch, dateFrom, dateTo]);
 
   var filtered  = memo.filtered;
   var total     = memo.total;
@@ -354,4 +356,4 @@ export default function TxView({ type, tx, products, onAdd, onEdit, onDelete, on
       )}
     </div>
   );
-}
+})
