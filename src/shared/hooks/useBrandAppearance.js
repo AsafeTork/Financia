@@ -264,12 +264,18 @@ export default function useBrandAppearance(brand, planInfo) {
     }
   }, [appBrand]);
 
-  useEffect(() => {
+  useEffect(function() {
     const el = document.documentElement;
     const theme = effectiveTheme === 'dark' ? 'dark' : 'light';
     el.setAttribute('data-theme', theme);
-    applyBrandVars(appBrand);
-  }, [effectiveTheme, appBrand]);
+    if (theme === 'dark') {
+      THEME_CONTROLLED_VARS.forEach(function(k) {
+        el.style.removeProperty(k);
+      });
+    } else {
+      applyTokenDiff(el, collectTokensFromBrand(appBrand));
+    }
+  }, [effectiveTheme]);
 
   const checkCampaigns = useCallback((campaigns) => {
     if (!campaigns || campaigns.length === 0) return;

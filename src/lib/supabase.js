@@ -121,7 +121,18 @@ if (!supabaseUrl || !supabaseAnonKey) {
   }
 }
 
-export var sb = supabaseUrl && supabaseAnonKey ? createClient(supabaseUrl, supabaseAnonKey) : createNoopSupabaseClient();
+export var sb = supabaseUrl && supabaseAnonKey ? createClient(supabaseUrl, supabaseAnonKey, {
+  realtime: {
+    heartbeatIntervalMs: 30000,
+    heartbeatTimeoutMs: 60000,
+    params: {
+      v: 'protocol-2',
+    },
+  },
+  global: {
+    fetch: globalThis.fetch,
+  },
+}) : createNoopSupabaseClient();
 
 if (sb && sb.functions && typeof sb.functions.invoke === 'function') {
   var _origInvoke = sb.functions.invoke.bind(sb.functions);
