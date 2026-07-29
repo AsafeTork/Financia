@@ -295,7 +295,27 @@ jobs:
       - uses: supabase/setup-cli@v1
         with:
           version: latest
-      - run: supabase functions deploy --project-ref ${{ secrets.SUPABASE_PROJECT_ID }}
+      - run: |
+          supabase functions deploy ai --project-ref ${{ secrets.SUPABASE_PROJECT_ID }}
+          supabase functions deploy stripe-webhook --project-ref ${{ secrets.SUPABASE_PROJECT_ID }}
+          supabase functions deploy create-subscription --project-ref ${{ secrets.SUPABASE_PROJECT_ID }}
+          supabase functions deploy create-payment --project-ref ${{ secrets.SUPABASE_PROJECT_ID }}
+          supabase functions deploy cancel-subscription --project-ref ${{ secrets.SUPABASE_PROJECT_ID }}
+          supabase functions deploy create-setup-intent --project-ref ${{ secrets.SUPABASE_PROJECT_ID }}
+          supabase functions deploy get-payment-method --project-ref ${{ secrets.SUPABASE_PROJECT_ID }}
+          supabase functions deploy get-subscription-status --project-ref ${{ secrets.SUPABASE_PROJECT_ID }}
+          supabase functions deploy remove-payment-method --project-ref ${{ secrets.SUPABASE_PROJECT_ID }}
+          supabase functions deploy set-default-payment-method --project-ref ${{ secrets.SUPABASE_PROJECT_ID }}
+          supabase functions deploy stripe-config --project-ref ${{ secrets.SUPABASE_PROJECT_ID }}
+          supabase functions deploy admin-create-client --project-ref ${{ secrets.SUPABASE_PROJECT_ID }}
+          supabase functions deploy admin-impersonate --project-ref ${{ secrets.SUPABASE_PROJECT_ID }}
+          supabase functions deploy admin-set-custom-price --project-ref ${{ secrets.SUPABASE_PROJECT_ID }}
+          supabase functions deploy admin-set-white-label --project-ref ${{ secrets.SUPABASE_PROJECT_ID }}
+          supabase functions deploy admin-stripe-overview --project-ref ${{ secrets.SUPABASE_PROJECT_ID }}
+          supabase functions deploy health --project-ref ${{ secrets.SUPABASE_PROJECT_ID }}
+          supabase functions deploy send-custom-email --project-ref ${{ secrets.SUPABASE_PROJECT_ID }}
+          supabase functions deploy trigger-apk-build --project-ref ${{ secrets.SUPABASE_PROJECT_ID }}
+          supabase functions deploy update-brand-config --project-ref ${{ secrets.SUPABASE_PROJECT_ID }}
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
         if: env.SUPABASE_ACCESS_TOKEN != ''
