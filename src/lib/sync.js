@@ -110,7 +110,7 @@ export const syncAll = async function(uid) {
     ]);
     await setLastSync(ts, uid);
     return results.every(Boolean);
-  } catch { return false; }
+  } catch (e) { console.error('[sync] syncAll failed:', e); return false; }
 };
 
 export const fetchClients = async function() {
@@ -118,7 +118,7 @@ export const fetchClients = async function() {
     var PROFILE_READ_FIELDS = 'user_id,name,logo,color,color_secondary,color_accent,theme,logo_url,white_label,phone,niche,custom_palette,visual_version,brand_config,plan,plan_expires_at,plan_activated_by,custom_price_cents_pro,custom_price_cents_premium,custom_price_cents_white_label,segment,created_at,updated_at';
     const { data } = await sb.from('company_profiles').select(PROFILE_READ_FIELDS).order('user_id');
     return data || [];
-  } catch { return []; }
+  } catch (e) { console.error('[sync] fetchClients failed:', e); return []; }
 };
 
 export const fetchClientUsage = async function() {
@@ -128,7 +128,7 @@ export const fetchClientUsage = async function() {
     const map = {};
     (data || []).forEach(function(r) { map[r.user_id] = r; });
     return map;
-  } catch { return {}; }
+  } catch (e) { console.error('[sync] fetchClientUsage:', e); return {}; }
 };
 
 export const fetchDbStats = async function() {
@@ -136,7 +136,7 @@ export const fetchDbStats = async function() {
     const { data, error } = await sb.rpc('admin_db_stats');
     if (error) return null;
     return data || null;
-  } catch { return null; }
+  } catch (e) { console.error('[sync] fetchDbStats:', e); return null; }
 };
 
 export const fetchStripeOverview = async function() {
@@ -144,7 +144,7 @@ export const fetchStripeOverview = async function() {
     const res = await sb.functions.invoke('admin-stripe-overview', { body: {} });
     if (res && res.error) return null;
     return res && res.data && !res.data.error ? res.data : null;
-  } catch { return null; }
+  } catch (e) { console.error('[sync] fetchStripeOverview:', e); return null; }
 };
 
 export const setClientCustomPrice = async function(targetUserId, cents, planId) {

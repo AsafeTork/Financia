@@ -258,34 +258,39 @@ export default function useBrandAppearance(brand, planInfo) {
   }, [appBrand]);
 
   useEffect(() => {
-    const el = document.documentElement;
-    const theme = effectiveTheme === 'dark' ? 'dark' : 'light';
-    const tokens = collectTokensFromBrand(appBrand);
-    if (theme === 'dark') {
-      el.setAttribute('data-theme', 'dark');
-      THEME_CONTROLLED_VARS.forEach(function(k) {
-        el.style.removeProperty(k);
-      });
-      const brandOnly = {};
-      for (const k in tokens) {
-        if (!Object.prototype.hasOwnProperty.call(tokens, k)) continue;
-        if (!THEME_CONTROLLED_VARS.has(k)) {
-          brandOnly[k] = tokens[k];
+    let cancelled = false;
+    requestAnimationFrame(function() {
+      if (cancelled) return;
+      const el = document.documentElement;
+      const theme = effectiveTheme === 'dark' ? 'dark' : 'light';
+      const tokens = collectTokensFromBrand(appBrand);
+      if (theme === 'dark') {
+        el.setAttribute('data-theme', 'dark');
+        THEME_CONTROLLED_VARS.forEach(function(k) {
+          el.style.removeProperty(k);
+        });
+        const brandOnly = {};
+        for (const k in tokens) {
+          if (!Object.prototype.hasOwnProperty.call(tokens, k)) continue;
+          if (!THEME_CONTROLLED_VARS.has(k)) {
+            brandOnly[k] = tokens[k];
+          }
         }
+        applyTokenDiff(el, brandOnly);
+      } else {
+        el.setAttribute('data-theme', 'light');
+        applyTokenDiff(el, tokens);
       }
-      applyTokenDiff(el, brandOnly);
-    } else {
-      el.setAttribute('data-theme', 'light');
-      applyTokenDiff(el, tokens);
-    }
 
-    if (savedCampaignRef.current) {
-      const campaign = savedCampaignRef.current;
-      if (isCampaignActive(campaign)) {
-        applyCampaignOverride(campaign);
+      if (savedCampaignRef.current) {
+        const campaign = savedCampaignRef.current;
+        if (isCampaignActive(campaign)) {
+          applyCampaignOverride(campaign);
+        }
+        savedCampaignRef.current = null;
       }
-      savedCampaignRef.current = null;
-    }
+    });
+    return function() { cancelled = true; };
   }, [effectiveTheme, appBrand]);
 
   const checkCampaigns = useCallback((campaigns) => {
