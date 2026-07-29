@@ -78,7 +78,9 @@ jobs:
       - name: Restaurar keystore permanente
         env:
           KEYSTORE_B64: ${{ secrets.KEYSTORE_B64 }}
-        run: echo "$KEYSTORE_B64" | base64 -d > android/app/financia.jks
+        run: |
+          echo "$KEYSTORE_B64" | tr -d '[:space:]' | base64 -d > android/app/financia.jks
+          ls -lh android/app/financia.jks
 
       - name: Build APK Release
         working-directory: android
