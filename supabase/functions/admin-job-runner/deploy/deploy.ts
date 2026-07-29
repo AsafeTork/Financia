@@ -1,7 +1,7 @@
 // Job: Deploy Functions
 // Deploys Edge Functions to Supabase via Management API
 
-import { JobDefinition, JobContext, JobResult, withRetry } from './job-runner.ts';
+import { JobDefinition, JobContext, JobResult, withRetry } from '../job-runner.ts';
 
 const SUPABASE_API = 'https://api.supabase.com/v1';
 
@@ -97,5 +97,5 @@ export const deployJob: JobDefinition = {
 };
 
 // Register
-import { registerJob } from './job-runner.ts';
+import { registerJob } from '../job-runner.ts';
 registerJob(deployJob);
