@@ -275,7 +275,7 @@ export default function useBrandAppearance(brand, planInfo) {
     } else {
       applyTokenDiff(el, collectTokensFromBrand(appBrand));
     }
-  }, [effectiveTheme]);
+  }, [effectiveTheme, appBrand]);
 
   const checkCampaigns = useCallback((campaigns) => {
     if (!campaigns || campaigns.length === 0) return;

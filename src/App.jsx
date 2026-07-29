@@ -104,8 +104,11 @@ export default function App() {
 
   const navTo = useCallback(function(v) {
     const go = function() { navigate('/' + v); };
-    if (typeof document !== 'undefined' && document.startViewTransition) {
-      document.startViewTransition(function() { flushSync(go); }).catch(function(e) { console.warn('View transition failed:', e); });
+    if (typeof document !== 'undefined' && typeof document.startViewTransition === 'function') {
+      var transition = document.startViewTransition(function() { flushSync(go); });
+      if (transition && transition.finished && typeof transition.finished.catch === 'function') {
+        transition.finished.catch(function(e) { console.warn('View transition failed:', e); });
+      }
     } else {
       go();
     }

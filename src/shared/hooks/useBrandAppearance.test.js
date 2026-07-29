@@ -27,8 +27,9 @@ beforeEach(function() {
     getItem: vi.fn(function(k) { return lsData[k] || null; }),
     setItem: vi.fn(function(k, v) { lsData[k] = v; }),
   });
+  const mockRemoveProperty = vi.fn();
   Object.defineProperty(document.documentElement, 'style', {
-    value: { setProperty: mockSetProperty },
+    value: { setProperty: mockSetProperty, removeProperty: mockRemoveProperty },
     configurable: true,
     writable: true,
   });
