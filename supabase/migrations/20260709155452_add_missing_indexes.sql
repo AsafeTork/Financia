@@ -1,0 +1,3 @@
+-- Migration: 20260709155452_add_missing_indexes
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

@@ -1,0 +1,3 @@
+-- Migration: 20260615111233_20260615_simplify_logos_storage_policies
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

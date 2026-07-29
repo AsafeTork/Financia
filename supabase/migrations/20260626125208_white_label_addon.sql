@@ -1,0 +1,3 @@
+-- Migration: 20260626125208_white_label_addon
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

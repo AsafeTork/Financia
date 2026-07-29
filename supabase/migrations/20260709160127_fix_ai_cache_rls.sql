@@ -1,0 +1,3 @@
+-- Migration: 20260709160127_fix_ai_cache_rls
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

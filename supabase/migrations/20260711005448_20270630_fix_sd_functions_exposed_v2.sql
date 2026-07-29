@@ -1,0 +1,3 @@
+-- Migration: 20260711005448_20270630_fix_sd_functions_exposed_v2
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

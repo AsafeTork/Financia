@@ -1,0 +1,3 @@
+-- Migration: 20260723231121_20260723_igreja_planalto_tables
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

@@ -1,0 +1,3 @@
+-- Migration: 20260624220024_stripe_activate_plan
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

@@ -1,0 +1,3 @@
+-- Migration: 20260624213645_impersonation_security
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

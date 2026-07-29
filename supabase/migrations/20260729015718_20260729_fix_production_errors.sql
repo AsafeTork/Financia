@@ -1,0 +1,3 @@
+-- Migration: 20260729015718_20260729_fix_production_errors
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

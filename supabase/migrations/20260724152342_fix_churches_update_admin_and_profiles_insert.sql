@@ -1,0 +1,3 @@
+-- Migration: 20260724152342_fix_churches_update_admin_and_profiles_insert
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

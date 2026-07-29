@@ -1,0 +1,3 @@
+-- Migration: 20260711005313_20270630_fix_admin_impersonate_start
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

@@ -1,0 +1,3 @@
+-- Migration: 20260624232202_fix_impersonate_start_ambiguous_target_uid
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

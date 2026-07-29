@@ -1,0 +1,3 @@
+-- Migration: 20260711005933_20260710000011_i4_drop_redundant_index
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

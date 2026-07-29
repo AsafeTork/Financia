@@ -1,0 +1,3 @@
+-- Migration: 20260711005512_20270630_drop_check_plan_unchanged
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

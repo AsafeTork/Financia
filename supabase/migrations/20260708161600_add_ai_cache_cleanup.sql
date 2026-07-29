@@ -1,0 +1,3 @@
+-- Migration: 20260708161600_add_ai_cache_cleanup
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

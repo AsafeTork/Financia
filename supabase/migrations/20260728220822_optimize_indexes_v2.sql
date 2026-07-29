@@ -1,0 +1,3 @@
+-- Migration: 20260728220822_optimize_indexes_v2
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

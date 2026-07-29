@@ -1,0 +1,3 @@
+-- Migration: 20260711005337_20270630_fix_admin_get_magic_link
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

@@ -1,0 +1,3 @@
+-- Migration: 20260711005533_20270630_evaluate_restore_stripe_plan
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

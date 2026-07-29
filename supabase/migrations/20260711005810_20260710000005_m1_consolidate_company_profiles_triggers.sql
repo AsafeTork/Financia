@@ -1,0 +1,3 @@
+-- Migration: 20260711005810_20260710000005_m1_consolidate_company_profiles_triggers
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

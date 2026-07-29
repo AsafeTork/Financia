@@ -1,0 +1,3 @@
+-- Migration: 20260615012234_fix_security_logos_bucket_policy
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

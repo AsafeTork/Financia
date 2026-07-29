@@ -1,0 +1,3 @@
+-- Migration: 20260709160308_force_revoke_cleanup_ai_cache
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

@@ -1,0 +1,3 @@
+-- Migration: 20260724175116_add_whatsapp_column_to_churches
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

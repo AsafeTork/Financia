@@ -1,0 +1,3 @@
+-- Migration: 20260626125427_harden_guard_white_label_search_path
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

@@ -1,0 +1,3 @@
+-- Migration: 20260724015521_fix_handle_new_user_trigger
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

@@ -1,0 +1,3 @@
+-- Migration: 20260724015715_delete_user_with_role
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

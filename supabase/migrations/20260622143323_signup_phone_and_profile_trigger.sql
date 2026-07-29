@@ -1,0 +1,3 @@
+-- Migration: 20260622143323_signup_phone_and_profile_trigger
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

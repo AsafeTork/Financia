@@ -1,0 +1,3 @@
+-- Migration: 20260709160718_fix_impersonation_rpc
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

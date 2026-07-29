@@ -1,0 +1,3 @@
+-- Migration: 20260711005911_20260710000008_m3_drop_ai_cache_rls
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

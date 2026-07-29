@@ -1,0 +1,3 @@
+-- Migration: 20260711005137_20260710000001_a3_search_path_pg_temp
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

@@ -1,0 +1,3 @@
+-- Migration: 20260706022416_20260705_restore_stripe_plan_rpc
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

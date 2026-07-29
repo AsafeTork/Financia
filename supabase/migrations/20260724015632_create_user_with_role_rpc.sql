@@ -1,0 +1,3 @@
+-- Migration: 20260724015632_create_user_with_role_rpc
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

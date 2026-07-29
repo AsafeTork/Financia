@@ -1,0 +1,3 @@
+-- Migration: 20260709173348_20260709_architectural_fix
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

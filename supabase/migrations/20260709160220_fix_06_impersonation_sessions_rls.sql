@@ -1,0 +1,3 @@
+-- Migration: 20260709160220_fix_06_impersonation_sessions_rls
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

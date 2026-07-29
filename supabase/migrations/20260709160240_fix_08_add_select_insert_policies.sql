@@ -1,0 +1,3 @@
+-- Migration: 20260709160240_fix_08_add_select_insert_policies
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

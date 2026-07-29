@@ -1,0 +1,3 @@
+-- Migration: 20260622140248_admin_client_usage
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

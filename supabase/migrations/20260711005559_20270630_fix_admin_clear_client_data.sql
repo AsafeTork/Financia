@@ -1,0 +1,3 @@
+-- Migration: 20260711005559_20270630_fix_admin_clear_client_data
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

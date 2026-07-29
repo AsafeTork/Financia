@@ -1,0 +1,3 @@
+-- Migration: 20260615104501_20260615_storage_admin_policies
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

@@ -1,0 +1,3 @@
+-- Migration: 20260709160108_fix_company_profiles_rls
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

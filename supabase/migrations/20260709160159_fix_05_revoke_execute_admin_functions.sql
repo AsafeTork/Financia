@@ -1,0 +1,3 @@
+-- Migration: 20260709160159_fix_05_revoke_execute_admin_functions
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

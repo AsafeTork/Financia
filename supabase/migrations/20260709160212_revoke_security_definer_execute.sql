@@ -1,0 +1,3 @@
+-- Migration: 20260709160212_revoke_security_definer_execute
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

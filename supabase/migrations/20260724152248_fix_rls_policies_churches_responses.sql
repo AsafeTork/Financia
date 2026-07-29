@@ -1,0 +1,3 @@
+-- Migration: 20260724152248_fix_rls_policies_churches_responses
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

@@ -1,0 +1,3 @@
+-- Migration: 20260624232431_fix_impersonate_start_onconflict_constraint
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

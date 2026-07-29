@@ -1,0 +1,3 @@
+-- Migration: 20260711005250_20260710000004_a6_handle_new_user_search_path
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

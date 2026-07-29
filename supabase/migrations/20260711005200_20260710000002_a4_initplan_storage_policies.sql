@@ -1,0 +1,3 @@
+-- Migration: 20260711005200_20260710000002_a4_initplan_storage_policies
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

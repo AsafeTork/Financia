@@ -1,0 +1,3 @@
+-- Migration: 20260615111621_20260615_add_logos_select_policy
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

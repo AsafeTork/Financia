@@ -1,0 +1,3 @@
+-- Migration: 20260705202803_20260705_add_idx_products_user_id
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

@@ -1,0 +1,3 @@
+-- Migration: 20260709160140_fix_other_tables_rls
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

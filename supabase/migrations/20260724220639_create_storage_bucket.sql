@@ -1,0 +1,3 @@
+-- Migration: 20260724220639_create_storage_bucket
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

@@ -1,0 +1,3 @@
+-- Migration: 20260705213028_20260705_harden_security_anon_revoke_and_storage
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

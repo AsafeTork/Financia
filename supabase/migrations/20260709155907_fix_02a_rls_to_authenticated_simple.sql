@@ -1,0 +1,3 @@
+-- Migration: 20260709155907_fix_02a_rls_to_authenticated_simple
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

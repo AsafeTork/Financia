@@ -1,0 +1,3 @@
+-- Migration: 20260624214113_audit_harden_admin_gates
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

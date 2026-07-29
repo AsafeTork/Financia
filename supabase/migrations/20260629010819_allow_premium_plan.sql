@@ -1,0 +1,3 @@
+-- Migration: 20260629010819_allow_premium_plan
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

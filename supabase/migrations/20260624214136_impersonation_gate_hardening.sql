@@ -1,0 +1,3 @@
+-- Migration: 20260624214136_impersonation_gate_hardening
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

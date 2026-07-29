@@ -1,0 +1,3 @@
+-- Migration: 20260728214639_20260728_fix_financia_security
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

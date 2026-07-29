@@ -1,0 +1,3 @@
+-- Migration: 20260709160151_fix_security_definer_search_path
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

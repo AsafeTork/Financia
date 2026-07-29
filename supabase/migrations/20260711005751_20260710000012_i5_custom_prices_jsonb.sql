@@ -1,0 +1,3 @@
+-- Migration: 20260711005751_20260710000012_i5_custom_prices_jsonb
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

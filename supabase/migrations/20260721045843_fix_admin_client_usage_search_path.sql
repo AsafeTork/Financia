@@ -1,0 +1,3 @@
+-- Migration: 20260721045843_fix_admin_client_usage_search_path
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

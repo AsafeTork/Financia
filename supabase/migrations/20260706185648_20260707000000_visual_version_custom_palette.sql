@@ -1,0 +1,3 @@
+-- Migration: 20260706185648_20260707000000_visual_version_custom_palette
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

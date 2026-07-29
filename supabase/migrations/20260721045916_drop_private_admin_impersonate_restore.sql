@@ -1,0 +1,3 @@
+-- Migration: 20260721045916_drop_private_admin_impersonate_restore
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

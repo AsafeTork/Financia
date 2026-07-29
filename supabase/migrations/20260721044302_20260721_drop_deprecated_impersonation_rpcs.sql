@@ -1,0 +1,3 @@
+-- Migration: 20260721044302_20260721_drop_deprecated_impersonation_rpcs
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

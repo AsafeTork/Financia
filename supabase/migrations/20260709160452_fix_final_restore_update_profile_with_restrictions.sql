@@ -1,0 +1,3 @@
+-- Migration: 20260709160452_fix_final_restore_update_profile_with_restrictions
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

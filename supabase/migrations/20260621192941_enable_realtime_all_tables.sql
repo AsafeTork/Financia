@@ -1,0 +1,3 @@
+-- Migration: 20260621192941_enable_realtime_all_tables
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

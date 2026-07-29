@@ -1,0 +1,3 @@
+-- Migration: 20260709174726_20260709_fix_user_roles_recursion
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

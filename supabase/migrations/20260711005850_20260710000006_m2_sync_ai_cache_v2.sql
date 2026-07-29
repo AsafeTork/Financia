@@ -1,0 +1,3 @@
+-- Migration: 20260711005850_20260710000006_m2_sync_ai_cache_v2
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

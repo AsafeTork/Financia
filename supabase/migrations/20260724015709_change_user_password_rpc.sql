@@ -1,0 +1,3 @@
+-- Migration: 20260724015709_change_user_password_rpc
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

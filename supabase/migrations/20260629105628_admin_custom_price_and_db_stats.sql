@@ -1,0 +1,3 @@
+-- Migration: 20260629105628_admin_custom_price_and_db_stats
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

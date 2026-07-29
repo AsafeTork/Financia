@@ -1,0 +1,3 @@
+-- Migration: 20260705213108_20260705_harden_security_revoke_public
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

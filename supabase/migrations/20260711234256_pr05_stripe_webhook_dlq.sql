@@ -1,0 +1,3 @@
+-- Migration: 20260711234256_pr05_stripe_webhook_dlq
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

@@ -1,0 +1,3 @@
+-- Migration: 20260711005219_20260710000003_a5_partial_index_impersonation
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

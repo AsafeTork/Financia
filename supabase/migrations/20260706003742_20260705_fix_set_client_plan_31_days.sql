@@ -1,0 +1,3 @@
+-- Migration: 20260706003742_20260705_fix_set_client_plan_31_days
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

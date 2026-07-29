@@ -1,0 +1,3 @@
+-- Migration: 20260615012816_fix_security_revoke_public_execute
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

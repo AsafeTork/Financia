@@ -1,0 +1,3 @@
+-- Migration: 20260709160137_fix_04b_search_path_part2
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

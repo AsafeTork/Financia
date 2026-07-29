@@ -1,0 +1,3 @@
+-- Migration: 20260615104906_20260615_rls_performance_and_cleanup
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync

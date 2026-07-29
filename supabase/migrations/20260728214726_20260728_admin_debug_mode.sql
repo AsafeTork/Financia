@@ -1,0 +1,3 @@
+-- Migration: 20260728214726_20260728_admin_debug_mode
+-- Applied directly to remote database
+-- This is a placeholder to keep local migrations in sync
