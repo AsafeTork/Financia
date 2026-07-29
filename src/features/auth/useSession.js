@@ -42,15 +42,16 @@ export function useSession(p) {
   var debounceRef   = useRef(null);
   var retryRef      = useRef(null);
   var retryDelayRef = useRef(1000);
+  var lastSyncEndRef = useRef(0);
 
   var dataLoader = useDataLoader(p);
   var { loadFromLocal, fetchRole } = dataLoader;
 
   var reconnectRef = useRef(null);
-  var syncCtx = { uidRef, syncingRef, loadFromLocal, reconnectRef };
+  var syncCtx = { uidRef, syncingRef, loadFromLocal, reconnectRef, lastSyncEndRef };
   var { runSync } = useSyncLoop(p, syncCtx);
 
-  var rtCtx = { uidRef, channelRef, debounceRef, retryRef, retryDelayRef, runSync, reconnectRef, syncingRef };
+  var rtCtx = { uidRef, channelRef, debounceRef, retryRef, retryDelayRef, runSync, reconnectRef, syncingRef, lastSyncEndRef };
   useRealtime({ setPlanInfo: p.setPlanInfo }, rtCtx);
 
   var setDataLoading = p.setDataLoading;
@@ -147,20 +148,31 @@ export function useSession(p) {
           var pr = allRes[0], pdr = allRes[1], txr = allRes[2], lr = allRes[3], roleRes = allRes[4];
           if (pr.data) {
             var prof = pr.data;
-            setBrand({name:prof.name, logo:prof.logo, color:prof.color, color_secondary:prof.color_secondary||null, color_accent:prof.color_accent||null, theme:prof.theme||'light', logo_url:prof.logo_url||null, phone:prof.phone||'', white_label:!!prof.white_label, niche:prof.niche||'', visual_version:prof.visual_version||0, custom_palette:!!prof.custom_palette, brand_config:prof.brand_config||null});
-            setPlanInfo({
-              plan:prof.plan||'free',
-              plan_expires_at:prof.plan_expires_at||null,
-              plan_activated_by:prof.plan_activated_by||null,
-              custom_price_cents:prof.custom_price_cents||0,
-              custom_price_cents_pro:prof.custom_price_cents_pro||0,
-              custom_price_cents_premium:prof.custom_price_cents_premium||0,
+            setBrand(function(prev) {
+              var next = {name:prof.name, logo:prof.logo, color:prof.color, color_secondary:prof.color_secondary||null, color_accent:prof.color_accent||null, theme:prof.theme||'light', logo_url:prof.logo_url||null, phone:prof.phone||'', white_label:!!prof.white_label, niche:prof.niche||'', visual_version:prof.visual_version||0, custom_palette:!!prof.custom_palette, brand_config:prof.brand_config||null};
+              if (prev && prev.name===next.name && prev.logo===next.logo && prev.color===next.color && prev.color_secondary===next.color_secondary && prev.color_accent===next.color_accent && prev.theme===next.theme && prev.logo_url===next.logo_url && prev.phone===next.phone && prev.white_label===next.white_label && prev.niche===next.niche && prev.visual_version===next.visual_version && prev.custom_palette===next.custom_palette && JSON.stringify(prev.brand_config)===JSON.stringify(next.brand_config)) return prev;
+              return next;
+            });
+            setPlanInfo(function(prev) {
+              var next = {
+                plan:prof.plan||'free',
+                plan_expires_at:prof.plan_expires_at||null,
+                plan_activated_by:prof.plan_activated_by||null,
+                custom_price_cents:prof.custom_price_cents||0,
+                custom_price_cents_pro:prof.custom_price_cents_pro||0,
+                custom_price_cents_premium:prof.custom_price_cents_premium||0,
+              };
+              if (prev && prev.plan===next.plan && prev.plan_expires_at===next.plan_expires_at && prev.plan_activated_by===next.plan_activated_by && prev.custom_price_cents===next.custom_price_cents && prev.custom_price_cents_pro===next.custom_price_cents_pro && prev.custom_price_cents_premium===next.custom_price_cents_premium) return prev;
+              return next;
             });
             await ldb.profiles.put(toLocal(prof));
           }
           var prodRows = pdr || [];
           if (prodRows.length > 0) {
-            setProducts(prodRows);
+            setProducts(function(prev) {
+              if (prev.length === prodRows.length) return prev;
+              return prodRows;
+            });
             await ldb.products.bulkPut(prodRows.map(function(r) { return toLocal(r, {user_id:userId}); }));
           }
           var txRows = txr || [];

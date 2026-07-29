@@ -230,7 +230,7 @@ export default function useBrandAppearance(brand, planInfo) {
   const appBrandRef = useRef(null);
 
   const hasWhiteLabel = !!(brand && brand.white_label);
-  const visualPreset = hasWhiteLabel ? null : planVisualDefaults(planInfo);
+  const visualPreset = useMemo(() => hasWhiteLabel ? null : planVisualDefaults(planInfo), [hasWhiteLabel, planInfo]);
   const missingCustomPalette = computeMissingCustomPalette(brand);
   const useWhiteLabelFallback = computeUseWhiteLabelFallback(hasWhiteLabel, brand, missingCustomPalette);
 
@@ -258,7 +258,11 @@ export default function useBrandAppearance(brand, planInfo) {
   }, [appBrand]);
 
   useEffect(() => {
-    applyBrandVars(appBrand);
+    const el = document.documentElement;
+    const theme = effectiveTheme === 'dark' ? 'dark' : 'light';
+    el.setAttribute('data-theme', theme);
+    const tokens = collectTokensFromBrand(appBrand);
+    applyBrandThemeVars(el, tokens);
 
     if (savedCampaignRef.current) {
       const campaign = savedCampaignRef.current;
@@ -266,19 +270,6 @@ export default function useBrandAppearance(brand, planInfo) {
         applyCampaignOverride(campaign);
       }
       savedCampaignRef.current = null;
-    }
-  }, [appBrand]);
-
-  useEffect(function() {
-    const el = document.documentElement;
-    const theme = effectiveTheme === 'dark' ? 'dark' : 'light';
-    el.setAttribute('data-theme', theme);
-    if (theme === 'dark') {
-      THEME_CONTROLLED_VARS.forEach(function(k) {
-        el.style.removeProperty(k);
-      });
-    } else {
-      applyTokenDiff(el, collectTokensFromBrand(appBrand));
     }
   }, [effectiveTheme, appBrand]);
 

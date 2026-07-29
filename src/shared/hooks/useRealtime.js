@@ -1,15 +1,18 @@
 import { sb } from '../../lib/supabase.js';
 
+var SYNC_COOLDOWN_MS = 5000;
+
 export function useRealtime(props, ctx) {
   var { setPlanInfo } = props;
-  var { uidRef, channelRef, debounceRef, retryRef, retryDelayRef, runSync, reconnectRef, syncingRef } = ctx;
+  var { uidRef, channelRef, debounceRef, retryRef, retryDelayRef, runSync, reconnectRef, syncingRef, lastSyncEndRef } = ctx;
 
   var subscribeRealtime = function(uid) {
     if (channelRef.current) { sb.removeChannel(channelRef.current); channelRef.current = null; }
     var doSync = function() {
       if (syncingRef && syncingRef.current) return;
+      if (lastSyncEndRef && Date.now() - lastSyncEndRef.current < SYNC_COOLDOWN_MS) return;
       if (debounceRef.current) clearTimeout(debounceRef.current);
-      debounceRef.current = setTimeout(runSync, 800);
+      debounceRef.current = setTimeout(runSync, 2000);
     };
     var applyPlan = function(payload) {
       var row = payload && payload['new'] ? payload['new'] : null;

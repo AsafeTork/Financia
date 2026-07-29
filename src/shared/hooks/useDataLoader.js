@@ -4,6 +4,20 @@ import { getRecurring, periodOf, pendingRecurring } from '../../lib/recurring.js
 import { sb } from '../../lib/supabase.js';
 import { now as _now } from '../../lib/utils.js';
 
+function serializeBrandConfig(bc) {
+  if (!bc) return '';
+  if (typeof bc === 'string') return bc;
+  try { return JSON.stringify(bc); } catch { return ''; }
+}
+
+function arraysEqualByKey(prev, next, key) {
+  if (prev.length !== next.length) return false;
+  for (var i = 0; i < prev.length; i++) {
+    if (prev[i][key] !== next[i][key]) return false;
+  }
+  return true;
+}
+
 export function useDataLoader(props) {
   var { setBrand, setPlanInfo, setTx, setProducts, setLosses, setIsAdminDB } = props;
 
@@ -19,7 +33,7 @@ export function useDataLoader(props) {
     if (profile) {
       setBrand(function(prev) {
         var next = {name:profile.name, logo:profile.logo, color:profile.color, color_secondary:profile.color_secondary||null, color_accent:profile.color_accent||null, theme:profile.theme||'light', logo_url:profile.logo_url||null, phone:profile.phone||'', white_label:!!profile.white_label, niche:profile.niche||'', visual_version:profile.visual_version||0, custom_palette:!!profile.custom_palette, brand_config:profile.brand_config||null};
-        if (prev && prev.name===next.name && prev.logo===next.logo && prev.color===next.color && prev.color_secondary===next.color_secondary && prev.color_accent===next.color_accent && prev.theme===next.theme && prev.logo_url===next.logo_url && prev.phone===next.phone && prev.white_label===next.white_label && prev.niche===next.niche && prev.visual_version===next.visual_version && prev.custom_palette===next.custom_palette && prev.brand_config===next.brand_config) return prev;
+        if (prev && prev.name===next.name && prev.logo===next.logo && prev.color===next.color && prev.color_secondary===next.color_secondary && prev.color_accent===next.color_accent && prev.theme===next.theme && prev.logo_url===next.logo_url && prev.phone===next.phone && prev.white_label===next.white_label && prev.niche===next.niche && prev.visual_version===next.visual_version && prev.custom_palette===next.custom_palette && serializeBrandConfig(prev.brand_config)===serializeBrandConfig(next.brand_config)) return prev;
         return next;
       });
       setPlanInfo(function(prev) {
@@ -35,7 +49,10 @@ export function useDataLoader(props) {
         return next;
       });
     }
-    setProducts(prods);
+    setProducts(function(prev) {
+      if (prev.length === prods.length && arraysEqualByKey(prev, prods, 'id') && arraysEqualByKey(prev, prods, 'stock')) return prev;
+      return prods;
+    });
     var allTx = txs;
     try {
       var rlist = await getRecurring(userId);
@@ -48,8 +65,16 @@ export function useDataLoader(props) {
         allTx = pend.concat(txs);
       }
     } catch (e) { void e; }
-    setTx(allTx.map(function(t) { return Object.assign({}, t, {desc:t.description||t.desc, cat:t.category||t.cat}); }));
-    setLosses(lss.map(function(l) { return Object.assign({}, l, {desc:l.description||l.desc}); }));
+    var mappedTx = allTx.map(function(t) { return Object.assign({}, t, {desc:t.description||t.desc, cat:t.category||t.cat}); });
+    setTx(function(prev) {
+      if (prev.length === mappedTx.length && arraysEqualByKey(prev, mappedTx, 'id') && arraysEqualByKey(prev, mappedTx, 'amount') && arraysEqualByKey(prev, mappedTx, 'date')) return prev;
+      return mappedTx;
+    });
+    var mappedLss = lss.map(function(l) { return Object.assign({}, l, {desc:l.description||l.desc}); });
+    setLosses(function(prev) {
+      if (prev.length === mappedLss.length && arraysEqualByKey(prev, mappedLss, 'id') && arraysEqualByKey(prev, mappedLss, 'qty')) return prev;
+      return mappedLss;
+    });
     var roleVal = roleMeta ? roleMeta.val : null;
     setIsAdminDB(roleVal === 'admin');
   }, [setBrand, setIsAdminDB, setLosses, setPlanInfo, setProducts, setTx]);
