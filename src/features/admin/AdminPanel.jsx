@@ -42,6 +42,7 @@ export default function AdminPanel({ toast, confirm, session, brand }) {
   const [done, setDone] = useState(null);
   const [clients, setClients] = useState([]);
   const [loadingCli, setLoadingCli] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [_uploading, setUploading] = useState(false);
   const [editClient, setEditClient] = useState(null);
   const [_copied, setCopied] = useState(null);
@@ -74,9 +75,13 @@ export default function AdminPanel({ toast, confirm, session, brand }) {
   const _logoRef = useRef();
 
   const reload = useCallback(function() {
+    setLoadError(false);
     Promise.all([fetchClients(), fetchClientUsage()]).then(function(res) {
-      setClients(res[0]); setUsage(res[1] || {}); setLoadingCli(false);
+      if (res[0] === null) { setLoadError(true); setClients([]); }
+      else { setClients(res[0]); }
+      setUsage(res[1] || {}); setLoadingCli(false);
     }).catch(function() {
+      setLoadError(true);
       setLoadingCli(false);
       if (toast) toast('Erro ao carregar dados de clientes.', 'error');
     });
@@ -457,7 +462,9 @@ export default function AdminPanel({ toast, confirm, session, brand }) {
 
         {loadingCli
           ? <div className="flex flex-col gap-2">{[0,1,2].map(function(i) { return <Skeleton key={i} h={88} r={12}/>; })}</div>
-          : clients.length === 0
+          : loadError
+            ? <Empty title="Erro ao carregar" sub="Nao foi possivel conectar ao servidor. Verifique sua conexao e tente novamente." action="Tentar novamente" onAction={function() { reload(); }}/>
+            : clients.length === 0
             ? <Empty title="Nenhum cliente ainda" sub="Crie o primeiro cliente no formulario abaixo."/>
             : visibleClients.length === 0
               ? <Empty title="Nenhum cliente encontrado" sub="Tente outro termo de busca ou limpe os filtros." action="Limpar filtros" onAction={function() { setSearch(''); setPlanFilter('all'); }}/>

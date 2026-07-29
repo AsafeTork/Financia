@@ -1,5 +1,4 @@
 import React, { useState, useCallback, useEffect, useRef, lazy, Suspense } from 'react';
-import { flushSync } from 'react-dom';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { INIT_BRAND, INIT_PLAN, atLimit, limitFor, effectivePlan } from './lib/constants.js';
 import { useTx } from './features/transactions/useTx.js';
@@ -103,15 +102,7 @@ export default function App() {
   const { appBrand, effectiveTheme, toggleTheme } = useBrandAppearance(brand, planInfo);
 
   const navTo = useCallback(function(v) {
-    const go = function() { navigate('/' + v); };
-    if (typeof document !== 'undefined' && typeof document.startViewTransition === 'function') {
-      var transition = document.startViewTransition(function() { flushSync(go); });
-      if (transition && transition.finished && typeof transition.finished.catch === 'function') {
-        transition.finished.catch(function(e) { console.warn('View transition failed:', e); });
-      }
-    } else {
-      go();
-    }
+    navigate('/' + v);
   }, [navigate]);
 
   useEffect(function() {
@@ -355,7 +346,7 @@ const currentView = sessionViews.includes(path) ? path : 'dashboard';
       <div className="flex-1 lg:ml-64 flex flex-col min-h-screen min-w-0 w-full">
         <WidgetErrorBoundary><Header brand={appBrand} syncStatus={syncStatus} theme={effectiveTheme} onToggleTheme={toggleTheme} onMenuOpen={handleOpenSidebar}/></WidgetErrorBoundary>
         <main id="main-content" tabIndex="-1" className="flex-1 p-4 lg:p-8 max-w-5xl w-full mx-auto pb-24 lg:pb-8 min-w-0 overflow-x-hidden">
-          <FeatureErrorBoundary featureName={currentView} key={location.pathname}>
+          <FeatureErrorBoundary featureName={currentView}>
             <AppRoutes tx={tx} products={products} losses={losses} brand={appBrand} planInfo={planInfo}
               onNav={navTo} toast={toast} confirm={confirm} uid={session.user.id}
               addTx={addTx} editTx={editTx} deleteTx={deleteTx} addGenerated={addGenerated}
