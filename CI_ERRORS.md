@@ -1,7 +1,7 @@
 # Relatório de Erros do CI
 
-**Última atualização:** 2026-07-29 17:18 UTC
-**Commit:** `665f7f084df52350096658c21a90088b5d4b73ba`
+**Última atualização:** 2026-07-29 17:25 UTC
+**Commit:** `fa699ce306c3e2fdf175a955c76ecd77394526d8`
 **Branch:** `main`
 
 ---
@@ -75,7 +75,7 @@ computing gzip size...
 [2mdist/[22m[2massets/[22m[36mSettingsView-DbwE4-BQ.js        [39m[1m[2m 78.22 kB[22m[1m[22m[2m │ gzip: 20.31 kB[22m
 [2mdist/[22m[2massets/[22m[36mindex-DTtkfVB6.js               [39m[1m[2m137.17 kB[22m[1m[22m[2m │ gzip: 40.93 kB[22m
 [2mdist/[22m[2massets/[22m[36mvendor-react-Bj2_g79g.js        [39m[1m[2m175.06 kB[22m[1m[22m[2m │ gzip: 57.38 kB[22m
-[32m✓ built in 3.25s[39m
+[32m✓ built in 3.58s[39m
 ```
 
 ---
@@ -87,58 +87,59 @@ computing gzip size...
 > gestao-financeira@5.1.1 test
 > vitest run
 
-[2m5:18:01 PM[22m [33m[1m[vite][22m[39m [33mwarning: `esbuild` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `oxc` instead.[39m
-[2m5:18:01 PM[22m [33m[1m[vite][22m[39m [33mwarning: `optimizeDeps.esbuildOptions` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `optimizeDeps.rolldownOptions` instead.[39m
+[2m5:24:48 PM[22m [33m[1m[vite][22m[39m [33mwarning: `esbuild` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `oxc` instead.[39m
+[2m5:24:48 PM[22m [33m[1m[vite][22m[39m [33mwarning: `optimizeDeps.esbuildOptions` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `optimizeDeps.rolldownOptions` instead.[39m
 [33mBoth esbuild and oxc options were set. oxc options will be used and esbuild options will be ignored.[39m The following esbuild options were set: `{ jsx: 'automatic', jsxImportSource: undefined }`
 
 [1m[30m[46m RUN [49m[39m[22m [36mv4.1.10 [39m[90m/home/runner/work/Financia/Financia[39m
 
- [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js [2m([22m[2m13 tests[22m[2m)[22m[32m 29[2mms[22m[39m
- [32m✓[39m src/lib/stripe-webhook.integration.test.js [2m([22m[2m11 tests[22m[2m)[22m[32m 30[2mms[22m[39m
- [32m✓[39m src/test/utils.test.js [2m([22m[2m141 tests[22m[2m)[22m[32m 45[2mms[22m[39m
- [32m✓[39m src/test/constants.test.js [2m([22m[2m95 tests[22m[2m)[22m[32m 42[2mms[22m[39m
+ [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js [2m([22m[2m13 tests[22m[2m)[22m[32m 30[2mms[22m[39m
+ [32m✓[39m src/test/utils.test.js [2m([22m[2m141 tests[22m[2m)[22m[32m 66[2mms[22m[39m
+ [32m✓[39m src/lib/stripe-webhook.integration.test.js [2m([22m[2m11 tests[22m[2m)[22m[32m 32[2mms[22m[39m
+ [32m✓[39m src/test/constants.test.js [2m([22m[2m95 tests[22m[2m)[22m[32m 36[2mms[22m[39m
 [90mstdout[2m | src/lib/sync.test.js[2m > [22m[2mbenchmarks[2m > [22m[2mQA-04: syncAll 10k rows < 5s (benchmark)
-[22m[39mQA-04 benchmark: syncAll took 0.15ms
+[22m[39mQA-04 benchmark: syncAll took 0.17ms
 
 [90mstdout[2m | src/lib/sync.test.js[2m > [22m[2mbenchmarks[2m > [22m[2mQA-05: admin-stripe-overview p95 < 2s (100 subs with cursor pagination)
-[22m[39mQA-05 benchmark: fetchStripeOverview p95=0.01ms avg=0.00ms over 100 iterations
+[22m[39mQA-05 benchmark: fetchStripeOverview p95=0.01ms avg=0.01ms over 100 iterations
 
- [32m✓[39m src/lib/sync.test.js [2m([22m[2m33 tests[22m[2m)[22m[32m 44[2mms[22m[39m
- [32m✓[39m src/features/branding/components.test.jsx [2m([22m[2m26 tests[22m[2m)[22m[33m 1513[2mms[22m[39m
- [32m✓[39m src/shared/hooks/useBrandAppearance.test.js [2m([22m[2m19 tests[22m[2m)[22m[32m 83[2mms[22m[39m
- [32m✓[39m src/features/branding/accessibility.test.jsx [2m([22m[2m28 tests[22m[2m)[22m[33m 1359[2mms[22m[39m
- [32m✓[39m src/features/branding/responseProcessor.test.js [2m([22m[2m23 tests[22m[2m)[22m[32m 26[2mms[22m[39m
- [32m✓[39m src/features/transactions/useTx.test.js [2m([22m[2m18 tests[22m[2m)[22m[32m 105[2mms[22m[39m
- [32m✓[39m src/lib/crud.test.js [2m([22m[2m19 tests[22m[2m)[22m[32m 24[2mms[22m[39m
- [32m✓[39m src/features/inventory/useProducts.test.js [2m([22m[2m13 tests[22m[2m)[22m[32m 92[2mms[22m[39m
+ [32m✓[39m src/lib/sync.test.js [2m([22m[2m33 tests[22m[2m)[22m[32m 35[2mms[22m[39m
+ [32m✓[39m src/features/branding/components.test.jsx [2m([22m[2m26 tests[22m[2m)[22m[33m 1735[2mms[22m[39m
+     [33m[2m✓[22m[39m muda plano ativo ao clicar na aba [33m 308[2mms[22m[39m
+ [32m✓[39m src/shared/hooks/useBrandAppearance.test.js [2m([22m[2m19 tests[22m[2m)[22m[32m 106[2mms[22m[39m
+ [32m✓[39m src/features/branding/accessibility.test.jsx [2m([22m[2m28 tests[22m[2m)[22m[33m 1463[2mms[22m[39m
+ [32m✓[39m src/features/branding/responseProcessor.test.js [2m([22m[2m23 tests[22m[2m)[22m[32m 27[2mms[22m[39m
+ [32m✓[39m src/features/transactions/useTx.test.js [2m([22m[2m18 tests[22m[2m)[22m[32m 82[2mms[22m[39m
+ [32m✓[39m src/lib/crud.test.js [2m([22m[2m19 tests[22m[2m)[22m[32m 35[2mms[22m[39m
+ [32m✓[39m src/features/inventory/useProducts.test.js [2m([22m[2m13 tests[22m[2m)[22m[32m 66[2mms[22m[39m
 [90mstderr[2m | src/features/branding/presets.test.js[2m > [22m[2mpresets[2m > [22m[2msetOnChange registra callback
 [22m[39mWarning: You called act(async () => ...) without await. This could lead to unexpected testing behaviour, interleaving multiple act calls and mixing their scopes. You should - await act(async () => ...);
 
- [32m✓[39m src/features/branding/presets.test.js [2m([22m[2m17 tests[22m[2m)[22m[32m 33[2mms[22m[39m
- [32m✓[39m src/features/inventory/useLosses.test.js [2m([22m[2m12 tests[22m[2m)[22m[32m 58[2mms[22m[39m
- [32m✓[39m src/lib/impersonation.integration.test.js [2m([22m[2m11 tests[22m[2m)[22m[32m 20[2mms[22m[39m
- [32m✓[39m src/shared/ui/PhoneInput.test.jsx [2m([22m[2m12 tests[22m[2m)[22m[33m 631[2mms[22m[39m
+ [32m✓[39m src/features/branding/presets.test.js [2m([22m[2m17 tests[22m[2m)[22m[32m 34[2mms[22m[39m
+ [32m✓[39m src/features/inventory/useLosses.test.js [2m([22m[2m12 tests[22m[2m)[22m[32m 59[2mms[22m[39m
+ [32m✓[39m src/lib/impersonation.integration.test.js [2m([22m[2m11 tests[22m[2m)[22m[32m 17[2mms[22m[39m
+ [32m✓[39m src/shared/ui/PhoneInput.test.jsx [2m([22m[2m12 tests[22m[2m)[22m[33m 645[2mms[22m[39m
 [90mstderr[2m | src/lib/stripe.test.js
 [22m[39mSupabase não configurado: VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY são obrigatórias.
 
- [32m✓[39m src/lib/stripe.test.js [2m([22m[2m19 tests[22m[2m)[22m[32m 17[2mms[22m[39m
- [32m✓[39m src/lib/auth.test.js [2m([22m[2m9 tests[22m[2m)[22m[32m 12[2mms[22m[39m
- [32m✓[39m src/shared/ui/ColorField.test.jsx [2m([22m[2m12 tests[22m[2m)[22m[32m 177[2mms[22m[39m
- [32m✓[39m src/features/branding/LogoSchemes.test.js [2m([22m[2m13 tests[22m[2m)[22m[32m 19[2mms[22m[39m
- [32m✓[39m src/lib/recurring.test.js [2m([22m[2m16 tests[22m[2m)[22m[32m 25[2mms[22m[39m
- [32m✓[39m src/features/branding/logoUtils.test.js [2m([22m[2m14 tests[22m[2m)[22m[32m 12[2mms[22m[39m
- [32m✓[39m src/lib/plans.test.js [2m([22m[2m16 tests[22m[2m)[22m[32m 14[2mms[22m[39m
- [32m✓[39m src/features/branding/LogoSchemes.test.jsx [2m([22m[2m9 tests[22m[2m)[22m[32m 10[2mms[22m[39m
- [32m✓[39m src/lib/utils.test.js [2m([22m[2m16 tests[22m[2m)[22m[32m 19[2mms[22m[39m
- [32m✓[39m src/lib/constants.test.js [2m([22m[2m12 tests[22m[2m)[22m[32m 16[2mms[22m[39m
- [32m✓[39m src/test/components.test.js [2m([22m[2m6 tests[22m[2m)[22m[33m 321[2mms[22m[39m
- [32m✓[39m src/lib/cleanNumeric.test.js [2m([22m[2m8 tests[22m[2m)[22m[32m 9[2mms[22m[39m
- [32m✓[39m src/lib/revenue.test.js [2m([22m[2m5 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+ [32m✓[39m src/lib/stripe.test.js [2m([22m[2m19 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+ [32m✓[39m src/lib/auth.test.js [2m([22m[2m9 tests[22m[2m)[22m[32m 19[2mms[22m[39m
+ [32m✓[39m src/shared/ui/ColorField.test.jsx [2m([22m[2m12 tests[22m[2m)[22m[32m 188[2mms[22m[39m
+ [32m✓[39m src/features/branding/LogoSchemes.test.js [2m([22m[2m13 tests[22m[2m)[22m[32m 17[2mms[22m[39m
+ [32m✓[39m src/lib/recurring.test.js [2m([22m[2m16 tests[22m[2m)[22m[32m 19[2mms[22m[39m
+ [32m✓[39m src/lib/plans.test.js [2m([22m[2m16 tests[22m[2m)[22m[32m 17[2mms[22m[39m
+ [32m✓[39m src/features/branding/logoUtils.test.js [2m([22m[2m14 tests[22m[2m)[22m[32m 17[2mms[22m[39m
+ [32m✓[39m src/features/branding/LogoSchemes.test.jsx [2m([22m[2m9 tests[22m[2m)[22m[32m 19[2mms[22m[39m
+ [32m✓[39m src/lib/utils.test.js [2m([22m[2m16 tests[22m[2m)[22m[32m 16[2mms[22m[39m
+ [32m✓[39m src/lib/constants.test.js [2m([22m[2m12 tests[22m[2m)[22m[32m 20[2mms[22m[39m
+ [32m✓[39m src/test/components.test.js [2m([22m[2m6 tests[22m[2m)[22m[33m 316[2mms[22m[39m
+ [32m✓[39m src/lib/cleanNumeric.test.js [2m([22m[2m8 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+ [32m✓[39m src/lib/revenue.test.js [2m([22m[2m5 tests[22m[2m)[22m[32m 8[2mms[22m[39m
 
 [2m Test Files [22m [1m[32m29 passed[39m[22m[90m (29)[39m
 [2m      Tests [22m [1m[32m646 passed[39m[22m[90m (646)[39m
-[2m   Start at [22m 17:18:01
-[2m   Duration [22m 18.84s[2m (transform 871ms, setup 16.48s, import 2.75s, tests 4.79s, environment 25.73s)[22m
+[2m   Start at [22m 17:24:48
+[2m   Duration [22m 21.37s[2m (transform 881ms, setup 19.95s, import 2.75s, tests 5.15s, environment 28.56s)[22m
 ```
 
 ---
@@ -170,4 +171,4 @@ computing gzip size...
 
 | Data | Correção | Commit |
 |------|----------|--------|
-| 2026-07-29 17:18 UTC | Gerado automaticamente pelo workflow | `665f7f084df52350096658c21a90088b5d4b73ba` |
+| 2026-07-29 17:25 UTC | Gerado automaticamente pelo workflow | `fa699ce306c3e2fdf175a955c76ecd77394526d8` |
