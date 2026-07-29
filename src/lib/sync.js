@@ -11,6 +11,18 @@ const PROFILE_WRITE_FIELDS = ['user_id','name','logo','color','color_secondary',
 
 var validHex = function(v) { return typeof v === 'string' && /^#[0-9a-fA-F]{6}$/.test(v); };
 
+var CONCURRENT_LIMIT = 8;
+
+var runLimited = async function(items, fn) {
+  var results = [];
+  for (var i = 0; i < items.length; i += CONCURRENT_LIMIT) {
+    var batch = items.slice(i, i + CONCURRENT_LIMIT);
+    var batchResults = await Promise.allSettled(batch.map(fn));
+    results = results.concat(batchResults);
+  }
+  return results;
+};
+
 const syncTable = async function(uid, table, ldbTable, mapLocal) {
   if (!navigator.onLine) return true;
   const lastSync = await getLastSync(uid);
@@ -20,7 +32,7 @@ const syncTable = async function(uid, table, ldbTable, mapLocal) {
   const toDeleteIds = [];
   const toMarkSynced = [];
 
-  await Promise.allSettled(unsynced.map(async function(row) {
+  await runLimited(unsynced, async function(row) {
     try {
       if (row._deleted) {
         await sb.from(table).delete().eq('id', row.id);
@@ -34,7 +46,7 @@ const syncTable = async function(uid, table, ldbTable, mapLocal) {
         if (!error) toMarkSynced.push(row.id);
       }
     } catch (_) { void _; }
-  }));
+  });
 
   if (toDeleteIds.length > 0) await ldbTable.bulkDelete(toDeleteIds);
   if (toMarkSynced.length > 0) await ldbTable.where('id').anyOf(toMarkSynced).modify({ _synced: 1 });

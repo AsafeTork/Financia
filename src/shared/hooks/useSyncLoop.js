@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { syncAll } from '../../lib/sync.js';
 
 var SYNC_COOLDOWN_MS = 5000;
@@ -6,6 +6,13 @@ var SYNC_COOLDOWN_MS = 5000;
 export function useSyncLoop(props, ctx) {
   var { setSyncStatus } = props;
   var { uidRef, syncingRef, loadFromLocal, reconnectRef, lastSyncEndRef } = ctx;
+  var syncStatusRef = useRef('idle');
+
+  var updateStatus = function(next) {
+    if (syncStatusRef.current === next) return;
+    syncStatusRef.current = next;
+    setSyncStatus(next);
+  };
 
   var canSync = function() {
     if (syncingRef.current) return false;
@@ -13,68 +20,55 @@ export function useSyncLoop(props, ctx) {
     return true;
   };
 
-  var runSync = function() {
-    var userId = uidRef.current;
-    if (!userId || !navigator.onLine || !canSync()) return;
+  var doSyncRef = useRef(null);
+  doSyncRef.current = function(userId, showStatus) {
+    if (!userId || !navigator.onLine) return;
+    if (syncingRef.current) return;
+    if (Date.now() - lastSyncEndRef.current < SYNC_COOLDOWN_MS) return;
     syncingRef.current = true;
+    if (showStatus) updateStatus('syncing');
     syncAll(userId).then(function(ok) {
       lastSyncEndRef.current = Date.now();
       syncingRef.current = false;
-      if (ok) loadFromLocal(userId);
+      if (ok) {
+        loadFromLocal(userId);
+        if (showStatus) {
+          updateStatus('ok');
+          setTimeout(function() { updateStatus('idle'); }, 3000);
+        }
+      } else {
+        if (showStatus) {
+          updateStatus('error');
+          setTimeout(function() { updateStatus('idle'); }, 5000);
+        }
+      }
     }).catch(function() {
       lastSyncEndRef.current = Date.now();
       syncingRef.current = false;
     });
   };
 
+  var runSyncRef = useRef(null);
+  runSyncRef.current = function() {
+    doSyncRef.current(uidRef.current, false);
+  };
+
   useEffect(function() {
-    var syncInterval = setInterval(async function() {
-      var userId = uidRef.current;
-      if (!userId || !navigator.onLine || !canSync()) return;
-      syncingRef.current = true;
-      setSyncStatus('syncing');
-      var ok = await syncAll(userId);
-      lastSyncEndRef.current = Date.now();
-      syncingRef.current = false;
-      if (ok) {
-        await loadFromLocal(userId);
-        setSyncStatus('ok');
-        setTimeout(function() { setSyncStatus('idle'); }, 3000);
-      } else {
-        setSyncStatus('error');
-        setTimeout(function() { setSyncStatus('idle'); }, 5000);
-      }
+    var syncInterval = setInterval(function() {
+      doSyncRef.current(uidRef.current, true);
     }, 120000);
 
     var onVisible = function() {
       if (document.visibilityState !== 'visible') return;
-      var userId = uidRef.current;
-      if (!userId || !navigator.onLine || !canSync()) return;
-      syncingRef.current = true;
-      syncAll(userId).then(function(ok) {
-        lastSyncEndRef.current = Date.now();
-        syncingRef.current = false;
-        if (ok) loadFromLocal(userId);
-      }).catch(function() {
-        lastSyncEndRef.current = Date.now();
-        syncingRef.current = false;
-      });
+      doSyncRef.current(uidRef.current, false);
     };
     document.addEventListener('visibilitychange', onVisible);
 
     var onOnline = function() {
       var userId = uidRef.current;
-      if (!userId || !canSync()) return;
+      if (!userId) return;
       if (reconnectRef && reconnectRef.current) reconnectRef.current(userId);
-      syncingRef.current = true;
-      syncAll(userId).then(function(ok) {
-        lastSyncEndRef.current = Date.now();
-        syncingRef.current = false;
-        if (ok) loadFromLocal(userId);
-      }).catch(function() {
-        lastSyncEndRef.current = Date.now();
-        syncingRef.current = false;
-      });
+      doSyncRef.current(userId, false);
     };
     window.addEventListener('online', onOnline);
 
@@ -85,5 +79,5 @@ export function useSyncLoop(props, ctx) {
     };
   }, [loadFromLocal, reconnectRef, setSyncStatus, syncingRef, uidRef, lastSyncEndRef]);
 
-  return { runSync };
+  return { runSync: function() { runSyncRef.current(); } };
 }

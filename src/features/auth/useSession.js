@@ -146,49 +146,45 @@ export function useSession(p) {
             sb.from('user_roles').select('role').eq('user_id', userId).maybeSingle(),
           ]);
           var pr = allRes[0], pdr = allRes[1], txr = allRes[2], lr = allRes[3], roleRes = allRes[4];
-          if (pr.data) {
-            var prof = pr.data;
-            setBrand(function(prev) {
-              var next = {name:prof.name, logo:prof.logo, color:prof.color, color_secondary:prof.color_secondary||null, color_accent:prof.color_accent||null, theme:prof.theme||'light', logo_url:prof.logo_url||null, phone:prof.phone||'', white_label:!!prof.white_label, niche:prof.niche||'', visual_version:prof.visual_version||0, custom_palette:!!prof.custom_palette, brand_config:prof.brand_config||null};
-              if (prev && prev.name===next.name && prev.logo===next.logo && prev.color===next.color && prev.color_secondary===next.color_secondary && prev.color_accent===next.color_accent && prev.theme===next.theme && prev.logo_url===next.logo_url && prev.phone===next.phone && prev.white_label===next.white_label && prev.niche===next.niche && prev.visual_version===next.visual_version && prev.custom_palette===next.custom_palette && JSON.stringify(prev.brand_config)===JSON.stringify(next.brand_config)) return prev;
-              return next;
-            });
-            setPlanInfo(function(prev) {
-              var next = {
-                plan:prof.plan||'free',
-                plan_expires_at:prof.plan_expires_at||null,
-                plan_activated_by:prof.plan_activated_by||null,
-                custom_price_cents:prof.custom_price_cents||0,
-                custom_price_cents_pro:prof.custom_price_cents_pro||0,
-                custom_price_cents_premium:prof.custom_price_cents_premium||0,
-              };
-              if (prev && prev.plan===next.plan && prev.plan_expires_at===next.plan_expires_at && prev.plan_activated_by===next.plan_activated_by && prev.custom_price_cents===next.custom_price_cents && prev.custom_price_cents_pro===next.custom_price_cents_pro && prev.custom_price_cents_premium===next.custom_price_cents_premium) return prev;
-              return next;
-            });
-            await ldb.profiles.put(toLocal(prof));
-          }
+
+          var prof = pr && pr.data ? pr.data : null;
           var prodRows = pdr || [];
-          if (prodRows.length > 0) {
-            setProducts(function(prev) {
-              if (prev.length === prodRows.length) return prev;
-              return prodRows;
-            });
-            await ldb.products.bulkPut(prodRows.map(function(r) { return toLocal(r, {user_id:userId}); }));
-          }
           var txRows = txr || [];
-          if (txRows.length > 0) {
-            var mappedTx = txRows.map(function(t) { return Object.assign({}, t, {desc:t.description, cat:t.category}); });
-            setTx(mappedTx);
-            await ldb.transactions.bulkPut(txRows.map(function(r) { return toLocal(r, {user_id:userId, desc:r.description, cat:r.category}); }));
-          }
           var lossRows = lr || [];
-          if (lossRows.length > 0) {
-            var mappedL = lossRows.map(function(l) { return Object.assign({}, l, {desc:l.description}); });
-            setLosses(mappedL);
-            await ldb.losses.bulkPut(lossRows.map(function(r) { return toLocal(r, {user_id:userId, desc:r.description}); }));
-          }
-          var roleData = roleRes && roleRes.data ? roleRes.data : null;
-          setIsAdminDB(roleData && roleData.role === 'admin');
+
+          if (prof) await ldb.profiles.put(toLocal(prof));
+          if (prodRows.length > 0) await ldb.products.bulkPut(prodRows.map(function(r) { return toLocal(r, {user_id:userId}); }));
+          if (txRows.length > 0) await ldb.transactions.bulkPut(txRows.map(function(r) { return toLocal(r, {user_id:userId, desc:r.description, cat:r.category}); }));
+          if (lossRows.length > 0) await ldb.losses.bulkPut(lossRows.map(function(r) { return toLocal(r, {user_id:userId, desc:r.description}); }));
+
+          setBrand(function(prev) {
+            if (!prof) return prev;
+            var next = {name:prof.name, logo:prof.logo, color:prof.color, color_secondary:prof.color_secondary||null, color_accent:prof.color_accent||null, theme:prof.theme||'light', logo_url:prof.logo_url||null, phone:prof.phone||'', white_label:!!prof.white_label, niche:prof.niche||'', visual_version:prof.visual_version||0, custom_palette:!!prof.custom_palette, brand_config:prof.brand_config||null};
+            if (prev && prev.name===next.name && prev.logo===next.logo && prev.color===next.color && prev.color_secondary===next.color_secondary && prev.color_accent===next.color_accent && prev.theme===next.theme && prev.logo_url===next.logo_url && prev.phone===next.phone && prev.white_label===next.white_label && prev.niche===next.niche && prev.visual_version===next.visual_version && prev.custom_palette===next.custom_palette && JSON.stringify(prev.brand_config)===JSON.stringify(next.brand_config)) return prev;
+            return next;
+          });
+          setPlanInfo(function(prev) {
+            if (!prof) return prev;
+            var next = { plan:prof.plan||'free', plan_expires_at:prof.plan_expires_at||null, plan_activated_by:prof.plan_activated_by||null, custom_price_cents:prof.custom_price_cents||0, custom_price_cents_pro:prof.custom_price_cents_pro||0, custom_price_cents_premium:prof.custom_price_cents_premium||0 };
+            if (prev && prev.plan===next.plan && prev.plan_expires_at===next.plan_expires_at && prev.plan_activated_by===next.plan_activated_by && prev.custom_price_cents===next.custom_price_cents && prev.custom_price_cents_pro===next.custom_price_cents_pro && prev.custom_price_cents_premium===next.custom_price_cents_premium) return prev;
+            return next;
+          });
+          setProducts(function(prev) {
+            if (prodRows.length === 0) return prev;
+            if (prev.length === prodRows.length) return prev;
+            return prodRows;
+          });
+          setTx(function(prev) {
+            if (txRows.length === 0) return prev;
+            var mapped = txRows.map(function(t) { return Object.assign({}, t, {desc:t.description, cat:t.category}); });
+            return mapped;
+          });
+          setLosses(function(prev) {
+            if (lossRows.length === 0) return prev;
+            var mapped = lossRows.map(function(l) { return Object.assign({}, l, {desc:l.description}); });
+            return mapped;
+          });
+          setIsAdminDB(roleRes && roleRes.data && roleRes.data.role === 'admin');
           await setLastSync(now(), userId);
         } catch { setDataError('Erro ao carregar dados.'); }
       } else {
