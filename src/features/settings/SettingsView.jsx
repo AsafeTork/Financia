@@ -43,18 +43,18 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
   var [phoneSaving, setPhoneSaving] = useState(false);
   var initParsed = parsePhone(brand.phone);
   var initE164 = buildPhone(initParsed.iso, initParsed.digits).e164;
-  React.useEffect(function() {
+  React.  useEffect(function() {
     var canBrand = isAdmin || hasWhiteLabel;
-    if (isAdmin && tab === 'account') {
+    if (tab === 'account' && isAdmin) {
       setTab('clients');
-    } else if (!isAdmin && tab === 'clients') {
+    } else if (tab === 'clients' && !isAdmin) {
       setTab('account');
-    } else if (!canBrand && tab === 'brandstudio') {
+    } else if (tab === 'brandstudio' && !canBrand) {
       setTab('account');
-    } else if (!hasWhiteLabel && tab === 'appearance') {
+    } else if (tab === 'appearance' && !hasWhiteLabel) {
       setTab('account');
     }
-  }, [isAdmin, tab, hasWhiteLabel]);
+  }, [isAdmin, hasWhiteLabel, tab]);
 
   // Busca o cartao salvo ao abrir a aba Assinatura (e apos trocar/remover).
   React.useEffect(function() {
@@ -76,7 +76,7 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
       if (toast) toast('Erro ao carregar forma de pagamento.', 'error');
     });
     return function() { alive = false; };
-  }, [tab, cardReload, setPaymentLoading, toast]);
+  }, [tab, cardReload]);
 
   // Busca status da assinatura Stripe na aba Assinatura.
   React.useEffect(function() {
@@ -91,7 +91,7 @@ export default function SettingsView({ brand, session, planInfo, onSave, onSaveP
       if (alive) setSubLoading(false);
     }).catch(function() { if (alive) { setSubStatus(null); setSubLoading(false); if (toast) toast('Erro ao carregar status da assinatura.', 'error'); } });
     return function() { alive = false; };
-  }, [tab, planId, setSubLoading, toast]);
+  }, [tab, planId]);
 
   const savePhone = async function() {
     setPhoneSaving(true);

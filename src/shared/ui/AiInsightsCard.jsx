@@ -66,22 +66,22 @@ export default function AiInsightsCard({ mtx, ti, to, profitCurr, profVar, lowSt
           </button>
         )}
       </div>
-      {!canUseAI ? (
-        <div className="flex flex-col gap-3">
-          <div className="relative rounded-xl p-4 overflow-hidden" style={{background: 'var(--bg-subtle)', filter: 'blur(2px)', opacity: 0.5, pointerEvents: 'none'}}>
-            <p className="text-xs leading-relaxed" style={{color:'var(--text-muted)'}}>"Suas despesas com estoque subiram 15%. Considere renegociar com fornecedores para melhorar sua margem."</p>
-            <p className="text-xs leading-relaxed mt-1" style={{color:'var(--text-muted)'}}>"Seu ticket medio e de R$ 195 — aumentar para R$ 220 geraria +R$ 1.200/mes."</p>
-          </div>
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{marginTop: '3rem'}}>
-            <span className="text-xs font-bold px-3 py-1 rounded-full" style={{background: brandAlpha(brand.color, 0.90), color: '#fff'}}>Disponivel no plano Pro</span>
-          </div>
-          <button onClick={onUpgrade}
-            className="self-start text-xs font-semibold px-4 py-2.5 rounded-xl text-white transition hover:opacity-90 min-h-[44px]"
-            style={{background: brand.color}}>
-            Conhecer plano Pro
-          </button>
-        </div>
-      ) : (
+          {!canUseAI ? (
+            <div className="flex flex-col gap-3 relative">
+              <div className="rounded-xl p-4 overflow-hidden" style={{background: 'var(--bg-subtle)', filter: 'blur(2px)', opacity: 0.5, pointerEvents: 'none'}}>
+                <p className="text-xs leading-relaxed" style={{color:'var(--text-muted)'}}>"Suas despesas com estoque subiram 15%. Considere renegociar com fornecedores para melhorar sua margem."</p>
+                <p className="text-xs leading-relaxed mt-1" style={{color:'var(--text-muted)'}}>"Seu ticket medio e de R$ 195 — aumentar para R$ 220 geraria +R$ 1.200/mes."</p>
+              </div>
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <span className="text-xs font-bold px-3 py-1 rounded-full" style={{background: brandAlpha(brand.color, 0.90), color: '#fff'}}>Disponivel no plano Pro</span>
+              </div>
+              <button onClick={onUpgrade}
+                className="self-start text-xs font-semibold px-4 py-2.5 rounded-xl text-white transition hover:opacity-90 min-h-[44px]"
+                style={{background: brand.color}}>
+                Conhecer plano Pro
+              </button>
+            </div>
+          ) : (
         <React.Fragment>
           {aiErr && <p className="text-xs" style={{color:'#ef4444'}}>{aiErr}</p>}
           {!aiText && !aiErr && !aiLoading && <p className="text-xs" style={{color:'var(--text-muted)'}}>Receba dicas praticas baseadas nos seus numeros do mes.</p>}

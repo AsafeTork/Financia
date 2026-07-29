@@ -237,11 +237,9 @@ export default function useBrandAppearance(brand, planInfo) {
   }, [appBrand, effectiveTheme]);
 
   useEffect(() => {
-    if (effectiveTheme === 'dark') {
-      const el = document.documentElement;
-      const paletteVars = ['--bg-page', '--bg-card', '--bg-input', '--bg-subtle', '--surface', '--text-main', '--text-sub', '--text-muted', '--border', '--border-md', '--success', '--warning', '--danger', '--info'];
-      paletteVars.forEach(k => el.style.removeProperty(k));
-    }
+    const el = document.documentElement;
+    const theme = effectiveTheme === 'dark' ? 'dark' : 'light';
+    el.setAttribute('data-theme', theme);
   }, [effectiveTheme]);
 
   const checkCampaigns = useCallback((campaigns) => {
