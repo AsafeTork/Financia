@@ -175,25 +175,29 @@ export const PLAN_PALETTE_DEFAULTS = {
     primary: '#002f59', secondary: '#e8f0f7', accent: '#1a6b5c',
     bgPage: '#f5f5f0', bgCard: '#ffffff', bgInput: '#ffffff', bgSubtle: '#f5f5f0',
     surface: '#ffffff', textMain: '#0f172a', textSub: '#5b6b7c', textMuted: '#94a3b8',
-    border: '#edeae3',
+    border: '#edeae3', borderMd: '#e2ddd4',
+    success: '#16a34a', warning: '#f59e0b', danger: '#dc2626', info: '#2563eb',
   },
   pro: {
     primary: '#2563eb', secondary: '#eff6ff', accent: '#7c3aed',
     bgPage: '#f8fafc', bgCard: '#ffffff', bgInput: '#ffffff', bgSubtle: '#f1f5f9',
     surface: '#ffffff', textMain: '#0f172a', textSub: '#475569', textMuted: '#94a3b8',
-    border: '#e2e8f0',
+    border: '#e2e8f0', borderMd: '#cbd5e1',
+    success: '#16a34a', warning: '#f59e0b', danger: '#dc2626', info: '#2563eb',
   },
   premium: {
     primary: '#0f172a', secondary: '#f8fafc', accent: '#f59e0b',
     bgPage: '#fafafa', bgCard: '#ffffff', bgInput: '#ffffff', bgSubtle: '#f5f5f5',
     surface: '#ffffff', textMain: '#171717', textSub: '#525252', textMuted: '#a3a3a3',
-    border: '#e5e5e5',
+    border: '#e5e5e5', borderMd: '#d4d4d4',
+    success: '#16a34a', warning: '#f59e0b', danger: '#dc2626', info: '#2563eb',
   },
   white_label: {
     primary: '#002f59', secondary: '#e8f0f7', accent: '#1a6b5c',
     bgPage: '#f5f5f0', bgCard: '#ffffff', bgInput: '#ffffff', bgSubtle: '#f5f5f0',
     surface: '#ffffff', textMain: '#0f172a', textSub: '#5b6b7c', textMuted: '#94a3b8',
-    border: '#edeae3',
+    border: '#edeae3', borderMd: '#e2ddd4',
+    success: '#16a34a', warning: '#f59e0b', danger: '#dc2626', info: '#2563eb',
   },
 };
 
