@@ -145,7 +145,9 @@ export const fetchClientUsage = async function() {
     const { data, error } = await sb.rpc('admin_client_usage');
     if (error) return {};
     const map = {};
-    (data || []).forEach(function(r) { map[r.user_id] = r; });
+    if (Array.isArray(data)) {
+      data.forEach(function(r) { map[r.user_id] = r; });
+    }
     return map;
   } catch (e) { console.error('[sync] fetchClientUsage:', e); return {}; }
 };
