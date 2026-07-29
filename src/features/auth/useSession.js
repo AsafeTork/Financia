@@ -50,7 +50,7 @@ export function useSession(p) {
   var syncCtx = { uidRef, syncingRef, loadFromLocal, reconnectRef };
   var { runSync } = useSyncLoop(p, syncCtx);
 
-  var rtCtx = { uidRef, channelRef, debounceRef, retryRef, retryDelayRef, runSync, reconnectRef };
+  var rtCtx = { uidRef, channelRef, debounceRef, retryRef, retryDelayRef, runSync, reconnectRef, syncingRef };
   useRealtime({ setPlanInfo: p.setPlanInfo }, rtCtx);
 
   var setDataLoading = p.setDataLoading;

@@ -18,9 +18,11 @@ export function useSyncLoop(props, ctx) {
   useEffect(function() {
     var syncInterval = setInterval(async function() {
       var userId = uidRef.current;
-      if (!userId || !navigator.onLine) return;
+      if (!userId || !navigator.onLine || syncingRef.current) return;
+      syncingRef.current = true;
       setSyncStatus('syncing');
       var ok = await syncAll(userId);
+      syncingRef.current = false;
       if (ok) {
         await loadFromLocal(userId);
         setSyncStatus('ok');
@@ -34,16 +36,18 @@ export function useSyncLoop(props, ctx) {
     var onVisible = function() {
       if (document.visibilityState !== 'visible') return;
       var userId = uidRef.current;
-      if (!userId || !navigator.onLine) return;
-      syncAll(userId).then(function(ok) { if (ok) loadFromLocal(userId); }).catch(function() { /* silent fail — session already handles retry */ });
+      if (!userId || !navigator.onLine || syncingRef.current) return;
+      syncingRef.current = true;
+      syncAll(userId).then(function(ok) { syncingRef.current = false; if (ok) loadFromLocal(userId); }).catch(function() { syncingRef.current = false; });
     };
     document.addEventListener('visibilitychange', onVisible);
 
     var onOnline = function() {
       var userId = uidRef.current;
-      if (!userId) return;
+      if (!userId || syncingRef.current) return;
       if (reconnectRef && reconnectRef.current) reconnectRef.current(userId);
-      syncAll(userId).then(function(ok) { if (ok) loadFromLocal(userId); }).catch(function() { /* silent fail — session already handles retry */ });
+      syncingRef.current = true;
+      syncAll(userId).then(function(ok) { syncingRef.current = false; if (ok) loadFromLocal(userId); }).catch(function() { syncingRef.current = false; });
     };
     window.addEventListener('online', onOnline);
 
@@ -52,7 +56,7 @@ export function useSyncLoop(props, ctx) {
       document.removeEventListener('visibilitychange', onVisible);
       window.removeEventListener('online', onOnline);
     };
-  }, [loadFromLocal, reconnectRef, setSyncStatus, uidRef]);
+  }, [loadFromLocal, reconnectRef, setSyncStatus, syncingRef, uidRef]);
 
   return { runSync };
 }

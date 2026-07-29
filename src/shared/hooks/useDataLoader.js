@@ -17,14 +17,22 @@ export function useDataLoader(props) {
     ]);
     var profile = results[0], prods = results[1], txs = results[2], lss = results[3], roleMeta = results[4];
     if (profile) {
-      setBrand({name:profile.name, logo:profile.logo, color:profile.color, color_secondary:profile.color_secondary||null, color_accent:profile.color_accent||null, theme:profile.theme||'light', logo_url:profile.logo_url||null, phone:profile.phone||'', white_label:!!profile.white_label, niche:profile.niche||'', visual_version:profile.visual_version||0, custom_palette:!!profile.custom_palette, brand_config:profile.brand_config||null});
-      setPlanInfo({
-        plan:profile.plan||'free',
-        plan_expires_at:profile.plan_expires_at||null,
-        plan_activated_by:profile.plan_activated_by||null,
-        custom_price_cents:profile.custom_price_cents||0,
-        custom_price_cents_pro:profile.custom_price_cents_pro||0,
-        custom_price_cents_premium:profile.custom_price_cents_premium||0,
+      setBrand(function(prev) {
+        var next = {name:profile.name, logo:profile.logo, color:profile.color, color_secondary:profile.color_secondary||null, color_accent:profile.color_accent||null, theme:profile.theme||'light', logo_url:profile.logo_url||null, phone:profile.phone||'', white_label:!!profile.white_label, niche:profile.niche||'', visual_version:profile.visual_version||0, custom_palette:!!profile.custom_palette, brand_config:profile.brand_config||null};
+        if (prev && prev.name===next.name && prev.logo===next.logo && prev.color===next.color && prev.color_secondary===next.color_secondary && prev.color_accent===next.color_accent && prev.theme===next.theme && prev.logo_url===next.logo_url && prev.phone===next.phone && prev.white_label===next.white_label && prev.niche===next.niche && prev.visual_version===next.visual_version && prev.custom_palette===next.custom_palette && prev.brand_config===next.brand_config) return prev;
+        return next;
+      });
+      setPlanInfo(function(prev) {
+        var next = {
+          plan:profile.plan||'free',
+          plan_expires_at:profile.plan_expires_at||null,
+          plan_activated_by:profile.plan_activated_by||null,
+          custom_price_cents:profile.custom_price_cents||0,
+          custom_price_cents_pro:profile.custom_price_cents_pro||0,
+          custom_price_cents_premium:profile.custom_price_cents_premium||0,
+        };
+        if (prev && prev.plan===next.plan && prev.plan_expires_at===next.plan_expires_at && prev.plan_activated_by===next.plan_activated_by && prev.custom_price_cents===next.custom_price_cents && prev.custom_price_cents_pro===next.custom_price_cents_pro && prev.custom_price_cents_premium===next.custom_price_cents_premium) return prev;
+        return next;
       });
     }
     setProducts(prods);

@@ -2,11 +2,12 @@ import { sb } from '../../lib/supabase.js';
 
 export function useRealtime(props, ctx) {
   var { setPlanInfo } = props;
-  var { uidRef, channelRef, debounceRef, retryRef, retryDelayRef, runSync, reconnectRef } = ctx;
+  var { uidRef, channelRef, debounceRef, retryRef, retryDelayRef, runSync, reconnectRef, syncingRef } = ctx;
 
   var subscribeRealtime = function(uid) {
     if (channelRef.current) { sb.removeChannel(channelRef.current); channelRef.current = null; }
     var doSync = function() {
+      if (syncingRef && syncingRef.current) return;
       if (debounceRef.current) clearTimeout(debounceRef.current);
       debounceRef.current = setTimeout(runSync, 800);
     };

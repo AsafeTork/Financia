@@ -227,6 +227,7 @@ export function exitPreviewMode() {
 export default function useBrandAppearance(brand, planInfo) {
   const [themePref, setThemePref] = useState(loadThemePref);
   const savedCampaignRef = useRef(null);
+  const appBrandRef = useRef(null);
 
   const hasWhiteLabel = !!(brand && brand.white_label);
   const visualPreset = hasWhiteLabel ? null : planVisualDefaults(planInfo);
@@ -234,11 +235,15 @@ export default function useBrandAppearance(brand, planInfo) {
   const useWhiteLabelFallback = computeUseWhiteLabelFallback(hasWhiteLabel, brand, missingCustomPalette);
 
   const appBrand = useMemo(() => {
-    return hasWhiteLabel
+    var next = hasWhiteLabel
       ? (useWhiteLabelFallback
         ? { ...brand, color: WHITE_LABEL_VISUAL_DEFAULT.color, color_secondary: WHITE_LABEL_VISUAL_DEFAULT.color_secondary, color_accent: WHITE_LABEL_VISUAL_DEFAULT.color_accent, theme: WHITE_LABEL_VISUAL_DEFAULT.theme }
         : brand)
       : { ...brand, color: visualPreset.color, color_secondary: visualPreset.color_secondary, color_accent: visualPreset.color_accent, theme: visualPreset.theme };
+    var prev = appBrandRef.current;
+    if (prev && prev.name===next.name && prev.logo===next.logo && prev.color===next.color && prev.color_secondary===next.color_secondary && prev.color_accent===next.color_accent && prev.theme===next.theme && prev.logo_url===next.logo_url && prev.phone===next.phone && prev.white_label===next.white_label && prev.niche===next.niche && prev.visual_version===next.visual_version && prev.custom_palette===next.custom_palette && prev.brand_config===next.brand_config) return prev;
+    appBrandRef.current = next;
+    return next;
   }, [hasWhiteLabel, useWhiteLabelFallback, brand, visualPreset]);
 
   const effectiveTheme = computeEffectiveTheme(themePref, appBrand);
