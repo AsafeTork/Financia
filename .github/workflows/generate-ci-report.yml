@@ -1,0 +1,147 @@
+name: Generate CI Errors Report
+
+on:
+  push:
+    branches: [main]
+  workflow_run:
+    workflows: ["CI", "Build Release"]
+    types: [completed]
+
+permissions:
+  contents: write
+
+jobs:
+  generate-report:
+    name: Generate CI Errors Report
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci 2>/dev/null || npm install --legacy-peer-deps
+
+      - name: Run linter
+        id: lint
+        run: |
+          npx eslint src/ 2>&1 | tee /tmp/lint-output.txt || true
+
+      - name: Run build
+        id: build
+        run: |
+          npm run build 2>&1 | tee /tmp/build-output.txt || true
+
+      - name: Run tests
+        id: test
+        run: |
+          npm run test 2>&1 | tee /tmp/test-output.txt || true
+
+      - name: Install jq
+        run: sudo apt-get install -y jq
+
+      - name: Generate CI_ERRORS.md
+        run: |
+          LINT_STATUS="ok"
+          BUILD_STATUS="ok"
+          TEST_STATUS="ok"
+          grep -qi "error" /tmp/lint-output.txt && LINT_STATUS="erros" || true
+          grep -qi "error" /tmp/build-output.txt && BUILD_STATUS="falha" || true
+          grep -qi "fail\|error\|×" /tmp/test-output.txt && TEST_STATUS="falha" || true
+
+          LINT_CONTENT=$(cat /tmp/lint-output.txt)
+          BUILD_CONTENT=$(cat /tmp/build-output.txt)
+          TEST_CONTENT=$(tail -60 /tmp/test-output.txt)
+
+          HISTORIC_RUNS=$(gh run list --repo "${{ github.repository }}" --limit 10 --json conclusion,displayTitle,createdAt,url 2>/dev/null | jq -r '.[] | "| " + .conclusion + " | [" + .displayTitle + "](" + .url + ") | " + .createdAt + " |"' 2>/dev/null || echo "| N/A | Sem dados | N/A |")
+
+          TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M UTC")
+          COMMIT="${{ github.sha }}"
+          BRANCH="${{ github.ref_name }}"
+
+          cat > CI_ERRORS.md << EOF
+          # Relatório de Erros do CI
+
+          **Última atualização:** ${TIMESTAMP}
+          **Commit:** \`${COMMIT}\`
+          **Branch:** \`${BRANCH}\`
+
+          ---
+
+          ## Resumo Executivo
+
+          | Verificação | Status |
+          |---|---|
+          | Lint + Typecheck | ${LINT_STATUS} |
+          | Testes Unitários | ${TEST_STATUS} |
+          | Build | ${BUILD_STATUS} |
+
+          ---
+
+          ## Erros Lint
+
+          \`\`\`
+          ${LINT_CONTENT}
+          \`\`\`
+
+          ---
+
+          ## Erros de Build
+
+          \`\`\`
+          ${BUILD_CONTENT}
+          \`\`\`
+
+          ---
+
+          ## Resultados dos Testes
+
+          \`\`\`
+          ${TEST_CONTENT}
+          \`\`\`
+
+          ---
+
+          ## Erros Históricos Recentes
+
+          | Conclusão | Título | Data |
+          |---|---|---|
+          ${HISTORIC_RUNS}
+
+          ---
+
+          ## Como Ler Este Relatório
+
+          1. **Resumo Executivo** — Visão geral de qual verificação falhou
+          2. **Erros Lint** — Problemas de estilo de código
+          3. **Erros de Build** — Falhas na compilação do projeto
+          4. **Resultados dos Testes** — Saída detalhada dos testes unitários
+          5. **Erros Históricos Recentes** — Últimos 10 runs do CI com status
+
+          ### Códigos de Status
+          - \`success\` — Passou
+          - \`failure\` — Falhou
+          - \`cancelled\` — Cancelado
+
+          ---
+
+          ## Correções Aplicadas Recentemente
+
+          | Data | Correção | Commit |
+          |------|----------|--------|
+          | ${TIMESTAMP} | Gerado automaticamente pelo workflow | \`${COMMIT}\` |
+          EOF
+
+      - name: Commit CI_ERRORS.md
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add CI_ERRORS.md
+          git diff --cached --quiet || git commit -m "chore: update CI_ERRORS.md [skip ci]"
+          git push
