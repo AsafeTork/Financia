@@ -260,9 +260,24 @@ export default function useBrandAppearance(brand, planInfo) {
   useEffect(() => {
     const el = document.documentElement;
     const theme = effectiveTheme === 'dark' ? 'dark' : 'light';
-    el.setAttribute('data-theme', theme);
     const tokens = collectTokensFromBrand(appBrand);
-    applyBrandThemeVars(el, tokens);
+    if (theme === 'dark') {
+      el.setAttribute('data-theme', 'dark');
+      THEME_CONTROLLED_VARS.forEach(function(k) {
+        el.style.removeProperty(k);
+      });
+      const brandOnly = {};
+      for (const k in tokens) {
+        if (!Object.prototype.hasOwnProperty.call(tokens, k)) continue;
+        if (!THEME_CONTROLLED_VARS.has(k)) {
+          brandOnly[k] = tokens[k];
+        }
+      }
+      applyTokenDiff(el, brandOnly);
+    } else {
+      el.setAttribute('data-theme', 'light');
+      applyTokenDiff(el, tokens);
+    }
 
     if (savedCampaignRef.current) {
       const campaign = savedCampaignRef.current;
