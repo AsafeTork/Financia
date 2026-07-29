@@ -32,7 +32,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '11'
+          java-version: '17'
 
       - name: Instalar dependencias de icones
         run: |
@@ -82,9 +82,10 @@ jobs:
 
       - name: Build APK Release
         working-directory: android
-        run: ./gradlew assembleRelease --no-daemon 2>&1 | tail -20
+        run: |
+          ./gradlew assembleRelease --no-daemon 2>&1 | tail -20
+          exit ${PIPESTATUS[0]}
         env:
-          ANDROID_HOME: ${{ env.ANDROID_HOME }}
           STORE_FILE: financia.jks
           STORE_PASS: ${{ secrets.KEYSTORE_PASS }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}

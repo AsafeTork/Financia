@@ -202,20 +202,21 @@ input:focus, select:focus, textarea:focus {
 [data-theme="dark"] .hover\\:bg-gray-100:hover { background-color: #0f1e33 !important; }
 [data-theme="dark"] .shadow-sm { box-shadow: 0 1px 3px rgba(0,0,0,0.3) !important; }
 
-/* ── View Transitions API: efeito "Slide In Over" ── */
+/* ── View Transitions API ── */
+@keyframes vt-fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+}
+@keyframes vt-fade-out {
+  to { opacity: 0; transform: translateY(-8px); }
+}
 @media (prefers-reduced-motion: no-preference) {
-  ::view-transition-group(root) { animation-duration: .6s; }
   ::view-transition-old(root) {
-    animation: slideOldUnder .6s ease-in-out both;
-    z-index: 1;
+    animation: vt-fade-out 0.2s ease-out both;
   }
   ::view-transition-new(root) {
-    animation: slideInOver .6s ease-in-out both;
-    z-index: 999;
+    animation: vt-fade-in 0.25s ease-out both;
   }
 }
-@keyframes slideInOver  { from { transform: translateX(100%); } to { transform: translateX(0); } }
-@keyframes slideOldUnder { from { transform: translateX(0); filter: brightness(1); } to { transform: translateX(-8%); filter: brightness(0.9); } }
 
 /* ===========================================
    PLAN THEMES — Experiencia visual por plano

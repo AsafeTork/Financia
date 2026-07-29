@@ -105,7 +105,7 @@ export default function App() {
   const navTo = useCallback(function(v) {
     const go = function() { navigate('/' + v); };
     if (typeof document !== 'undefined' && document.startViewTransition) {
-      document.startViewTransition(function() { flushSync(go); });
+      document.startViewTransition(function() { flushSync(go); }).catch(function(){});
     } else {
       go();
     }
@@ -282,7 +282,7 @@ const currentView = sessionViews.includes(path) ? path : 'dashboard';
     return (
       <FeatureErrorBoundary featureName="Legal">
         <Suspense fallback={<Loader/>}>
-          {path === 'privacidade' ? <PrivacyPolicy/> : <TermsOfService/>}
+          {path === 'privacidade' ? <PrivacyPolicy onNav={navTo}/> : <TermsOfService onNav={navTo}/>}
         </Suspense>
       </FeatureErrorBoundary>
     );
@@ -292,7 +292,7 @@ const currentView = sessionViews.includes(path) ? path : 'dashboard';
     return (
       <FeatureErrorBoundary featureName="Landing">
         <Suspense fallback={<Loader/>}>
-          <Landing brand={brand} onEnter={function() { navigate('/'); setShowLogin(true); }}/>
+          <Landing brand={brand} onEnter={function() { navigate('/'); setShowLogin(true); }} onNav={navTo}/>
         </Suspense>
       </FeatureErrorBoundary>
     );
@@ -304,12 +304,12 @@ const currentView = sessionViews.includes(path) ? path : 'dashboard';
       return (
         <FeatureErrorBoundary featureName="Landing">
           <Suspense fallback={<Loader/>}>
-            <Landing brand={brand} onEnter={function() { setShowLogin(true); }}/>
+            <Landing brand={brand} onEnter={function() { setShowLogin(true); }} onNav={navTo}/>
           </Suspense>
         </FeatureErrorBoundary>
       );
     }
-    return <Login brand={brand}/>;
+    return <Login brand={brand} onNav={navTo}/>;
   }
 
   if (dataLoading) return <Loader text="Carregando seus dados..."/>;

@@ -48,7 +48,7 @@ var sections = [
   },
 ];
 
-export default function TermsOfService() {
+export default function TermsOfService({ onNav }) {
   return (
     <div style={{ background: WARM, color: INK, minHeight: '100vh' }}>
 
@@ -81,7 +81,7 @@ export default function TermsOfService() {
         <div className="rounded-2xl p-5 mb-8" style={{ background: 'rgba(15,157,108,0.08)', border: '1px solid rgba(15,157,108,0.2)' }}>
           <p className="text-sm leading-relaxed" style={{ color: INK }}>
             Estes Termos de Uso regulam o acesso e o uso do <strong>Financia</strong>. Leia com atenção antes de criar sua conta. Ao se cadastrar, você declara ter lido, compreendido e aceito integralmente estes Termos, bem como nossa{' '}
-            <a href="#privacidade" style={{ color: ACCENT, fontWeight: 600 }}>Política de Privacidade</a>.
+            <a href="/privacidade" onClick={function(e){e.preventDefault();onNav('privacidade');}} style={{ color: ACCENT, fontWeight: 600 }}>Política de Privacidade</a>.
           </p>
         </div>
 
@@ -113,8 +113,8 @@ export default function TermsOfService() {
           <span className="font-display text-sm font-semibold" style={{ color: INK }}>Financia</span>
         </div>
         <div className="flex items-center gap-4 text-xs" style={{ color: MUTED }}>
-          <a href="#privacidade" style={{ color: MUTED }}>Privacidade</a>
-          <a href="#termos" style={{ color: MUTED }}>Termos de Uso</a>
+          <a href="/privacidade" onClick={function(e){e.preventDefault();onNav('privacidade');}} style={{ color: MUTED }}>Privacidade</a>
+          <span style={{ color: INK, fontWeight: 600, cursor: 'default' }}>Termos de Uso</span>
         </div>
       </footer>
 

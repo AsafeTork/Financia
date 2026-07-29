@@ -18,7 +18,7 @@ function GoogleBtn({ onClick, loading, label }) {
   );
 }
 
-export default function Login({ brand }) {
+export default function Login({ brand, onNav }) {
   var [mode, setMode] = useState('login');
   var [email, setEmail] = useState('');
   var [pass, setPass] = useState('');
@@ -287,7 +287,7 @@ export default function Login({ brand }) {
                   <input type="checkbox" checked={accept} onChange={function(e) { setAccept(e.target.checked); setErr(''); }}
                     className="mt-0.5 w-4 h-4 flex-shrink-0 cursor-pointer" style={{ accentColor: brandColor }} />
                   <span className="text-xs leading-relaxed" style={{ color: '#5b6b7c' }}>
-                    Li e aceito as <a href="#privacidade" className="underline font-medium" style={{ color: brandText }}>Políticas de Privacidade</a> e os <a href="#termos" className="underline font-medium" style={{ color: brandText }}>Termos de Uso</a>.
+                    Li e aceito as <a href="/privacidade" onClick={function(e){e.preventDefault();onNav('privacidade');}} className="underline font-medium" style={{ color: brandText }}>Políticas de Privacidade</a> e os <a href="/termos" onClick={function(e){e.preventDefault();onNav('termos');}} className="underline font-medium" style={{ color: brandText }}>Termos de Uso</a>.
                   </span>
                 </label>
               )}

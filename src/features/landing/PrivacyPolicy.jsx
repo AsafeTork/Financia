@@ -45,7 +45,7 @@ var sections = [
   },
 ];
 
-export default function PrivacyPolicy() {
+export default function PrivacyPolicy({ onNav }) {
   return (
     <div style={{ background: WARM, color: INK, minHeight: '100vh' }}>
 
@@ -109,8 +109,8 @@ export default function PrivacyPolicy() {
           <span className="font-display text-sm font-semibold" style={{ color: INK }}>Financia</span>
         </div>
         <div className="flex items-center gap-4 text-xs" style={{ color: MUTED }}>
-          <a href="#privacidade" style={{ color: MUTED }}>Privacidade</a>
-          <a href="#termos" style={{ color: MUTED }}>Termos de Uso</a>
+          <span style={{ color: INK, fontWeight: 600, cursor: 'default' }}>Privacidade</span>
+          <a href="/termos" onClick={function(e){e.preventDefault();onNav('termos');}} style={{ color: MUTED }}>Termos de Uso</a>
         </div>
       </footer>
 

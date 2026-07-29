@@ -90,7 +90,7 @@ const FAQ = [
   { q: 'Meus dados ficam seguros?', a: 'Ficam. Cada conta enxerga apenas os proprios dados, com conexao criptografada e isolamento por usuario no banco.' },
 ];
 
-export default function Landing({ onEnter }) {
+export default function Landing({ onEnter, onNav }) {
   const waLinkUrl = waLink('Quero conhecer o Financia para o meu negocio.');
   const statsRef = useScrollReveal();
   const dashRef = useScrollReveal();
@@ -594,8 +594,8 @@ export default function Landing({ onEnter }) {
           </div>
           <p className="text-xs" style={{ color: MUTED }}>Gestao financeira para pequenos negocios brasileiros</p>
           <div className="flex items-center gap-5 text-xs" style={{ color: MUTED }}>
-            <a href="#privacidade" className="hover:text-[#002f59] transition-colors">Privacidade</a>
-            <a href="#termos" className="hover:text-[#002f59] transition-colors">Termos de Uso</a>
+            <a href="/privacidade" onClick={function(e){e.preventDefault();onNav('privacidade');}} className="hover:text-[#002f59] transition-colors">Privacidade</a>
+            <a href="/termos" onClick={function(e){e.preventDefault();onNav('termos');}} className="hover:text-[#002f59] transition-colors">Termos de Uso</a>
           </div>
         </div>
       </footer>

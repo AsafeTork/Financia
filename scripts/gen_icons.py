@@ -27,7 +27,7 @@ if has_logo:
         print(f'PIL error: {e}')
 
 # Fallback SVG default
-svg = 'icon-512.svg'
+svg = 'public/icon-512.svg'
 if os.path.exists(svg):
     for d, s in SIZES.items():
         make_dir(d)
