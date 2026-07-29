@@ -18,9 +18,14 @@ const PLAN_LOGO_META = {
   white_label: { label: 'White Label' },
 };
 
-function usePlanLogoSync(activePlan, brandConfig, brandColor) {
-  const planOverrides = (brandConfig && brandConfig.modules && brandConfig.modules.planOverrides) || {};
-  const globalColors = (brandConfig && brandConfig.modules && brandConfig.modules.logo) || OFFICIAL_LOGO_COLORS;
+function usePlanLogoSync(activePlan, brandConfig, brandColor, rawBrandConfig) {
+  const planOverrides = (brandConfig && brandConfig.modules && brandConfig.modules.planOverrides)
+    || (rawBrandConfig && rawBrandConfig.planOverrides)
+    || {};
+  const oldLogoColors = rawBrandConfig && rawBrandConfig.logoColors;
+  const globalColors = (brandConfig && brandConfig.modules && brandConfig.modules.logo && brandConfig.modules.logo.colors)
+    || oldLogoColors
+    || OFFICIAL_LOGO_COLORS;
   const overrideColors = planOverrides[activePlan] && planOverrides[activePlan].logoColors;
   const hasCustom = !!overrideColors;
 
@@ -58,7 +63,7 @@ function usePlanLogoSync(activePlan, brandConfig, brandColor) {
 
 function LogoTabContent({ brand, bs, brandColor, applyLogoScheme, toast }) {
   const [activeTab, setActiveTab] = React.useState('_global');
-  const lps = usePlanLogoSync(activeTab, bs.brandConfig, brandColor);
+  const lps = usePlanLogoSync(activeTab, bs.brandConfig, brandColor, brand.brand_config);
   const isGlobal = activeTab === '_global';
 
   const doSave = async () => {
@@ -202,7 +207,13 @@ export default function BrandStudioView({ brand, planInfo, onSave, toast, onNav,
       const updated = {
         ...brand,
         logo_url: dataUrl,
-        brand_config: JSON.stringify({ ...cfg, logoColors: colors }),
+        brand_config: JSON.stringify({
+          ...cfg,
+          modules: {
+            ...cfg.modules,
+            logo: { ...(cfg.modules?.logo || {}), colors: colors },
+          },
+        }),
       };
       await onSave(updated);
       if (toast) toast('Logo global atualizada!', 'success');

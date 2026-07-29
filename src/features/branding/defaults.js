@@ -32,6 +32,7 @@ export const LOGO_DEFAULTS = {
   url: null,
   fallback: 'F',
   radius: '12px',
+  colors: null,
 };
 
 export const SIDEBAR_DEFAULTS = {

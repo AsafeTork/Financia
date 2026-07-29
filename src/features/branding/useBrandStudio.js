@@ -85,13 +85,14 @@ export default function useBrandStudio(brand, planInfo, onSave, toast) {
   const savePlanLogo = useCallback(async (planId, logoColors) => {
     let cfg;
     try { cfg = typeof brand.brand_config === 'string' ? JSON.parse(brand.brand_config) : (brand.brand_config || { modules: {} }); } catch (e) { console.warn('useBrandStudio: failed to parse brand_config for plan logo, using empty modules:', e); cfg = { modules: {} }; }
-    if (!cfg.planOverrides) cfg.planOverrides = {};
-    const existing = cfg.planOverrides[planId] || {};
+    if (!cfg.modules) cfg.modules = {};
+    if (!cfg.modules.planOverrides) cfg.modules.planOverrides = {};
+    const existing = cfg.modules.planOverrides[planId] || {};
     if (logoColors) {
-      cfg.planOverrides[planId] = { ...existing, logoColors };
+      cfg.modules.planOverrides[planId] = { ...existing, logoColors };
     } else {
       delete existing.logoColors;
-      if (Object.keys(existing).length > 0) { cfg.planOverrides[planId] = existing; } else { delete cfg.planOverrides[planId]; }
+      if (Object.keys(existing).length > 0) { cfg.modules.planOverrides[planId] = existing; } else { delete cfg.modules.planOverrides[planId]; }
     }
     saveToHistory(brand);
     const updated = { ...brand, brand_config: JSON.stringify(cfg) };

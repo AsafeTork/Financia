@@ -69,6 +69,7 @@ const MODULE_DEFS = {
         url: { type: 'string', nullable: true },
         fallback: { type: 'string', minLength: 1, maxLength: 1 },
         radius: { type: 'string' },
+        colors: { type: 'object', additionalProperties: { type: 'string' } },
       },
     },
     defaults: LOGO_DEFAULTS,
