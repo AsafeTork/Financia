@@ -41,7 +41,7 @@ function DebugBadge() {
     try { return localStorage.getItem('financia_debug_mode') === '1'; } catch { return false; }
   });
   React.useEffect(function() {
-    function check() { try { setShow(localStorage.getItem('financia_debug_mode') === '1'); } catch {} }
+    function check() { try { setShow(localStorage.getItem('financia_debug_mode') === '1'); } catch (e) { console.warn('DebugBadge: error reading debug state:', e); } }
     window.addEventListener('storage', check);
     window.addEventListener('financia-debug-change', check);
     return function() { window.removeEventListener('storage', check); window.removeEventListener('financia-debug-change', check); };

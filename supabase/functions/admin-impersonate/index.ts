@@ -69,19 +69,29 @@ Deno.serve(async function(req: Request) {
       return corsResponse({ error: 'token_not_found' }, 500);
     }
 
-    const { data: sessionData, error: sessionError } = await admin.auth.verifyOtp({
-      email: targetEmail,
-      token: token,
-      type: 'magiclink',
+    const verifyRes = await fetch(`${supabaseUrl}/auth/v1/verify`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': anonKey,
+      },
+      body: JSON.stringify({
+        type: 'magiclink',
+        email: targetEmail,
+        token: token,
+      }),
     });
-    if (sessionError || !sessionData?.session?.access_token) {
-      return corsResponse({ error: 'verify_otp_failed' }, 500);
+
+    const verifyData = await verifyRes.json();
+
+    if (!verifyRes.ok || !verifyData?.access_token) {
+      return corsResponse({ error: 'verify_otp_failed', detail: verifyData }, 500);
     }
 
     return corsResponse({
-      access_token: sessionData.session.access_token,
-      refresh_token: sessionData.session.refresh_token,
-      expires_at: sessionData.session.expires_at,
+      access_token: verifyData.access_token,
+      refresh_token: verifyData.refresh_token,
+      expires_at: verifyData.expires_at,
     });
   } catch (err) {
     return serverErrorResponse(err instanceof Error ? err.message : String(err));

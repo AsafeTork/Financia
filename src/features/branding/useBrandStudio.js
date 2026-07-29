@@ -9,7 +9,7 @@ export default function useBrandStudio(brand, planInfo, onSave, toast) {
   const brandConfig = useMemo(() => {
     const bc = brand && brand.brand_config;
     if (typeof bc === 'string') {
-      try { return JSON.parse(bc); } catch { return getDefaults(); }
+      try { return JSON.parse(bc); } catch (e) { console.warn('useBrandStudio: failed to parse brand_config JSON, using defaults:', e); return getDefaults(); }
     }
     return bc ? mergeWithDefaults(bc) : getDefaults();
   }, [brand]);
@@ -77,7 +77,7 @@ export default function useBrandStudio(brand, planInfo, onSave, toast) {
 
   const savePlanLogo = useCallback(async (planId, logoColors) => {
     let cfg;
-    try { cfg = typeof brand.brand_config === 'string' ? JSON.parse(brand.brand_config) : (brand.brand_config || { modules: {} }); } catch { cfg = { modules: {} }; }
+    try { cfg = typeof brand.brand_config === 'string' ? JSON.parse(brand.brand_config) : (brand.brand_config || { modules: {} }); } catch (e) { console.warn('useBrandStudio: failed to parse brand_config for plan logo, using empty modules:', e); cfg = { modules: {} }; }
     if (!cfg.planOverrides) cfg.planOverrides = {};
     const existing = cfg.planOverrides[planId] || {};
     if (logoColors) {

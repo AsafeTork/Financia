@@ -1,4 +1,6 @@
-import { test, expect, Page, BrowserContext } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
+import * as fs from 'fs';
+import * as path from 'path';
 
 const PROD_URL = 'https://financiabr.me';
 
@@ -17,56 +19,138 @@ const ROUTES = [
   { path: '/termos', label: 'Terms' },
 ];
 
-const consoleErrors: { url: string; message: string; source: string }[] = [];
+interface ErrorEntry {
+  url: string;
+  message: string;
+  source: string;
+}
 
-async function captureConsole(page: Page, routeLabel: string) {
+class RouteErrors {
+  private errors: Map<string, ErrorEntry[]> = new Map();
+  private currentLabel: string = 'setup';
+  private readonly filePath: string;
+
+  constructor() {
+    this.filePath = path.join(process.cwd(), 'prod-audit-errors.json');
+  }
+
+  setLabel(label: string): void {
+    this.currentLabel = label;
+  }
+
+  add(entry: { message: string; source: string }): void {
+    const label = this.currentLabel;
+    if (!this.errors.has(label)) {
+      this.errors.set(label, []);
+    }
+    this.errors.get(label)!.push({
+      url: label,
+      message: entry.message,
+      source: entry.source,
+    });
+  }
+
+  getAll(): Record<string, ErrorEntry[]> {
+    const result: Record<string, ErrorEntry[]> = {};
+    for (const [route, entries] of this.errors) {
+      result[route] = entries;
+    }
+    return result;
+  }
+
+  getFlat(): ErrorEntry[] {
+    return Array.from(this.errors.values()).flat();
+  }
+
+  getSummary(): { total: number; bySource: Record<string, number> } {
+    const bySource: Record<string, number> = {};
+    let total = 0;
+    for (const entries of this.errors.values()) {
+      for (const e of entries) {
+        bySource[e.source] = (bySource[e.source] || 0) + 1;
+        total++;
+      }
+    }
+    return { total, bySource };
+  }
+
+  save(): void {
+    const payload = {
+      routes: this.getAll(),
+      flat: this.getFlat(),
+      summary: this.getSummary(),
+      generatedAt: new Date().toISOString(),
+    };
+    fs.writeFileSync(this.filePath, JSON.stringify(payload, null, 2));
+  }
+
+  generateReport(): string {
+    const flat = this.getFlat();
+    const summary = this.getSummary();
+    const lines: string[] = [
+      '=== PRODUCTION AUDIT REPORT ===',
+      `Total errors: ${summary.total}`,
+      '',
+      '--- Page Errors ---',
+      ...flat.filter(e => e.source === 'pageerror').map(e => `  [${e.url}] ${e.message}`),
+      '',
+      '--- Console Errors ---',
+      ...flat.filter(e => e.source === 'error').map(e => `  [${e.url}] ${e.message}`),
+      '',
+      '--- Console Warnings ---',
+      ...flat.filter(e => e.source === 'warning').map(e => `  [${e.url}] ${e.message}`),
+      '',
+      '--- Audit Failures ---',
+      ...flat.filter(e => e.source === 'audit').map(e => `  [${e.url}] ${e.message}`),
+    ];
+    return lines.join('\n');
+  }
+}
+
+function captureConsole(page: Page, collector: RouteErrors): void {
   page.on('console', (msg) => {
     if (msg.type() === 'error' || msg.type() === 'warning') {
-      consoleErrors.push({
-        url: routeLabel,
-        message: msg.text(),
-        source: msg.type(),
-      });
+      collector.add({ message: msg.text(), source: msg.type() });
     }
   });
   page.on('pageerror', (err) => {
-    consoleErrors.push({
-      url: routeLabel,
-      message: err.message,
-      source: 'pageerror',
-    });
+    collector.add({ message: err.message, source: 'pageerror' });
   });
 }
 
-async function clickAllButtons(page: Page, routeLabel: string) {
+async function clickAllButtons(page: Page): Promise<void> {
   const buttons = page.locator('button, a[href], [role="button"], input[type="submit"], input[type="button"]');
   const count = await buttons.count();
   for (let i = 0; i < Math.min(count, 30); i++) {
     try {
       const btn = buttons.nth(i);
       if (await btn.isVisible({ timeout: 1000 }).catch(() => false)) {
-        await btn.click({ timeout: 2000, force: true }).catch(() => {});
+        await btn.click({ timeout: 2000, force: true });
         await page.waitForTimeout(200);
       }
-    } catch {}
+    } catch {
+      // Best-effort probe during audit — element may be stale or not interactable
+    }
   }
 }
 
-async function clickAllTabsAndAccordions(page: Page, routeLabel: string) {
+async function clickAllTabsAndAccordions(page: Page): Promise<void> {
   const interactables = page.locator('[role="tab"], [role="button"][aria-expanded], summary, .accordion-trigger');
   const count = await interactables.count();
   for (let i = 0; i < Math.min(count, 20); i++) {
     try {
       const el = interactables.nth(i);
       if (await el.isVisible({ timeout: 1000 }).catch(() => false)) {
-        await el.click({ timeout: 2000, force: true }).catch(() => {});
+        await el.click({ timeout: 2000, force: true });
         await page.waitForTimeout(150);
       }
-    } catch {}
+    } catch {
+      // Best-effort probe during audit — element may be stale or not interactable
+    }
   }
 }
 
-async function fillInputs(page: Page, routeLabel: string) {
+async function fillInputs(page: Page): Promise<void> {
   const inputs = page.locator('input:not([type="hidden"]):not([type="color"])');
   const count = await inputs.count();
   for (let i = 0; i < Math.min(count, 10); i++) {
@@ -75,48 +159,57 @@ async function fillInputs(page: Page, routeLabel: string) {
       if (await input.isVisible({ timeout: 1000 }).catch(() => false)) {
         const type = await input.getAttribute('type');
         if (type === 'email') {
-          await input.fill('test@example.com', { timeout: 1000 }).catch(() => {});
+          await input.fill('test@example.com', { timeout: 1000 });
         } else if (type === 'tel') {
-          await input.fill('11999999999', { timeout: 1000 }).catch(() => {});
+          await input.fill('11999999999', { timeout: 1000 });
         } else if (!type || type === 'text') {
-          await input.fill('test', { timeout: 1000 }).catch(() => {});
+          await input.fill('test', { timeout: 1000 });
         }
         await page.waitForTimeout(100);
       }
-    } catch {}
+    } catch {
+      // Best-effort probe during audit — element may be stale or not interactable
+    }
   }
 }
 
-async function auditRoute(page: Page, route: string, label: string) {
+async function auditRoute(page: Page, route: string, label: string, collector: RouteErrors): Promise<void> {
+  collector.setLabel(label);
   try {
-    await page.goto(route, { waitUntil: 'domcontentloaded', timeout: 20000 }).catch(() => {});
+    await page.goto(route, { waitUntil: 'domcontentloaded', timeout: 20000 });
     await page.waitForTimeout(1500);
-    await clickAllTabsAndAccordions(page, label).catch(() => {});
-    await fillInputs(page, label).catch(() => {});
-    await clickAllButtons(page, label).catch(() => {});
+    await clickAllTabsAndAccordions(page);
+    await fillInputs(page);
+    await clickAllButtons(page);
     await page.waitForTimeout(500);
   } catch (err) {
-    consoleErrors.push({
-      url: label,
-      message: `Failed to load/audit: ${err}`,
-      source: 'audit',
-    });
+    collector.add({ message: `Failed to load/audit: ${err}`, source: 'audit' });
   }
+  collector.save();
 }
 
 test.setTimeout(600000);
 
 test.describe('Production Audit - All Browsers', () => {
-  test('full audit on chromium', async ({ page }) => {
-    await captureConsole(page, 'chromium-setup');
+  test('full audit on chromium', async ({ page }, testInfo) => {
+    const collector = new RouteErrors();
+    captureConsole(page, collector);
 
-    // Login with admin credentials from env vars
     const adminEmail = process.env.PLAYWRIGHT_USERNAME || 'admin@gestao.com';
     const adminPass = process.env.PLAYWRIGHT_PASSWORD || '';
 
     if (adminPass) {
-      await page.goto(`${PROD_URL}/login`, { waitUntil: 'domcontentloaded', timeout: 20000 }).catch(() => {});
-      await page.goto(PROD_URL, { waitUntil: 'domcontentloaded', timeout: 20000 }).catch(() => {});
+      collector.setLabel('login');
+      try {
+        await page.goto(`${PROD_URL}/login`, { waitUntil: 'domcontentloaded', timeout: 20000 });
+      } catch (err) {
+        collector.add({ message: `Login goto failed: ${err}`, source: 'audit' });
+      }
+      try {
+        await page.goto(PROD_URL, { waitUntil: 'domcontentloaded', timeout: 20000 });
+      } catch (err) {
+        collector.add({ message: `Post-login goto failed: ${err}`, source: 'audit' });
+      }
       const emailInput = page.locator('input[type="email"], input[name="email"], input[placeholder*="email" i]').first();
       const passInput = page.locator('input[type="password"], input[name="password"]').first();
       const submitBtn = page.locator('button[type="submit"], button:has-text("Entrar"), button:has-text("Login")').first();
@@ -125,55 +218,32 @@ test.describe('Production Audit - All Browsers', () => {
         await emailInput.fill(adminEmail);
         if (await passInput.isVisible({ timeout: 1000 }).catch(() => false)) {
           await passInput.fill(adminPass);
-          await submitBtn.click({ timeout: 5000 }).catch(() => {});
+          try {
+            await submitBtn.click({ timeout: 5000 });
+          } catch (err) {
+            collector.add({ message: `Login submit failed: ${err}`, source: 'audit' });
+          }
           await page.waitForTimeout(3000);
         }
       }
     }
 
-    // Enable debug mode via localStorage
     await page.evaluate(() => {
       localStorage.setItem('financia_debug_mode', '1');
     });
 
-    // Set debug_mode in session metadata
-    await captureConsole(page, `chromium-${ROUTES[0].label}`);
-
     for (const r of ROUTES) {
       const fullUrl = r.path === '/' ? PROD_URL : `${PROD_URL}${r.path}`;
-      await auditRoute(page, fullUrl, `chromium-${r.label}`);
+      await auditRoute(page, fullUrl, `chromium-${r.label}`, collector);
     }
 
-    test.expect.soft(consoleErrors.filter(e => e.source === 'pageerror').length).toBe(0);
-  });
-});
+    collector.save();
 
-test.describe('Production Audit Report', () => {
-  test('print all console errors found', async ({}, testInfo) => {
-    const errorsByType: Record<string, typeof consoleErrors> = {};
-    for (const err of consoleErrors) {
-      if (!errorsByType[err.source]) errorsByType[err.source] = [];
-      errorsByType[err.source].push(err);
-    }
-
-    const report = [
-      '=== PRODUCTION AUDIT REPORT ===',
-      `Total errors: ${consoleErrors.length}`,
-      '',
-      '--- Page Errors ---',
-      ...consoleErrors.filter(e => e.source === 'pageerror').map(e => `  [${e.url}] ${e.message}`),
-      '',
-      '--- Console Errors ---',
-      ...consoleErrors.filter(e => e.source === 'error').map(e => `  [${e.url}] ${e.message}`),
-      '',
-      '--- Console Warnings ---',
-      ...consoleErrors.filter(e => e.source === 'warning').map(e => `  [${e.url}] ${e.message}`),
-      '',
-      '--- Audit Failures ---',
-      ...consoleErrors.filter(e => e.source === 'audit').map(e => `  [${e.url}] ${e.message}`),
-    ].join('\n');
-
+    const report = collector.generateReport();
     console.log(report);
     await testInfo.attach('prod-audit-report', { body: report, contentType: 'text/plain' });
+
+    const flat = collector.getFlat();
+    test.expect.soft(flat.filter(e => e.source === 'pageerror').length).toBe(0);
   });
 });

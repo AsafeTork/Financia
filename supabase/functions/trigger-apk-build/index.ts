@@ -23,7 +23,7 @@ Deno.serve(async function (req: Request): Promise<Response> {
 
   const ghToken = Deno.env.get('GH_TOKEN');
   if (!ghToken) {
-    return jsonResponse(500, { ok: false, reason: 'no_token' });
+    return jsonResponse(200, { ok: false, reason: 'no_token' });
   }
 
   const supabaseUrl = Deno.env.get('SUPABASE_URL');
@@ -70,9 +70,12 @@ Deno.serve(async function (req: Request): Promise<Response> {
     );
 
     if (ghRes.status === 204) {
+      console.log('GitHub dispatch accepted', { clientName, logoUrl: logoUrl ? 'provided' : 'none' });
       return jsonResponse(200, { ok: true });
     }
-    return jsonResponse(200, { ok: false, reason: 'api_error', status: ghRes.status });
+    const ghBody = await ghRes.text().catch(() => '(no body)');
+    console.error('GitHub dispatch failed', { status: ghRes.status, body: ghBody });
+    return jsonResponse(200, { ok: false, reason: 'api_error', status: ghRes.status, detail: ghBody });
   } catch (err: any) {
     return jsonResponse(200, { ok: false, reason: 'network_error', detail: String(err?.message || err) });
   }
