@@ -249,13 +249,30 @@ export default function useBrandAppearance(brand, planInfo) {
   const effectiveTheme = computeEffectiveTheme(themePref, appBrand);
 
   const toggleTheme = useCallback(() => {
-    setThemePref(prev => {
-      const current = prev || (appBrand && appBrand.theme) || 'light';
-      const next = current === 'dark' ? 'light' : 'dark';
-      saveThemePref(next);
-      return next;
-    });
-  }, [appBrand]);
+    const el = document.documentElement;
+    const current = el.getAttribute('data-theme') || 'light';
+    const next = current === 'dark' ? 'light' : 'dark';
+
+    el.setAttribute('data-theme', next);
+    saveThemePref(next);
+
+    const brand = appBrandRef.current || {};
+    const tokens = collectTokensFromBrand(brand);
+    if (next === 'dark') {
+      THEME_CONTROLLED_VARS.forEach(function(k) { el.style.removeProperty(k); });
+      const brandOnly = {};
+      for (const k in tokens) {
+        if (Object.prototype.hasOwnProperty.call(tokens, k) && !THEME_CONTROLLED_VARS.has(k)) {
+          brandOnly[k] = tokens[k];
+        }
+      }
+      applyTokenDiff(el, brandOnly);
+    } else {
+      applyTokenDiff(el, tokens);
+    }
+
+    setTimeout(function() { setThemePref(next); }, 0);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -263,6 +280,8 @@ export default function useBrandAppearance(brand, planInfo) {
       if (cancelled) return;
       const el = document.documentElement;
       const theme = effectiveTheme === 'dark' ? 'dark' : 'light';
+      const currentTheme = el.getAttribute('data-theme');
+      if (currentTheme === theme) return;
       const tokens = collectTokensFromBrand(appBrand);
       if (theme === 'dark') {
         el.setAttribute('data-theme', 'dark');

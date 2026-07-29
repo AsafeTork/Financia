@@ -37,9 +37,8 @@ export default function useBrandStudio(brand, planInfo, onSave, toast) {
   }, []);
 
   useEffect(() => {
-    if (historyIndex >= 0 && history[historyIndex]) enterPreviewMode(history[historyIndex]);
     return () => { exitPreviewMode(); };
-  }, [historyIndex, history]);
+  }, []);
 
   // Fixed: added proper dependencies
   const presetCats = useMemo(() => getPresetCategories(), []);
@@ -56,23 +55,31 @@ export default function useBrandStudio(brand, planInfo, onSave, toast) {
   }, [brand, historyIndex]);
 
   const undo = useCallback(() => {
-    if (historyIndex > 0) setHistoryIndex(i => i - 1);
-  }, [historyIndex]);
+    const i = historyIndex - 1;
+    if (i < 0) return;
+    setHistoryIndex(i);
+    if (history[i]) enterPreviewMode(history[i]);
+  }, [historyIndex, history]);
 
   const redo = useCallback(() => {
-    if (historyIndex < history.length - 1) setHistoryIndex(i => i + 1);
+    const i = historyIndex + 1;
+    if (i >= history.length) return;
+    setHistoryIndex(i);
+    if (history[i]) enterPreviewMode(history[i]);
   }, [historyIndex, history]);
 
   const restoreFromHistory = useCallback(async (idx) => {
     const entry = history[idx];
     if (!entry) return;
     await onSave(entry);
+    exitPreviewMode();
     setHistoryIndex(idx);
     if (toast) toast('Versao restaurada.', 'success');
   }, [history, onSave, toast]);
 
   const savePlanOverride = useCallback(async (planId, overrideData) => {
     await onSave(applyPlanOverride(brand, planId, overrideData));
+    exitPreviewMode();
   }, [brand, onSave]);
 
   const savePlanLogo = useCallback(async (planId, logoColors) => {
@@ -89,6 +96,7 @@ export default function useBrandStudio(brand, planInfo, onSave, toast) {
     saveToHistory(brand);
     const updated = { ...brand, brand_config: JSON.stringify(cfg) };
     await onSave(updated);
+    exitPreviewMode();
     if (toast) toast(logoColors ? `Logo personalizada salva para ${planId}!` : `Plano ${planId} agora usa a logo global.`, 'success');
   }, [brand, onSave, toast, saveToHistory]);
 
@@ -104,6 +112,7 @@ export default function useBrandStudio(brand, planInfo, onSave, toast) {
     const cfg = typeof preset.config === 'string' ? JSON.parse(preset.config) : preset.config;
     saveToHistory(brand);
     await onSave({ ...brand, brand_config: JSON.stringify(cfg) });
+    exitPreviewMode();
     if (toast) toast('Preset aplicado com sucesso!', 'success');
   }, [brand, onSave, toast, saveToHistory]);
 
@@ -117,6 +126,7 @@ export default function useBrandStudio(brand, planInfo, onSave, toast) {
     if (!proposed || !proposed.success || !proposed.proposedBrand) return;
     saveToHistory(brand);
     await onSave(proposed.proposedBrand);
+    exitPreviewMode();
     setProposed(null);
     if (toast) toast('Alteracoes aprovadas e aplicadas!', 'success');
   }, [proposed, brand, onSave, toast, saveToHistory]);
@@ -140,6 +150,7 @@ export default function useBrandStudio(brand, planInfo, onSave, toast) {
       secondary_logo_size: brandGlobal.secondary_logo_size || 40,
     };
     await onSave(updated);
+    exitPreviewMode();
     if (toast) toast('Identidade global salva!', 'success');
   }, [brand, brandGlobal, onSave, toast, saveToHistory]);
 

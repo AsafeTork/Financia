@@ -2,6 +2,11 @@ import { sb } from './supabase.js';
 import { now } from './utils.js';
 import { ldb, toLocal, getLastSync, setLastSync, FIELD_MAP, pickFields } from './dexie.js';
 
+var consecutiveFailures = 0;
+var MAX_CONSECUTIVE_FAILURES = 5;
+var BACKOFF_MS = 60000;
+var lastFailureTs = 0;
+
 const PROFILE_WRITE_FIELDS = ['user_id','name','logo','color','color_secondary','color_accent','theme','logo_url','white_label','phone','niche','custom_palette','visual_version','brand_config'];
 
 var validHex = function(v) { return typeof v === 'string' && /^#[0-9a-fA-F]{6}$/.test(v); };
@@ -96,9 +101,13 @@ const syncProfiles = async function(uid) {
 
 export const syncAll = async function(uid) {
   if (!uid || !navigator.onLine) return false;
+  if (consecutiveFailures >= MAX_CONSECUTIVE_FAILURES) {
+    if (Date.now() - lastFailureTs < BACKOFF_MS) return false;
+    consecutiveFailures = 0;
+  }
   try {
     const ts = now();
-    const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 15000));
+    const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 3000));
     const results = await Promise.race([
       Promise.all([
         syncTable(uid, 'transactions', ldb.transactions, function(r) { return { desc: r.description, cat: r.category }; }),
@@ -109,8 +118,18 @@ export const syncAll = async function(uid) {
       timeout,
     ]);
     await setLastSync(ts, uid);
+    consecutiveFailures = 0;
     return results.every(Boolean);
-  } catch (e) { console.error('[sync] syncAll failed:', e); return false; }
+  } catch (e) {
+    consecutiveFailures++;
+    lastFailureTs = Date.now();
+    console.error('[sync] syncAll failed:', e);
+    return false;
+  }
+};
+
+export const resetSyncBackoff = function() {
+  consecutiveFailures = 0;
 };
 
 export const fetchClients = async function() {
