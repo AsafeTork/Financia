@@ -79,13 +79,13 @@ describe('syncAll', function() {
 
   it('retorna false sem uid', async function() {
     const r = await syncAll(null);
-    expect(r).toBe(false);
+    expect(r.ok).toBe(false);
   });
 
   it('retorna false se offline', async function() {
     navigator.onLine = false;
     const r = await syncAll('u1');
-    expect(r).toBe(false);
+    expect(r.ok).toBe(false);
   });
 
   it('executa sync e retorna true', async function() {
@@ -110,7 +110,7 @@ describe('syncAll', function() {
     } });
 
     const r = await syncAll('u1');
-    expect(r).toBe(true);
+    expect(r.ok).toBe(true);
   });
 });
 
@@ -317,7 +317,7 @@ describe('benchmarks', function() {
     const duration = performance.now() - start;
 
     console.log(`QA-04 benchmark: syncAll took ${duration.toFixed(2)}ms`);
-    expect(result).toBe(true);
+    expect(result.ok).toBe(true);
     expect(duration).toBeLessThan(5000);
   });
 

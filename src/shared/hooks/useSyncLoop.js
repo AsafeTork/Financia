@@ -27,11 +27,13 @@ export function useSyncLoop(props, ctx) {
     if (Date.now() - lastSyncEndRef.current < SYNC_COOLDOWN_MS) return;
     syncingRef.current = true;
     if (showStatus) updateStatus('syncing');
-    syncAll(userId).then(function(ok) {
+    syncAll(userId).then(function(result) {
       lastSyncEndRef.current = Date.now();
       syncingRef.current = false;
+      var ok = result.ok !== false;
+      var changed = result.changed === true;
       if (ok) {
-        loadFromLocal(userId);
+        if (changed) loadFromLocal(userId);
         if (showStatus) {
           updateStatus('ok');
           setTimeout(function() { updateStatus('idle'); }, 3000);

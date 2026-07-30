@@ -34,9 +34,7 @@ export function useDataLoader(props) {
     var allTx = txs;
     try {
       var rlist = await getRecurring(userId);
-      var pend = await pendingRecurring(userId, rlist, periodOf(new Date()), function(id) {
-        return ldb.transactions.get(id).then(function(r) { return !!r; });
-      });
+      var pend = await pendingRecurring(userId, rlist, periodOf(new Date()));
       if (pend.length > 0) {
         for (var gi = 0; gi < pend.length; gi++) { pend[gi].registered_by = (profile && profile.name) || 'Recorrente'; }
         await ldb.transactions.bulkPut(pend);

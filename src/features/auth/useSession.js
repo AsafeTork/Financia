@@ -109,11 +109,13 @@ export function useSession(p) {
         setSyncStatus('syncing');
         var res = await Promise.all([syncAll(userId), fetchRole(userId)]);
         if (loadingRef.current !== token) return;
-        var ok = res[0], admin = res[1];
+        var syncResult = res[0], admin = res[1];
+        var ok = syncResult.ok !== false;
+        var changed = syncResult.changed === true;
         setIsAdminDB(admin);
         if (!admin) sessionStorage.removeItem('is_admin');
         if (ok) {
-          await loadFromLocal(userId);
+          if (changed) await loadFromLocal(userId);
           if (loadingRef.current !== token) return;
           setSyncStatus('ok');
           var st1 = {};

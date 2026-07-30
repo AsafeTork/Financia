@@ -52,6 +52,10 @@ var AppRoutes = React.memo(function AppRoutes(props) {
     return <EmailView brand={brand} toast={toast}/>;
   }, [brand, toast]);
 
+  var dashboardElement = useMemo(function() {
+    return <Dashboard tx={tx} products={products} brand={brand} onNav={onNav} planInfo={planInfo} lossesCount={losses.length} onUpgrade={onUpgradePlano} loading={dataLoading}/>;
+  }, [tx, products, brand, onNav, planInfo, losses.length, onUpgradePlano, dataLoading]);
+
   var reportElement = useMemo(function() {
     return <ReportView tx={tx} brand={brand} toast={toast} onNav={onNav} planInfo={planInfo}/>;
   }, [tx, brand, toast, onNav, planInfo]);
@@ -59,8 +63,8 @@ var AppRoutes = React.memo(function AppRoutes(props) {
   return (
     <Suspense fallback={<PageSkeleton/>}>
       <Routes>
-        <Route path="/" element={<Dashboard tx={tx} products={products} brand={brand} onNav={onNav} planInfo={planInfo} lossesCount={losses.length} onUpgrade={onUpgradePlano} loading={dataLoading}/>} />
-        <Route path="/dashboard" element={<Dashboard tx={tx} products={products} brand={brand} onNav={onNav} planInfo={planInfo} lossesCount={losses.length} onUpgrade={onUpgradePlano} loading={dataLoading}/>} />
+        <Route path="/" element={dashboardElement} />
+        <Route path="/dashboard" element={dashboardElement} />
         <Route path="/income" element={incomeElement} />
         <Route path="/expense" element={expenseElement} />
         <Route path="/inventory" element={inventoryElement} />

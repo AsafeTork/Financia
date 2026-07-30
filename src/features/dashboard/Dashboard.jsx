@@ -6,15 +6,16 @@ import AiInsightsCard from '../../shared/ui/AiInsightsCard.jsx';
 import { fmt, fmtDate, today, prevDays, brandAlpha } from '../../lib/utils.js';
 import { PLAN_LIMITS, effectivePlan } from '../../lib/constants.js';
 
+var PERIODS = [
+  { v:'month',    l:'Mês atual' },
+  { v:'3months',  l:'Últimos 3 meses' },
+  { v:'6months',  l:'Últimos 6 meses' },
+  { v:'year',     l:'Ano atual' },
+  { v:'12months', l:'Últimos 12 meses' },
+];
+
 export default React.memo(function Dashboard({ tx, products, brand, onNav, planInfo, lossesCount, onUpgrade, loading }) {
   var [period, setPeriod] = useState('month');
-  var periods = [
-    { v:'month',    l:'Mês atual' },
-    { v:'3months',  l:'Últimos 3 meses' },
-    { v:'6months',  l:'Últimos 6 meses' },
-    { v:'year',     l:'Ano atual' },
-    { v:'12months', l:'Últimos 12 meses' },
-  ];
   var now_d = new Date();
   var pStart = period === 'year'
     ? new Date(now_d.getFullYear(), 0, 1)
@@ -63,12 +64,14 @@ export default React.memo(function Dashboard({ tx, products, brand, onNav, planI
 
   var plan     = effectivePlan(planInfo);
   var lowStock = useMemo(function() { return products.filter(function(p) { return p.stock != null && p.stock <= 5; }); }, [products]);
-  var usage = [
-    { key: 'transactions', label: 'Transacoes', used: tx.length,        limit: PLAN_LIMITS.free.transactions, color: brand.color },
-    { key: 'products',     label: 'Produtos',   used: products.length,  limit: PLAN_LIMITS.free.products,     color: '#0f9d6c' },
-    { key: 'losses',       label: 'Perdas',     used: lossesCount || 0, limit: PLAN_LIMITS.free.losses,       color: '#8b5cf6' },
-  ];
-  var reachedCats = usage.filter(function(u) { return u.used >= u.limit; });
+  var usage = useMemo(function() {
+    return [
+      { key: 'transactions', label: 'Transacoes', used: tx.length,        limit: PLAN_LIMITS.free.transactions, color: brand.color },
+      { key: 'products',     label: 'Produtos',   used: products.length,  limit: PLAN_LIMITS.free.products,     color: '#0f9d6c' },
+      { key: 'losses',       label: 'Perdas',     used: lossesCount || 0, limit: PLAN_LIMITS.free.losses,       color: '#8b5cf6' },
+    ];
+  }, [tx.length, products.length, lossesCount, brand.color]);
+  var reachedCats = useMemo(function() { return usage.filter(function(u) { return u.used >= u.limit; }); }, [usage]);
   var anyReached = plan === 'free' && reachedCats.length > 0;
   var recent   = useMemo(function() { return tx.slice().sort(function(a, b) { return b.date.localeCompare(a.date); }).slice(0, 8); }, [tx]);
   var hour     = new Date().getHours();
@@ -89,7 +92,7 @@ export default React.memo(function Dashboard({ tx, products, brand, onNav, planI
         <select aria-label="Periodo" value={period} onChange={function(e){setPeriod(e.target.value)}}
           className="text-xs rounded-xl px-3 py-2 border min-h-[44px] flex-shrink-0"
           style={{background:'var(--bg-card)', color:'var(--text-main)', borderColor:'var(--border)'}}>
-          {periods.map(function(p){return <option key={p.v} value={p.v}>{p.l}</option>})}
+          {PERIODS.map(function(p){return <option key={p.v} value={p.v}>{p.l}</option>})}
         </select>
       </div>
 

@@ -27,10 +27,10 @@ export default React.memo(function ReportView({ tx, brand, toast, onNav, planInf
     if (navMonths.indexOf(month) === -1) setMonth(curRealMonth);
   }, [navMonths, curRealMonth, month]);
 
-  var filtered = tx.filter(function(t) { return t.date.startsWith(month); });
-  var income  = filtered.filter(function(t) { return t.type === 'income'; }).reduce(function(s, t) { return s + t.amount; }, 0);
-  var expense = filtered.filter(function(t) { return t.type === 'expense'; }).reduce(function(s, t) { return s + t.amount; }, 0);
-  var bycat   = filtered.filter(function(t) { return t.type === 'expense'; }).reduce(function(a, t) { var k = t.category || 'Outro'; a[k] = (a[k] || 0) + t.amount; return a; }, {});
+  var filtered = useMemo(function() { return tx.filter(function(t) { return t.date.startsWith(month); }); }, [tx, month]);
+  var income  = useMemo(function() { return filtered.filter(function(t) { return t.type === 'income'; }).reduce(function(s, t) { return s + t.amount; }, 0); }, [filtered]);
+  var expense = useMemo(function() { return filtered.filter(function(t) { return t.type === 'expense'; }).reduce(function(s, t) { return s + t.amount; }, 0); }, [filtered]);
+  var bycat   = useMemo(function() { return filtered.filter(function(t) { return t.type === 'expense'; }).reduce(function(a, t) { var k = t.category || 'Outro'; a[k] = (a[k] || 0) + t.amount; return a; }, {}); }, [filtered]);
 
   var monthIdx = navMonths.indexOf(month);
   var prevDisabled = monthIdx <= 0;

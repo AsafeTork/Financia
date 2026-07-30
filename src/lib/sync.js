@@ -23,8 +23,10 @@ var runLimited = async function(items, fn) {
   return results;
 };
 
-const syncTable = async function(uid, table, ldbTable, mapLocal) {
-  if (!navigator.onLine) return true;
+var MAX_PAGINATION_PAGES = 50;
+
+const syncTable = async function(uid, table, ldbTable, mapLocal, signal) {
+  if (!navigator.onLine) return { ok: true, changed: false };
   const lastSync = await getLastSync(uid);
   const fields = FIELD_MAP[table] || [];
 
@@ -54,18 +56,19 @@ const syncTable = async function(uid, table, ldbTable, mapLocal) {
   var selectFields = (FIELD_MAP[table] || ['id']).join(', ');
   var allRemote = [];
   var cursor = null;
-  while (true) {
+  for (var page = 0; page < MAX_PAGINATION_PAGES; page++) {
+    if (signal && signal.aborted) break;
     var query = sb.from(table).select(selectFields).eq('user_id', uid).gte('updated_at', lastSync).order('updated_at', {ascending:true}).limit(500);
     if (cursor) query = query.gt('updated_at', cursor);
     var batch = await query;
-    if (batch.error) return false;
+    if (batch.error) return { ok: false, changed: false };
     var rows = batch.data || [];
     if (rows.length === 0) break;
-    allRemote = allRemote.concat(rows);
+    for (var j = 0; j < rows.length; j++) allRemote.push(rows[j]);
     if (rows.length < 500) break;
     cursor = rows[rows.length - 1].updated_at;
   }
-  if (allRemote.length === 0) return true;
+  if (allRemote.length === 0) return { ok: true, changed: false };
 
   var remote = allRemote;
   const remoteIds = remote.map(function(r) { return r.id; });
@@ -79,7 +82,7 @@ const syncTable = async function(uid, table, ldbTable, mapLocal) {
   });
   if (rowsToPut.length > 0) await ldbTable.bulkPut(rowsToPut);
 
-  return true;
+  return { ok: true, changed: true };
 };
 
 const syncProfiles = async function(uid) {
@@ -112,31 +115,34 @@ const syncProfiles = async function(uid) {
 };
 
 export const syncAll = async function(uid) {
-  if (!uid || !navigator.onLine) return false;
+  if (!uid || !navigator.onLine) return { ok: false, changed: false };
   if (consecutiveFailures >= MAX_CONSECUTIVE_FAILURES) {
-    if (Date.now() - lastFailureTs < BACKOFF_MS) return false;
+    if (Date.now() - lastFailureTs < BACKOFF_MS) return { ok: false, changed: false };
     consecutiveFailures = 0;
   }
+  var controller = new AbortController();
+  var timer = setTimeout(function() { controller.abort(); }, 3000);
   try {
     const ts = now();
-    const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 3000));
-    const results = await Promise.race([
-      Promise.all([
-        syncTable(uid, 'transactions', ldb.transactions, function(r) { return { desc: r.description, cat: r.category }; }),
-        syncTable(uid, 'products',     ldb.products,     function() { return {}; }),
-        syncTable(uid, 'losses',       ldb.losses,       function(r) { return { desc: r.description }; }),
-        syncProfiles(uid),
-      ]),
-      timeout,
+    const results = await Promise.all([
+      syncTable(uid, 'transactions', ldb.transactions, function(r) { return { desc: r.description, cat: r.category }; }, controller.signal),
+      syncTable(uid, 'products',     ldb.products,     function() { return {}; }, controller.signal),
+      syncTable(uid, 'losses',       ldb.losses,       function(r) { return { desc: r.description }; }, controller.signal),
+      syncProfiles(uid),
     ]);
+    clearTimeout(timer);
+    var allOk = results.every(function(r) { return r.ok !== false; });
+    var anyChanged = results.some(function(r) { return r.changed === true; });
     await setLastSync(ts, uid);
     consecutiveFailures = 0;
-    return results.every(Boolean);
+    return { ok: allOk, changed: anyChanged };
   } catch (e) {
+    clearTimeout(timer);
+    controller.abort();
     consecutiveFailures++;
     lastFailureTs = Date.now();
     console.error('[sync] syncAll failed:', e);
-    return false;
+    return { ok: false, changed: false };
   }
 };
 

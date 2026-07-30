@@ -75,17 +75,24 @@ export function buildRecurringRow(uid, tpl, period, rb) {
 }
 
 // Calcula as transacoes recorrentes do mes que ainda nao existem localmente.
-// existsFn(id) -> Promise<bool>. Retorna apenas as linhas novas a inserir.
+// Usa bulkGet para verificar existencia em paralelo (1 chamada IDB em vez de N).
 export async function pendingRecurring(uid, list, period, existsFn) {
   var active = activeTemplates(list);
   if (!active.length) return [];
   var skips = await getSkips(uid);
-  var out = [];
+  var toCheck = [];
+  var meta = [];
   for (var i = 0; i < active.length; i++) {
     var id = recurringId(uid, active[i], period);
     if (skips.indexOf(id) !== -1) continue;
-    var exists = await existsFn(id);
-    if (!exists) out.push(buildRecurringRow(uid, active[i], period, active[i].rb));
+    toCheck.push(id);
+    meta.push(active[i]);
+  }
+  if (!toCheck.length) return [];
+  var existing = await ldb.transactions.bulkGet(toCheck);
+  var out = [];
+  for (var j = 0; j < existing.length; j++) {
+    if (!existing[j]) out.push(buildRecurringRow(uid, meta[j], period, meta[j].rb));
   }
   return out;
 }
