@@ -1,7 +1,7 @@
 # Relatório de Erros do CI
 
-**Última atualização:** 2026-07-30 00:40 UTC
-**Commit:** `ea58981be7c8a37892f7c1b5947c2785fbde9f60`
+**Última atualização:** 2026-07-30 01:18 UTC
+**Commit:** `07de0796143058a28a10f7b09409b04d432f6db3`
 **Branch:** `main`
 
 ---
@@ -20,20 +20,6 @@
 
 ```
 
-/home/runner/work/Financia/Financia/src/App.jsx
-    3:10  warning  'INIT_BRAND' is defined but never used. Allowed unused vars must match /^_/u                                                                                                                                                    @typescript-eslint/no-unused-vars
-   71:5   error    'setBrand' is not defined                                                                                                                                                                                                       no-undef
-  110:72  error    'brand' is not defined                                                                                                                                                                                                          no-undef
-  193:33  error    'brand' is not defined                                                                                                                                                                                                          no-undef
-  202:6   warning  React Hook useEffect has an unnecessary dependency: 'brand'. Either exclude it or remove the dependency array. Outer scope values like 'brand' aren't valid dependencies because mutating them doesn't re-render the component  react-hooks/exhaustive-deps
-  202:29  error    'brand' is not defined                                                                                                                                                                                                          no-undef
-  293:27  error    'brand' is not defined                                                                                                                                                                                                          no-undef
-  305:29  error    'brand' is not defined                                                                                                                                                                                                          no-undef
-  310:26  error    'brand' is not defined                                                                                                                                                                                                          no-undef
-  324:37  error    'brand' is not defined                                                                                                                                                                                                          no-undef
-  330:38  error    'brand' is not defined                                                                                                                                                                                                          no-undef
-  340:31  error    'brand' is not defined                                                                                                                                                                                                          no-undef
-
 /home/runner/work/Financia/Financia/src/features/admin/AdminPanel.jsx
   67:6  warning  React Hook useCallback has an unnecessary dependency: 'session'. Either exclude it or remove the dependency array  react-hooks/exhaustive-deps
 
@@ -49,7 +35,7 @@
 /home/runner/work/Financia/Financia/src/shared/hooks/useSyncLoop.js
   17:7  warning  'canSync' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
 
-✖ 17 problems (10 errors, 7 warnings)
+✖ 5 problems (0 errors, 5 warnings)
 ```
 
 ---
@@ -79,32 +65,32 @@ computing gzip size...
 [2mdist/[22m[2massets/[22m[36msupabase-storage-vwDjcXxQ.js    [39m[1m[2m  0.00 kB[22m[1m[22m[2m │ gzip:  0.02 kB[22m
 [2mdist/[22m[2massets/[22m[36msupabase-auth-vwDjcXxQ.js       [39m[1m[2m  0.00 kB[22m[1m[22m[2m │ gzip:  0.02 kB[22m
 [2mdist/[22m[2massets/[22m[36museDebouncedValue-B0hKsm5O.js   [39m[1m[2m  0.21 kB[22m[1m[22m[2m │ gzip:  0.17 kB[22m
-[2mdist/[22m[2massets/[22m[36mlogoUtils-RtabttkU.js           [39m[1m[2m  0.89 kB[22m[1m[22m[2m │ gzip:  0.47 kB[22m
-[2mdist/[22m[2massets/[22m[36maiClient-CA6IpAxU.js            [39m[1m[2m  2.87 kB[22m[1m[22m[2m │ gzip:  1.52 kB[22m
+[2mdist/[22m[2massets/[22m[36mlogoUtils-DQlqqxw1.js           [39m[1m[2m  0.89 kB[22m[1m[22m[2m │ gzip:  0.47 kB[22m
+[2mdist/[22m[2massets/[22m[36maiClient-dwKUbPiM.js            [39m[1m[2m  2.87 kB[22m[1m[22m[2m │ gzip:  1.52 kB[22m
 [2mdist/[22m[2massets/[22m[36mradix-E4vWxl6g.js               [39m[1m[2m  2.95 kB[22m[1m[22m[2m │ gzip:  1.41 kB[22m
 [2mdist/[22m[2massets/[22m[36mvendor-scheduler-CbiHYZlt.js    [39m[1m[2m  4.10 kB[22m[1m[22m[2m │ gzip:  1.78 kB[22m
 [2mdist/[22m[2massets/[22m[36mexporters-CCVTeScg.js           [39m[1m[2m  4.23 kB[22m[1m[22m[2m │ gzip:  1.80 kB[22m
-[2mdist/[22m[2massets/[22m[36mEmailView-C3gmWzIC.js           [39m[1m[2m  5.15 kB[22m[1m[22m[2m │ gzip:  2.08 kB[22m
-[2mdist/[22m[2massets/[22m[36mCardPreview-KFPeMdTe.js         [39m[1m[2m  6.29 kB[22m[1m[22m[2m │ gzip:  2.78 kB[22m
-[2mdist/[22m[2massets/[22m[36mSaleForm-HrHvwtyv.js            [39m[1m[2m  7.45 kB[22m[1m[22m[2m │ gzip:  2.55 kB[22m
+[2mdist/[22m[2massets/[22m[36mEmailView-BYwiBhDZ.js           [39m[1m[2m  5.15 kB[22m[1m[22m[2m │ gzip:  2.08 kB[22m
+[2mdist/[22m[2massets/[22m[36mCardPreview-rmt99Hob.js         [39m[1m[2m  6.29 kB[22m[1m[22m[2m │ gzip:  2.78 kB[22m
+[2mdist/[22m[2massets/[22m[36mSaleForm-CAk2PjWQ.js            [39m[1m[2m  7.45 kB[22m[1m[22m[2m │ gzip:  2.55 kB[22m
 [2mdist/[22m[2massets/[22m[36mPrivacyPolicy-BkGvRqJc.js       [39m[1m[2m  7.96 kB[22m[1m[22m[2m │ gzip:  3.45 kB[22m
 [2mdist/[22m[2massets/[22m[36mTermsOfService-c0xlNlJ-.js      [39m[1m[2m  8.70 kB[22m[1m[22m[2m │ gzip:  3.67 kB[22m
-[2mdist/[22m[2massets/[22m[36mReportView-B0nPVIFC.js          [39m[1m[2m 10.37 kB[22m[1m[22m[2m │ gzip:  3.14 kB[22m
+[2mdist/[22m[2massets/[22m[36mReportView-Dv12YKT8.js          [39m[1m[2m 10.37 kB[22m[1m[22m[2m │ gzip:  3.14 kB[22m
 [2mdist/[22m[2massets/[22m[36mstripe-BFjv1rCu.js              [39m[1m[2m 13.00 kB[22m[1m[22m[2m │ gzip:  4.88 kB[22m
-[2mdist/[22m[2massets/[22m[36mTxView-BD3Dlx1O.js              [39m[1m[2m 14.60 kB[22m[1m[22m[2m │ gzip:  4.78 kB[22m
-[2mdist/[22m[2massets/[22m[36mInventoryView-Lo67QsYv.js       [39m[1m[2m 19.97 kB[22m[1m[22m[2m │ gzip:  5.52 kB[22m
+[2mdist/[22m[2massets/[22m[36mTxView-DVVaVBRI.js              [39m[1m[2m 14.60 kB[22m[1m[22m[2m │ gzip:  4.78 kB[22m
+[2mdist/[22m[2massets/[22m[36mInventoryView-B_GWzrLZ.js       [39m[1m[2m 19.97 kB[22m[1m[22m[2m │ gzip:  5.52 kB[22m
 [2mdist/[22m[2massets/[22m[36mquery-ByP6YL3J.js               [39m[1m[2m 24.61 kB[22m[1m[22m[2m │ gzip:  7.40 kB[22m
-[2mdist/[22m[2massets/[22m[36mDashboard-C8pMjV-X.js           [39m[1m[2m 27.71 kB[22m[1m[22m[2m │ gzip:  7.52 kB[22m
-[2mdist/[22m[2massets/[22m[36mPlansView-CE7SG02n.js           [39m[1m[2m 31.26 kB[22m[1m[22m[2m │ gzip:  8.33 kB[22m
-[2mdist/[22m[2massets/[22m[36mLanding-C8cQw_Vb.js             [39m[1m[2m 32.00 kB[22m[1m[22m[2m │ gzip:  7.66 kB[22m
-[2mdist/[22m[2massets/[22m[36mSettingsView-0fQJM-Ve.js        [39m[1m[2m 35.76 kB[22m[1m[22m[2m │ gzip:  9.86 kB[22m
-[2mdist/[22m[2massets/[22m[36mBrandStudioView-Bc8RD0Zg.js     [39m[1m[2m 37.25 kB[22m[1m[22m[2m │ gzip:  9.72 kB[22m
-[2mdist/[22m[2massets/[22m[36mAdminPanel-evoJEZtF.js          [39m[1m[2m 45.79 kB[22m[1m[22m[2m │ gzip: 13.49 kB[22m
+[2mdist/[22m[2massets/[22m[36mDashboard-CdvlCtcK.js           [39m[1m[2m 27.71 kB[22m[1m[22m[2m │ gzip:  7.52 kB[22m
+[2mdist/[22m[2massets/[22m[36mPlansView-Co7zslhO.js           [39m[1m[2m 31.26 kB[22m[1m[22m[2m │ gzip:  8.33 kB[22m
+[2mdist/[22m[2massets/[22m[36mLanding-oMW4kpXC.js             [39m[1m[2m 32.00 kB[22m[1m[22m[2m │ gzip:  7.66 kB[22m
+[2mdist/[22m[2massets/[22m[36mSettingsView-D1QhcMP2.js        [39m[1m[2m 35.76 kB[22m[1m[22m[2m │ gzip:  9.86 kB[22m
+[2mdist/[22m[2massets/[22m[36mBrandStudioView-BbAEKDo-.js     [39m[1m[2m 37.25 kB[22m[1m[22m[2m │ gzip:  9.72 kB[22m
+[2mdist/[22m[2massets/[22m[36mAdminPanel-2Yxl1isn.js          [39m[1m[2m 45.79 kB[22m[1m[22m[2m │ gzip: 13.49 kB[22m
 [2mdist/[22m[2massets/[22m[36mvendor-CdDn-nhL.js              [39m[1m[2m 52.89 kB[22m[1m[22m[2m │ gzip: 16.59 kB[22m
 [2mdist/[22m[2massets/[22m[36mdexie-2jmnBxhj.js               [39m[1m[2m 74.29 kB[22m[1m[22m[2m │ gzip: 26.62 kB[22m
-[2mdist/[22m[2massets/[22m[36mindex-C3y9EFsT.js               [39m[1m[2m144.13 kB[22m[1m[22m[2m │ gzip: 43.16 kB[22m
+[2mdist/[22m[2massets/[22m[36mindex-CVvdMwsA.js               [39m[1m[2m144.14 kB[22m[1m[22m[2m │ gzip: 43.15 kB[22m
 [2mdist/[22m[2massets/[22m[36mvendor-react-Bj2_g79g.js        [39m[1m[2m175.06 kB[22m[1m[22m[2m │ gzip: 57.38 kB[22m
-[32m✓ built in 3.62s[39m
+[32m✓ built in 3.65s[39m
 ```
 
 ---
@@ -143,8 +129,8 @@ null
 
 [2m Test Files [22m [1m[31m3 failed[39m[22m[2m | [22m[1m[32m26 passed[39m[22m[90m (29)[39m
 [2m      Tests [22m [1m[31m13 failed[39m[22m[2m | [22m[1m[32m633 passed[39m[22m[90m (646)[39m
-[2m   Start at [22m 00:40:02
-[2m   Duration [22m 19.68s[2m (transform 935ms, setup 16.99s, import 2.78s, tests 5.19s, environment 26.84s)[22m
+[2m   Start at [22m 01:18:04
+[2m   Duration [22m 20.20s[2m (transform 874ms, setup 17.66s, import 2.78s, tests 5.25s, environment 27.52s)[22m
 
 
 ::error file=/home/runner/work/Financia/Financia/src/lib/sync.test.js,title=src/lib/sync.test.js > fetchClients > retorna array vazio no erro,line=130,column=21::AssertionError: expected null to deeply equal []%0A%0A- Expected:%0A[]%0A%0A+ Received:%0Anull%0A%0A ❯ src/lib/sync.test.js:130:21%0A%0A
@@ -203,4 +189,4 @@ null
 
 | Data | Correção | Commit |
 |------|----------|--------|
-| 2026-07-30 00:40 UTC | Gerado automaticamente pelo workflow | `ea58981be7c8a37892f7c1b5947c2785fbde9f60` |
+| 2026-07-30 01:18 UTC | Gerado automaticamente pelo workflow | `07de0796143058a28a10f7b09409b04d432f6db3` |
