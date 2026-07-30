@@ -1,7 +1,7 @@
 # Relatório de Erros do CI
 
-**Última atualização:** 2026-07-30 00:07 UTC
-**Commit:** `9bac04c770bb09fadeba7e49935b48cc10af0556`
+**Última atualização:** 2026-07-30 00:23 UTC
+**Commit:** `1d33bb948b702250f7fb4265fcfe49855f710ce8`
 **Branch:** `main`
 
 ---
@@ -65,32 +65,32 @@ computing gzip size...
 [2mdist/[22m[2massets/[22m[36msupabase-storage-vwDjcXxQ.js    [39m[1m[2m  0.00 kB[22m[1m[22m[2m │ gzip:  0.02 kB[22m
 [2mdist/[22m[2massets/[22m[36msupabase-auth-vwDjcXxQ.js       [39m[1m[2m  0.00 kB[22m[1m[22m[2m │ gzip:  0.02 kB[22m
 [2mdist/[22m[2massets/[22m[36museDebouncedValue-B0hKsm5O.js   [39m[1m[2m  0.21 kB[22m[1m[22m[2m │ gzip:  0.17 kB[22m
-[2mdist/[22m[2massets/[22m[36mlogoUtils-DFKRJDEE.js           [39m[1m[2m  0.89 kB[22m[1m[22m[2m │ gzip:  0.47 kB[22m
-[2mdist/[22m[2massets/[22m[36maiClient-DTalXFBW.js            [39m[1m[2m  2.87 kB[22m[1m[22m[2m │ gzip:  1.52 kB[22m
+[2mdist/[22m[2massets/[22m[36mlogoUtils-D4UFWcJn.js           [39m[1m[2m  0.89 kB[22m[1m[22m[2m │ gzip:  0.47 kB[22m
+[2mdist/[22m[2massets/[22m[36maiClient-Bcw848uf.js            [39m[1m[2m  2.87 kB[22m[1m[22m[2m │ gzip:  1.52 kB[22m
 [2mdist/[22m[2massets/[22m[36mradix-E4vWxl6g.js               [39m[1m[2m  2.95 kB[22m[1m[22m[2m │ gzip:  1.41 kB[22m
 [2mdist/[22m[2massets/[22m[36mvendor-scheduler-CbiHYZlt.js    [39m[1m[2m  4.10 kB[22m[1m[22m[2m │ gzip:  1.78 kB[22m
 [2mdist/[22m[2massets/[22m[36mexporters-CCVTeScg.js           [39m[1m[2m  4.23 kB[22m[1m[22m[2m │ gzip:  1.80 kB[22m
-[2mdist/[22m[2massets/[22m[36mEmailView-BkUr4iDI.js           [39m[1m[2m  5.15 kB[22m[1m[22m[2m │ gzip:  2.08 kB[22m
-[2mdist/[22m[2massets/[22m[36mCardPreview-DSYAEIXi.js         [39m[1m[2m  6.29 kB[22m[1m[22m[2m │ gzip:  2.78 kB[22m
-[2mdist/[22m[2massets/[22m[36mSaleForm-LN0lXW_h.js            [39m[1m[2m  7.45 kB[22m[1m[22m[2m │ gzip:  2.55 kB[22m
+[2mdist/[22m[2massets/[22m[36mEmailView-CC8BQRP4.js           [39m[1m[2m  5.15 kB[22m[1m[22m[2m │ gzip:  2.08 kB[22m
+[2mdist/[22m[2massets/[22m[36mCardPreview-CuHXN2qk.js         [39m[1m[2m  6.29 kB[22m[1m[22m[2m │ gzip:  2.78 kB[22m
+[2mdist/[22m[2massets/[22m[36mSaleForm-CRF1Bk0v.js            [39m[1m[2m  7.45 kB[22m[1m[22m[2m │ gzip:  2.55 kB[22m
 [2mdist/[22m[2massets/[22m[36mPrivacyPolicy-BkGvRqJc.js       [39m[1m[2m  7.96 kB[22m[1m[22m[2m │ gzip:  3.45 kB[22m
 [2mdist/[22m[2massets/[22m[36mTermsOfService-c0xlNlJ-.js      [39m[1m[2m  8.70 kB[22m[1m[22m[2m │ gzip:  3.67 kB[22m
-[2mdist/[22m[2massets/[22m[36mReportView-A_xStVKT.js          [39m[1m[2m 10.24 kB[22m[1m[22m[2m │ gzip:  3.13 kB[22m
+[2mdist/[22m[2massets/[22m[36mReportView-BNFmSwMU.js          [39m[1m[2m 10.37 kB[22m[1m[22m[2m │ gzip:  3.14 kB[22m
 [2mdist/[22m[2massets/[22m[36mstripe-BFjv1rCu.js              [39m[1m[2m 13.00 kB[22m[1m[22m[2m │ gzip:  4.88 kB[22m
-[2mdist/[22m[2massets/[22m[36mTxView-BCz7zyE-.js              [39m[1m[2m 14.60 kB[22m[1m[22m[2m │ gzip:  4.78 kB[22m
-[2mdist/[22m[2massets/[22m[36mInventoryView-CtlItjTx.js       [39m[1m[2m 19.97 kB[22m[1m[22m[2m │ gzip:  5.52 kB[22m
+[2mdist/[22m[2massets/[22m[36mTxView-BP-GTMGZ.js              [39m[1m[2m 14.60 kB[22m[1m[22m[2m │ gzip:  4.78 kB[22m
+[2mdist/[22m[2massets/[22m[36mInventoryView-D_ePr8NI.js       [39m[1m[2m 19.97 kB[22m[1m[22m[2m │ gzip:  5.52 kB[22m
 [2mdist/[22m[2massets/[22m[36mquery-ByP6YL3J.js               [39m[1m[2m 24.61 kB[22m[1m[22m[2m │ gzip:  7.40 kB[22m
-[2mdist/[22m[2massets/[22m[36mDashboard-Di4czneh.js           [39m[1m[2m 27.61 kB[22m[1m[22m[2m │ gzip:  7.49 kB[22m
-[2mdist/[22m[2massets/[22m[36mPlansView-CuIt2kXu.js           [39m[1m[2m 31.26 kB[22m[1m[22m[2m │ gzip:  8.34 kB[22m
-[2mdist/[22m[2massets/[22m[36mLanding-DB9Y_P63.js             [39m[1m[2m 32.00 kB[22m[1m[22m[2m │ gzip:  7.66 kB[22m
-[2mdist/[22m[2massets/[22m[36mSettingsView-Dq7rA1he.js        [39m[1m[2m 35.76 kB[22m[1m[22m[2m │ gzip:  9.86 kB[22m
-[2mdist/[22m[2massets/[22m[36mBrandStudioView-C1Yavhvj.js     [39m[1m[2m 37.08 kB[22m[1m[22m[2m │ gzip:  9.69 kB[22m
-[2mdist/[22m[2massets/[22m[36mAdminPanel-eU82ADh-.js          [39m[1m[2m 45.79 kB[22m[1m[22m[2m │ gzip: 13.49 kB[22m
+[2mdist/[22m[2massets/[22m[36mDashboard--Ilth8tu.js           [39m[1m[2m 27.71 kB[22m[1m[22m[2m │ gzip:  7.52 kB[22m
+[2mdist/[22m[2massets/[22m[36mPlansView-Bt8qnhkJ.js           [39m[1m[2m 31.26 kB[22m[1m[22m[2m │ gzip:  8.34 kB[22m
+[2mdist/[22m[2massets/[22m[36mLanding-5gKXumKH.js             [39m[1m[2m 32.00 kB[22m[1m[22m[2m │ gzip:  7.66 kB[22m
+[2mdist/[22m[2massets/[22m[36mSettingsView-D4EtCERo.js        [39m[1m[2m 35.76 kB[22m[1m[22m[2m │ gzip:  9.86 kB[22m
+[2mdist/[22m[2massets/[22m[36mBrandStudioView-Be3A9mtS.js     [39m[1m[2m 37.08 kB[22m[1m[22m[2m │ gzip:  9.69 kB[22m
+[2mdist/[22m[2massets/[22m[36mAdminPanel-DtdJ22E4.js          [39m[1m[2m 45.79 kB[22m[1m[22m[2m │ gzip: 13.49 kB[22m
 [2mdist/[22m[2massets/[22m[36mvendor-CdDn-nhL.js              [39m[1m[2m 52.89 kB[22m[1m[22m[2m │ gzip: 16.59 kB[22m
 [2mdist/[22m[2massets/[22m[36mdexie-2jmnBxhj.js               [39m[1m[2m 74.29 kB[22m[1m[22m[2m │ gzip: 26.62 kB[22m
-[2mdist/[22m[2massets/[22m[36mindex-DmUtk44r.js               [39m[1m[2m143.17 kB[22m[1m[22m[2m │ gzip: 42.80 kB[22m
+[2mdist/[22m[2massets/[22m[36mindex-DBi1hfbj.js               [39m[1m[2m143.72 kB[22m[1m[22m[2m │ gzip: 43.04 kB[22m
 [2mdist/[22m[2massets/[22m[36mvendor-react-Bj2_g79g.js        [39m[1m[2m175.06 kB[22m[1m[22m[2m │ gzip: 57.38 kB[22m
-[32m✓ built in 3.64s[39m
+[32m✓ built in 3.52s[39m
 ```
 
 ---
@@ -129,8 +129,8 @@ null
 
 [2m Test Files [22m [1m[31m3 failed[39m[22m[2m | [22m[1m[32m26 passed[39m[22m[90m (29)[39m
 [2m      Tests [22m [1m[31m13 failed[39m[22m[2m | [22m[1m[32m633 passed[39m[22m[90m (646)[39m
-[2m   Start at [22m 00:07:32
-[2m   Duration [22m 21.19s[2m (transform 932ms, setup 19.25s, import 2.91s, tests 5.56s, environment 28.15s)[22m
+[2m   Start at [22m 00:23:09
+[2m   Duration [22m 20.50s[2m (transform 1.04s, setup 18.12s, import 3.00s, tests 5.20s, environment 27.99s)[22m
 
 
 ::error file=/home/runner/work/Financia/Financia/src/lib/sync.test.js,title=src/lib/sync.test.js > fetchClients > retorna array vazio no erro,line=130,column=21::AssertionError: expected null to deeply equal []%0A%0A- Expected:%0A[]%0A%0A+ Received:%0Anull%0A%0A ❯ src/lib/sync.test.js:130:21%0A%0A
@@ -189,4 +189,4 @@ null
 
 | Data | Correção | Commit |
 |------|----------|--------|
-| 2026-07-30 00:07 UTC | Gerado automaticamente pelo workflow | `9bac04c770bb09fadeba7e49935b48cc10af0556` |
+| 2026-07-30 00:23 UTC | Gerado automaticamente pelo workflow | `1d33bb948b702250f7fb4265fcfe49855f710ce8` |
