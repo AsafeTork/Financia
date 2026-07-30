@@ -67,7 +67,15 @@ export default function App() {
   const [appLoading, setAppLoading]     = useState(true);
   const [dataLoading, setDataLoading]   = useState(false);
   const [dataError, setDataError]       = useState(null);
-  const [brand, setBrand]               = useState(INIT_BRAND);
+  const setBrandStable = useCallback(function(next) {
+    setBrand(function(prev) {
+      if (!prev && !next) return prev;
+      if (!prev) return next;
+      if (!next) return prev;
+      if (prev.name===next.name && prev.logo===next.logo && prev.color===next.color && prev.color_secondary===next.color_secondary && prev.color_accent===next.color_accent && prev.theme===next.theme && prev.logo_url===next.logo_url && prev.phone===next.phone && prev.white_label===next.white_label && prev.niche===next.niche && prev.visual_version===next.visual_version && prev.custom_palette===next.custom_palette && prev.brand_config===next.brand_config) return prev;
+      return next;
+    });
+  }, []);
   const [planInfo, setPlanInfo]         = useState(INIT_PLAN);
   const [syncStatus, setSyncStatus]     = useState('idle');
   const [sidebarOpen, setSidebarOpen]   = useState(false);
@@ -234,11 +242,11 @@ export default function App() {
   const sessionProps = React.useMemo(function() {
     return { toast, session, setSession, isAdminDB, setIsAdminDB,
       setAppLoading, setDataLoading, setDataError,
-      setBrand, setPlanInfo, setSyncStatus,
+      setBrand: setBrandStable, setPlanInfo, setSyncStatus,
       setTx, setProducts, setLosses };
   }, [toast, session, setSession, isAdminDB, setIsAdminDB,
     setAppLoading, setDataLoading, setDataError,
-    setBrand, setPlanInfo, setSyncStatus,
+    setBrandStable, setPlanInfo, setSyncStatus,
     setTx, setProducts, setLosses]);
   const {saveBrand, savePhone, loadData} = useSession(sessionProps);
 
