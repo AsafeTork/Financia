@@ -1,0 +1,106 @@
+name: Admin Audit
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  admin-audit:
+    name: Admin Full Audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci 2>/dev/null || npm install --legacy-peer-deps
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium firefox
+
+      - name: Run admin audit
+        run: npx playwright test e2e/admin-audit.spec.ts --project=chromium
+        env:
+          CI: true
+          PLAYWRIGHT_USERNAME: ${{ secrets.PLAYWRIGHT_USERNAME }}
+          PLAYWRIGHT_PASSWORD: ${{ secrets.PLAYWRIGHT_PASSWORD }}
+        continue-on-error: true
+
+      - name: Upload admin audit markdown report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: admin-audit-report-md
+          path: admin-audit-report.md
+          retention-days: 30
+
+      - name: Upload admin audit JSON results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: admin-audit-results-json
+          path: admin-audit-results.json
+          retention-days: 30
+
+      - name: Update CI_ERRORS.md with audit findings
+        if: always()
+        run: |
+          REPORT="admin-audit-report.md"
+          if [ ! -f "$REPORT" ]; then
+            echo "No audit report generated."
+            exit 0
+          fi
+          ERROR_COUNT=$(grep -c '^\- \`.*Console error' "$REPORT" 2>/dev/null || echo "0")
+          PAGE_ERRORS=$(grep -c '^\- \`.*Page error' "$REPORT" 2>/dev/null || echo "0")
+          BROKEN_BTN=$(grep -c 'broken button' "$REPORT" 2>/dev/null || echo "0")
+
+          TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M UTC")
+          COMMIT="${{ github.sha }}"
+
+          cat >> CI_ERRORS.md << EOF
+
+          ## Admin Audit Results (${TIMESTAMP})
+
+          | Metric | Value |
+          |--------|-------|
+          | Console errors | ${ERROR_COUNT} |
+          | Page errors | ${PAGE_ERRORS} |
+          | Broken buttons | ${BROKEN_BTN} |
+          | Commit | \`${COMMIT}\` |
+
+          ### Admin Audit Report (excerpt)
+
+          \`\`\`markdown
+          $(head -80 "$REPORT")
+          \`\`\`
+
+          Full report: [admin-audit-report.md](\${{ github.server_url }}/\${{ github.repository }}/blob/\${{ github.sha }}/admin-audit-report.md)
+
+          ---
+          EOF
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add CI_ERRORS.md
+          git diff --cached --quiet || git commit -m "chore: update CI_ERRORS.md with admin audit [skip ci]"
+          git push
+
+      - name: Generate summary
+        if: always()
+        run: |
+          REPORT="admin-audit-report.md"
+          echo "## Admin Audit" >> "$GITHUB_STEP_SUMMARY"
+          if [ -f "$REPORT" ]; then
+            cat "$REPORT" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "No report generated." >> "$GITHUB_STEP_SUMMARY"
+          fi
