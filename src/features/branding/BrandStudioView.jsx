@@ -252,14 +252,16 @@ export default React.memo(function BrandStudioView({ brand, planInfo, onSave, to
               style={active ? {borderColor: brandColor, color: brandColor} : {}}>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d={s.icon} /></svg>
             {s.label}
-          </button>
-        );
+            </button>
+          );
         })}
       </div>
 
-      {section === 'logo' && <div role="tabpanel" id="panel-logo" aria-labelledby="tab-logo"><LogoTabContent brand={brand} bs={bs} brandColor={brandColor} applyLogoScheme={applyLogoScheme} toast={toast} /></div>}
+      <div className="brandstudio-panel" style={{display: section === 'logo' ? 'block' : 'none'}}>
+        <div role="tabpanel" id="panel-logo" aria-labelledby="tab-logo"><LogoTabContent brand={brand} bs={bs} brandColor={brandColor} applyLogoScheme={applyLogoScheme} toast={toast} /></div>
+      </div>
 
-      {section === 'planos' && (
+      <div className="brandstudio-panel" style={{display: section === 'planos' ? 'block' : 'none'}}>
         <div role="tabpanel" id="panel-planos" aria-labelledby="tab-planos">
         <Card className="p-6 flex flex-col gap-4">
           <PlanTabsEditor
@@ -271,7 +273,7 @@ export default React.memo(function BrandStudioView({ brand, planInfo, onSave, to
             toast={toast} />
         </Card>
         </div>
-      )}
+      </div>
     </div>
   );
 });
