@@ -1,7 +1,7 @@
 # Relatório de Erros do CI
 
-**Última atualização:** 2026-07-30 01:32 UTC
-**Commit:** `d7defe31ce0155702ad14d8fa71bdad13ca188c4`
+**Última atualização:** 2026-07-30 01:36 UTC
+**Commit:** `760d2384ca318ae7cdcd26c75f77c1670847822f`
 **Branch:** `main`
 
 ---
@@ -90,7 +90,7 @@ computing gzip size...
 [2mdist/[22m[2massets/[22m[36mdexie-2jmnBxhj.js               [39m[1m[2m 74.29 kB[22m[1m[22m[2m │ gzip: 26.62 kB[22m
 [2mdist/[22m[2massets/[22m[36mindex-CVvdMwsA.js               [39m[1m[2m144.14 kB[22m[1m[22m[2m │ gzip: 43.15 kB[22m
 [2mdist/[22m[2massets/[22m[36mvendor-react-Bj2_g79g.js        [39m[1m[2m175.06 kB[22m[1m[22m[2m │ gzip: 57.38 kB[22m
-[32m✓ built in 3.66s[39m
+[32m✓ built in 3.55s[39m
 ```
 
 ---
@@ -129,8 +129,8 @@ null
 
 [2m Test Files [22m [1m[31m3 failed[39m[22m[2m | [22m[1m[32m26 passed[39m[22m[90m (29)[39m
 [2m      Tests [22m [1m[31m13 failed[39m[22m[2m | [22m[1m[32m633 passed[39m[22m[90m (646)[39m
-[2m   Start at [22m 01:32:26
-[2m   Duration [22m 20.41s[2m (transform 952ms, setup 18.08s, import 2.76s, tests 5.19s, environment 27.86s)[22m
+[2m   Start at [22m 01:36:10
+[2m   Duration [22m 21.06s[2m (transform 863ms, setup 18.29s, import 2.80s, tests 5.72s, environment 28.51s)[22m
 
 
 ::error file=/home/runner/work/Financia/Financia/src/lib/sync.test.js,title=src/lib/sync.test.js > fetchClients > retorna array vazio no erro,line=130,column=21::AssertionError: expected null to deeply equal []%0A%0A- Expected:%0A[]%0A%0A+ Received:%0Anull%0A%0A ❯ src/lib/sync.test.js:130:21%0A%0A
@@ -189,4 +189,4 @@ null
 
 | Data | Correção | Commit |
 |------|----------|--------|
-| 2026-07-30 01:32 UTC | Gerado automaticamente pelo workflow | `d7defe31ce0155702ad14d8fa71bdad13ca188c4` |
+| 2026-07-30 01:36 UTC | Gerado automaticamente pelo workflow | `760d2384ca318ae7cdcd26c75f77c1670847822f` |
