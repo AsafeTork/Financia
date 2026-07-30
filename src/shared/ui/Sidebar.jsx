@@ -15,6 +15,14 @@ function Sidebar({ view, onNav, brand, open, onClose, isAdmin }) {
   const mainItems = navItems.filter(function(v) { return v.key !== 'settings'; });
   const settingsItem = navItems.find(function(v) { return v.key === 'settings'; });
 
+  const sidebarBg = React.useMemo(function() {
+    return {background: 'var(--sidebar-bg, ' + (brand.color || '#0f1c2e') + ')'};
+  }, [brand.color]);
+
+  const onlineStyle = React.useMemo(function() {
+    return {background: online ? '#22c55e' : '#f59e0b', boxShadow: '0 0 0 3px ' + (online ? 'rgba(34,197,94,0.18)' : 'rgba(245,158,11,0.18)')};
+  }, [online]);
+
   function NavBtn(item) {
     const active = view === item.key;
     return (
@@ -37,7 +45,7 @@ function Sidebar({ view, onNav, brand, open, onClose, isAdmin }) {
       {open && <div className="fixed inset-0 z-30 bg-black bg-opacity-50 lg:hidden" onClick={onClose}/>}
       <aside data-testid="sidebar"
         className={'fixed top-0 left-0 h-full w-64 z-40 flex flex-col transition-transform duration-300 ' + (open ? 'translate-x-0' : '-translate-x-full') + ' lg:translate-x-0'}
-        style={{background: 'var(--sidebar-bg, ' + (brand.color || '#0f1c2e') + ')'}}>
+        style={sidebarBg}>
 
         <div className="px-5 py-5 flex items-center gap-3" style={{borderBottom:'1px solid rgba(255,255,255,0.08)'}}>
           {isValidUrl(brand?.logo_url)
@@ -61,7 +69,7 @@ function Sidebar({ view, onNav, brand, open, onClose, isAdmin }) {
         </div>
 
         <div className="px-5 py-3 flex items-center gap-2" style={{borderTop:'1px solid rgba(255,255,255,0.06)'}}>
-          <span className="w-2 h-2 rounded-full flex-shrink-0 transition-all duration-300" style={{background: online ? '#22c55e' : '#f59e0b', boxShadow: '0 0 0 3px ' + (online ? 'rgba(34,197,94,0.18)' : 'rgba(245,158,11,0.18)')}}/>
+          <span className="w-2 h-2 rounded-full flex-shrink-0 transition-all duration-300" style={onlineStyle}/>
           <p className="text-xs truncate" style={{color:'rgba(255,255,255,0.6)'}}>{online ? 'Online — tudo sincronizado' : 'Offline — salvo no aparelho'}</p>
         </div>
       </aside>

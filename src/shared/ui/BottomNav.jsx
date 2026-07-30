@@ -14,9 +14,17 @@ var ITEMS = [
 function BottomNav({ view, onNav, brand, isAdmin }) {
   var isAdminUser = !!isAdmin;
   var visibleItems = ITEMS.filter(function(i) { return !i.adminOnly || isAdminUser; });
+
+  var navStyle = React.useMemo(function() {
+    return {background:'var(--bg-page)', borderTop:'1px solid var(--border-color, #f1f5f9)', paddingBottom:'env(safe-area-inset-bottom, 0px)'};
+  }, []);
+
+  var indicatorBg = React.useMemo(function() {
+    return {background: brand.color, transform:'translateX(-50%)'};
+  }, [brand.color]);
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-30 lg:hidden"
-      style={{background:'var(--bg-page)', borderTop:'1px solid var(--border-color, #f1f5f9)', paddingBottom:'env(safe-area-inset-bottom, 0px)'}}>
+      style={navStyle}>
       <div className="flex h-16">
         {visibleItems.map(function(item) {
           var active = view === item.key;
@@ -26,7 +34,7 @@ function BottomNav({ view, onNav, brand, isAdmin }) {
               className="relative flex-1 flex flex-col items-center justify-center gap-1 transition-colors min-w-0 pt-1"
               style={{color: active ? brand.color : '#94a3b8'}}>
               {active && (
-                <div className="absolute top-0 left-1/2 w-8 h-0.5 rounded-b-full" style={{background: brand.color, transform:'translateX(-50%)'}}/>
+                <div className="absolute top-0 left-1/2 w-8 h-0.5 rounded-b-full" style={indicatorBg}/>
               )}
               <div className="flex items-center justify-center rounded-xl transition-all" style={{width:36, height:26, background: active ? brandAlpha(brand.color, 0.12) : 'transparent'}}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"

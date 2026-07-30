@@ -24,8 +24,8 @@ export default React.memo(function Dashboard({ tx, products, brand, onNav, planI
   var pS = pStart.getFullYear() + '-' + String(pStart.getMonth()+1).padStart(2,'0');
   var ppS = ppStart.getFullYear() + '-' + String(ppStart.getMonth()+1).padStart(2,'0');
 
-  var mtx  = tx.filter(function(t) { return t.date >= pS; });
-  var pmtx = tx.filter(function(t) { return t.date >= ppS && t.date < pS; });
+  var mtx  = useMemo(function() { return tx.filter(function(t) { return t.date >= pS; }); }, [tx, pS]);
+  var pmtx = useMemo(function() { return tx.filter(function(t) { return t.date >= ppS && t.date < pS; }); }, [tx, ppS, pS]);
 
   var sumMonth = useMemo(function() {
     var r = { ti: 0, to: 0 };
@@ -62,7 +62,7 @@ export default React.memo(function Dashboard({ tx, products, brand, onNav, planI
   }, [tx]);
 
   var plan     = effectivePlan(planInfo);
-  var lowStock = products.filter(function(p) { return p.stock != null && p.stock <= 5; });
+  var lowStock = useMemo(function() { return products.filter(function(p) { return p.stock != null && p.stock <= 5; }); }, [products]);
   var usage = [
     { key: 'transactions', label: 'Transacoes', used: tx.length,        limit: PLAN_LIMITS.free.transactions, color: brand.color },
     { key: 'products',     label: 'Produtos',   used: products.length,  limit: PLAN_LIMITS.free.products,     color: '#0f9d6c' },
@@ -70,7 +70,7 @@ export default React.memo(function Dashboard({ tx, products, brand, onNav, planI
   ];
   var reachedCats = usage.filter(function(u) { return u.used >= u.limit; });
   var anyReached = plan === 'free' && reachedCats.length > 0;
-  var recent   = tx.slice().sort(function(a, b) { return b.date.localeCompare(a.date); }).slice(0, 8);
+  var recent   = useMemo(function() { return tx.slice().sort(function(a, b) { return b.date.localeCompare(a.date); }).slice(0, 8); }, [tx]);
   var hour     = new Date().getHours();
   var greeting = hour < 12 ? 'Bom dia' : hour < 18 ? 'Boa tarde' : 'Boa noite';
 

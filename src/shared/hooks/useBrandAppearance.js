@@ -248,6 +248,10 @@ export default function useBrandAppearance(brand, planInfo) {
 
   const effectiveTheme = computeEffectiveTheme(themePref, appBrand);
 
+  const appBrandTokens = useMemo(function() {
+    return collectTokensFromBrand(appBrand);
+  }, [appBrand]);
+
   const toggleTheme = useCallback(() => {
     const el = document.documentElement;
     const current = el.getAttribute('data-theme') || 'light';
@@ -256,8 +260,7 @@ export default function useBrandAppearance(brand, planInfo) {
     el.setAttribute('data-theme', next);
     saveThemePref(next);
 
-    const brand = appBrandRef.current || {};
-    const tokens = collectTokensFromBrand(brand);
+    const tokens = appBrandTokens;
     if (next === 'dark') {
       THEME_CONTROLLED_VARS.forEach(function(k) { el.style.removeProperty(k); });
       const brandOnly = {};
@@ -272,7 +275,7 @@ export default function useBrandAppearance(brand, planInfo) {
     }
 
     setTimeout(function() { setThemePref(next); }, 0);
-  }, []);
+  }, [appBrandTokens]);
 
   useEffect(() => {
     let cancelled = false;
@@ -282,7 +285,7 @@ export default function useBrandAppearance(brand, planInfo) {
       const theme = effectiveTheme === 'dark' ? 'dark' : 'light';
       const currentTheme = el.getAttribute('data-theme');
       if (currentTheme === theme) return;
-      const tokens = collectTokensFromBrand(appBrand);
+      const tokens = appBrandTokens;
       if (theme === 'dark') {
         el.setAttribute('data-theme', 'dark');
         THEME_CONTROLLED_VARS.forEach(function(k) {
@@ -310,7 +313,7 @@ export default function useBrandAppearance(brand, planInfo) {
       }
     });
     return function() { cancelled = true; };
-  }, [effectiveTheme, appBrand]);
+  }, [effectiveTheme, appBrandTokens]);
 
   const checkCampaigns = useCallback((campaigns) => {
     if (!campaigns || campaigns.length === 0) return;
