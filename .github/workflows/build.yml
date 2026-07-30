@@ -1,8 +1,6 @@
 name: Build Release
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
     inputs:
       client_name:
@@ -16,7 +14,7 @@ on:
       primary_color:
         description: 'Cor HEX sem # (ex: 002f59)'
         required: false
-        default: '002f59'
+        default: '002f59' 
 
 permissions:
   contents: write
