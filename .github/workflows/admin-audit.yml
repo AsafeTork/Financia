@@ -51,49 +51,6 @@ jobs:
           path: admin-audit-results.json
           retention-days: 30
 
-      - name: Update CI_ERRORS.md with audit findings
-        if: always()
-        run: |
-          REPORT="admin-audit-report.md"
-          if [ ! -f "$REPORT" ]; then
-            echo "No audit report generated."
-            exit 0
-          fi
-          ERROR_COUNT=$(grep -c '^\- \`.*Console error' "$REPORT" 2>/dev/null || echo "0")
-          PAGE_ERRORS=$(grep -c '^\- \`.*Page error' "$REPORT" 2>/dev/null || echo "0")
-          BROKEN_BTN=$(grep -c 'broken button' "$REPORT" 2>/dev/null || echo "0")
-
-          TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M UTC")
-          COMMIT="${{ github.sha }}"
-
-          cat >> CI_ERRORS.md << EOF
-
-          ## Admin Audit Results (${TIMESTAMP})
-
-          | Metric | Value |
-          |--------|-------|
-          | Console errors | ${ERROR_COUNT} |
-          | Page errors | ${PAGE_ERRORS} |
-          | Broken buttons | ${BROKEN_BTN} |
-          | Commit | \`${COMMIT}\` |
-
-          ### Admin Audit Report (excerpt)
-
-          \`\`\`markdown
-          $(head -80 "$REPORT")
-          \`\`\`
-
-          Full report: [admin-audit-report.md](\${{ github.server_url }}/\${{ github.repository }}/blob/\${{ github.sha }}/admin-audit-report.md)
-
-          ---
-          EOF
-
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add CI_ERRORS.md
-          git diff --cached --quiet || git commit -m "chore: update CI_ERRORS.md with admin audit [skip ci]"
-          git push
-
       - name: Generate summary
         if: always()
         run: |
