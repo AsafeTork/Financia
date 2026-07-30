@@ -47,6 +47,13 @@ def gen_report():
     if file_contains("ci-artifacts/build-output.txt", r"error|erro|failed|falha"):
         build_status = "com erros"
 
+    e2e_status = "ok"
+    e2e_content = ""
+    if os.path.exists("ci-artifacts/e2e-output.txt"):
+        e2e_content = read_file("ci-artifacts/e2e-output.txt", 3000)
+        if file_contains("ci-artifacts/e2e-output.txt", r"failed|FAIL|fail|erro|error"):
+            e2e_status = "com falhas"
+
     admin_audit = ""
     for path in [
         "ci-artifacts/admin-audit-report-md/admin-audit-report.md",
@@ -105,6 +112,7 @@ def gen_report():
 | Lint + Typecheck | {lint_status} |
 | Testes Unitarios | {test_status} |
 | Build | {build_status} |
+| E2E Tests | {e2e_status} |
 | Auditoria de Producao | ver resultado abaixo |
 | Admin Audit | ver resultado abaixo |
 
@@ -130,6 +138,18 @@ def gen_report():
 
 ```
 {build_content}
+```
+
+---
+
+## E2E Tests (chromium)
+
+| Status |
+|---|
+| {e2e_status} |
+
+```
+{e2e_content}
 ```
 
 ---
@@ -163,7 +183,6 @@ Relatorio completo admin-audit-report.md disponivel como artifact.
 
     with open("CI_REPORT.md", "w") as f:
         f.write(report)
-    print("CI_REPORT.md gerado com sucesso.")
 
 
 if __name__ == "__main__":

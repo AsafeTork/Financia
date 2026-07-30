@@ -50,3 +50,69 @@ describe('atLimit', function() {
     expect(atLimit(FREE, 'losses', 10)).toBe(true);
   });
 });
+
+describe('effectivePlan — inputs borda', function() {
+  it('handle string de data malformada', function() {
+    expect(effectivePlan({ plan: 'pro', plan_expires_at: 'not-a-date' })).toBe('free');
+  });
+  it('handle date invalid object', function() {
+    expect(effectivePlan({ plan: 'pro', plan_expires_at: new Date('invalid') })).toBe('free');
+  });
+  it('data de expiracao no exato momento (edge timezone)', function() {
+    const now = new Date().toISOString();
+    expect(effectivePlan({ plan: 'pro', plan_expires_at: now })).toBe('free');
+  });
+  it('plan undefined retorna free', function() {
+    expect(effectivePlan(undefined)).toBe('free');
+  });
+  it('plan empty string retorna free', function() {
+    expect(effectivePlan({ plan: '', plan_expires_at: null })).toBe('free');
+  });
+  it('plan vazio mas pro com data futura', function() {
+    expect(effectivePlan({ plan: 'pro', plan_expires_at: '2099-12-31T00:00:00.000Z' })).toBe('pro');
+  });
+});
+
+describe('limitFor — planos borda', function() {
+  it('undefined plan usa free', function() {
+    expect(limitFor(undefined, 'transactions')).toBe(50);
+  });
+  it('plan vazio usa free', function() {
+    expect(limitFor({ plan: '' }, 'transactions')).toBe(50);
+  });
+  it('plan desconhecido usa free', function() {
+    expect(limitFor({ plan: 'enterprise' }, 'transactions')).toBe(50);
+  });
+  it('categoria desconhecida retorna Infinity', function() {
+    expect(limitFor(FREE, 'unknown-category')).toBe(Infinity);
+  });
+  it('retorna numero finito para todas as categorias conhecidas no free', function() {
+    expect(isFinite(limitFor(FREE, 'transactions'))).toBe(true);
+    expect(isFinite(limitFor(FREE, 'products'))).toBe(true);
+    expect(isFinite(limitFor(FREE, 'losses'))).toBe(true);
+  });
+});
+
+describe('atLimit — edge cases', function() {
+  it('valor negativo nunca atinge limite', function() {
+    expect(atLimit(FREE, 'transactions', -1)).toBe(false);
+  });
+  it('valor zero nao atinge limite (conta a partir de 1)', function() {
+    expect(atLimit(FREE, 'transactions', 0)).toBe(false);
+  });
+  it('exatamente no limite retorna true', function() {
+    expect(atLimit(FREE, 'transactions', 50)).toBe(true);
+  });
+  it('limite de produtos com valor 0', function() {
+    expect(atLimit(FREE, 'products', 0)).toBe(false);
+  });
+  it('pro com limite muito grande', function() {
+    expect(atLimit(PRO, 'transactions', 1000000)).toBe(false);
+  });
+  it('handle Infinity retorna false', function() {
+    expect(atLimit(FREE, 'transactions', Infinity)).toBe(false);
+  });
+  it('NaN nao atinge limite', function() {
+    expect(atLimit(FREE, 'transactions', NaN)).toBe(false);
+  });
+});

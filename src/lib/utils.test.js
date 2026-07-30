@@ -70,3 +70,60 @@ describe('brandAlpha', function() {
     expect(brandAlpha('#002f59', 0.12)).toContain(',0.12)');
   });
 });
+describe('safe — entradas extremas', function() {
+  it('tira tag script de string enorme com XSS', function() {
+    const payload = '<script>alert("xss")</script>' + 'A'.repeat(300);
+    const result = safe(function() { throw new Error(payload); });
+    expect(result.includes('<script>')).toBe(false);
+    expect(result.includes('alert')).toBe(false);
+  });
+  it('trata onerror= dentro de atributo', function() {
+    const result = safe(() => { throw new Error('<img onerror=alert(1) src=x>'); });
+    expect(result.includes('onerror')).toBe(false);
+  });
+  it('trata entrada com Newline Injection', function() {
+    const result = safe(() => { throw new Error('line1\nline2\n<script>'); });
+    expect(result.includes('<script>')).toBe(false);
+  });
+});
+
+describe('deriveCores — inputs borda', function() {
+  it('aceita hex com 3 caracteres', function() {
+    const r = deriveCores('#fff');
+    expect(r.secondary).toBeTruthy();
+    expect(r.accent).toBeTruthy();
+  });
+  it('aceita hex maiusculo', function() {
+    const r = deriveCores('#002F59');
+    expect(r.secondary).toBeTruthy();
+    expect(r.accent).toBeTruthy();
+  });
+  it('aceita hex com # faltando', function() {
+    const r = deriveCores('002f59');
+    expect(r.primary).toBeTruthy();
+  });
+  it('branco puro usa fallback', function() {
+    const r = deriveCores('#ffffff');
+    expect(r.primary).toBe('#002f59');
+  });
+});
+
+describe('brandAlpha — alfas extremos', function() {
+  it('alpha 0 retorna rgba transparente', function() {
+    expect(brandAlpha('#002f59', 0)).toBe('rgba(0,47,89,0)');
+  });
+  it('alpha 1 retorna opaco', function() {
+    expect(brandAlpha('#002f59', 1)).toBe('rgba(0,47,89,1)');
+  });
+  it('alpha negativo e tratado como zero', function() {
+    const result = brandAlpha('#002f59', -0.5);
+    expect(result).toBe('rgba(0,47,89,0)');
+  });
+  it('alpha maior que 1 e tratado como 1', function() {
+    const result = brandAlpha('#002f59', 2);
+    expect(result).toBe('rgba(0,47,89,1)');
+  });
+  it('hex curto #000 funciona', function() {
+    expect(brandAlpha('#000', 0.5)).toBe('rgba(0,0,0,0.5)');
+  });
+});

@@ -199,7 +199,7 @@ jobs:
     name: Extract Errors & Generate Report
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    needs: [lint-typecheck, unit-tests, build, security-audit, production-audit, admin-audit]
+    needs: [lint-typecheck, unit-tests, build, security-audit, production-audit, admin-audit, e2e]
     if: always()
     steps:
       - uses: actions/checkout@v4
@@ -209,7 +209,7 @@ jobs:
         continue-on-error: true
         with:
           path: ci-artifacts
-          pattern: "lint-typecheck,unit-tests,build,security-audit,prod-audit,admin-audit-report-md,admin-audit-results-json"
+          pattern: "lint-typecheck,unit-tests,build,security-audit,prod-audit,admin-audit-report-md,admin-audit-results-json,e2e-tests"
           merge-multiple: true
       - name: Install jq
         run: sudo apt-get install -y jq
@@ -231,23 +231,52 @@ jobs:
           path: CI_REPORT.md
           retention-days: 30
 
+  e2e:
+    name: E2E Tests (chromium)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci || npm install --legacy-peer-deps
+      - run: npm run build 2>&1 | tail -5
+      - name: Install Playwright browsers
+        run: npx playwright install chromium
+      - name: Run critical E2E tests
+        run: npx playwright test e2e/auth-flow.spec.ts e2e/brand-studio.spec.ts e2e/dashboard-analytics.spec.ts e2e/offline-state-corruption.spec.ts e2e/deep-sync-conflict.spec.ts e2e/keyboard-navigation.spec.ts e2e/error-boundary-recovery.spec.ts --project=chromium 2>&1 | tee /tmp/e2e-output.txt || true
+      - name: Save e2e output
+        if: always()
+        run: |
+          mkdir -p /tmp/ci-artifacts
+          cp /tmp/e2e-output.txt /tmp/ci-artifacts/ 2>/dev/null || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: e2e-tests
+          path: /tmp/ci-artifacts/
+          retention-days: 5
+
   summary:
     name: Test Summary
     runs-on: ubuntu-latest
-    needs: [lint-typecheck, unit-tests, build, security-audit, production-audit, admin-audit, extract-errors]
+    needs: [lint-typecheck, unit-tests, build, security-audit, production-audit, admin-audit, e2e, extract-errors]
     if: always()
     steps:
-      - run: |
-          echo "## CI Summary" >> "$GITHUB_STEP_SUMMARY"
-          echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo "| Job | Status |" >> "$GITHUB_STEP_SUMMARY"
-          echo "|-----|--------|" >> "$GITHUB_STEP_SUMMARY"
-          echo "| Lint + Typecheck | ${{ needs.lint-typecheck.result }} |" >> "$GITHUB_STEP_SUMMARY"
-          echo "| Unit Tests | ${{ needs.unit-tests.result }} |" >> "$GITHUB_STEP_SUMMARY"
-          echo "| Build | ${{ needs.build.result }} |" >> "$GITHUB_STEP_SUMMARY"
-          echo "| Security Audit | ${{ needs.security-audit.result }} |" >> "$GITHUB_STEP_SUMMARY"
-          echo "| Prod Audit (chromium) | ${{ needs.production-audit.result }} |" >> "$GITHUB_STEP_SUMMARY"
-          echo "| Admin Audit | ${{ needs.admin-audit.result }} |" >> "$GITHUB_STEP_SUMMARY"
-          echo "| Extract Errors & Report | ${{ needs.extract-errors.result }} |" >> "$GITHUB_STEP_SUMMARY"
-          echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo "📄 Relatório completo: \`CI_REPORT.md\` (salvo como artifact e commitado no repositório)" >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: ci-report-md
+          path: .
+      - name: Upload CI_REPORT.md artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-summary-report
+          path: CI_REPORT.md
+          retention-days: 30
