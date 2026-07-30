@@ -278,6 +278,82 @@ jobs:
           **Commit:** \`${COMMIT}\`
           **Branch:** \`${BRANCH}\`
 
+          <details>
+          <summary><b>📊 Fluxo do Workflow (clique para expandir)</b></summary>
+
+          \`\`\`mermaid
+          flowchart TD
+            A[Push para main] --> B[Lint + Typecheck]
+            A --> C[Testes Unitários]
+            A --> D[Build Web]
+            A --> E[Security Audit]
+            D --> F[Production Audit chromium]
+            D --> G[Admin Audit produção]
+            B --> H[Extract Errors]
+            C --> H
+            E --> H
+            F --> H
+            G --> H
+            H --> I[CI_REPORT.md consolidado]
+            I --> J[Commit CI_REPORT.md]
+            I --> K[Artifact CI_REPORT.md]
+
+            style A fill:#4CAF50,color:white,stroke:#2E7D32
+            style B fill:#2196F3,color:white
+            style C fill:#2196F3,color:white
+            style D fill:#FF9800,color:white
+            style E fill:#9C27B0,color:white
+            style F fill:#00BCD4,color:white
+            style G fill:#F44336,color:white
+            style H fill:#795548,color:white
+            style I fill:#4CAF50,color:white,stroke:#2E7D32
+            style J fill:#607D8B,color:white
+            style K fill:#607D8B,color:white
+          \`\`\`
+
+          </details>
+
+          ---
+
+          ## Diagrama de Execução
+
+          \`\`\`
+          PUSH → MAIN
+            │
+            ├── [1] Lint + Typecheck ──────────────────────┐
+            │     ✅ / ❌                                      │
+            │                                                  ├──→ EXTRACT ERRORS ──→ CI_REPORT.md
+            ├── [2] Unit Tests ─────────────────────────────┤     (consolida tudo)
+            │     ✅ / ❌                                      │
+            │                                                  │
+            ├── [3] Build Web ──────────────────────────────┤
+            │     ✅ / ❌                                      │
+            │               │                                  │
+            │               ├──→ [4] Prod Audit (chromium) ──┤
+            │               │     ✅ / ❌                      │
+            │               │                                  │
+            │               └──→ [5] Admin Audit (produção) ─┤
+            │                     ✅ / ❌                      │
+            │                                                  │
+            ├── [6] Security Audit ─────────────────────────┤
+            │     ⚠️ / ✅                                      │
+            │                                                  │
+            └──→ [7] CI_REPORT.md + [8] CI_REPORT.md commit │
+          \`\`\`
+
+          ---
+
+          ## Legenda
+
+          | Símbolo | Significado |
+          |---------|-------------|
+          | ✅ | Passou |
+          | ❌ | Faliu |
+          | ⚠️ | Warning (não bloqueante) |
+          | 📄 | Relatório gerado |
+          | 🔧 | Ação de correção |
+          | ↳ | Sub-item / detalhe |
+
           ---
 
           ## Status Geral
@@ -323,7 +399,7 @@ jobs:
           ${PROD_METRICS}
           ---
 
-          ## Admin Audit (produção - Firefox/Chromium)
+          ## Admin Audit (produção — Firefox/Chromium)
 
           ${ADMIN_METRICS}
 
