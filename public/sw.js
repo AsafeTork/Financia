@@ -1,9 +1,8 @@
-const CACHE_VER = '6';
-const CACHE_DATE = '20260713';
+const CACHE_VER = '7';
+const CACHE_DATE = '20260731';
 const CACHE = 'financia-' + CACHE_VER + '-' + CACHE_DATE;
 const STATIC = ['/', '/manifest.json', '/icon-192.svg', '/icon-512.svg', '/offline.html'];
 
-// Avisa todas as abas o progresso do cache (alimenta a barra do banner).
 function postProgress(pct) {
   return self.clients.matchAll({ includeUncontrolled: true }).then(function(cls) {
     cls.forEach(function(cl) { cl.postMessage({ type: 'CACHE_PROGRESS', pct: pct }); });
@@ -11,8 +10,6 @@ function postProgress(pct) {
 }
 
 self.addEventListener('install', function(e) {
-  // Cacheia item a item reportando progresso. NAO chama skipWaiting:
-  // o novo SW fica em espera ate o usuario clicar em "Atualizar".
   e.waitUntil(
     caches.open(CACHE).then(function(c) {
       var done = 0;
@@ -23,7 +20,6 @@ self.addEventListener('install', function(e) {
           return postProgress(Math.round((done / STATIC.length) * 100)).then(function() { return next(i + 1); });
         });
       }
-      // Depois dos itens estaticos, descobrir e precachear os bundles JS/CSS
       return next(0).then(function() {
         return fetch('/').then(function(r) {
           if (!r.ok) return;
@@ -88,13 +84,12 @@ self.addEventListener('fetch', function(e) {
   var url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
 
-  // NAVIGATIONS: use preloadResponse if available to avoid double-fetch
   if (req.mode === 'navigate') {
     e.respondWith(
       (function() {
         var preload = e.preloadResponse;
         var fetchPromise = Promise.resolve(preload).then(function(pr) {
-          if (pr) return pr; // consumed preload — no double fetch!
+          if (pr) return pr;
           return fetch(req);
         }).then(function(res) {
           if (res && res.ok) {
@@ -113,13 +108,12 @@ self.addEventListener('fetch', function(e) {
     return;
   }
 
-  // API GET: stale-while-revalidate with max-age check
-  if (req.url.includes('/api/') && (req.method === 'GET' || req.method === 'HEAD')) {
+  if (url.pathname.indexOf('/api/') === 0) {
     e.respondWith(
       (function() {
-        var urlKey = url.origin + url.pathname;
+        var urlKey = url.origin + url.pathname + url.search;
         return caches.match(urlKey).then(function(cached) {
-          var maxAge = 30; // 30 seconds freshness for financial data
+          var maxAge = 30;
           var isFresh = false;
           if (cached) {
             var dateHeader = cached.headers.get('date');
@@ -129,7 +123,6 @@ self.addEventListener('fetch', function(e) {
             }
           }
           if (isFresh) return cached;
-
           var fetchPromise = fetch(req).then(function(res) {
             if (res && res.ok) {
               var clone = res.clone();
@@ -137,7 +130,6 @@ self.addEventListener('fetch', function(e) {
             }
             return res;
           }).catch(function() { return cached; });
-
           return cached || fetchPromise;
         });
       })()
@@ -145,7 +137,6 @@ self.addEventListener('fetch', function(e) {
     return;
   }
 
-  // Font files: cache-first
   if (url.pathname.match(/\.(woff2?|ttf|otf|eot)$/)) {
     e.respondWith(
       caches.match(req).then(function(cached) {
@@ -162,7 +153,6 @@ self.addEventListener('fetch', function(e) {
     return;
   }
 
-  // Assets com hash (imutaveis): cache-first
   if (url.pathname.indexOf('/assets/') === 0) {
     e.respondWith(
       caches.match(req).then(function(cached) {
@@ -179,7 +169,6 @@ self.addEventListener('fetch', function(e) {
     return;
   }
 
-  // Demais GET same-origin: network-first com fallback de cache + size limit
   e.respondWith(
     fetch(req).then(function(res) {
       if (res && res.status === 200) {
@@ -187,10 +176,8 @@ self.addEventListener('fetch', function(e) {
         e.waitUntil(
           caches.open(CACHE).then(function(c) {
             return c.put(req, clone).then(function() {
-              return caches.open(CACHE).then(function(cc) { return cc.keys(); }).then(function(keys) {
-                if (keys.length > 100) {
-                  cc.delete(keys[0]); // LRU-ish eviction when over 100 entries
-                }
+              return c.keys().then(function(keys) {
+                if (keys.length > 50) c.delete(keys[0]);
               });
             });
           })

@@ -1,0 +1,44 @@
+{
+  "budgets": [
+    {
+      "resourceType": "script",
+      "budget": 500000
+    },
+    {
+      "resourceType": "stylesheet",
+      "budget": 100000
+    },
+    {
+      "resourceType": "image",
+      "budget": 200000
+    },
+    {
+      "resourceType": "font",
+      "budget": 100000
+    },
+    {
+      "metric": "LCP",
+      "budget": 2500
+    },
+    {
+      "metric": "FID",
+      "budget": 100
+    },
+    {
+      "metric": "CLS",
+      "budget": 0.1
+    },
+    {
+      "metric": "TTFB",
+      "budget": 800
+    },
+    {
+      "metric": "FCP",
+      "budget": 1800
+    },
+    {
+      "metric": "INP",
+      "budget": 200
+    }
+  ]
+}

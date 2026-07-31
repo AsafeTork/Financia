@@ -29,45 +29,33 @@ export default defineConfig(async function() {
       port: 4173,
       host: '0.0.0.0',
     },
+    css: {
+      codeSplit: true,
+    },
     build: {
       outDir: 'dist',
       emptyOutDir: true,
       target: 'es2022',
+      cssMinify: 'terser',
+      sourcemap: false,
       rollupOptions: {
         output: {
           compact: true,
           generatedCode: 'es2015',
           manualChunks: function(id) {
-            // React + ReactDOM MUST be in SAME chunk (tight coupling, shared internals)
             if (id.includes('node_modules/react') && !id.includes('react-table')) return 'vendor-react';
             if (id.includes('node_modules/react-dom')) return 'vendor-react';
-            
-            // Scheduler - no deps on react/react-dom
             if (id.includes('node_modules/scheduler')) return 'vendor-scheduler';
-            
-            // Supabase - split by module
             if (id.indexOf('@supabase/postgrest-js') !== -1) return 'supabase-db';
             if (id.indexOf('@supabase/auth-js') !== -1) return 'supabase-auth';
             if (id.indexOf('@supabase/storage-js') !== -1) return 'supabase-storage';
             if (id.indexOf('@supabase/functions-js') !== -1) return 'supabase-functions';
             if (id.includes('node_modules/@supabase')) return 'supabase';
-            
-            // TanStack Query
             if (id.includes('node_modules/@tanstack/query-core') || id.includes('node_modules/@tanstack/react-query')) return 'query';
-            
-            // Dexie
             if (id.includes('node_modules/dexie')) return 'dexie';
-            
-            // Radix UI
             if (id.includes('node_modules/@radix-ui')) return 'radix';
-            
-            // Stripe
             if (id.includes('node_modules/@stripe')) return 'stripe';
-            
-            // nodemailer - EXCLUDE from vendor (Node.js only)
             if (id.includes('node_modules/nodemailer')) return 'nodemailer';
-            
-            // Everything else from node_modules
             if (id.includes('node_modules')) return 'vendor';
           },
         },
@@ -79,6 +67,24 @@ export default defineConfig(async function() {
         }
       },
       chunkSizeWarningLimit: 500,
+      reportCompressedSize: true,
+      minify: 'terser',
+      terserOptions: {
+        compress: {
+          passes: 2,
+          pure_getters: true,
+          unsafe: true,
+          unsafe_comps: true,
+          unsafe_math: true,
+          unsafe_proto: true,
+        },
+        mangle: {
+          safari10: true,
+        },
+        format: {
+          comments: false,
+        },
+      },
     },
     esbuild: {
       jsx: 'automatic',

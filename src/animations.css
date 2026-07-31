@@ -209,33 +209,40 @@
 
 /* Entrada suave ao aparecer */
 .anim-fade-up {
+  will-change: transform, opacity;
   animation: fadeInUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .anim-fade-down {
+  will-change: transform, opacity;
   animation: fadeInDown 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 /* Float suave ao hover */
 .hover-float:hover {
+  will-change: transform;
   animation: hoverFloat 0.6s ease-in-out infinite;
 }
 
 .hover-glow:hover {
+  will-change: box-shadow;
   animation: hoverGlow 0.6s ease-in-out infinite;
 }
 
 /* Elevação de card ao hover */
 .card-hover-lift:hover {
+  will-change: transform;
   animation: cardLift 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
 /* Flutuação contínua */
 .float-slow {
+  will-change: transform;
   animation: floatSlow 4s ease-in-out infinite;
 }
 
 .float-medium {
+  will-change: transform;
   animation: float 3s ease-in-out infinite;
 }
 

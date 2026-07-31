@@ -8,6 +8,7 @@
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
+  "prefer_related_applications": false,
   "background_color": "#002f59",
   "theme_color": "#002f59",
   "categories": ["business", "finance", "productivity"],
