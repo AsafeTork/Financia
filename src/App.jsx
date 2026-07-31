@@ -1,6 +1,5 @@
-import React, { useState, useCallback, useEffect, useRef, lazy, Suspense } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { INIT_BRAND, INIT_PLAN, atLimit, limitFor, effectivePlan } from './lib/constants.js';
+import React, { useCallback, useRef, useMemo, Suspense, lazy, useEffect } from 'react';
+import { INIT_BRAND, atLimit, limitFor } from './lib/constants.js';
 import { useTx } from './features/transactions/useTx.js';
 import { useProducts } from './features/inventory/useProducts.js';
 import { useLosses } from './features/inventory/useLosses.js';
@@ -21,357 +20,108 @@ import { FeatureErrorBoundary } from './shared/FeatureErrorBoundary.jsx';
 import { WidgetErrorBoundary } from './shared/WidgetErrorBoundary.jsx';
 import Login from './features/auth/Login.jsx';
 import AppRoutes from './routes/routes.jsx';
+import Loader from './App/components/Loader.jsx';
+import DebugBadge from './App/components/DebugBadge.jsx';
+import { AppProvider } from './App/contexts/AppContext.jsx';
+import { useAppState } from './hooks/useAppState.js';
+import { useToasts } from './hooks/useToasts.js';
+import { useNavigation } from './hooks/useNavigation.js';
+import { useOnboarding } from './hooks/useOnboarding.js';
+import { usePlanEffects } from './hooks/usePlanEffects.js';
 
-const Landing       = lazy(function() { return import('./features/landing/Landing.jsx'); });
-const PrivacyPolicy  = lazy(function() { return import('./features/landing/PrivacyPolicy.jsx'); });
+const Landing = lazy(function() { return import('./features/landing/Landing.jsx'); });
+const PrivacyPolicy = lazy(function() { return import('./features/landing/PrivacyPolicy.jsx'); });
 const TermsOfService = lazy(function() { return import('./features/landing/TermsOfService.jsx'); });
 
-function Loader({ text }) {
-  return (
-    <div className="min-h-screen flex items-center justify-center flex-col gap-3" style={{background:'var(--bg-page)'}}>
-      <div className="w-10 h-10 border-2 border-gray-200 rounded-full animate-spin" style={{borderTopColor:'var(--brand)'}}/>
-      {text && <p className="text-sm text-gray-400">{text}</p>}
-    </div>
-  );
-}
-
-function DebugBadge() {
-  const [show, setShow] = React.useState(function() {
-    try { return localStorage.getItem('financia_debug_mode') === '1'; } catch { return false; }
-  });
-  React.useEffect(function() {
-    function check() { try { setShow(localStorage.getItem('financia_debug_mode') === '1'); } catch (e) { console.warn('DebugBadge: error reading debug state:', e); } }
-    window.addEventListener('storage', check);
-    window.addEventListener('financia-debug-change', check);
-    return function() { window.removeEventListener('storage', check); window.removeEventListener('financia-debug-change', check); };
-  }, []);
-  if (!show) return null;
-  return (
-    <div className="fixed bottom-4 right-4 z-50 flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-lg"
-      style={{background:'#6b21a8', color:'#fff'}}>
-      <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-      DEBUG
-    </div>
-  );
-}
-
 export default function App() {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const path = location.pathname.replace(/^\//, '');
-  const isLegal = path === 'privacidade' || path === 'termos';
-  const isLanding = path === 'landing';
-
-  const [session, setSession]           = useState(null);
-  const [isAdminDB, setIsAdminDB]       = useState(false);
-  const [appLoading, setAppLoading]     = useState(true);
-  const [dataLoading, setDataLoading]   = useState(false);
-  const [dataError, setDataError]       = useState(null);
-  const [brand, setBrand]               = useState(INIT_BRAND);
-  const setBrandStable = useCallback(function(next) {
-    setBrand(function(prev) {
-      if (!prev && !next) return prev;
-      if (!prev) return next;
-      if (!next) return prev;
-      if (prev.name===next.name && prev.logo===next.logo && prev.color===next.color && prev.color_secondary===next.color_secondary && prev.color_accent===next.color_accent && prev.theme===next.theme && prev.logo_url===next.logo_url && prev.phone===next.phone && prev.white_label===next.white_label && prev.niche===next.niche && prev.visual_version===next.visual_version && prev.custom_palette===next.custom_palette && prev.brand_config===next.brand_config) return prev;
-      return next;
-    });
-  }, [setBrand]);
-  const [planInfo, setPlanInfo]         = useState(INIT_PLAN);
-  const [syncStatus, setSyncStatus]     = useState('idle');
-  const [sidebarOpen, setSidebarOpen]   = useState(false);
-  const [toasts, setToasts]             = useState([]);
-  const [confirmData, setConfirmData]   = useState(null);
-  const [showLogin, setShowLogin]       = useState(false);
-  const [showUpgrade, setShowUpgrade]   = useState(false);
-  const [onboardingNeeded, setOnboardingNeeded] = useState(false);
-  const [announceMsg, setAnnounceMsg]   = useState('');
-  const firstRender                     = useRef(true);
-  const onboardingRef                   = useRef(null);
-  const toastId                         = useRef(0);
-  const toastTimeoutsRef                = useRef([]);
-  const modalRef                        = useRef({ confirmData, showUpgrade, sidebarOpen, showLogin });
-  modalRef.current = { confirmData, showUpgrade, sidebarOpen, showLogin };
-
-  const dismissToast = useCallback(function(id) {
-    setToasts(function(list) { return list.filter(function(t) { return t.id !== id; }); });
-  }, []);
-
-  const toast = useCallback(function(msg, type) {
-    if (!type) type = 'success';
-    const id = ++toastId.current;
-    setToasts(function(list) { return list.concat([{id:id, msg:msg, type:type}]); });
-    const tid = setTimeout(function() {
-      toastTimeoutsRef.current = toastTimeoutsRef.current.filter(function(t) { return t !== tid; });
-      setToasts(function(list) { return list.filter(function(t) { return t.id !== id; }); });
-    }, type === 'error' ? 4000 : 3000);
-    toastTimeoutsRef.current.push(tid);
-  }, []);
-
-  const { appBrand, effectiveTheme, toggleTheme } = useBrandAppearance(brand, planInfo);
-
-  const navTo = useCallback(function(v) {
-    navigate('/' + v);
-  }, [navigate]);
-
-  useEffect(function() {
-    const plan = effectivePlan(planInfo);
-    const el = document.documentElement;
-    el.setAttribute('data-plan', plan);
-    if (plan !== 'free' && session) {
-      const prev = el.getAttribute('data-plan-prev');
-      if (prev && prev !== plan) {
-        const msg = plan === 'premium'
-          ? 'Seu plano foi atualizado para Premium. Sua experiencia executiva ja esta disponivel.'
-          : 'Seu plano foi atualizado para Pro. Sua nova experiencia ja esta disponivel.';
-        toast(msg, 'success');
-      }
-      el.setAttribute('data-plan-prev', plan);
-    } else {
-      el.setAttribute('data-plan-prev', plan);
-    }
-  }, [planInfo, session, toast]);
-
-  useEffect(function() {
-    if (!dataLoading) return;
-    const t = setTimeout(function() { setDataLoading(false); setSyncStatus('idle'); }, 25000);
-    return function() { clearTimeout(t); };
-  }, [dataLoading]);
-
-  useEffect(function() {
-    let buffer = [];
-    let timer = null;
-    const routes = { d:'dashboard', t:'income', i:'inventory', s:'settings', r:'report', p:'planos' };
-
-    function help() {
-      const msg = 'Atalhos: g+d Dashboard, g+t Transações, g+i Estoque, g+s Config, g+r Relatórios, g+p Planos, ? Ajuda, Esc Fechar';
-      if (typeof window.showToast === 'function') { window.showToast(msg, 'info'); }
-      else { window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: msg, type: 'info' } })); }
-    }
-
-    function onKeyDown(e) {
-      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT' || e.target.isContentEditable) return;
-      const key = e.key.toLowerCase();
-
-      if (key === 'escape') {
-        const m = modalRef.current;
-        if (m.confirmData) { setConfirmData(null); return; }
-        if (m.showUpgrade) { setShowUpgrade(false); return; }
-        if (m.sidebarOpen) { setSidebarOpen(false); return; }
-        if (m.showLogin) { setShowLogin(false); return; }
-        return;
-      }
-      if (key === '?') { e.preventDefault(); help(); return; }
-
-      if (key === 'g') {
-        e.preventDefault();
-        clearTimeout(timer);
-        buffer.push('g');
-        timer = setTimeout(function() { buffer = []; }, 1000);
-        return;
-      }
-
-      if (buffer.length === 1 && buffer[0] === 'g') {
-        clearTimeout(timer);
-        buffer = [];
-        const hash = routes[key];
-        if (hash) { e.preventDefault(); navTo(hash); }
-        return;
-      }
-      buffer = [];
-    }
-
-    document.addEventListener('keydown', onKeyDown);
-    return function() { document.removeEventListener('keydown', onKeyDown); };
-  }, [navigate, navTo]);
-
-  useEffect(function() {
-    if (!session) { onboardingRef.current = null; setOnboardingNeeded(false); return; }
-    if (dataLoading) return;
-    const meta2 = session.user.user_metadata || {};
-    const gName = meta2.full_name || meta2.name || '';
-    const doneFlag = !!localStorage.getItem('financia_onboarded_' + session.user.id);
-    const needName = !!gName && brand.name === gName;
-    const needs = !doneFlag && needName;
-    if (onboardingRef.current === null) {
-      onboardingRef.current = needs;
-      setOnboardingNeeded(needs);
-    } else if (onboardingRef.current === true && !needs) {
-      onboardingRef.current = false;
-      setOnboardingNeeded(false);
-    }
-  }, [session, dataLoading, brand]);
-
-  useEffect(function() {
-    return function() {
-      toastTimeoutsRef.current.forEach(function(tid) { clearTimeout(tid); });
-      toastTimeoutsRef.current = [];
-    };
-  }, []);
-
-  useEffect(function() {
-    if (firstRender.current) {
-      firstRender.current = false;
-      return;
-    }
-    const names = { dashboard:'Dashboard', income:'Vendas e Ganhos', expense:'Despesas', inventory:'Estoque', report:'Relatório', email:'Comunicar', settings:'Configurações', planos:'Planos', brandstudio:'Brand Studio' };
-    var name = names[path] || path;
-    setAnnounceMsg('');
-    var rafId = requestAnimationFrame(function() {
-      setAnnounceMsg(name);
-    });
-    var main = document.getElementById('main-content');
-    if (main) main.focus();
-    var t = setTimeout(function() { setAnnounceMsg(''); }, 3000);
-    return function() { cancelAnimationFrame(rafId); clearTimeout(t); };
-  }, [path]);
-
-  const confirm = useCallback(function(msg, onOk) { setConfirmData({msg:msg, onOk:onOk}); }, []);
-
-  const enforceLimit = useCallback(function(kind, currentCount) {
-    if (atLimit(planInfo, kind, currentCount)) {
-      setShowUpgrade({ kind: kind, limit: limitFor(planInfo, kind) });
-      return false;
-    }
-    return true;
-  }, [planInfo]);
-
-  const {tx, setTx, addTx, addGenerated, editTx, deleteTx}                              = useTx(session, enforceLimit, toast);
-  const {products, setProducts, addProduct, editProduct, deleteProduct, adjustStock}    = useProducts(session, enforceLimit, toast);
-  const {losses, setLosses, addLoss, editLoss, deleteLoss}                             = useLosses(session, enforceLimit, toast);
-
-  const sessionProps = React.useMemo(function() {
-    return { toast, session, setSession, isAdminDB, setIsAdminDB,
-      setAppLoading, setDataLoading, setDataError,
-      setBrand: setBrandStable, setPlanInfo, setSyncStatus,
-      setTx, setProducts, setLosses };
-  }, [toast, session, setSession, isAdminDB, setIsAdminDB,
-    setAppLoading, setDataLoading, setDataError,
-    setBrandStable, setPlanInfo, setSyncStatus,
-    setTx, setProducts, setLosses]);
-  const {saveBrand, savePhone, loadData} = useSession(sessionProps);
-
-const loadDataRef = useRef(loadData);
-loadDataRef.current = loadData;
-
+  const s = useAppState();
+  const t = useToasts({ toasts: s.toasts, setToasts: s.setToasts, toastId: s.toastId, toastTimeoutsRef: s.toastTimeoutsRef });
+  const n = useNavigation({ modalRef: s.modalRef, setConfirmData: s.setConfirmData, setShowUpgrade: s.setShowUpgrade, setSidebarOpen: s.setSidebarOpen, setShowLogin: s.setShowLogin });
+  usePlanEffects({ dataLoading: s.dataLoading, setDataLoading: s.setDataLoading, setSyncStatus: s.setSyncStatus, planInfo: s.planInfo, session: s.session, toast: t.toast, path: n.path, setAnnounceMsg: s.setAnnounceMsg, firstRender: s.firstRender, toastTimeoutsRef: s.toastTimeoutsRef });
+  const { appBrand, effectiveTheme, toggleTheme } = useBrandAppearance(s.brand, s.planInfo);
+   const sessionProps = useMemo(function() {
+     return { toast: t.toast, session: s.session, setSession: s.setSession, isAdminDB: s.isAdminDB, setIsAdminDB: s.setIsAdminDB,
+       setAppLoading: s.setAppLoading, setDataLoading: s.setDataLoading, setDataError: s.setDataError,
+       setBrand: s.setBrandStable, setPlanInfo: s.setPlanInfo, setSyncStatus: s.setSyncStatus,
+       setTx: setTx, setProducts: setProducts, setLosses: setLosses };
+   }, [t.toast, s.session, s.setSession, s.isAdminDB, s.setIsAdminDB, s.setAppLoading, s.setDataLoading, s.setDataError, s.setBrandStable, s.setPlanInfo, s.setSyncStatus, setTx, setProducts, setLosses]);
+  const { saveBrand, savePhone, loadData } = useSession(sessionProps);
+  const loadDataRef = useRef(loadData); loadDataRef.current = loadData;
   useEffect(function() {
     if (typeof window === 'undefined') return;
-    window.__financia_reload_plan = function() {
-      if (session && session.user && session.user.id && navigator.onLine) {
-        loadDataRef.current(session.user.id);
-      }
-    };
+    window.__financia_reload_plan = function() { if (s.session && s.session.user && s.session.user.id && navigator.onLine) loadDataRef.current(s.session.user.id); };
     return function() { delete window.__financia_reload_plan; };
-  }, [session]);
-
-  const handleCloseSidebar   = useCallback(function() { setSidebarOpen(false); }, []);
-  const handleOpenSidebar    = useCallback(function() { setSidebarOpen(true); }, []);
-  const handleDeductStock    = useCallback(function(id, qty) { adjustStock(id, -qty); }, [adjustStock]);
-  const handleConfirmOk      = useCallback(async function() { await confirmData.onOk(); setConfirmData(null); }, [confirmData]);
-  const handleCancel         = useCallback(function() { setConfirmData(null); }, []);
-  const handleCloseUpgrade   = useCallback(function() { setShowUpgrade(false); }, []);
-  const handleNav            = useCallback(function(v) { navTo(v); }, [navTo]);
-
-const sessionViews = ['dashboard','income','expense','inventory','email','report','settings','planos','brandstudio'];
-const currentView = sessionViews.includes(path) ? path : 'dashboard';
-
-  if (appLoading) return <Loader/>;
-
-  if (isLegal) {
-    return (
-      <FeatureErrorBoundary featureName="Legal">
-        <Suspense fallback={<Loader/>}>
-          {path === 'privacidade' ? <PrivacyPolicy onNav={navTo}/> : <TermsOfService onNav={navTo}/>}
-        </Suspense>
-      </FeatureErrorBoundary>
-    );
-  }
-
-  if (isLanding) {
-    return (
-      <FeatureErrorBoundary featureName="Landing">
-        <Suspense fallback={<Loader/>}>
-          <Landing brand={brand} onEnter={function() { navTo(''); setShowLogin(true); }} onNav={navTo}/>
-        </Suspense>
-      </FeatureErrorBoundary>
-    );
-  }
-
-  if (!session) {
-    const seen = !!localStorage.getItem('financia_seen');
-    if (!seen && !showLogin) {
-      return (
-        <FeatureErrorBoundary featureName="Landing">
-          <Suspense fallback={<Loader/>}>
-            <Landing brand={brand} onEnter={function() { setShowLogin(true); }} onNav={navTo}/>
-          </Suspense>
-        </FeatureErrorBoundary>
-      );
-    }
-    return <Login brand={brand} onNav={navTo}/>;
-  }
-
-  if (dataLoading) return <Loader text="Carregando seus dados..."/>;
-  if (dataError) return (
-    <div className="min-h-screen flex items-center justify-center flex-col gap-4 p-6" style={{background:'var(--bg-page)'}}>
-      <span className="text-4xl">(!)</span>
-      <p className="text-sm font-semibold text-gray-700">{dataError}</p>
-      <button onClick={function() { loadData(session.user.id); }} className="px-6 py-2.5 text-white rounded-xl text-sm font-semibold bg-green-600">Tentar novamente</button>
-    </div>
-  );
-
-  const meta = session.user.user_metadata || {};
-  const googleName = meta.full_name || meta.name || '';
-  const needsName = !!googleName && brand.name === googleName;
-  let needsPhone = false;
-  if (onboardingNeeded) {
-    const finishOnboarding = function(data) {
-      const tasks = [];
-      if (needsName && data.name) {
-        const nb = Object.assign({}, brand, {name: data.name});
-        tasks.push(Promise.resolve(saveBrand(nb)));
-      }
-      if (data.phone) tasks.push(Promise.resolve(savePhone(data.phone)));
-      return Promise.all(tasks).then(function() {
-        localStorage.setItem('financia_onboarded_' + session.user.id, '1');
-        onboardingRef.current = false;
-        setOnboardingNeeded(false);
-      });
+  }, [s.session]);
+  const o = useOnboarding({ session: s.session, dataLoading: s.dataLoading, brand: s.brand, setOnboardingNeeded: s.setOnboardingNeeded, onboardingRef: s.onboardingRef, saveBrand, savePhone });
+  const enforceLimit = useCallback(function(kind, currentCount) {
+    if (atLimit(s.planInfo, kind, currentCount)) { s.setShowUpgrade({ kind: kind, limit: limitFor(s.planInfo, kind) }); return false; } return true;
+  }, [s.planInfo]);
+  const { tx, setTx, addTx, addGenerated, editTx, deleteTx } = useTx(s.session, enforceLimit, t.toast);
+  const { products, setProducts, addProduct, editProduct, deleteProduct, adjustStock } = useProducts(s.session, enforceLimit, t.toast);
+  const { losses, setLosses, addLoss, editLoss, deleteLoss } = useLosses(s.session, enforceLimit, t.toast);
+  const handleConfirmOk = useCallback(async function() { await s.confirmData.onOk(); s.setConfirmData(null); }, [s.confirmData]);
+  const handleCancel = useCallback(function() { s.setConfirmData(null); }, []);
+  const handleCloseUpgrade = useCallback(function() { s.setShowUpgrade(false); }, []);
+  const handleCloseSidebar = useCallback(function() { s.setSidebarOpen(false); }, []);
+  const handleOpenSidebar = useCallback(function() { s.setSidebarOpen(true); }, []);
+  const handleDeductStock = useCallback(function(id, qty) { adjustStock(id, -qty); }, [adjustStock]);
+  const handleNav = useCallback(function(v) { n.navTo(v); }, [n.navTo]);
+  const ctx = useMemo(function() {
+    return { session: s.session, setSession: s.setSession, isAdminDB: s.isAdminDB, setIsAdminDB: s.setIsAdminDB,
+      appLoading: s.appLoading, setAppLoading: s.setAppLoading, dataLoading: s.dataLoading, setDataLoading: s.setDataLoading,
+      dataError: s.dataError, setDataError: s.setDataError, brand: s.brand, setBrand: s.setBrand, setBrandStable: s.setBrandStable,
+      planInfo: s.planInfo, setPlanInfo: s.setPlanInfo, syncStatus: s.syncStatus, setSyncStatus: s.setSyncStatus,
+      toasts: s.toasts, setToasts: s.setToasts, confirmData: s.confirmData, setConfirmData: s.setConfirmData,
+      showLogin: s.showLogin, setShowLogin: s.setShowLogin, showUpgrade: s.showUpgrade, setShowUpgrade: s.setShowUpgrade,
+      onboardingNeeded: s.onboardingNeeded, setOnboardingNeeded: s.setOnboardingNeeded,
+      announceMsg: s.announceMsg, setAnnounceMsg: s.setAnnounceMsg, sidebarOpen: s.sidebarOpen, setSidebarOpen: s.setSidebarOpen,
+      appBrand, effectiveTheme, toggleTheme, navTo: n.navTo, currentView: n.currentView,
+      toast: t.toast, dismissToast: t.dismissToast,
+      confirm: function(msg, onOk) { s.setConfirmData({msg:msg, onOk:onOk}); },
+      handleConfirmOk, handleCancel, handleCloseUpgrade, handleNav, handleCloseSidebar, handleOpenSidebar, handleDeductStock,
+      saveBrand, savePhone, loadData, enforceLimit,
+      tx, setTx, addTx, addGenerated, editTx, deleteTx, products, setProducts, addProduct, editProduct, deleteProduct,
+      losses, setLosses, addLoss, editLoss, deleteLoss, adjustStock,
+      path: n.path, isLegal: n.isLegal, isLanding: n.isLanding,
     };
-    return <Onboarding brand={brand} needsName={needsName} needsPhone={needsPhone} onSave={finishOnboarding}/>;
+  }, [s, appBrand, effectiveTheme, toggleTheme, n, t, handleConfirmOk, handleCancel, handleCloseUpgrade, handleDeductStock, saveBrand, savePhone, loadData, enforceLimit, tx, setTx, addTx, addGenerated, editTx, deleteTx, products, setProducts, addProduct, editProduct, deleteProduct, losses, setLosses, addLoss, editLoss, deleteLoss, adjustStock]);
+
+  if (s.appLoading) return <Loader/>;
+  if (n.isLegal) return <FeatureErrorBoundary featureName="Legal"><Suspense fallback={<Loader/>}>{n.path === 'privacidade' ? <PrivacyPolicy onNav={n.navTo}/> : <TermsOfService onNav={n.navTo}/>}</Suspense></FeatureErrorBoundary>;
+  if (n.isLanding) return <FeatureErrorBoundary featureName="Landing"><Suspense fallback={<Loader/>}><Landing brand={s.brand} onEnter={function() { n.navTo(''); s.setShowLogin(true); }} onNav={n.navTo}/></Suspense></FeatureErrorBoundary>;
+  if (!s.session) {
+    const seen = !!localStorage.getItem('financia_seen');
+    if (!seen && !s.showLogin) return <FeatureErrorBoundary featureName="Landing"><Suspense fallback={<Loader/>}><Landing brand={s.brand} onEnter={function() { s.setShowLogin(true); }} onNav={n.navTo}/></Suspense></FeatureErrorBoundary>;
+    return <Login brand={s.brand} onNav={n.navTo}/>;
   }
+  if (s.dataLoading) return <Loader text="Carregando seus dados..."/>;
+  if (s.dataError) return <div className="min-h-screen flex items-center justify-center flex-col gap-4 p-6" style={{background:'var(--bg-page)'}}><span className="text-4xl">(!)</span><p className="text-sm font-semibold text-gray-700">{s.dataError}</p><button onClick={function() { loadData(s.session.user.id); }} className="px-6 py-2.5 text-white rounded-xl text-sm font-semibold bg-green-600">Tentar novamente</button></div>;
+
+  const meta = s.session.user.user_metadata || {};
+  const googleName = meta.full_name || meta.name || '';
+  const needsName = !!googleName && s.brand.name === googleName;
+  let needsPhone = false;
+  if (s.onboardingNeeded) { const finishOnboarding = function(data) { o.finishOnboarding(data, needsName); }; return <Onboarding brand={s.brand} needsName={needsName} needsPhone={needsPhone} onSave={finishOnboarding}/>; }
 
   return (
-    <div className="min-h-screen flex overflow-x-hidden" style={{background:'var(--bg-page)'}}>
-      <a href="#main-content" onClick={function(e){e.preventDefault();var el=document.getElementById('main-content');if(el){el.setAttribute('tabindex','-1');el.focus();el.scrollIntoView();}}} className="skip-link">Pular para conteúdo</a>
-      <Offline/>
-      <WidgetErrorBoundary><UpdateBanner brand={appBrand}/></WidgetErrorBoundary>
-      <DebugBadge/>
-      <SyncBadge status={syncStatus}/>
-      <WidgetErrorBoundary><Sidebar view={currentView} onNav={navTo} brand={appBrand} open={sidebarOpen} isAdmin={isAdminDB} onClose={handleCloseSidebar}/></WidgetErrorBoundary>
-      <div className="hidden lg:block fixed top-4 right-4 z-30">
-        <ThemeToggle theme={effectiveTheme} onToggle={toggleTheme} variant="floating"/>
+    <AppProvider value={ctx}>
+      <div className="min-h-screen flex overflow-x-hidden" style={{background:'var(--bg-page)'}}>
+        <a href="#main-content" onClick={function(e){e.preventDefault();var el=document.getElementById('main-content');if(el){el.setAttribute('tabindex','-1');el.focus();el.scrollIntoView();}}} className="skip-link">Pular para conte\u00fado</a>
+        <Offline/><WidgetErrorBoundary><UpdateBanner brand={appBrand}/></WidgetErrorBoundary><DebugBadge/><SyncBadge status={s.syncStatus}/>
+        <WidgetErrorBoundary><Sidebar view={n.currentView} onNav={n.navTo} brand={appBrand} open={s.sidebarOpen} isAdmin={s.isAdminDB} onClose={handleCloseSidebar}/></WidgetErrorBoundary>
+        <div className="hidden lg:block fixed top-4 right-4 z-30"><ThemeToggle theme={effectiveTheme} onToggle={toggleTheme} variant="floating"/></div>
+        <div className="flex-1 lg:ml-64 flex flex-col min-h-screen min-w-0 w-full">
+          <WidgetErrorBoundary><Header brand={appBrand} syncStatus={s.syncStatus} theme={effectiveTheme} onToggleTheme={toggleTheme} onMenuOpen={handleOpenSidebar}/></WidgetErrorBoundary>
+          <main id="main-content" tabIndex="-1" className="flex-1 p-4 lg:p-8 max-w-5xl w-full mx-auto pb-24 lg:pb-8 min-w-0 overflow-x-hidden">
+            <FeatureErrorBoundary featureName={n.currentView}><AppRoutes context={ctx}/></FeatureErrorBoundary>
+          </main>
+        </div>
+        <WidgetErrorBoundary><BottomNav view={n.currentView} onNav={n.navTo} brand={appBrand} isAdmin={s.isAdminDB}/></WidgetErrorBoundary>
+        <Toast toasts={s.toasts} onDismiss={t.dismissToast}/>
+        {s.confirmData && <Confirm msg={s.confirmData.msg} onOk={handleConfirmOk} onCancel={handleCancel}/>}
+        {s.showUpgrade && <UpgradeModal reason={typeof s.showUpgrade === 'object' ? s.showUpgrade : null} brand={appBrand} onClose={handleCloseUpgrade} onNav={handleNav}/>}
+        <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">{s.announceMsg}</div>
       </div>
-      <div className="flex-1 lg:ml-64 flex flex-col min-h-screen min-w-0 w-full">
-        <WidgetErrorBoundary><Header brand={appBrand} syncStatus={syncStatus} theme={effectiveTheme} onToggleTheme={toggleTheme} onMenuOpen={handleOpenSidebar}/></WidgetErrorBoundary>
-        <main id="main-content" tabIndex="-1" className="flex-1 p-4 lg:p-8 max-w-5xl w-full mx-auto pb-24 lg:pb-8 min-w-0 overflow-x-hidden">
-          <FeatureErrorBoundary featureName={currentView}>
-            <AppRoutes tx={tx} products={products} losses={losses} brand={appBrand} planInfo={planInfo}
-              onNav={navTo} toast={toast} confirm={confirm} uid={session.user.id}
-              addTx={addTx} editTx={editTx} deleteTx={deleteTx} addGenerated={addGenerated}
-              onDeductStock={handleDeductStock}
-              addProduct={addProduct} editProduct={editProduct} deleteProduct={deleteProduct}
-              addLoss={addLoss} editLoss={editLoss} deleteLoss={deleteLoss} adjustStock={adjustStock}
-              saveBrand={saveBrand} savePhone={savePhone} session={session} isAdmin={isAdminDB}
-              dataLoading={dataLoading}/>
-          </FeatureErrorBoundary>
-        </main>
-      </div>
-      <WidgetErrorBoundary><BottomNav view={currentView} onNav={navTo} brand={appBrand} isAdmin={isAdminDB}/></WidgetErrorBoundary>
-      <Toast toasts={toasts} onDismiss={dismissToast}/>
-      {confirmData && <Confirm msg={confirmData.msg} onOk={handleConfirmOk} onCancel={handleCancel}/>}
-      {showUpgrade && <UpgradeModal reason={typeof showUpgrade === 'object' ? showUpgrade : null} brand={appBrand} onClose={handleCloseUpgrade} onNav={handleNav}/>}
-      <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">{announceMsg}</div>
-    </div>
+    </AppProvider>
   );
 }

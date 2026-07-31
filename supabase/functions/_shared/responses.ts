@@ -116,3 +116,48 @@ export function jsonResponse(body: unknown, status = 200): Response {
     headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
   });
 }
+
+// Safe error response - sanitizes internal errors for client, logs full details server-side
+export function safeErrorResponse(err: unknown, context: string): Response {
+  const requestId = createRequestId();
+  
+  // Full log server-side (Sentry, console, etc.)
+  console.error(`[${requestId}] ${context}:`, err);
+  
+  // Map known errors to safe codes
+  if (err instanceof Error) {
+    // Stripe errors
+    if (err.name === 'StripeError' || err.constructor.name === 'StripeError') {
+      return corsResponse({ 
+        error: 'payment_failed', 
+        requestId,
+        message: 'Erro no processamento do pagamento' 
+      }, 402);
+    }
+    
+    // Postgres/Postgrest errors
+    if (err.message?.includes('duplicate key') || err.message?.includes('violates')) {
+      return corsResponse({ 
+        error: 'database_error', 
+        requestId,
+        message: 'Erro interno do servidor' 
+      }, 500);
+    }
+    
+    // Auth errors
+    if (err.message?.includes('unauthorized') || err.message?.includes('auth')) {
+      return corsResponse({ 
+        error: 'unauthorized', 
+        requestId,
+        message: 'Não autorizado' 
+      }, 401);
+    }
+  }
+  
+  // Generic for client - never leak internal details
+  return corsResponse({ 
+    error: 'internal_error', 
+    requestId,
+    message: 'Erro interno do servidor' 
+  }, 500);
+}

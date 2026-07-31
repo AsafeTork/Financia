@@ -1,31 +1,69 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useRef } from 'react';
 import { sb } from '../../lib/supabase.js';
 
-export function useImpersonation(props) {
-  var { toast } = props;
+// In-memory storage for impersonation token (not persisted to localStorage)
+let impersonationTokenRef = null;
 
-  var handleImpersonation = useCallback(function() {
-    var hash = window.location.hash;
-    if (!hash || !hash.includes('access_token')) return;
+export function useImpersonation({ toast }) {
+  const handleImpersonation = useCallback(async () => {
     try {
-      var params = new URLSearchParams(hash.replace('#', ''));
-      var accessToken = params.get('access_token');
-      var refreshToken = params.get('refresh_token');
-      if (!accessToken || !refreshToken) return;
-      sb.auth.setSession({ access_token: accessToken, refresh_token: refreshToken })
-        .then(function(res) {
-          if (res.error) throw res.error;
-          window.location.hash = '';
-          window.location.reload();
-        })
-        .catch(function(err) {
-          if (toast) toast('Erro ao acessar conta: ' + (err.message || 'tente novamente'), 'error');
-          window.location.hash = '';
-        });
-    } catch (_) {
+      // Request impersonation token from backend (which sets HttpOnly cookie)
+      const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/impersonation-token`, {
+        method: 'POST',
+        credentials: 'include', // Include HttpOnly cookie
+        headers: { 'Content-Type': 'application/json' },
+      });
+      
+      if (!response.ok) {
+        if (toast) toast('Erro ao iniciar impersonação', 'error');
+        return;
+      }
+      
+      const { impersonation_token } = await response.json();
+      if (!impersonation_token) return;
+      
+      // Store in memory only (not localStorage)
+      impersonationTokenRef = impersonation_token;
+      
+      // Set session with impersonation token
+      const { error } = await sb.auth.setSession({
+        access_token: impersonation_token,
+        refresh_token: '', // No refresh token for impersonation
+      });
+      
+      if (error) throw error;
+      
+      // Clear URL hash if any
+      window.location.hash = '';
+      window.location.reload();
+    } catch (err) {
+      if (toast) toast('Erro ao acessar conta: ' + (err.message || 'tente novamente'), 'error');
       window.location.hash = '';
     }
   }, [toast]);
 
-  useEffect(handleImpersonation, [handleImpersonation]);
+  // Check for impersonation token in memory on mount
+  useEffect(() => {
+    if (impersonationTokenRef) {
+      sb.auth.setSession({
+        access_token: impersonationTokenRef,
+        refresh_token: '',
+      }).then(() => {
+        window.location.reload();
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    handleImpersonation();
+  }, [handleImpersonation]);
+}
+
+// Export getter for other modules to use
+export function getImpersonationToken() {
+  return impersonationTokenRef;
+}
+
+export function clearImpersonationToken() {
+  impersonationTokenRef = null;
 }

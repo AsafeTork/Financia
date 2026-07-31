@@ -5,21 +5,10 @@
 import Stripe from 'https://esm.sh/stripe@17.7.0?target=denonext';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { enforceRateLimit, getAdminClient, sanitizePaymentMethodId, cacheDel } from '../_shared/security.ts';
-
-const CORS_HEADERS = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-};
+import { withLogging, corsResponse, handleOptions } from '../_shared/logger.ts';
+import { safeErrorResponse } from '../_shared/responses.ts';
 
 const ACTIVE_STATUSES = ['active', 'trialing', 'past_due', 'unpaid'];
-
-function jsonResponse(status, payload) {
-  const headers = { 'Content-Type': 'application/json' };
-  const keys = Object.keys(CORS_HEADERS);
-  for (let i = 0; i < keys.length; i++) { headers[keys[i]] = CORS_HEADERS[keys[i]]; }
-  return new Response(JSON.stringify(payload), { status: status, headers: headers });
-}
 
 async function findCustomerId(stripe, email) {
   if (!email) return null;
@@ -28,20 +17,18 @@ async function findCustomerId(stripe, email) {
   return null;
 }
 
-Deno.serve(async function (req) {
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { status: 204, headers: CORS_HEADERS });
-  }
+async function handler(req: Request): Promise<Response> {
+  if (req.method === 'OPTIONS') return handleOptions();
 
   const stripeKey = Deno.env.get('STRIPE_SECRET_KEY');
   if (!stripeKey) {
-    return jsonResponse(500, { error: 'stripe_not_configured' });
+    return corsResponse({ error: 'stripe_not_configured' }, 500);
   }
 
   try {
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
-      return jsonResponse(401, { error: 'unauthorized' });
+      return corsResponse({ error: 'unauthorized' }, 401);
     }
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
@@ -53,25 +40,25 @@ Deno.serve(async function (req) {
     const userResult = await supabase.auth.getUser();
     const user = userResult && userResult.data ? userResult.data.user : null;
     if (!user) {
-      return jsonResponse(401, { error: 'unauthorized' });
+      return corsResponse({ error: 'unauthorized' }, 401);
     }
 
     let body = {};
     try { body = await req.json(); } catch (parseErr) { body = {}; }
     const pmId = sanitizePaymentMethodId(body && body.payment_method_id);
     if (!pmId) {
-      return jsonResponse(400, { error: 'no_payment_method' });
+      return corsResponse({ error: 'no_payment_method' }, 400);
     }
     const admin = getAdminClient();
     const allowed = await enforceRateLimit(admin, user.id, 'set_default_payment_method', 60, 10);
-    if (!allowed) return jsonResponse(429, { error: 'rate_limited' });
+    if (!allowed) return corsResponse({ error: 'rate_limited' }, 429);
 
     const stripe = new Stripe(stripeKey, { apiVersion: '2025-01-27.acacia' });
     const pm = await stripe.paymentMethods.retrieve(pmId);
     var customerId = pm && pm.customer ? String(pm.customer) : null;
     if (!customerId) customerId = await findCustomerId(stripe, user.email);
     if (!customerId) {
-      return jsonResponse(404, { error: 'no_customer' });
+      return corsResponse({ error: 'no_customer' }, 404);
     }
     if (!pm || !pm.customer) {
       await stripe.paymentMethods.attach(pmId, { customer: customerId });
@@ -98,9 +85,13 @@ Deno.serve(async function (req) {
     // Invalida cache do get-payment-method pra refletir o novo cartao.
     await cacheDel(admin, 'stripe:get-payment-method:', user.id);
 
-    return jsonResponse(200, { ok: true, subscriptions_updated: updated });
+    return corsResponse({ ok: true, subscriptions_updated: updated });
   } catch (err) {
-    const message = err && err.message ? err.message : String(err);
-    return jsonResponse(500, { error: String(message) });
+    return safeErrorResponse(err, 'set-default-payment-method');
   }
+}
+
+Deno.serve(async (req) => {
+  if (req.method === 'OPTIONS') return handleOptions();
+  return withLogging('set-default-payment-method', async (req) => handler(req))(req);
 });

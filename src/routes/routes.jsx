@@ -1,6 +1,7 @@
 import React, { lazy, Suspense, useCallback, useMemo } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { PageSkeleton } from '../shared/ui/ui.jsx';
+import { useAppContext } from '../App/contexts/AppContext.jsx';
 
 const Dashboard     = lazy(function() { return import('../features/dashboard/Dashboard.jsx'); });
 const TxView        = lazy(function() { return import('../features/transactions/TxView.jsx'); });
@@ -11,15 +12,17 @@ const SettingsView  = lazy(function() { return import('../features/settings/Sett
 const PlansView     = lazy(function() { return import('../features/plans/PlansView.jsx'); });
 const BrandStudioView = lazy(function() { return import('../features/branding/BrandStudioView.jsx'); });
 
-var AppRoutes = React.memo(function AppRoutes(props) {
-  var tx = props.tx, products = props.products, losses = props.losses, brand = props.brand;
-  var planInfo = props.planInfo, onNav = props.onNav, toast = props.toast, confirm = props.confirm;
-  var uid = props.uid, addTx = props.addTx, editTx = props.editTx, deleteTx = props.deleteTx;
-  var addGenerated = props.addGenerated, onDeductStock = props.onDeductStock;
-  var addProduct = props.addProduct, editProduct = props.editProduct, deleteProduct = props.deleteProduct;
-  var addLoss = props.addLoss, editLoss = props.editLoss, deleteLoss = props.deleteLoss;
-  var adjustStock = props.adjustStock, saveBrand = props.saveBrand, savePhone = props.savePhone;
-  var session = props.session, isAdmin = props.isAdmin, dataLoading = props.dataLoading;
+var AppRoutes = React.memo(function AppRoutes() {
+  var ctx = useAppContext();
+  var tx = ctx.tx, products = ctx.products, losses = ctx.losses, brand = ctx.brand;
+  var planInfo = ctx.planInfo, onNav = ctx.navTo, toast = ctx.toast, confirm = ctx.confirm;
+  var uid = ctx.session ? ctx.session.user.id : null;
+  var addTx = ctx.addTx, editTx = ctx.editTx, deleteTx = ctx.deleteTx;
+  var addGenerated = ctx.addGenerated, onDeductStock = ctx.handleDeductStock;
+  var addProduct = ctx.addProduct, editProduct = ctx.editProduct, deleteProduct = ctx.deleteProduct;
+  var addLoss = ctx.addLoss, editLoss = ctx.editLoss, deleteLoss = ctx.deleteLoss;
+  var adjustStock = ctx.adjustStock, saveBrand = ctx.saveBrand, savePhone = ctx.savePhone;
+  var session = ctx.session, isAdmin = ctx.isAdminDB, dataLoading = ctx.dataLoading;
 
   var noop = useMemo(function() { return function() {}; }, []);
   var onUpgradePlano = useMemo(function() { return function() { onNav('planos'); }; }, [onNav]);

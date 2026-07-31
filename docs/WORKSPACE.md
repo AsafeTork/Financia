@@ -2,14 +2,14 @@
 
 ---
 type: WORKING
-status: APPROVED
+status: REVIEW
 owner: Integrador
-version: 2.1
+version: 2.2
 reviewed_by: Integrador
-ready_for_integration: true
-last_review: 2026-07-11
-dependencies: [CLAUDE.md, EXECUTOR_PROMPT.md, EXECUTION_STATE.md, SCRATCH_PAD.md, VALIDATION_MODULE.md, CHECKPOINT_AUDITOR.md, CHANGELOG_AI.md, IMPLEMENTATION_ORDER.md, MASTER_REFACTOR_PLAN.md]
-next_review: 2026-07-18
+ready_for_integration: false
+last_review: 2026-07-31
+dependencies: [CLAUDE.md, EXECUTOR_PROMPT.md, EXECUTION_STATE.md, SCRATCH_PAD.md, VALIDATION_MODULE.md, CHECKPOINT_AUDITOR.md, CHANGELOG_AI.md, IMPLEMENTATION_ORDER.md, MASTER_REFACTOR_PLAN.md, REPORT_FINANCIA_BACKEND.md]
+next_review: 2026-08-07
 ---
 
 ---
@@ -153,21 +153,36 @@ Cada fase segue o workflow v2.1:
 | Fase 5 | ✅ **SUPABASE/BACKEND** | PR-01 a PR-05 + EF-03 + EF-05 + Stripe Refactor concluídos e testados | Fase 1 |
 | Fase 6 | ✅ **QA** | Playwright E2E, LHCI, MSW, thresholds 60/50/50/60, PWA offline, IndexedDB recovery, multi-tab sync, Stripe Elements, screen reader (Guidepup), memory leak — todos implementados | Fase 1 |
 | Fase 8 | ✅ **FINALIZAÇÃO** | Correções de segurança Supabase, 12 Edge Functions deployadas, docs promovidos para APPROVED | Fase 7 |
+| **Fase 9** | 🔴 **BACKEND SECURITY FIXES** | **NOVA FASE** - Correções críticas do REPORT_FINANCIA_BACKEND.md: storage RLS initPlan, ai_cache dead policies, admin-set-custom-price duplicate, migrações não trackeadas, tokens impersonation, rate limiting | Fase 8 |
 
 - **Build:** ✅ Passando
 - **Lint:** ✅ 0 erros, 1 warning (pre-existing)
 - **Testes:** ✅ 471+ passed (core)
-- **Supabase Security:** ✅ 12/12 advisories resolvidos
+- **Supabase Security:** ⚠️ **12/12 advisories resolvidos MAS 4 gaps críticos novos** (storage RLS, ai_cache RLS, impersonation, rate limiting)
 - **Edge Functions:** ✅ 12 deployadas (0→12)
 - **Edge Functions pendentes:** 8 (admin-impersonate, get-payment-method, set-default-payment-method, remove-payment-method, send-custom-email, update-brand-config, ai, trigger-apk-build, admin-job-runner)
 - **Site:** ✅ Online em https://financiabr.me
 - **Documentos:** 36 ativos em `docs/`, 12 em `docs/archive/`
+- **Migrações:** ⚠️ **57 no DB vs 22 no disco — 35 não trackeadas (risco disaster recovery)**
 
 ---
 
 ## 4. Bloqueios Atuais
 
-**Nenhum** — Projeto finalizado.
+**Fase 9 — Backend Security Fixes** — Bloqueia declaração de projeto finalizado.
+
+| Item | Severidade | Fonte | Status |
+|------|-----------|-------|--------|
+| Storage RLS policies sem `(SELECT auth.uid())` → 19x slowdown | CRÍTICA | REPORT_FINANCIA_BACKEND.md | Pendente |
+| `ai_cache` RLS policies mortas (4 policies) — service_role bypassa | CRÍTICA | REPORT_FINANCIA_BACKEND.md | Pendente |
+| `admin-set-custom-price` código duplicado (2 handlers + 2 Deno.serve) | CRÍTICA | REPORT_FINANCIA_BACKEND.md | Pendente |
+| 35 migrações não trackeadas (57 DB vs 22 disco) | CRÍTICA | REPORT_FINANCIA_BACKEND.md | Pendente |
+| Impersonation tokens em URL hash (browser history, logs) | ALTA | REPORT_FINANCIA_BACKEND.md | Pendente |
+| Rate limiting ausente em 6+ Edge Functions públicas | ALTA | REPORT_FINANCIA_BACKEND.md | Pendente |
+| `brand_config` column ausente no DB live (schema drift) | MÉDIA | REPORT_FINANCIA_BACKEND.md | Pendente |
+| 4 colunas `custom_price_cents` deveriam ser `jsonb` | MÉDIA | REPORT_FINANCIA_BACKEND.md | Pendente |
+
+---
 
 ## 5. Pendências Baixa Prioridade
 
@@ -178,23 +193,35 @@ Cada fase segue o workflow v2.1:
 
 ---
 
-## 5. Conflitos Identificados
+## 6. Conflitos Identificados
 
 | Conflito | Impacto | Envolvidos | Status |
 |----------|---------|-----------|--------|
 | MASTER_REFACTOR_PLAN.md fases ≠ WORKSPACE.md fases | Roadmap ambíguo | Integrador | ✅ Resolvido (reconciliado) |
 | Documentos citam ~1177 testes, real ~640 | Métricas falsas | Todos | ✅ Resolvido (atualizado) |
+| **WORKSPACE.md v2.1 declarava "projeto finalizado" vs REPORT_FINANCIA_BACKEND.md v1.0 achados críticos** | **Bloqueia release** | **Integrador** | **✅ Resolvido — WORKSPACE.md movido para REVIEW v2.2, Fase 9 criada** |
 
 ---
 
-## 6. Riscos
+## 7. Riscos
 
-**Nenhum risco ativo.** Todas as fases concluídas e validadas.
+**Riscos ativos da Fase 9:**
+- Storage RLS performance 19x degradação afeta todos uploads/downloads de logos
+- Migrações não trackeadas = impossível disaster recovery
+- Impersonation tokens expostos = account takeover via URL history
+- Rate limiting ausente = abuso de API Stripe, custos financeiros
 
 ---
 
-## 7. Próximas Ações
+## 8. Próximas Ações
 
-1. Habilitar leaked password protection no dashboard Supabase Auth
-2. Deploy das 8 Edge Functions restantes
-3. Nada mais — projeto completo
+1. **Fase 9.1:** Fix storage RLS initPlan (4 policies) — migration + deploy
+2. **Fase 9.2:** Drop dead `ai_cache` RLS policies (4 policies) — migration
+3. **Fase 9.3:** Fix `admin-set-custom-price` duplicate code — Edge Function update
+4. **Fase 9.4:** `supabase db pull` para capturar 35 migrações não trackeadas
+5. **Fase 9.5:** Impersonation flow redesign — short-lived tokens, HTTP-only cookies
+6. **Fase 9.6:** Add rate limiting to 6+ public Edge Functions
+7. **Fase 9.7:** Add missing `brand_config` column + consolidate `custom_price_cents` → jsonb
+8. **Fase 9.8:** Validar tudo: build, lint, testes, Lighthouse, security audit
+9. Promover WORKSPACE.md para APPROVED v2.3
+10. Declarar projeto finalizado (se Fase 9 passar)

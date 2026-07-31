@@ -5,21 +5,10 @@
 import Stripe from 'https://esm.sh/stripe@17.7.0?target=denonext';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { enforceRateLimit, getAdminClient, cacheDel } from '../_shared/security.ts';
+import { withLogging, corsResponse, handleOptions } from '../_shared/logger.ts';
+import { safeErrorResponse } from '../_shared/responses.ts';
 
-const CORS_HEADERS = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-};
-
-var ACTIVE_STATUSES = ['active', 'trialing', 'past_due', 'unpaid'];
-
-function jsonResponse(status, payload) {
-  const headers = { 'Content-Type': 'application/json' };
-  const keys = Object.keys(CORS_HEADERS);
-  for (let i = 0; i < keys.length; i++) { headers[keys[i]] = CORS_HEADERS[keys[i]]; }
-  return new Response(JSON.stringify(payload), { status: status, headers: headers });
-}
+const ACTIVE_STATUSES = ['active', 'trialing', 'past_due', 'unpaid'];
 
 function activeSubscriptionOf(subs) {
   if (!subs || !subs.data) return null;
@@ -36,20 +25,18 @@ async function findCustomer(stripe, email) {
   return null;
 }
 
-Deno.serve(async function (req) {
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { status: 204, headers: CORS_HEADERS });
-  }
+async function handler(req: Request): Promise<Response> {
+  if (req.method === 'OPTIONS') return handleOptions();
 
   const stripeKey = Deno.env.get('STRIPE_SECRET_KEY');
   if (!stripeKey) {
-    return jsonResponse(500, { error: 'stripe_not_configured' });
+    return corsResponse({ error: 'stripe_not_configured' }, 500);
   }
 
   try {
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
-      return jsonResponse(401, { error: 'unauthorized' });
+      return corsResponse({ error: 'unauthorized' }, 401);
     }
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
@@ -61,16 +48,16 @@ Deno.serve(async function (req) {
     const userResult = await supabase.auth.getUser();
     const user = userResult && userResult.data ? userResult.data.user : null;
     if (!user) {
-      return jsonResponse(401, { error: 'unauthorized' });
+      return corsResponse({ error: 'unauthorized' }, 401);
     }
     const admin = getAdminClient();
     const allowed = await enforceRateLimit(admin, user.id, 'remove_payment_method', 60, 6);
-    if (!allowed) return jsonResponse(429, { error: 'rate_limited' });
+    if (!allowed) return corsResponse({ error: 'rate_limited' }, 429);
 
     const stripe = new Stripe(stripeKey, { apiVersion: '2025-01-27.acacia' });
     const customer = await findCustomer(stripe, user.email);
     if (!customer) {
-      return jsonResponse(200, { ok: true });
+      return corsResponse({ ok: true });
     }
 
     // Detach de todos os cartoes anexados ao customer.
@@ -107,9 +94,13 @@ Deno.serve(async function (req) {
       }
     }
 
-    return jsonResponse(200, { ok: true, removed: removed });
+    return corsResponse({ ok: true, removed: removed });
   } catch (err) {
-    const message = err && err.message ? err.message : String(err);
-    return jsonResponse(500, { error: String(message) });
+    return safeErrorResponse(err, 'remove-payment-method');
   }
+}
+
+Deno.serve(async (req) => {
+  if (req.method === 'OPTIONS') return handleOptions();
+  return withLogging('remove-payment-method', async (req) => handler(req))(req);
 });

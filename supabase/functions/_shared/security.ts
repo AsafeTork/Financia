@@ -100,7 +100,7 @@ export async function enforceRateLimit(
   windowSeconds: number,
   maxRequests: number
 ): Promise<boolean> {
-  if (!admin) return true;
+  if (!admin) return false; // FAIL-CLOSED: no admin client = block
   try {
     const uid = userId || 'anon';
     const key = `rl:${action}:${uid}`;
@@ -129,8 +129,9 @@ export async function enforceRateLimit(
       expires_at: new Date(Date.now() + windowSeconds * 1000).toISOString(),
     });
     return true;
-  } catch {
-    return true; // fail open
+  } catch (err) {
+    console.error('[RATE_LIMIT] Critical failure:', err);
+    return false; // FAIL-CLOSED: error = block
   }
 }
 

@@ -5,36 +5,23 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { enforceRateLimit, getAdminClient, sanitizeEmail, sanitizeHexColor, sanitizeText, sanitizeUrl } from '../_shared/security.ts';
 import { htmlFromText, sendSystemEmail } from '../_shared/mailer.ts';
+import { withLogging, corsResponse, handleOptions } from '../_shared/logger.ts';
+import { safeErrorResponse } from '../_shared/responses.ts';
 
-const CORS_HEADERS = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-};
-
-function jsonResponse(status, payload) {
-  const headers = { 'Content-Type': 'application/json' };
-  const keys = Object.keys(CORS_HEADERS);
-  for (let i = 0; i < keys.length; i++) { headers[keys[i]] = CORS_HEADERS[keys[i]]; }
-  return new Response(JSON.stringify(payload), { status: status, headers: headers });
-}
-
-Deno.serve(async function (req) {
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { status: 204, headers: CORS_HEADERS });
-  }
+async function handler(req: Request): Promise<Response> {
+  if (req.method === 'OPTIONS') return handleOptions();
 
   const supabaseUrl = Deno.env.get('SUPABASE_URL');
   const anonKey = Deno.env.get('SUPABASE_ANON_KEY');
   const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
   if (!supabaseUrl || !anonKey || !serviceKey) {
-    return jsonResponse(500, { error: 'not_configured' });
+    return corsResponse({ error: 'not_configured' }, 500);
   }
 
   try {
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
-      return jsonResponse(401, { error: 'unauthorized' });
+      return corsResponse({ error: 'unauthorized' }, 401);
     }
 
     // 1) Identifica o chamador a partir do JWT.
@@ -44,7 +31,7 @@ Deno.serve(async function (req) {
     const userResult = await callerClient.auth.getUser();
     const caller = userResult && userResult.data ? userResult.data.user : null;
     if (!caller) {
-      return jsonResponse(401, { error: 'unauthorized' });
+      return corsResponse({ error: 'unauthorized' }, 401);
     }
 
     // 2) Confirma que o chamador e admin (via service_role, ignora RLS).
@@ -56,7 +43,7 @@ Deno.serve(async function (req) {
       .maybeSingle();
     const isAdmin = roleRes && roleRes.data && roleRes.data.role === 'admin';
     if (!isAdmin) {
-      return jsonResponse(403, { error: 'forbidden' });
+      return corsResponse({ error: 'forbidden' }, 403);
     }
 
     // 3) Valida entrada.
@@ -66,17 +53,17 @@ Deno.serve(async function (req) {
     const password = sanitizeText(body && body.password, 128);
     const companyName = sanitizeText(body && body.company_name, 120);
     if (!email || !password) {
-      return jsonResponse(400, { error: 'missing_credentials' });
+      return corsResponse({ error: 'missing_credentials' }, 400);
     }
     if (password.length < 8) {
-      return jsonResponse(400, { error: 'weak_password' });
+      return corsResponse({ error: 'weak_password' }, 400);
     }
     if (!companyName) {
-      return jsonResponse(400, { error: 'missing_company' });
+      return corsResponse({ error: 'missing_company' }, 400);
     }
     const secAdmin = getAdminClient();
     const allowed = await enforceRateLimit(secAdmin, caller.id, 'admin_create_client', 60, 5);
-    if (!allowed) return jsonResponse(429, { error: 'rate_limited' });
+    if (!allowed) return corsResponse({ error: 'rate_limited' }, 429);
 
     // 4) Cria o usuário sem confirmação automática (confirma via link no e-mail).
     const created = await admin.auth.admin.createUser({
@@ -87,11 +74,11 @@ Deno.serve(async function (req) {
     if (created.error) {
       const msg = String(created.error.message || '');
       const dup = msg.indexOf('already') !== -1 || msg.indexOf('registered') !== -1;
-      return jsonResponse(dup ? 409 : 400, { error: dup ? 'email_exists' : 'create_failed', detail: msg });
+      return corsResponse({ error: dup ? 'email_exists' : 'create_failed', detail: msg }, dup ? 409 : 400);
     }
     const newUid = created.data && created.data.user ? created.data.user.id : null;
     if (!newUid) {
-      return jsonResponse(500, { error: 'no_uid' });
+      return corsResponse({ error: 'no_uid' }, 500);
     }
 
     // 5) Cria o perfil da empresa.
@@ -107,7 +94,7 @@ Deno.serve(async function (req) {
     });
     if (profileRes.error) {
       // Usuario foi criado; reporta o erro de perfil mas devolve o uid para nao orfanar.
-      return jsonResponse(207, { user_id: newUid, profile_error: String(profileRes.error.message || '') });
+      return corsResponse({ user_id: newUid, profile_error: String(profileRes.error.message || '') }, 207);
     }
 
     const loginUrl = 'https://financia-gestao.onrender.com';
@@ -160,12 +147,17 @@ Deno.serve(async function (req) {
       html: confirmUrl ? mailHtml : htmlFromText(mailText),
     });
 
-    return jsonResponse(200, {
+    return corsResponse({
       user_id: newUid,
       email_confirmation: confirmUrl ? 'sent' : 'missing_link',
       mail_error: mailResult && !mailResult.ok ? (mailResult.error || 'mail_failed') : null,
     });
   } catch (err) {
-    return jsonResponse(500, { error: 'internal', detail: String(err && err.message ? err.message : err) });
+    return safeErrorResponse(err, 'admin-create-client');
   }
+}
+
+Deno.serve(async (req) => {
+  if (req.method === 'OPTIONS') return handleOptions();
+  return withLogging('admin-create-client', async (req) => handler(req))(req);
 });

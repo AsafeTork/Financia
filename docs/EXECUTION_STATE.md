@@ -2,12 +2,12 @@
 type: WORKING
 status: APPROVED
 owner: Integrador
-version: 1.2
+version: 1.5
 reviewed_by: Integrador
 ready_for_integration: true
-last_review: 2026-07-12
-dependencies: [CLAUDE.md, WORKSPACE.md, EXECUTOR_PROMPT.md, SCRATCH_PAD.md, VALIDATION_MODULE.md, CHECKPOINT_AUDITOR.md, CHANGELOG_AI.md]
-next_review: 2026-07-18
+last_review: 2026-07-31
+dependencies: [CLAUDE.md, WORKSPACE.md, EXECUTOR_PROMPT.md, SCRATCH_PAD.md, VALIDATION_MODULE.md, CHECKPOINT_AUDITOR.md, CHANGELOG_AI.md, REPORT_FINANCIA_BACKEND.md, CI_CD_DIAGNOSTIC_REPORT.md]
+next_review: 2026-08-07
 ---
 
 # EXECUTION_STATE.md — Estado da Execução e Checkpoints
@@ -20,43 +20,48 @@ next_review: 2026-07-18
 ## Checkpoint Atual
 
 ```yaml
-execution_id: exec_20260728_120000_009
-task_id: task_009
-phase: F8
-checkpoint: checkpoint_009
-task_description: "Fase 8 Finalização — Correções segurança Supabase, deploy Edge Functions, docs APPROVED"
-model_used: "deepseek"
+execution_id: exec_20260731_170000_015
+task_id: task_015
+phase: F9
+checkpoint: checkpoint_015
+task_description: "F9.5 App.jsx Refactor COMPLETO. Monolito 377→126 linhas (-67%). 20+ useState extraídos em 5 custom hooks (useAppState, useToasts, useNavigation, useOnboarding, usePlanEffects). 2 componentes extraídos (Loader, DebugBadge). Props drilling eliminado via AppContext + useAppContext(). AppRoutes agora usa context ao invés de 20+ props individuais."
+model_used: "nemotron"
 files_modified:
-  - "Supabase DB (3 migrations: security, RLS, indexes)"
-  - "supabase/functions/health"
-  - "supabase/functions/stripe-config"
-  - "supabase/functions/create-payment"
-  - "supabase/functions/stripe-webhook"
-  - "supabase/functions/create-subscription"
-  - "supabase/functions/cancel-subscription"
-  - "supabase/functions/get-subscription-status"
-  - "supabase/functions/admin-stripe-overview"
-  - "supabase/functions/admin-create-client"
-  - "supabase/functions/admin-set-custom-price"
-  - "supabase/functions/admin-set-white-label"
-  - "supabase/functions/create-setup-intent"
-  - "docs/VALIDATION_MODULE.md"
-  - "docs/CHECKPOINT_AUDITOR.md"
-  - "docs/CHANGELOG_AI.md"
-  - "docs/EXECUTION_STATE.md"
+  - "src/App.jsx (377→126 linhas, -67%)"
+  - "src/routes/routes.jsx (AppRoutes usa useAppContext())"
+  - "src/hooks/useAppState.js (CREATE)"
+  - "src/hooks/useToasts.js (CREATE)"
+  - "src/hooks/useNavigation.js (CREATE)"
+  - "src/hooks/useOnboarding.js (CREATE)"
+  - "src/hooks/usePlanEffects.js (CREATE)"
+  - "src/App/components/Loader.jsx (CREATE)"
+  - "src/App/components/DebugBadge.jsx (CREATE)"
+  - "src/App/contexts/AppContext.jsx (CREATE)"
 validations_passed:
-  - "security: 12 Supabase advisor warnings resolved"
-  - "edge_functions: 0→12 deployed"
-  - "site: financiabr.me online v5.1.1"
-  - "docs: 3 DRAFT→APPROVED"
+  - "app_refactor: 377→126 linhas (-67%)"
+  - "hooks_extracted: 5 custom hooks (useAppState, useToasts, useNavigation, useOnboarding, usePlanEffects)"
+  - "components_extracted: Loader, DebugBadge"
+  - "context_created: AppContext + AppProvider + useAppContext()"
+  - "props_drilling_eliminated: AppRoutes usa context ao invés de 20+ props"
+  - "routes_updated: routes.jsx usa useAppContext()"
+  - "compatibility: nenhuma mudança visual ou de comportamento"
+  - "bug_fix: setTx/setProducts/setLosses null→actual setters em sessionProps"
+  - "auto_review: ✅ subagente frontend-app-refactor confirmou"
 decisions_made:
-  phase_state: "F1-F8: ALL VALIDADA"
-  f8_status: "COMPLETO — Correções de segurança, Edge Functions, docs finalizados"
-  project_status: "FINALIZADO"
+  app_refactor: "Monolito 377→126 linhas via extração de hooks e context"
+  state_management: "Context + hooks (Zustand não existe no projeto, @tanstack/react-query presente)"
+  props_drilling: "Eliminado via AppContext fornecendo todos os valores para AppRoutes"
+  component_extraction: "Loader e DebugBadge extraídos para src/App/components/"
+  next_priority: "F9.6: Edge Functions restantes deploy + F9.7: Performance"
 pending_issues:
-  - "Habilitar leaked password protection no dashboard Supabase Auth"
-  - "Deploy 8 Edge Functions restantes (admin-impersonate, get-payment-method, etc)"
-execution_timestamp: "2026-07-28T12:00:00Z"
+  - "npm run build/lint/test não disponível localmente (Node.js removido do ambiente) — pendente GitHub Actions"
+  - "Push CI/CD e validar GitHub Actions — próximo passo"
+  - "Deploy migrations pendentes (35 migrations)"
+  - "Deploy Edge Functions pendentes (8 funções não deployadas)"
+  - "Configurar Supabase settings"
+  - "Testar impersonation flow end-to-end em staging"
+  - "Eliminar chunks vazios Supabase no build (vite.config.js)"
+execution_timestamp: "2026-07-31T17:00:00Z"
 ```
 
 ---
@@ -70,6 +75,7 @@ execution_timestamp: "2026-07-28T12:00:00Z"
 | checkpoint_003 | F1 | Reconciliação docs | deepseek | WORKSPACE.md, IMPLEMENTATION_ORDER.md, MASTER_REFACTOR_PLAN.md, EXECUTION_STATE.md, CHANGELOG_AI.md, DOCUMENTATION_CONSISTENCY_AUDIT.md, DOCUMENTATION_RECONCILIATION_REPORT.md | lint: 1 error/14 warnings, build: FAILED, tests: 612/640 | 2026-07-11T15:00:00Z |
 | checkpoint_004 | F5 | PR-05 QA completo | nemotron | sync.test.js, stripe-webhook.integration.test.js, stripe-subscription-cycle.integration.test.js, impersonation.integration.test.js, admin-stripe-overview/index.ts, create-payment/index.ts, create-subscription/index.ts, stripe-webhook/index.ts, vitest.config.js, qa-benchmarks-results.json, k6-load-test.js, k6-results-summary.json | lint: 0e/6w, build: passed, typecheck: passed, QA-01 a QA-07: ALL PASS | 2026-07-12T03:00:00Z |
 | checkpoint_005 | F3 | Branding P1-P12 completo | nemotron | schemaRegistry.js, defaults.js, logoUtils.js, presets.js, responseProcessor.js, useBrandStudio.js, useBrandAppearance.js, BrandStudioView.jsx, LogoSchemes.jsx, PlanTabsEditor.jsx, PreviewGeral.jsx, planThemes.js, previewValidator.js, index.js, AI_BRAND_SCHEMA.md, schema.js (removed), validateBrandConfig.js (removed) | lint: 0e/1w, build: passed, typecheck: passed, 162 branding tests PASS, P1-P12 ALL ✅ | 2026-07-12T11:00:00Z |
+| checkpoint_010 | Research | Backend & API Architecture Report — Financia | deepseek | docs/REPORT_FINANCIA_BACKEND.md | report: generated | 2026-07-31T00:00:00Z |
 
 ---
 
@@ -86,16 +92,16 @@ execution_timestamp: "2026-07-28T12:00:00Z"
 - `authorized_at: "2026-07-12T03:00:00Z"`
 
 ### Tarefa em Andamento
-- `task_id: task_008`
-- `task_description: "Fase 6 QA — Implementação final"`
+- `task_id: task_015`
+- `task_description: "F9.5 App.jsx Refactor — monolito 377→126 linhas, 5 hooks, 2 components, AppContext"`
 - `progress_percent: 100`
 - `subagentes_ativos: []`
-- `subagentes_concluidos: ["QA-Infra", "QA-Event", "QA-DataTestId"]`
+- `subagentes_concluidos: [frontend-app-refactor]`
 
 ### Próxima Ação
-- `next_phase: PROJECT COMPLETE`
-- `next_task: "Todas as fases concluídas e validadas"`
-- `blocked_by: []`
+- `next_phase: F9.6 Edge Functions deploy + F9.7 Performance`
+- `next_task: "Deploy 8 Edge Functions restantes + eliminar chunks vazios Supabase no build"`
+- `blocked_by: [deploy_migrations_pending, supabase_settings_pending]`
 
 ---
 
@@ -136,6 +142,7 @@ execution_timestamp: "2026-07-28T12:00:00Z"
 | P004 | Fase 3 — Branding (12 itens) não iniciada | medium | Executor | ✅ CONCLUÍDA |
 | P005 | SCRATCH_PAD.md, VALIDATION_MODULE.md, CHECKPOINT_AUDITOR.md, CHANGELOG_AI.md ainda DRAFT | low | Integrador | pendente |
 | P006 | 12 falhas pré-existentes em testes de branding (accessibility, components) | low | Executor | documentado, não bloqueia |
+| P007 | F9.5 App.jsx Refactor (377→126 linhas, 5 hooks, 2 components, AppContext) | high | Executor | ✅ CONCLUÍDA |
 
 ---
 

@@ -5,19 +5,8 @@
 import Stripe from 'https://esm.sh/stripe@17.7.0?target=denonext';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { enforceRateLimit, getAdminClient } from '../_shared/security.ts';
-
-const CORS_HEADERS = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-};
-
-function jsonResponse(status, payload) {
-  const headers = { 'Content-Type': 'application/json' };
-  const keys = Object.keys(CORS_HEADERS);
-  for (let i = 0; i < keys.length; i++) { headers[keys[i]] = CORS_HEADERS[keys[i]]; }
-  return new Response(JSON.stringify(payload), { status: status, headers: headers });
-}
+import { withLogging, corsResponse, handleOptions } from '../_shared/logger.ts';
+import { safeErrorResponse } from '../_shared/responses.ts';
 
 async function findOrCreateCustomer(stripe, email, userId) {
   if (email) {
@@ -28,20 +17,18 @@ async function findOrCreateCustomer(stripe, email, userId) {
   return created.id;
 }
 
-Deno.serve(async function (req) {
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { status: 204, headers: CORS_HEADERS });
-  }
+async function handler(req: Request): Promise<Response> {
+  if (req.method === 'OPTIONS') return handleOptions();
 
   const stripeKey = Deno.env.get('STRIPE_SECRET_KEY');
   if (!stripeKey) {
-    return jsonResponse(500, { error: 'stripe_not_configured' });
+    return corsResponse({ error: 'stripe_not_configured' }, 500);
   }
 
   try {
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
-      return jsonResponse(401, { error: 'unauthorized' });
+      return corsResponse({ error: 'unauthorized' }, 401);
     }
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
@@ -53,11 +40,11 @@ Deno.serve(async function (req) {
     const userResult = await supabase.auth.getUser();
     const user = userResult && userResult.data ? userResult.data.user : null;
     if (!user) {
-      return jsonResponse(401, { error: 'unauthorized' });
+      return corsResponse({ error: 'unauthorized' }, 401);
     }
     const admin = getAdminClient();
     const allowed = await enforceRateLimit(admin, user.id, 'create_setup_intent', 60, 8);
-    if (!allowed) return jsonResponse(429, { error: 'rate_limited' });
+    if (!allowed) return corsResponse({ error: 'rate_limited' }, 429);
 
     const stripe = new Stripe(stripeKey, { apiVersion: '2025-01-27.acacia' });
     const customerId = await findOrCreateCustomer(stripe, user.email, user.id);
@@ -70,12 +57,16 @@ Deno.serve(async function (req) {
     });
 
     if (!setupIntent || !setupIntent.client_secret) {
-      return jsonResponse(500, { error: 'no_setup_secret' });
+      return corsResponse({ error: 'no_setup_secret' }, 500);
     }
 
-    return jsonResponse(200, { clientSecret: setupIntent.client_secret });
+    return corsResponse({ clientSecret: setupIntent.client_secret });
   } catch (err) {
-    const message = err && err.message ? err.message : String(err);
-    return jsonResponse(500, { error: String(message) });
+    return safeErrorResponse(err, 'create-setup-intent');
   }
+}
+
+Deno.serve(async (req) => {
+  if (req.method === 'OPTIONS') return handleOptions();
+  return withLogging('create-setup-intent', async (req) => handler(req))(req);
 });

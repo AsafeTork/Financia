@@ -2,23 +2,17 @@
 // Devolve a chave PUBLICAVEL do Stripe (pk_...) lida do secret do Supabase.
 // pk_ e publica por design (segura no front) — isso evita ter que setar a chave
 // no Render: tudo do Stripe fica como secret no Supabase.
-const CORS_HEADERS = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
-};
+import { withLogging, corsResponse, handleOptions } from '../_shared/logger.ts';
+import { safeErrorResponse } from '../_shared/responses.ts';
 
-function jsonResponse(status, payload) {
-  const headers = { 'Content-Type': 'application/json' };
-  const keys = Object.keys(CORS_HEADERS);
-  for (let i = 0; i < keys.length; i++) { headers[keys[i]] = CORS_HEADERS[keys[i]]; }
-  return new Response(JSON.stringify(payload), { status: status, headers: headers });
+async function handler(req: Request): Promise<Response> {
+  if (req.method === 'OPTIONS') return handleOptions();
+  
+  const key = Deno.env.get('STRIPE_PUBLISHABLE_KEY') || Deno.env.get('STRIPE_PUBLIC_KEY') || '';
+  return corsResponse({ publishableKey: key });
 }
 
-Deno.serve(function (req) {
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { status: 204, headers: CORS_HEADERS });
-  }
-  const key = Deno.env.get('STRIPE_PUBLISHABLE_KEY') || Deno.env.get('STRIPE_PUBLIC_KEY') || '';
-  return jsonResponse(200, { publishableKey: key });
+Deno.serve(async (req) => {
+  if (req.method === 'OPTIONS') return handleOptions();
+  return withLogging('stripe-config', async (req) => handler(req))(req);
 });

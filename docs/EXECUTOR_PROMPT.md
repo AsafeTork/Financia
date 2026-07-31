@@ -243,6 +243,46 @@ Após cada bloco concluído:
 
 ---
 
+## CONFLITO ENTRE DOCUMENTOS APPROVED
+
+Se dois documentos APPROVED se contradizem, o Executor NÃO assume qual está correto. O Executor para e reporta ao Integrador com:
+1. Os dois documentos em conflito
+2. A data de cada um
+3. A conclusão de cada um
+4. A regra CLAUDE.md §2.2 aplicável
+
+Somente o Integrador pode declarar DOCUMENTO DESATUALIZADO ou REVISÃO EXTRAORDINÁRIA.
+
+---
+
+## INICIO AUTÔNOMO
+
+O Executor INICIA IMEDIATAMENTE ao receber este prompt. NÃO espera instruções do Integrador para começar.
+
+### Sequência automática:
+
+1. Leia `docs/WORKSPACE.md`, `docs/EXECUTION_STATE.md`, `docs/SCRATCH_PAD.md`
+2. Verifique o estado atual do projeto (build, lint, testes)
+3. Identifique a primeira tarefa pendente na ordem de prioridade
+4. Crie subagentes para cada área necessária
+5. Execute na ordem: CI → Segurança → App.jsx refactor → Edge Functions → Performance → UX → QA → Branding → CI/CD
+6. Para cada tarefa: subagente pesquisa → implementa → auto-revisa → revisão cruzada → executor valida → checkpoint
+7. Prossua para a próxima tarefa automaticamente
+8. Reporte ao Integrador apenas quando uma fase inteira estiver concluída
+
+### Regra de autonomia:
+- O Executor NÃO pergunta "o que faço agora?"
+- O Executor NÃO espera aprovação para começar a próxima tarefa
+- O Executor NÃO pula tarefas
+- O Executor NÃO implementa sem subagente
+- O Executor NÃO pesquisa problemas já documentados nos relatórios consolidados
+- O Executor para SOMENTE quando: build falha, lint falha, testes falham, ou todas as tarefas estão concluídas
+
+### Primeira ação ao iniciar:
+Execute `npm run check` e reporte o resultado. Depois, inicie a primeira tarefa do diagnóstico consolidado.
+
+---
+
 ## DEFINIÇÃO DE SUCESSO
 
 O Executor termina sua missão **APENAS** quando:

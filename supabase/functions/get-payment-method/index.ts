@@ -5,51 +5,21 @@
 import Stripe from 'https://esm.sh/stripe@17.7.0?target=denonext';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { cacheGet, cacheSet, enforceRateLimit, getAdminClient } from '../_shared/security.ts';
+import { withLogging, corsResponse, handleOptions } from '../_shared/logger.ts';
+import { safeErrorResponse } from '../_shared/responses.ts';
 
-const CORS_HEADERS = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-};
-
-function jsonResponse(status, payload) {
-  const headers = { 'Content-Type': 'application/json' };
-  const keys = Object.keys(CORS_HEADERS);
-  for (let i = 0; i < keys.length; i++) { headers[keys[i]] = CORS_HEADERS[keys[i]]; }
-  return new Response(JSON.stringify(payload), { status: status, headers: headers });
-}
-
-async function findCustomer(stripe, email) {
-  if (!email) return null;
-  const existing = await stripe.customers.list({ email: email, limit: 1 });
-  if (existing && existing.data && existing.data.length > 0) return existing.data[0];
-  return null;
-}
-
-function cardFromPaymentMethod(pm) {
-  if (!pm || !pm.card) return null;
-  return {
-    brand: pm.card.brand,
-    last4: pm.card.last4,
-    exp_month: pm.card.exp_month,
-    exp_year: pm.card.exp_year,
-  };
-}
-
-Deno.serve(async function (req) {
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { status: 204, headers: CORS_HEADERS });
-  }
+async function handler(req: Request): Promise<Response> {
+  if (req.method === 'OPTIONS') return handleOptions();
 
   const stripeKey = Deno.env.get('STRIPE_SECRET_KEY');
   if (!stripeKey) {
-    return jsonResponse(500, { error: 'stripe_not_configured' });
+    return corsResponse({ error: 'stripe_not_configured' }, 500);
   }
 
   try {
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
-      return jsonResponse(401, { error: 'unauthorized' });
+      return corsResponse({ error: 'unauthorized' }, 401);
     }
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
@@ -61,24 +31,43 @@ Deno.serve(async function (req) {
     const userResult = await supabase.auth.getUser();
     const user = userResult && userResult.data ? userResult.data.user : null;
     if (!user) {
-      return jsonResponse(401, { error: 'unauthorized' });
+      return corsResponse({ error: 'unauthorized' }, 401);
     }
+    
     const admin = getAdminClient();
     const allowed = await enforceRateLimit(admin, user.id, 'get_payment_method', 60, 30);
-    if (!allowed) return jsonResponse(429, { error: 'rate_limited' });
+    if (!allowed) return corsResponse({ error: 'rate_limited' }, 429);
 
     const cachePayload = { user_id: user.id };
     const cached = await cacheGet(admin, 'stripe:get-payment-method:' + user.id, cachePayload);
     if (cached && Object.prototype.hasOwnProperty.call(cached, 'card')) {
-      return jsonResponse(200, cached);
+      return corsResponse(cached);
     }
 
     const stripe = new Stripe(stripeKey, { apiVersion: '2025-01-27.acacia' });
+    
+    async function findCustomer(stripe, email) {
+      if (!email) return null;
+      const existing = await stripe.customers.list({ email: email, limit: 1 });
+      if (existing && existing.data && existing.data.length > 0) return existing.data[0];
+      return null;
+    }
+
+    function cardFromPaymentMethod(pm) {
+      if (!pm || !pm.card) return null;
+      return {
+        brand: pm.card.brand,
+        last4: pm.card.last4,
+        exp_month: pm.card.exp_month,
+        exp_year: pm.card.exp_year,
+      };
+    }
+
     const customer = await findCustomer(stripe, user.email);
     if (!customer) {
       const noCard = { card: null };
       await cacheSet(admin, 'stripe:get-payment-method:' + user.id, cachePayload, noCard, 60, user.id);
-      return jsonResponse(200, noCard);
+      return corsResponse(noCard);
     }
 
     // 1) cartao padrao de fatura.
@@ -94,15 +83,19 @@ Deno.serve(async function (req) {
     if (!pmId) {
       const noCard = { card: null };
       await cacheSet(admin, 'stripe:get-payment-method:' + user.id, cachePayload, noCard, 60, user.id);
-      return jsonResponse(200, noCard);
+      return corsResponse(noCard);
     }
 
     const pm = await stripe.paymentMethods.retrieve(pmId);
     const response = { card: cardFromPaymentMethod(pm), payment_method_id: pmId };
     await cacheSet(admin, 'stripe:get-payment-method:' + user.id, cachePayload, response, 60, user.id);
-    return jsonResponse(200, response);
+    return corsResponse(response);
   } catch (err) {
-    const message = err && err.message ? err.message : String(err);
-    return jsonResponse(500, { error: String(message) });
+    return safeErrorResponse(err, 'get-payment-method');
   }
+}
+
+Deno.serve(async (req) => {
+  if (req.method === 'OPTIONS') return handleOptions();
+  return withLogging('get-payment-method', async (req) => handler(req))(req);
 });

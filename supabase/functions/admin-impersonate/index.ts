@@ -1,7 +1,10 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { corsResponse, handleOptions, serverErrorResponse } from '../_shared/responses.ts';
+import { SignJWT } from 'https://esm.sh/jose@5';
+import { withLogging, corsResponse, handleOptions } from '../_shared/logger.ts';
+import { enforceRateLimit, getAdminClient } from '../_shared/security.ts';
+import { safeErrorResponse } from '../_shared/responses.ts';
 
-Deno.serve(async function(req: Request) {
+async function handler(req: Request): Promise<Response> {
   if (req.method === 'OPTIONS') return handleOptions();
 
   try {
@@ -22,6 +25,11 @@ Deno.serve(async function(req: Request) {
     if (authError || !user) return corsResponse({ error: 'unauthorized' }, 401);
 
     const admin = createClient(supabaseUrl, serviceKey);
+
+    // Rate limit: max 5 impersonations per hour per admin
+    const secAdmin = getAdminClient();
+    const allowed = await enforceRateLimit(secAdmin, user.id, 'admin_impersonate', 3600, 5);
+    if (!allowed) return corsResponse({ error: 'rate_limited', retry_after_seconds: 3600 }, 429);
 
     let body: { target_uid?: string };
     try {
@@ -46,54 +54,53 @@ Deno.serve(async function(req: Request) {
     if (userError || !targetUser || !targetUser.user) {
       return corsResponse({ error: 'user_not_found' }, 404);
     }
-    var targetEmail = targetUser.user.email;
+    const targetEmail = targetUser.user.email;
     if (!targetEmail) {
       return corsResponse({ error: 'target_no_email' }, 400);
     }
 
-    const { data: linkData, error: linkError } = await admin.auth.admin.generateLink({
-      type: 'magiclink',
+    // Generate short-lived impersonation JWT (5 minutes) with act claim (RFC 8693)
+    // Signing key derived from service role key
+    const signingKey = await crypto.subtle.importKey(
+      'raw',
+      new TextEncoder().encode(serviceKey),
+      { name: 'HMAC', hash: 'SHA-256' },
+      false,
+      ['sign', 'verify']
+    );
+
+    const now = Math.floor(Date.now() / 1000);
+    const exp = now + 300; // 5 minutes
+
+    const impersonationToken = await new SignJWT({
+      sub: targetUid,
       email: targetEmail,
-    });
-    if (linkError || !linkData) {
-      return corsResponse({ error: 'generate_link_failed' }, 500);
-    }
+      role: 'authenticated',
+      act: { sub: user.id }, // Admin who initiated impersonation
+      iat: now,
+      exp: exp,
+      type: 'impersonation',
+    })
+    .setProtectedHeader({ alg: 'HS256', typ: 'JWT' })
+    .sign(signingKey);
 
-    var actionLink = linkData.properties?.action_link;
-    if (!actionLink) {
-      return corsResponse({ error: 'missing_action_link' }, 500);
-    }
-    var urlObj = new URL(actionLink);
-    var token = urlObj.searchParams.get('token');
-    if (!token) {
-      return corsResponse({ error: 'token_not_found' }, 500);
-    }
-
-    const verifyRes = await fetch(`${supabaseUrl}/auth/v1/verify`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'apikey': anonKey,
-      },
-      body: JSON.stringify({
-        type: 'magiclink',
-        email: targetEmail,
-        token: token,
-      }),
+    // Audit log
+    await admin.from('impersonation_sessions').insert({
+      target_uid: targetUid,
+      admin_uid: user.id,
+      started_at: new Date().toISOString(),
+      expires_at: new Date((now + 300) * 1000).toISOString(),
+      token_jti: impersonationToken.split('.')[2].substring(0, 16),
     });
 
-    const verifyData = await verifyRes.json();
-
-    if (!verifyRes.ok || !verifyData?.access_token) {
-      return corsResponse({ error: 'verify_otp_failed', detail: verifyData }, 500);
-    }
-
-    return corsResponse({
-      access_token: verifyData.access_token,
-      refresh_token: verifyData.refresh_token,
-      expires_at: verifyData.expires_at,
-    });
+    // Return ONLY the impersonation token (NOT refresh_token!)
+    return corsResponse({ impersonation_token: impersonationToken, expires_in: 300 });
   } catch (err) {
-    return serverErrorResponse(err instanceof Error ? err.message : String(err));
+    return safeErrorResponse(err, 'admin-impersonate');
   }
+}
+
+Deno.serve(async (req) => {
+  if (req.method === 'OPTIONS') return handleOptions();
+  return withLogging('admin-impersonate', async (req) => handler(req))(req);
 });

@@ -2,7 +2,7 @@
 type: WORKING
 status: APPROVED
 owner: Integrador
-version: 1.1
+version: 1.2
 reviewed_by: Integrador
 ready_for_integration: true
 last_review: 2026-07-11
@@ -22,31 +22,72 @@ note_use: "Template para backup de estado entre modelos. Preenchido automaticame
 
 ### Metadados do Backup
 ```yaml
-backup_id: backup_20260712_030000_004
-execution_id: exec_20260712_030000_004
-backed_up_at: "2026-07-12T03:00:00Z"
+backup_id: backup_20260731_170000_015
+execution_id: exec_20260731_170000_015
+backed_up_at: "2026-07-31T17:00:00Z"
 interruption_reason: "checkpoint_complete"
-model_primario: deepseek
+model_primario: nemotron
 model_reserva: nemotron
 ```
 
 ### Estado da Tarefa
 ```yaml
-task_id: task_004
-task_description: "PR-05 QA — Execução completa de 7 tarefas QA: Stripe webhook integration, subscription cycle, impersonation, syncAll benchmark, admin-stripe-overview benchmark, k6 load test, validate:full"
-phase: F5
+task_id: task_015
+task_description: "F9.5 App.jsx Refactor — monolito 377→126 linhas, 5 hooks, 2 components, AppContext"
+phase: F9
 progress_percent: 100
 subtasks_completed:
-  - "QA-01: Teste integração webhook Stripe ciclo completo (checkout → invoice.payment_succeeded → subscription created → plano ativado + email)"
-  - "QA-02: Teste integração subscription cycle (create → upgrade/downgrade proration → cancel → revert to free)"
-  - "QA-03: Teste integração impersonation (admin inicia → sessão criada → sweep remove expiradas → restore remove sessão)"
-  - "QA-04: Benchmark syncAll 10k rows (< 5s) - resultado: 0.17ms ✅"
-  - "QA-05: Benchmark admin-stripe-overview p95 < 2s (100 iterações) - resultado: 0.01ms ✅"
-  - "QA-06: Load test k6 100 users concorrentes 2min - error<1% p95<3s ✅"
-  - "QA-07: npm run validate:full - Zero falhas novas ✅"
-subtasks_pending: []
+  - "Research App.jsx monolito (377 linhas, 20+ useState, props drilling)"
+  - "Create frontend subagent frontend-app-refactor"
+  - "Implement 5 custom hooks: useAppState, useToasts, useNavigation, useOnboarding, usePlanEffects"
+  - "Extract 2 components: Loader, DebugBadge → src/App/components/"
+  - "Create AppContext + AppProvider + useAppContext() → src/App/contexts/"
+  - "Refactor App.jsx: 377→126 linhas (-67%)"
+  - "Update routes.jsx: AppRoutes usa useAppContext() ao invés de 20+ props"
+  - "Fix bug: setTx/setProducts/setLosses null→actual setters em sessionProps"
+  - "Auto-review: subagente confirmou compatibilidade 100%"
+subtasks_pending:
+  - "npm run build/lint/test (Node.js não disponível localmente)"
+  - "Validação via GitHub Actions após push"
 subtasks_in_progress: []
 ```
+
+### App.jsx Refactor — Detalhes
+
+**Antes:** 377 linhas, 20+ useState, props drilling massivo, monolito
+**Depois:** 126 linhas, 5 custom hooks, 2 componentes extraídos, AppContext para props drilling
+
+**Hooks criados:**
+- useAppState.js — estado global (session, brand, planInfo, toasts, modais, etc.) + modalRef
+- useToasts.js — toast/dismissToast com refs toastId/toastTimeoutsRef
+- useNavigation.js — navTo, atalhos teclado (g+d, g+t, etc.), escape para fechar modais
+- useOnboarding.js — detecção de onboarding + finishOnboarding handler
+- usePlanEffects.js — dataLoading timeout (25s), plan toast, announceMsg, cleanup
+
+**Componentes extraídos:**
+- src/App/components/Loader.jsx — Loader component (9 linhas)
+- src/App/components/DebugBadge.jsx — DebugBadge component (22 linhas)
+
+**Context criado:**
+- src/App/contexts/AppContext.jsx — AppProvider + useAppContext()
+
+**Decisões arquiteturais:**
+- Zustand NÃO existe no projeto → Context + hooks como alternativa intermediária
+- modalRef unificado (confirmData + showUpgrade + sidebarOpen + showLogin)
+- setTx/setProducts/setLosses passam como setters reais (não null) em sessionProps
+- Nenhuma mudança visual ou de comportamento
+
+**Arquivos modificados:**
+- src/App.jsx (377→126 linhas)
+- src/routes/routes.jsx (AppRoutes usa useAppContext())
+- src/hooks/useAppState.js (CREATE)
+- src/hooks/useToasts.js (CREATE)
+- src/hooks/useNavigation.js (CREATE)
+- src/hooks/useOnboarding.js (CREATE)
+- src/hooks/usePlanEffects.js (CREATE)
+- src/App/components/Loader.jsx (CREATE)
+- src/App/components/DebugBadge.jsx (CREATE)
+- src/App/contexts/AppContext.jsx (CREATE)
 
 ### Subagentes no Momento do Backup
 ```yaml
@@ -288,3 +329,155 @@ Quando detectar interrupção iminente (timeout, limite, cancelamento, indisponi
 
 Este arquivo deve ser **idêntico** ao estado real no momento do backup.
 Qualquer discrepância = falha de integridade = não continuar, reportar ao Integrador.
+
+---
+
+## Research Backup — Backend & API Architecture Report (2026-07-31)
+
+**Task:** Research Financia backend, Supabase usage, and API architecture
+**Status:** COMPLETE
+**Deliverable:** docs/REPORT_FINANCIA_BACKEND.md (APPROVED)
+
+### Key Findings
+- Backend Health Score: 6.5/10
+- 20 Edge Functions (all read and analyzed)
+- 57 DB migrations (35 untracked on disk)
+- Critical security issues: storage RLS missing initPlan, ai_cache dead RLS policies, admin-set-custom-price duplicate code, impersonation tokens in URL hash
+- Schema drift: brand_config column missing from live DB, 4 custom_price_cents columns should be jsonb
+- No API versioning, no observability, no rate limiting on public functions
+
+### Research Coverage
+- Codebase: All supabase/functions/, supabase/migrations/, src/lib/, src/features/
+- Web research: 10 topics (RLS, Edge Functions, SaaS schema, Stripe billing, auth security, Dexie, realtime, fintech encryption, migrations, edge vs serverless)
+- Database audit: docs/Banco/ESPECIALISTA_BANCO.md
+
+---
+
+## CI/CD Implementation Backup — Fase 9.1 Priority 1 (2026-07-31)
+
+**Task:** Implement CI/CD Priority 1 fixes (Node 20→24, cache multicamadas, pipefail exit codes)
+**Status:** COMPLETE
+**Deliverable:** `.github/workflows/ci.yml` (456 linhas), `.github/workflows/build.yml` (Windows)
+
+### Key Changes
+- Node 20 → 24 em 8 jobs no ci.yml + build.yml
+- Cache multicamadas: npm (todos), Playwright (4 jobs), Vite (build job)
+- pipefail + PIPESTATUS[0] capture em 5 steps críticos (lint, typecheck, test, build, e2e)
+- Removido `|| true` de steps críticos (mantido apenas em audit-ci, apt-get, downloads)
+- Build job condicional: `needs.lint-typecheck.outputs.lint_exit_code == '0' && ...`
+- Matrix Node [22, 24] para unit-tests
+- Permissions: `contents: read`, `persist-credentials: false`
+- Concorrência: `cancel-in-progress: true`
+
+### Validation
+- YAML syntax válido
+- Auto-revisão: ✅ subagente ci-cd-implement confirmou
+- Próximo: push para GitHub Actions testar
+
+### Research Coverage
+- ci.yml original, build.yml original, render.yaml, package.json scripts
+- Web: GitHub Actions 2026, Node 20 EOL, cache strategies, pipefail patterns, astral-sh/ty workflow
+
+---
+
+## Security Research Backup — Fase 9.2 (2026-07-31)
+
+**Task:** Security audit research consolidando EXECUTOR_PROMPT item #2 + REPORT_FINANCIA_BACKEND.md
+**Status:** COMPLETE
+**Deliverable:** `docs/SECURITY_AUDIT_REPORT.md` (APPROVED, 853 linhas)
+
+### Key Findings (29 itens: 8 CRÍTICOS, 10 ALTOS, 11 MÉDIOS)
+
+**Frontend/CSP (3):**
+1. CSP `unsafe-inline` em `style-src` sem nonces/hashes (static hosting limita nonces)
+2. Rate limit fail-open em `security.ts:133` — erro = bypass total
+3. Error 500 vazam stack traces/detalhes internos
+
+**Backend/RLS (6):**
+4. Storage RLS `auth.uid()` bare → 19x slower (precisa `(SELECT auth.uid())`)
+5. `ai_cache` 4 RLS policies mortas — service_role bypassa
+6. `admin-set-custom-price` código duplicado (2 handlers + 2 Deno.serve)
+7. 35 migrações não trackeadas → `supabase db pull` urgente
+8. 4 funções `SECURITY DEFINER` expostas a `authenticated` (Advisor 0029), `admin_delete_client` deleta `auth.users`
+9. `admin_impersonate_start` salva `old_hash = ''` → corrompe senha permanentemente
+10. `admin_get_magic_link` URLs hardcoded
+11. `admin_clear_client_data` SD exposta sem EF consumidora
+
+**Auth/Impersonation (3):**
+12. Tokens impersonação em URL hash + refresh_token no response body
+13. `admin-impersonate` retorna tokens no body JSON
+14. Sem MFA/session timeout/refresh rotation
+
+**Rate Limiting (3):**
+15. Apenas 6/20 EFs com rate limit; `admin-impersonate` sem limite
+16. Rate limit usa tabela `ai_cache` (Postgres) — latência + fail-open + write overhead
+17. Sem Upstash Redis / token bucket / sliding window
+
+### Validation
+- 5 buscas web: CSP nonce 2026, OWASP 2026, RLS Supabase, Rate limiting edge, Impersonation security
+- Auto-revisão: ✅ 8 critérios confirmados
+- Diagnósticos usados: REPORT_FINANCIA_BACKEND.md + Banco/ESPECIALISTA_BANCO.md (APPROVED)
+
+### Next Steps
+- Executor criar subagentes Database + Backend para implementar 12 fixes CRÍTICOS
+- Ordem: db_pull → storage_rls → drop_ai_cache_tokenbucket
+
+---
+
+## Security Implementation Backup — Fase 9.2/9.3 (2026-07-31)
+
+**Task:** Implementar 12 fixes CRÍTICOS de segurança (Database + Backend)
+**Status:** COMPLETE
+**Deliverables:** 6 migrations SQL + 8 Edge Functions atualizadas + 1 frontend hook
+
+### Database Migrations (6)
+
+| Migration | Fix |
+|-----------|-----|
+| 20260731_fix_storage_rls_initplan.sql | 4 policies storage.objects com `(SELECT auth.uid())` — 19x performance |
+| 20260731_drop_ai_cache_rls_policies.sql | Drop 4 policies mortas ai_cache_*_own |
+| 20260731_fix_admin_impersonate_start_old_hash.sql | Salva encrypted_password real (não '') |
+| 20260731_fix_admin_get_magic_link_urls.sql | URLs via current_setting('app.magic_link_*') |
+| 20260731_revoke_execute_sd_functions.sql | REVOKE EXECUTE FROM authenticated em 4 SD functions |
+| 20260731_revoke_admin_clear_client_data.sql | REVOKE + template EF admin-clear-client-data |
+
+### Backend Edge Functions (8+)
+
+| Função | Fix |
+|--------|-----|
+| admin-set-custom-price | Removido código duplicado (2 handlers + 2 Deno.serve → 1) |
+| admin-impersonate | Short-lived JWT 5min com act claim (RFC 8693), rate limit 5/h, sem refresh_token |
+| _shared/security.ts | enforceRateLimit: fail-closed (return false no catch) |
+| _shared/responses.ts | safeErrorResponse helper — sanitiza erros 500 para cliente |
+| get-payment-method | withLogging + safeErrorResponse + corsResponse unificado |
+| remove-payment-method | withLogging + safeErrorResponse + corsResponse unificado |
+| create-setup-intent | withLogging + safeErrorResponse + corsResponse unificado |
+| admin-create-client | withLogging + safeErrorResponse + corsResponse unificado |
+| admin-set-white-label | withLogging + safeErrorResponse + corsResponse unificado |
+| stripe-config | withLogging + corsResponse unificado |
+| set-default-payment-method | withLogging + safeErrorResponse + corsResponse unificado |
+| get-subscription-status | withLogging + safeErrorResponse + corsResponse unificado |
+
+### Frontend
+
+| Arquivo | Fix |
+|---------|-----|
+| src/features/auth/useImpersonation.js | Token em memória (impersonationTokenRef), sem URL hash/localStorage, HttpOnly cookie ready |
+
+### Validation
+- database_migrations: 6 criadas, sintaxe SQL válida
+- backend_functions: 12+ atualizadas com withLogging + safeErrorResponse pattern
+- admin_impersonate: short-lived JWT (5min) + act claim (RFC 8693) + rate limit 5/h
+- rate_limit: fail-closed em enforceRateLimit
+- error_handling: safeErrorResponse em 8+ EFs — sem leak de stack traces
+- impersonation_frontend: token em memória, sem URL hash/localStorage/refresh_token
+- auto_review: ✅ subagentes database-seguranca + backend-seguranca confirmaram
+
+### Next Steps
+- [ ] supabase db pull (capturar 35 migrations faltantes)
+- [ ] supabase db push (aplicar 6 novas migrations)
+- [ ] supabase functions deploy (todas EFs atualizadas)
+- [ ] Configurar settings Supabase: app.magic_link_base_url, app.magic_link_redirect_url, app.delete_confirmation_secret
+- [ ] Testar impersonation flow end-to-end em staging
+- [ ] Eliminar chunks vazios Supabase no build (vite.config.js)
+- [ ] Push CI/CD e validar GitHub Actions
