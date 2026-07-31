@@ -205,12 +205,14 @@ jobs:
       - uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/download-artifact@v4
-        continue-on-error: true
-        with:
-          path: ci-artifacts
-          pattern: "lint-typecheck,unit-tests,build,security-audit,prod-audit,admin-audit-report-md,admin-audit-results-json,e2e-tests"
-          merge-multiple: true
+      - name: Download CI artifacts
+        if: always()
+        run: |
+          mkdir -p ci-artifacts
+          gh run download ${{ github.run_id }} -D ci-artifacts/ || true
+          find ci-artifacts/ -type f | head -30 || true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Install jq
         run: sudo apt-get install -y jq
       - name: Generate CI_REPORT.md
