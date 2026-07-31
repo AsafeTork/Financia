@@ -1,10 +1,26 @@
 # CI Validator Report
 
-**Date:** 2026-07-21
+**Date:** 2026-07-31
 **Workflow:** `.github/workflows/ci.yml`
 **Repo:** `AsafeTork/financia`
 
 ---
+
+## Current Workflow Structure (consolidated)
+
+Single workflow `ci.yml` with 8 jobs:
+
+| Job | Purpose | Artifact |
+|-----|---------|----------|
+| `lint-typecheck` | ESLint + TypeScript check | `lint-typecheck` |
+| `unit-tests` | Vitest unit tests | `unit-tests` |
+| `build` | Vite production build | `build` |
+| `security-audit` | `npx audit-ci` security scan | `security-audit` |
+| `production-audit` | Playwright prod audit (chromium) | `prod-audit` |
+| `admin-audit` | Playwright admin audit (chromium) | `admin-audit-report-md`, `admin-audit-results-json` |
+| `e2e` | Playwright E2E tests (chromium) | `e2e-tests` |
+| `extract-errors` | Download artifacts + generate CI_REPORT.md | `ci-report-md` |
+| `summary` | Download CI_REPORT.md + upload summary | `ci-summary-report` |
 
 ## Files match? (local vs GitHub raw)
 
@@ -12,37 +28,30 @@
 
 ## YAML valid?
 
-**YES** — `yaml.safe_load()` parsed successfully. No syntax errors.
+**YES** — parsed successfully. No syntax errors.
 
 ## Workflow registered on GitHub?
 
-**YES** — API returned:
-- Name: `CI`
-- Path: `.github/workflows/ci.yml`
-- ID: `310043420`
-- State: `active`
+**YES** — API returned active state.
 
-## All project names match playwright.config.ts?
+## Artifact Download Mechanism
 
-**PARTIAL** — 5 of 6 Playwright projects are covered:
+**FIXED** — Previously used `actions/download-artifact@v4` with `merge-multiple: true` which failed to find artifacts (all jobs showed "nao executado" in CI_REPORT.md). Fixed by switching to `gh run download ${{ github.run_id }}` which reliably downloads all artifacts from the current run.
 
-| CI matrix project | Playwright config project | Match? |
-|---|---|---|
-| `chromium` | `chromium` | YES |
-| `firefox` | `firefox` | YES |
-| `webkit` | `webkit` | YES |
-| `Mobile Chrome` | `Mobile Chrome` | YES |
-| `Mobile Safari` | `Mobile Safari` | YES |
-| *(missing)* | `screen-reader` | **NO — not in CI** |
+## Script File Discovery
 
-## Issues found
+**FIXED** — `scripts/generate-ci-report.py` now uses `find_file()` for recursive file discovery in `ci-artifacts/`, handling cases where `actions/download-artifact` places files in subdirectories.
 
-1. **Missing `screen-reader` project in CI matrix** — Playwright config defines 6 projects, but CI only runs 5. The `screen-reader` project (`headless: false`, `workers: 1`) is excluded with no comment explaining why. If intentional, document it.
+## Issues Found
 
-2. **Summary job shows same result for all E2E rows** — The `summary` job uses `needs.e2e-tests.result` for all 5 E2E browser rows (`chromium`, `firefox`, `webkit`, `mobile-chrome`, `mobile-safari`). With a matrix strategy, `needs.e2e-tests.result` returns a combined/comma-separated value for all matrix instances, so all rows will display the same value rather than per-browser results. This is cosmetic, not functional.
+1. **Missing `screen-reader` project in CI matrix** — Playwright config defines 6 projects, but CI only runs 1 (chromium). The `screen-reader` project is excluded with no comment explaining why. If intentional, document it.
 
-3. **No `if: always()` on `actions/upload-artifact` in `build` job** — Unlike the `unit-tests` and `e2e-tests` jobs which use `if: always()` for artifact upload, the `build` job's `dist` upload lacks this. If build succeeds this is fine, but for consistency it could be added.
+2. **`e2e` job runs redundant `npm run build`** — The e2e job runs `npm run build` at line 247, but the `build` job already produces a build. This duplicates work. Consider adding `needs: [build]` to the e2e job and removing the redundant build step.
+
+3. **`security-audit` uploads `security-output.txt` not read by report** — The security audit artifact is uploaded but never read by `generate-ci-report.py`. The security audit results are invisible in CI_REPORT.md.
+
+4. **`admin-audit` can fail silently** — If `admin-audit-report.md` or `admin-audit-results.json` are not generated (e.g., test failure), the upload-artifact steps fail and the artifacts are missing. The `if: always()` on upload doesn't help if the files don't exist.
 
 ## Verdict
 
-**PASS** — Workflow is functional, all jobs are well-structured, versions are current (`actions/checkout@v4`, `setup-node@v4`, `upload-artifact@v4`, Node 20, `playwright` browsers), concurrency and fail-fast are configured correctly. The issues noted above are either cosmetic or intentional omissions.
+**PASS with notes** — Workflow is functional after fixing the artifact download mechanism. The CI_REPORT.md now correctly reflects job statuses. Minor improvements recommended for redundancy and visibility.
