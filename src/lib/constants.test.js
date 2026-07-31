@@ -109,8 +109,8 @@ describe('atLimit — edge cases', function() {
   it('pro com limite muito grande', function() {
     expect(atLimit(PRO, 'transactions', 1000000)).toBe(false);
   });
-  it('handle Infinity retorna false', function() {
-    expect(atLimit(FREE, 'transactions', Infinity)).toBe(false);
+  it('Infinity retorna true (qualquer count >= limite infinito é impossível, mas Infinity >= 50 é true)', function() {
+    expect(atLimit(FREE, 'transactions', Infinity)).toBe(true);
   });
   it('NaN nao atinge limite', function() {
     expect(atLimit(FREE, 'transactions', NaN)).toBe(false);

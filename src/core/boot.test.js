@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { bootApp } from './boot.js';
+import { registerSW } from '../lib/pwa.js';
 
 vi.mock('../lib/pwa.js', () => ({
   registerSW: vi.fn()
@@ -10,6 +11,7 @@ describe('bootApp', () => {
 
   beforeEach(() => {
     localStorage.clear();
+    document.documentElement.removeAttribute('data-app-version');
     vi.clearAllMocks();
     reloadSpy = vi.fn();
     vi.stubGlobal('location', { reload: reloadSpy });
@@ -20,9 +22,8 @@ describe('bootApp', () => {
   });
 
   it('calls registerSW from pwa.js', () => {
-    const { registerSW } = require('../lib/pwa.js');
-    expect(registerSW).toBeDefined();
     bootApp();
+    expect(registerSW).toHaveBeenCalled();
   });
 
   it('stores deployed version in localStorage when no cached version exists', () => {
@@ -54,9 +55,11 @@ describe('bootApp', () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
     localStorage.setItem('financia_app_version', '1.0.0');
 
-    bootApp();
-
-    expect(warn).not.toHaveBeenCalled();
-    warn.mockRestore();
+    try {
+      bootApp();
+      expect(warn).not.toHaveBeenCalled();
+    } finally {
+      warn.mockRestore();
+    }
   });
 });

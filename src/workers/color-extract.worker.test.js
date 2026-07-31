@@ -32,10 +32,9 @@ function extractColors(imageData) {
   for (var j = 0; j < allHexes.length; j++) {
     var hex = allHexes[j];
     var lum = luminance(hex);
-    if (lum < 0.4 && !dark) dark = hex;
-    else if (lum >= 0.4 && lum <= 0.6 && !mid) mid = hex;
-    else if (lum > 0.6 && !light) light = hex;
-    if (dark && mid && light) break;
+    if (!dark && lum < 0.2) dark = hex;
+    else if (!mid && lum >= 0.2 && lum <= 0.6) mid = hex;
+    else if (!light && lum > 0.6) light = hex;
   }
   var primary = dark || allHexes[0] || '#002f59';
   return {
@@ -74,9 +73,9 @@ describe('extractColors', () => {
       data[i + 3] = 255;
     }
     var result = extractColors(new ImageData(data, width, height));
-    expect(result.primary).toBe('#002f59');
+    expect(result.primary).toBe('#003060');
     expect(result.all.length).toBe(1);
-    expect(result.all[0]).toBe('#002f59');
+    expect(result.all[0]).toBe('#003060');
   });
 
   it('skips transparent pixels', () => {

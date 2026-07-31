@@ -1,11 +1,13 @@
 export const fmt = function(n) { return 'R$\xa0' + Number(n || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); };
 export const hexToRgb = function(hex) {
   var h = (hex || '#002f59').replace('#', '');
+  if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
   return { r: parseInt(h.substring(0, 2), 16), g: parseInt(h.substring(2, 4), 16), b: parseInt(h.substring(4, 6), 16) };
 };
 export const brandAlpha = function(hex, a) {
   var c = hexToRgb(hex);
-  return 'rgba(' + c.r + ',' + c.g + ',' + c.b + ',' + a + ')';
+  var clamped = Math.max(0, Math.min(1, a));
+  return 'rgba(' + c.r + ',' + c.g + ',' + c.b + ',' + clamped + ')';
 };
 export const fmtDate = function(s) { return new Date(s + 'T12:00').toLocaleDateString('pt-BR'); };
 export const monthLabel = function(s) { const [y, m] = s.split('-'); return new Date(+y, +m - 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }); };
@@ -146,14 +148,22 @@ export const passwordStrength = function(pw) {
 export const cleanNumeric = function(raw, opts) {
   opts = opts || {};
   var decimals = opts.decimals !== false;
-  var maxLen = opts.maxLen || (decimals ? 12 : 7);
+  var maxLen = opts.maxLen != null ? opts.maxLen : (decimals ? 12 : 7);
   var s = String(raw == null ? '' : raw);
   var invalid = decimals ? /[^0-9.,]/.test(s) : /[^0-9]/.test(s);
   var clean = decimals ? s.replace(/[^0-9.,]/g, '') : s.replace(/[^0-9]/g, '');
   if (decimals) {
-    clean = clean.replace(/,/g, '.');
-    var fd = clean.indexOf('.');
-    if (fd !== -1) clean = clean.slice(0, fd + 1) + clean.slice(fd + 1).replace(/\./g, '');
+    if (clean.includes(',')) {
+      clean = clean.replace(/\./g, '');
+      var commaIdx = clean.indexOf(',');
+      if (commaIdx !== -1) {
+        clean = clean.slice(0, commaIdx) + '.' + clean.slice(commaIdx + 1).replace(/,/g, '');
+      }
+    } else {
+      clean = clean.replace(/,/g, '.');
+      var fd = clean.indexOf('.');
+      if (fd !== -1) clean = clean.slice(0, fd + 1) + clean.slice(fd + 1).replace(/\./g, '');
+    }
   }
   if (clean.length > maxLen) clean = clean.slice(0, maxLen);
   return { value: clean, invalid: invalid };

@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import * as fs from 'fs';
 
-const PROD_URL = 'https://financiabr.me';
+const BASE_URL = 'http://localhost:5173';
 const storageState = fs.existsSync('e2e/storageState.json') ? 'e2e/storageState.json' : undefined;
 
 test.describe('Deep Sync Conflict Scenarios', () => {
@@ -9,7 +9,7 @@ test.describe('Deep Sync Conflict Scenarios', () => {
 
   test('BroadcastChannel ping/pong survives rapid tab switching', async ({ browser }) => {
     if (!storageState) {
-      test.skip(true, 'No storageState.json');
+      test.skip('No storageState.json');
     }
 
     const ctx1 = await browser.newContext({ storageState });
@@ -18,68 +18,84 @@ test.describe('Deep Sync Conflict Scenarios', () => {
     const p1 = await ctx1.newPage();
     const p2 = await ctx2.newPage();
 
-    await p1.goto(PROD_URL, { waitUntil: 'networkidle', timeout: 15000 });
-    await p2.goto(PROD_URL, { waitUntil: 'networkidle', timeout: 15000 });
+    await p1.goto(BASE_URL, { waitUntil: 'networkidle', timeout: 15000 });
+    await p2.goto(BASE_URL, { waitUntil: 'networkidle', timeout: 15000 });
 
-    const channelA = new BroadcastChannel('financia-sync');
-    const channelB = new BroadcastChannel('financia-sync');
+    await p1.evaluate(() => {
+      (window as any).__bc1 = new BroadcastChannel('financia-sync');
+      (window as any).__bc1.onmessage = (evt: MessageEvent) => {
+        (window as any).__bc1LastMessage = evt.data;
+      };
+    });
 
-    let receivedPong = false;
-    const timeout = setTimeout(() => { channelA.close(); channelB.close(); }, 8000);
+    await p2.evaluate(() => {
+      (window as any).__bc2 = new BroadcastChannel('financia-sync');
+      (window as any).__bc2.onmessage = (evt: MessageEvent) => {
+        (window as any).__bc2LastMessage = evt.data;
+        (window as any).__bc2.postMessage({ type: 'SYNC_ACK', timestamp: Date.now() });
+      };
+    });
 
-    channelB.onmessage = (evt) => {
-      if (evt.data.type === 'SYNC_PING') {
-        receivedPong = true;
-        channelB.postMessage({ type: 'SYNC_ACK', timestamp: Date.now() });
-      }
-    };
-
-    channelA.postMessage({ type: 'SYNC_PING', timestamp: Date.now() });
+    await p1.evaluate(() => {
+      (window as any).__bc1.postMessage({ type: 'SYNC_PING', timestamp: Date.now() });
+    });
 
     await new Promise((resolve) => setTimeout(resolve, 3000));
-    clearTimeout(timeout);
 
-    channelA.close();
-    channelB.close();
+    const p2ReceivedPing = await p2.evaluate(() => {
+      return (window as any).__bc2LastMessage?.type === 'SYNC_PING';
+    });
 
-    expect(receivedPong).toBe(true);
+    const p1ReceivedAck = await p1.evaluate(() => {
+      return (window as any).__bc1LastMessage?.type === 'SYNC_ACK';
+    });
 
+    await p1.evaluate(() => (window as any).__bc1.close());
+    await p2.evaluate(() => (window as any).__bc2.close());
     await ctx1.close();
     await ctx2.close();
+
+    expect(p2ReceivedPing).toBe(true);
+    expect(p1ReceivedAck).toBe(true);
   });
 
   test('BroadcastChannel handles duplicate messages without errors', async ({ browser }) => {
     if (!storageState) {
-      test.skip(true, 'No storageState.json');
+      test.skip('No storageState.json');
     }
 
     const ctx = await browser.newContext({ storageState });
     const p = await ctx.newPage();
 
-    await p.goto(PROD_URL, { waitUntil: 'networkidle', timeout: 15000 });
+    await p.goto(BASE_URL, { waitUntil: 'networkidle', timeout: 15000 });
     await p.waitForTimeout(1000);
 
-    const channel = new BroadcastChannel('financia-sync');
-    const messages = [];
-
-    channel.onmessage = (evt) => {
-      messages.push(evt.data.type);
-    };
+    await p.evaluate(() => {
+      (window as any).__bc = new BroadcastChannel('financia-sync');
+      (window as any).__bcMessages = [];
+      (window as any).__bc.onmessage = (evt: MessageEvent) => {
+        (window as any).__bcMessages.push(evt.data.type);
+      };
+    });
 
     for (let i = 0; i < 10; i++) {
-      channel.postMessage({ type: 'SYNC_PING', timestamp: Date.now(), id: i });
+      await p.evaluate((id: number) => {
+        (window as any).__bc.postMessage({ type: 'SYNC_PING', timestamp: Date.now(), id });
+      }, i);
     }
 
     await new Promise((resolve) => setTimeout(resolve, 2000));
 
-    channel.close();
+    const msgCount = await p.evaluate(() => (window as any).__bcMessages?.length || 0);
+
+    await p.evaluate(() => (window as any).__bc.close());
     await ctx.close();
 
-    expect(messages.length).toBeGreaterThanOrEqual(0);
+    expect(msgCount).toBeGreaterThanOrEqual(0);
   });
 
   test('sync worker survives unhandled rejection', async ({ page }) => {
-    await page.goto(PROD_URL, { waitUntil: 'domcontentloaded', timeout: 15000 });
+    await page.goto(BASE_URL, { waitUntil: 'domcontentloaded', timeout: 15000 });
     await page.waitForLoadState('networkidle');
 
     let unhandledRejection = false;
@@ -102,7 +118,7 @@ test.describe('Deep Sync Conflict Scenarios', () => {
   });
 
   test('memory leak check after sync broadcast storm', async ({ page }) => {
-    await page.goto(PROD_URL, { waitUntil: 'domcontentloaded', timeout: 15000 });
+    await page.goto(BASE_URL, { waitUntil: 'domcontentloaded', timeout: 15000 });
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(1000);
 
@@ -112,7 +128,9 @@ test.describe('Deep Sync Conflict Scenarios', () => {
 
     for (let i = 0; i < 20; i++) {
       await page.evaluate(() => {
-        BroadcastChannel && new BroadcastChannel('financia-sync').postMessage({ type: 'SYNC_PING', timestamp: Date.now() });
+        if (typeof BroadcastChannel !== 'undefined') {
+          new BroadcastChannel('financia-sync').postMessage({ type: 'SYNC_PING', timestamp: Date.now() });
+        }
       });
     }
 

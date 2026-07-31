@@ -1,14 +1,18 @@
 import json
 import os
 import re
+import sys
 from datetime import datetime, timezone
 
 
 def read_file(path, limit=None):
     if not os.path.exists(path):
         return ""
-    with open(path) as f:
-        content = f.read()
+    try:
+        with open(path, encoding="utf-8", errors="replace") as f:
+            content = f.read()
+    except Exception:
+        return ""
     if limit:
         content = content[:limit]
     return content
@@ -17,13 +21,20 @@ def read_file(path, limit=None):
 def read_last_lines(path, n=40):
     if not os.path.exists(path):
         return ""
-    with open(path) as f:
-        lines = f.read().split("\n")
+    if n <= 0:
+        return ""
+    try:
+        with open(path, encoding="utf-8", errors="replace") as f:
+            lines = f.read().split("\n")
+    except Exception:
+        return ""
     return "\n".join(lines[-n:])
 
 
 def file_contains(path, pattern, flags=re.I):
     content = read_file(path)
+    if not content:
+        return None
     return bool(re.search(pattern, content, flags))
 
 
@@ -34,25 +45,37 @@ def gen_report():
 
     lint_status = "ok"
     lint_content = read_file("ci-artifacts/lint-output.txt", 5000)
-    if file_contains("ci-artifacts/lint-output.txt", r"error|erro"):
+    lint_exists = os.path.exists("ci-artifacts/lint-output.txt")
+    if not lint_exists:
+        lint_status = "nao executado"
+    elif file_contains("ci-artifacts/lint-output.txt", r"error|erro"):
         lint_status = "com erros"
 
     test_status = "ok"
     test_content = read_last_lines("ci-artifacts/test-output.txt", 40)
-    if file_contains("ci-artifacts/test-output.txt", r"fail|falha|erro|x"):
+    test_exists = os.path.exists("ci-artifacts/test-output.txt")
+    if not test_exists:
+        test_status = "nao executado"
+    elif file_contains("ci-artifacts/test-output.txt", r"fail|falha|erro|x"):
         test_status = "com falhas"
 
     build_status = "ok"
     build_content = read_last_lines("ci-artifacts/build-output.txt", 30)
-    if file_contains("ci-artifacts/build-output.txt", r"error|erro|failed|falha"):
+    build_exists = os.path.exists("ci-artifacts/build-output.txt")
+    if not build_exists:
+        build_status = "nao executado"
+    elif file_contains("ci-artifacts/build-output.txt", r"error|erro|failed|falha"):
         build_status = "com erros"
 
     e2e_status = "ok"
     e2e_content = ""
-    if os.path.exists("ci-artifacts/e2e-output.txt"):
+    e2e_exists = os.path.exists("ci-artifacts/e2e-output.txt")
+    if e2e_exists:
         e2e_content = read_file("ci-artifacts/e2e-output.txt", 3000)
         if file_contains("ci-artifacts/e2e-output.txt", r"failed|FAIL|fail|erro|error"):
             e2e_status = "com falhas"
+    else:
+        e2e_status = "nao executado"
 
     admin_audit = ""
     for path in [
@@ -70,7 +93,7 @@ def gen_report():
     ]:
         if os.path.exists(admin_json_path):
             try:
-                with open(admin_json_path) as f:
+                with open(admin_json_path, encoding="utf-8") as f:
                     aj = json.load(f)
                 errs = aj.get("totalErrors", 0)
                 warn = aj.get("totalWarnings", 0)
@@ -88,7 +111,7 @@ def gen_report():
     ]:
         if os.path.exists(prod_json_path):
             try:
-                with open(prod_json_path) as f:
+                with open(prod_json_path, encoding="utf-8") as f:
                     pj = json.load(f)
                 px = pj.get("stats", {}).get("expected", 0)
                 ux = pj.get("stats", {}).get("unexpected", 0)
@@ -164,6 +187,8 @@ def gen_report():
 
 ## Admin Audit (producao — Firefox/Chromium)
 
+| Metric | Valor |
+|---|---|
 {admin_metrics}
 
 Relatorio completo admin-audit-report.md disponivel como artifact.
@@ -181,9 +206,12 @@ Relatorio completo admin-audit-report.md disponivel como artifact.
 | {timestamp} | CI report gerado automaticamente | `{commit}` |
 """
 
-    with open("CI_REPORT.md", "w") as f:
+    with open("CI_REPORT.md", "w", encoding="utf-8") as f:
         f.write(report)
 
 
 if __name__ == "__main__":
-    gen_report()
+    try:
+        gen_report()
+    except Exception:
+        sys.exit(1)

@@ -1,14 +1,14 @@
 import { test, expect } from '@playwright/test';
 import * as fs from 'fs';
 
-const PROD_URL = 'https://financiabr.me';
+const BASE_URL = 'http://localhost:5173';
 const storageState = fs.existsSync('e2e/storageState.json') ? 'e2e/storageState.json' : undefined;
 
 test.describe('Deep Edge Cases — Offline State Corruption & Recovery', () => {
   test.setTimeout(30000);
 
   test('IndexedDB corruption is handled gracefully — app does not crash on load', async ({ page }) => {
-    await page.goto(PROD_URL, { waitUntil: 'domcontentloaded', timeout: 15000 });
+    await page.goto(BASE_URL, { waitUntil: 'domcontentloaded', timeout: 15000 });
     await page.waitForLoadState('networkidle');
 
     const corruptIDB = await page.evaluate(async () => {
@@ -25,7 +25,7 @@ test.describe('Deep Edge Cases — Offline State Corruption & Recovery', () => {
         const tx = db.transaction('corrupt-store', 'readwrite');
         const store = tx.objectStore('corrupt-store');
         store.put(new Blob(['not valid JSON']), 'bad-key');
-        await new Promise((resolve) => tx.oncomplete = resolve);
+        await new Promise((resolve) => { tx.oncomplete = resolve; });
         db.close();
         return true;
       } catch (e) {
@@ -33,7 +33,7 @@ test.describe('Deep Edge Cases — Offline State Corruption & Recovery', () => {
       }
     });
 
-    const consoleErrors = [];
+    const consoleErrors: string[] = [];
     page.on('console', (msg) => {
       if (msg.type() === 'error') consoleErrors.push(msg.text());
     });
@@ -41,11 +41,11 @@ test.describe('Deep Edge Cases — Offline State Corruption & Recovery', () => {
     await page.reload({ waitUntil: 'networkidle' });
     await page.waitForTimeout(2000);
 
-    expect(consoleErrors.some((e) => e.includes('Application')) === false).toBeTruthy();
+    expect(consoleErrors.some((e) => e.includes('Application'))).toBeFalsy();
   });
 
   test('app survives localStorage quota exceeded gracefully', async ({ page }) => {
-    await page.goto(PROD_URL, { waitUntil: 'domcontentloaded', timeout: 15000 });
+    await page.goto(BASE_URL, { waitUntil: 'domcontentloaded', timeout: 15000 });
     await page.waitForLoadState('networkidle');
 
     const quotaResult = await page.evaluate(async () => {
@@ -55,15 +55,15 @@ test.describe('Deep Edge Cases — Offline State Corruption & Recovery', () => {
         localStorage.removeItem('quota_test');
         return 'success';
       } catch (e) {
-        return e.name;
+        return (e as DOMException).name;
       }
     });
 
     expect(quotaResult).toBeTruthy();
   });
 
-  test('sessionStorage survives page refresh', async ({ page }) => {
-    await page.goto(PROD_URL, { waitUntil: 'domcontentloaded', timeout: 15000 });
+  test('sessionStorage does not survive page refresh', async ({ page }) => {
+    await page.goto(BASE_URL, { waitUntil: 'domcontentloaded', timeout: 15000 });
     await page.waitForLoadState('networkidle');
 
     await page.evaluate(() => {
@@ -77,24 +77,28 @@ test.describe('Deep Edge Cases — Offline State Corruption & Recovery', () => {
     expect(value).toBeNull();
   });
 
-  test('multiple rapid navigations do not break app', async ({ page }) => {
+  test('multiple rapid navigations do not break app', async ({ page, browser }) => {
     if (!storageState) {
-      test.skip(true, 'No storageState.json');
+      test.skip('No storageState.json');
     }
 
     const context = await browser.newContext({ storageState });
     const authPage = await context.newPage();
 
-    await authPage.goto(PROD_URL, { waitUntil: 'domcontentloaded', timeout: 15000 });
+    await authPage.goto(BASE_URL, { waitUntil: 'domcontentloaded', timeout: 15000 });
     await authPage.waitForLoadState('networkidle');
 
     for (let i = 0; i < 5; i++) {
-      await authPage.click('a[href="/dashboard"], a[href="/"]').catch(() => {});
+      const link = authPage.locator('a[href="/dashboard"], a[href="/"]').first();
+      if (await link.isVisible().catch(() => false)) {
+        await link.click();
+        await authPage.waitForLoadState('networkidle');
+      }
       await authPage.waitForTimeout(300);
     }
 
     const title = await authPage.title();
-    expect(title).toBeTruthy();
+    expect(title).not.toBe('');
 
     await context.close();
   });
