@@ -115,7 +115,7 @@ export const deriveCores = function(primary) {
   var p = primary || '#002f59';
   var hsl = hexToHsl(p);
   var secondary = hslToHex(hsl.h, clamp01(hsl.s * 0.55, 0.12, 0.5), 0.92);
-  var accent = hslToHex(hsl.h + 150, clamp01(hsl.s + 0.15, 0.5, 0.85), clamp01(hsl.l < 0.45 ? 0.52 : hsl.l - 0.05, 0.42, 0.6));
+  var accent = hslToHex(hsl.h + 150, clamp01(hsl.s + 0.15, 0.5, 0.85), clamp01(hsl.l < 0.45 ? 0.95 : Math.min(hsl.l + 0.15, 0.95), 0.93, 0.98));
   return { secondary: secondary, accent: accent };
 };
 

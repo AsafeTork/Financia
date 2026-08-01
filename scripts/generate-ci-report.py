@@ -59,7 +59,7 @@ def gen_report():
     elif file_contains("ci-artifacts/lint-output.txt", r"error|erro"):
         lint_status = "com erros"
 
-    test_status = "ok"
+    test_content = read_file(find_file("ci-artifacts", "test-output.txt"), 5000)
     test_exists = bool(find_file("ci-artifacts", "test-output.txt"))
     if not test_exists:
         test_status = "nao executado"
@@ -72,6 +72,7 @@ def gen_report():
         build_status = "nao executado"
     elif file_contains("ci-artifacts/build-output.txt", r"error|erro|failed|falha"):
         build_status = "com erros"
+    build_content = read_file(find_file("ci-artifacts", "build-output.txt"), 3000)
 
     e2e_status = "ok"
     e2e_exists = bool(find_file("ci-artifacts", "e2e-output.txt"))
@@ -80,6 +81,7 @@ def gen_report():
             e2e_status = "com falhas"
     else:
         e2e_status = "nao executado"
+    e2e_content = read_file(find_file("ci-artifacts", "e2e-output.txt"), 5000)
 
     admin_audit = ""
     for fname in ["admin-audit-report.md", "admin-audit-report.md.bak"]:

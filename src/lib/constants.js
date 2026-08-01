@@ -17,7 +17,7 @@ export const effectivePlan = function(p) {
   return new Date(p.plan_expires_at) > new Date() ? plan : 'free';
 };
 
-export const limitFor = function(p, kind) { return PLAN_LIMITS[effectivePlan(p)][kind]; };
+export const limitFor = function(p, kind) { var v = PLAN_LIMITS[effectivePlan(p)][kind]; return v === undefined ? Infinity : v; };
 export const atLimit = function(p, kind, count) { return count >= limitFor(p, kind); };
 
 // Conta como receita real apenas plano pago ATIVO (todo plano nao-free conta).
