@@ -481,3 +481,28 @@ Qualquer discrepância = falha de integridade = não continuar, reportar ao Inte
 - `supabase_list_edge_functions` confirmou todas as versões atualizadas
 - Logs de deploy sem erros
 - Todas as funções ACTIVE
+
+---
+
+## Backup 021 — F9.6 UX (2026-08-01)
+
+```yaml
+backup_id: backup_20260801_010000_021
+task_id: task_021
+task_description: "F9.6 UX — QuickActions FAB, onboarding wizard, micro-interactions"
+phase: F9
+progress_percent: 100
+```
+
+### UX Improvements — Detalhes
+
+**QuickActions:** FAB menu (Nova Venda, Nova Despesa, Novo Produto, Nova Perda, Config) + quickIntent bus. Visível em dashboard/income/expense/inventory. Fecha com Esc/clique fora. ARIA completo.
+
+**Onboarding:** Wizard por etapas com progress indicator, tooltips contextuais (Tip.jsx), skip, progresso salvo em localStorage por usuário, validação inline + banner de erro (offline/retry).
+
+**Micro-interações:** .pressable (toque), .anim-page-view (transição de tela), .tip-bubble — todos com guarda prefers-reduced-motion. Loader dual ring.
+
+**Testes:** 32 casos em 4 arquivos (quickIntent 7, QuickActions 8, Onboarding 12, Feedback 5).
+
+**Commit:** 182fa92
+**Push:** ✅ via gh

@@ -938,3 +938,57 @@ next_review: 2026-08-28
 
 ### Pendências
 - [ ] F9.5 Performance (bundle, Lighthouse ~50)
+
+---
+
+## [2026-08-01] — F9.6 UX Improvements — exec_20260801_010000_021
+
+**Modelo:** nemotron
+**Executor:** Chat Executor (Integrador)
+**Tarefa:** QuickActions FAB, onboarding wizard, micro-interactions (Fase 9.6)
+**Subagentes:** ux-improvements
+
+### Mudanças
+| Arquivo | Ação | Descrição |
+|---------|------|-----------|
+| src/shared/ui/QuickActions.jsx | CREATE | FAB menu (Nova Venda/Despesa/Produto/Perda/Config) |
+| src/lib/quickIntent.js | CREATE | Bus de intenção (zero prop-drilling) |
+| src/shared/ui/Onboarding.jsx | REWRITE | Wizard com progress, tooltips, skip, save entre sessões |
+| src/shared/ui/Tip.jsx | CREATE | Tooltips contextuais (aria-describedby) |
+| src/shared/ui/Feedback.jsx | CREATE | Feedback visual inline (role=alert/status) |
+| src/App.jsx | MODIFY | QuickActions render + anim-page-view + uid prop |
+| src/App/components/Loader.jsx | MODIFY | Dual ring + aria-busy |
+| src/index.css | MODIFY | .pressable/.anim-page-view/.tip-bubble |
+| src/lib/quickIntent.test.js | CREATE | 7 testes |
+| src/shared/ui/QuickActions.test.jsx | CREATE | 8 testes |
+| src/shared/ui/Onboarding.test.jsx | CREATE | 12 testes |
+| src/shared/ui/Feedback.test.jsx | CREATE | 5 testes |
+
+### Validações
+- quick_actions: FAB menu + quickIntent bus ✅
+- onboarding: wizard + progress indicator + tooltips + skip + save ✅
+- micro_interactions: pressable, anim-page-view, tip-bubble ✅
+- a11y: role=menu, aria-expanded, aria-describedby, role=alert/status ✅
+- tests: 32 casos em 4 arquivos ✅
+
+### Checkpoint
+- execution_id: exec_20260801_010000_021
+- checkpoint: checkpoint_021
+- phase: F9
+
+### Decisões
+- **Decisão:** QuickAction via FAB + quickIntent bus (zero prop-drilling)
+  - Imutável: true
+  - Autor: Executor
+- **Decisão:** Onboarding wizard com progresso persistido em localStorage por usuário
+  - Imutável: true
+  - Autor: Executor
+
+### Pendências
+- [ ] F9.7 QA coverage (40% → 60%)
+- [ ] F9.8 Branding (22 problemas)
+- [ ] F9.9 CI/CD completo
+
+---
+
+*Este arquivo é IMUTÁVEL — apenas APPEND permitido. Nunca editar entradas passadas.*

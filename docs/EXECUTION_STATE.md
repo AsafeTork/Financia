@@ -20,32 +20,35 @@ next_review: 2026-08-07
 ## Checkpoint Atual
 
 ```yaml
-execution_id: exec_20260731_220000_020
-task_id: task_020
+execution_id: exec_20260801_010000_021
+task_id: task_021
 phase: F9
-checkpoint: checkpoint_020
-task_description: "F9.5 Performance COMPLETO. Bundle optimized (empty chunks removed, vendor chunks consolidated), Lighthouse improved, Core Web Vitals optimized, PWA cache strategies improved, service worker optimized."
+checkpoint: checkpoint_021
+task_description: "F9.6 UX COMPLETO. QuickActions FAB + quickIntent bus, Onboarding wizard (progress, tooltips, skip, save entre sessões, error handling), Tip.jsx, Feedback.jsx, micro-interactions (.pressable, .anim-page-view), Loader melhorado. 4 arquivos de teste, 32 casos."
 model_used: "nemotron"
 files_modified:
-  - "vite.config.js (remove empty chunks, consolidate vendor, cacheDir)"
-  - "index.html (CSP + resource hints)"
-  - "src/index.css (optimized CSS)"
-  - "src/lib/pwa.js (PWA cache strategies)"
-  - "public/sw.js (service worker optimization)"
-  - "src/App.jsx (render optimizations)"
-  - "src/core/providers.jsx (provider optimization)"
+  - "src/shared/ui/QuickActions.jsx (CREATE)"
+  - "src/lib/quickIntent.js (CREATE)"
+  - "src/shared/ui/Onboarding.jsx (REWRITE)"
+  - "src/shared/ui/Tip.jsx (CREATE)"
+  - "src/shared/ui/Feedback.jsx (CREATE)"
+  - "src/App/components/Loader.jsx (MODIFY)"
+  - "src/App.jsx (MODIFY: QuickActions + anim-page-view + uid prop)"
+  - "src/features/transactions/TxView.jsx (MODIFY: quickIntent consume)"
+  - "src/features/inventory/InventoryView.jsx (MODIFY: quickIntent consume)"
+  - "src/index.css (MODIFY: micro-interactions)"
+  - "4 test files (CREATE)"
 validations_passed:
-  - "bundle: empty chunks eliminated"
-  - "vendor_chunks: consolidated (supabase, query, radix, stripe)"
-  - "cacheDir: added for build caching"
-  - "pwa: cache strategies improved"
-  - "service_worker: optimized"
-  - "auto_review: ✅ subagente performance-optimizer confirmou"
+  - "quick_actions: FAB menu + quickIntent bus"
+  - "onboarding: wizard com progress indicator + tooltips + skip + save entre sessões"
+  - "micro_interactions: .pressable, .anim-page-view, .tip-bubble"
+  - "a11y: role=menu, aria-expanded, aria-describedby, role=alert/status"
+  - "tests: 32 casos em 4 arquivos (quickIntent 7, QuickActions 8, Onboarding 12, Feedback 5)"
+  - "auto_review: ✅ subagente ux-improvements confirmou"
 decisions_made:
-  bundle: "Empty chunks removed, vendor chunks consolidated"
-  caching: "cacheDir added for build caching"
-  pwa: "Cache strategies improved for offline support"
-  next_priority: "F9.6 UX improvements + F9.7 QA coverage"
+  quick_action: "FAB + quickIntent bus (zero prop-drilling)"
+  onboarding: "Wizard + progresso persistido em localStorage por usuário"
+  next_priority: "F9.7 QA coverage (40% → 60%)"
 decisions_made:
   app_refactor: "Monolito 377→126 linhas via extração de hooks e context"
   state_management: "Context + hooks (Zustand não existe no projeto, @tanstack/react-query presente)"
@@ -91,15 +94,15 @@ execution_timestamp: "2026-07-31T23:30:00Z"
 - `authorized_at: "2026-07-12T03:00:00Z"`
 
 ### Tarefa em Andamento
-- `task_id: task_020`
-- `task_description: "F9.5 Performance — bundle optimized, Lighthouse improved, Core Web Vitals optimized"`
+- `task_id: task_021`
+- `task_description: "F9.6 UX — QuickActions FAB, onboarding wizard, micro-interactions"`
 - `progress_percent: 100`
 - `subagentes_ativos: []`
-- `subagentes_concluidos: [performance-optimizer]`
+- `subagentes_concluidos: [ux-improvements]`
 
 ### Próxima Ação
-- `next_phase: F9.6 UX improvements`
-- `next_task: "Quick-action, onboarding UX improvements"`
+- `next_phase: F9.7 QA coverage`
+- `next_task: "Aumentar cobertura de testes 40% → 60%"`
 - `blocked_by: []`
 
 ---
