@@ -1,5 +1,5 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { corsResponse, handleOptions, unauthorizedResponse, serverErrorResponse } from '../_shared/responses.ts';
+import { corsResponse, handleOptions, unauthorizedResponse, safeErrorResponse } from '../_shared/responses.ts';
 
 Deno.serve(async function (req: Request) {
   if (req.method === 'OPTIONS') return handleOptions();
@@ -40,13 +40,11 @@ Deno.serve(async function (req: Request) {
       .eq('user_id', caller.id);
 
     if (error) {
-      return corsResponse({ error: error.message }, 500);
+      return safeErrorResponse(new Error(error.message), 'update-brand-config');
     }
 
     return corsResponse({ ok: true }, 200);
   } catch (err) {
-    return serverErrorResponse(
-      err instanceof Error ? err.message : String(err)
-    );
+    return safeErrorResponse(err, 'update-brand-config');
   }
 });

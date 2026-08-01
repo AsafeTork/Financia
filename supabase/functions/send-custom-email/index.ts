@@ -1,6 +1,7 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { enforceRateLimit, getAdminClient, sanitizeEmail, sanitizeText } from '../_shared/security.ts';
 import { htmlFromText, sendSystemEmail } from '../_shared/mailer.ts';
+import { safeErrorResponse } from '../_shared/responses.ts';
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -60,7 +61,6 @@ Deno.serve(async function (req) {
     }
     return jsonResponse(200, { ok: true });
   } catch (err) {
-    const message = err && (err as any).message ? String((err as any).message) : String(err);
-    return jsonResponse(500, { error: message });
+    return safeErrorResponse(err, 'send-custom-email');
   }
 });

@@ -13,6 +13,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { enforceRateLimit, getAdminClient, sanitizePlanId } from '../_shared/security.ts';
 import { withLogging, corsResponse, handleOptions, Logger } from '../_shared/logger.ts';
 import { createStripeClient, findOrCreateCustomer, findOrCreatePrice, resolvePriceId, planOfSub, monthlyCentsOf, PLAN_PRICES, ADMIN_TEST_PRICE, PLAN_RANK, ACTIVE_STATUSES } from '../_shared/stripe.ts';
+import { safeErrorResponse } from '../_shared/responses.ts';
 
 async function isAdminUser(admin: any, userId: string): Promise<boolean> {
   if (!admin || !userId) return false;
@@ -209,11 +210,7 @@ async function handler(req: Request, logger: Logger): Promise<Response> {
       subscriptionId: subscription.id,
     });
   } catch (err) {
-    const statusCode = err && (err as any).statusCode ? Number((err as any).statusCode) : 500;
-    const code = stripeErrorCode(err, null);
-    if (statusCode >= 400 && statusCode < 500) return corsResponse({ error: code }, statusCode);
-    const message = err && (err as any).message ? (err as any).message : String(err);
-    return corsResponse({ error: String(message) }, 500);
+    return safeErrorResponse(err, 'create-subscription');
   }
 }
 

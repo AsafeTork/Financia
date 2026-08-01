@@ -5,6 +5,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { getAdminClient, enforceRateLimit } from '../_shared/security.ts';
 import { createStripeClient, findOrCreateCustomer, getActiveSubscription, ACTIVE_STATUSES } from '../_shared/stripe.ts';
 import { withLogging, corsResponse, handleOptions, Logger } from '../_shared/logger.ts';
+import { safeErrorResponse } from '../_shared/responses.ts';
 
 const ACTIVE_STATUSES = ['active', 'trialing', 'past_due', 'unpaid'];
 
@@ -93,9 +94,7 @@ async function handler(req: Request, logger: Logger): Promise<Response> {
 
     return corsResponse({ ok: true, status: 'scheduled', cancel_at: updated.current_period_end });
   } catch (err) {
-    const message = err?.message || String(err);
-    logger.error('Error in cancel-subscription', err as Error);
-    return corsResponse({ error: String(message) }, 500);
+    return safeErrorResponse(err, 'cancel-subscription');
   }
 }
 

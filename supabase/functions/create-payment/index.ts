@@ -7,6 +7,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { sanitizeKind, getAdminClient, enforceRateLimit } from '../_shared/security.ts';
 import { createStripeClient, findOrCreateCustomer, stripeErrorCode, WHITE_LABEL_PRICE, ADMIN_TEST_PRICE } from '../_shared/stripe.ts';
 import { withLogging, corsResponse, handleOptions, Logger } from '../_shared/logger.ts';
+import { safeErrorResponse } from '../_shared/responses.ts';
 
 const WHITE_LABEL_PRICE = 49700;
 const ADMIN_TEST_PRICE = 50;
@@ -118,11 +119,7 @@ async function handler(req: Request, logger: Logger): Promise<Response> {
 
     return corsResponse({ clientSecret: paymentIntent.client_secret, paymentIntentId: paymentIntent.id });
   } catch (err) {
-    const statusCode = err && (err as any).statusCode ? Number((err as any).statusCode) : 500;
-    const code = stripeErrorCode(err, null);
-    if (statusCode >= 400 && statusCode < 500) return corsResponse({ error: code }, statusCode);
-    const message = err && (err as any).message ? (err as any).message : String(err);
-    return corsResponse({ error: String(message) }, 500);
+    return safeErrorResponse(err, 'create-payment');
   }
 }
 

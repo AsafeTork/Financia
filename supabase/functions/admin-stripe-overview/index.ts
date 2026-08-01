@@ -7,6 +7,7 @@ import Stripe from 'https://esm.sh/stripe@17.7.0?target=denonext';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { cacheGet, cacheSet, enforceRateLimit, getAdminClient } from '../_shared/security.ts';
 import { withLogging, corsResponse, handleOptions, Logger } from '../_shared/logger.ts';
+import { safeErrorResponse } from '../_shared/responses.ts';
 
 const ACTIVE_STATUSES = ['active', 'trialing', 'past_due'];
 
@@ -133,9 +134,7 @@ async function handler(req: Request, logger: Logger): Promise<Response> {
     await cacheSet(secAdmin, 'stripe:admin-overview:' + user.id + ':' + (cursor || 'first') + ':' + limit, cachePayload, response, 30, user.id);
     return corsResponse(response);
   } catch (err) {
-    const message = err && (err as any).message ? (err as any).message : String(err);
-    logger.error('Error in admin-stripe-overview', err as Error);
-    return corsResponse({ error: String(message) }, 500);
+    return safeErrorResponse(err, 'admin-stripe-overview');
   }
 }
 
