@@ -728,8 +728,57 @@ next_review: 2026-08-28
   - Autor: Executor
 
 ### Pendências
-- [ ] F9.2 Security Implementation (CSP, rate limit, error sanitization)
-- [ ] F9.3 App.jsx refactor (already done, files removed due to error)
+- [ ] F9.3 App.jsx refactor (re-implement)
+- [ ] F9.4 Edge Functions deploy (8 não deployadas)
+- [ ] F9.5 Performance (bundle, Lighthouse ~50)
+
+---
+
+## [2026-07-31] — F9.2 Security Implementation — exec_20260731_190000_017
+
+**Modelo:** nemotron
+**Executor:** Chat Executor (Integrador)
+**Tarefa:** Fixar CSP, error sanitization, security headers (Fase 9.2)
+**Subagentes:** security-fix
+
+### Mudanças
+| Arquivo | Ação | Descrição |
+|---------|------|-----------|
+| index.html | MODIFY | CSP: keep unsafe-inline in style-src, remove report-uri |
+| render.yaml | MODIFY | CSP fix + COOP/CORP/X-Permitted-Cross-Domain-Policies headers |
+| supabase/functions/create-payment/index.ts | MODIFY | safeErrorResponse applied |
+| supabase/functions/create-subscription/index.ts | MODIFY | safeErrorResponse applied |
+| supabase/functions/cancel-subscription/index.ts | MODIFY | safeErrorResponse applied |
+| supabase/functions/send-custom-email/index.ts | MODIFY | safeErrorResponse applied |
+| supabase/functions/admin-stripe-overview/index.ts | MODIFY | safeErrorResponse applied |
+| supabase/functions/update-brand-config/index.ts | MODIFY | safeErrorResponse applied |
+
+### Validações
+- csp_script_src: no unsafe-inline, no unsafe-eval, strict-dynamic only ✅
+- csp_style_src: unsafe-inline kept for Tailwind inline styles ✅
+- csp_report_uri: removed (no /csp-report endpoint) ✅
+- rate_limit: already fail-closed (no change needed) ✅
+- error_sanitization: safeErrorResponse in 6 Edge Functions ✅
+- security_headers: COOP same-origin, CORP same-origin, X-Permitted-Cross-Domain-Policies none ✅
+
+### Checkpoint
+- execution_id: exec_20260731_190000_017
+- checkpoint: checkpoint_017
+- phase: F9
+
+### Decisões
+- **Decisão:** CSP style-src keeps unsafe-inline (Tailwind inline styles)
+  - Imutável: true
+  - Autor: Executor
+- **Decisão:** CSP report-uri removed (no /csp-report endpoint)
+  - Imutável: true
+  - Autor: Executor
+- **Decisão:** Rate limit already fail-closed, no change needed
+  - Imutável: true
+  - Autor: Executor
+
+### Pendências
+- [ ] F9.3 App.jsx refactor (re-implement)
 - [ ] F9.4 Edge Functions deploy (8 não deployadas)
 - [ ] F9.5 Performance (bundle, Lighthouse ~50)
 

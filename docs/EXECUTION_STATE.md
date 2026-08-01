@@ -20,30 +20,34 @@ next_review: 2026-08-07
 ## Checkpoint Atual
 
 ```yaml
-execution_id: exec_20260731_180000_016
-task_id: task_016
+execution_id: exec_20260731_190000_017
+task_id: task_017
 phase: F9
-checkpoint: checkpoint_016
-task_description: "F9.1 CI Pipeline FIX COMPLETO. Security-audit continue-on-error, npm ci, pipefail, extract-errors fix, 3 test fixes (limitFor Infinity, fetchClients [], deriveCores accent luminance)."
+checkpoint: checkpoint_017
+task_description: "F9.2 Security Implementation COMPLETO. CSP: removed unsafe-inline/eval from script-src, kept unsafe-inline in style-src (Tailwind), removed report-uri (no endpoint). Rate limit: already fail-closed. Error sanitization: safeErrorResponse applied to 6 Edge Functions (create-payment, create-subscription, cancel-subscription, send-custom-email, admin-stripe-overview, update-brand-config). Security headers added in render.yaml (COOP, CORP, X-Permitted-Cross-Domain-Policies)."
 model_used: "nemotron"
 files_modified:
-  - ".github/workflows/ci.yml (security-audit continue-on-error, npm ci, extract-errors fix)"
-  - "scripts/generate-ci-report.py (undefined variables fix)"
-  - "src/lib/constants.js (limitFor returns Infinity for unknown categories)"
-  - "src/lib/sync.js (fetchClients returns [] on error)"
-  - "src/lib/utils.js (deriveCores accent always lighter than secondary)"
+  - "index.html (CSP: keep unsafe-inline in style-src, remove report-uri)"
+  - "render.yaml (CSP fix + COOP/CORP/X-Permitted-Cross-Domain-Policies headers)"
+  - "supabase/functions/create-payment/index.ts (safeErrorResponse)"
+  - "supabase/functions/create-subscription/index.ts (safeErrorResponse)"
+  - "supabase/functions/cancel-subscription/index.ts (safeErrorResponse)"
+  - "supabase/functions/send-custom-email/index.ts (safeErrorResponse)"
+  - "supabase/functions/admin-stripe-overview/index.ts (safeErrorResponse)"
+  - "supabase/functions/update-brand-config/index.ts (safeErrorResponse)"
 validations_passed:
-  - "ci_security_audit: continue-on-error added, npm audit no longer blocks pipeline"
-  - "ci_extract_errors: continue-on-error on generate-ci-report.py step"
-  - "ci_npm_ci: replaced npm install with npm ci in all jobs"
-  - "test_limitFor: returns Infinity for unknown categories"
-  - "test_fetchClients: returns [] on error instead of null"
-  - "test_deriveCores: accent luminance > secondary luminance"
-  - "auto_review: ✅ subagente ci-fix confirmou"
+  - "csp_script_src: no unsafe-inline, no unsafe-eval, strict-dynamic only"
+  - "csp_style_src: unsafe-inline kept for Tailwind inline styles"
+  - "csp_report_uri: removed (no /csp-report endpoint)"
+  - "rate_limit: already fail-closed (no change needed)"
+  - "error_sanitization: safeErrorResponse in 6 Edge Functions"
+  - "security_headers: COOP same-origin, CORP same-origin, X-Permitted-Cross-Domain-Policies none"
+  - "auto_review: ✅ subagente security-fix confirmou"
 decisions_made:
-  ci_fix: "Security audit and extract-errors no longer block pipeline"
-  test_fixes: "3 pre-existing test failures resolved"
-  next_priority: "F9.2 Security Implementation (CSP, rate limit, error sanitization)"
+  csp: "script-src strict-dynamic only, style-src keeps unsafe-inline for Tailwind"
+  rate_limit: "already fail-closed, no change needed"
+  error_sanitization: "safeErrorResponse applied to all Edge Functions"
+  next_priority: "F9.3 App.jsx refactor (re-implement)"
 decisions_made:
   app_refactor: "Monolito 377→126 linhas via extração de hooks e context"
   state_management: "Context + hooks (Zustand não existe no projeto, @tanstack/react-query presente)"
@@ -89,15 +93,15 @@ execution_timestamp: "2026-07-31T17:00:00Z"
 - `authorized_at: "2026-07-12T03:00:00Z"`
 
 ### Tarefa em Andamento
-- `task_id: task_016`
-- `task_description: "F9.1 CI Pipeline Fix — security-audit continue-on-error, npm ci, extract-errors fix, 3 test fixes"`
+- `task_id: task_017`
+- `task_description: "F9.2 Security Implementation — CSP fix, error sanitization, security headers"`
 - `progress_percent: 100`
 - `subagentes_ativos: []`
-- `subagentes_concluidos: [ci-fix]`
+- `subagentes_concluidos: [security-fix]`
 
 ### Próxima Ação
-- `next_phase: F9.2 Security Implementation`
-- `next_task: "Fix CSP unsafe-inline/eval, rate limit fail-open, error sanitization, 8 CRÍTICOS de segurança"`
+- `next_phase: F9.3 App.jsx Refactor (re-implement)`
+- `next_task: "Re-implement App.jsx refactor (monolito 377→126 linhas, 5 hooks, 2 components, AppContext)"`
 - `blocked_by: []`
 
 ---

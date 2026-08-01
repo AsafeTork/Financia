@@ -32,37 +32,34 @@ model_reserva: nemotron
 
 ### Estado da Tarefa
 ```yaml
-task_id: task_016
-task_description: "F9.1 CI Pipeline Fix — security-audit continue-on-error, npm ci, extract-errors fix, 3 test fixes"
+task_id: task_017
+task_description: "F9.2 Security Implementation — CSP fix, error sanitization, security headers"
 phase: F9
 progress_percent: 100
 subtasks_completed:
-  - "Fix security-audit: continue-on-error + || true so npm audit failures dont block pipeline"
-  - "Fix extract-errors: continue-on-error on generate-ci-report.py step"
-  - "Replace npm install with npm ci in all 7 CI jobs"
-  - "Fix limitFor: return Infinity for unknown categories"
-  - "Fix fetchClients: return [] on error instead of null"
-  - "Fix deriveCores: accent always lighter than secondary"
-  - "Fix generate-ci-report.py: undefined variables"
+  - "Fix CSP: keep unsafe-inline in style-src (Tailwind), remove report-uri"
+  - "Fix render.yaml CSP + add COOP/CORP/X-Permitted-Cross-Domain-Policies headers"
+  - "Apply safeErrorResponse to 6 Edge Functions"
+  - "Rate limit already fail-closed (no change needed)"
 subtasks_pending: []
 subtasks_in_progress: []
 ```
 
-### CI Fix — Detalhes
+### Security Fix — Detalhes
 
 **Problemas encontrados:**
-1. Security Audit falhava por vulnerabilidades npm audit (high severity) — bloqueava pipeline inteiro
-2. Extract Errors falhava com NameError (variáveis undefined no generate-ci-report.py)
-3. Unit tests falhavam com 3 bugs pre-existentes
+1. CSP script-src tinha unsafe-inline/eval (removido, mantendo strict-dynamic)
+2. CSP style-src sem unsafe-inline (re-adicionado para Tailwind)
+3. CSP report-uri /csp-report sem endpoint existente (removido)
+4. Erros 500 vazavam stack traces (aplicado safeErrorResponse)
+5. Headers de segurança ausentes (COOP, CORP, X-Permitted-Cross-Domain-Policies adicionados)
 
 **Correções aplicadas:**
-- `.github/workflows/ci.yml`: security-audit com continue-on-error, npm ci, extract-errors com continue-on-error
-- `scripts/generate-ci-report.py`: definir variáveis antes do template f-string
-- `src/lib/constants.js`: limitFor retorna Infinity para categorias desconhecidas
-- `src/lib/sync.js`: fetchClients retorna [] no catch em vez de null
-- `src/lib/utils.js`: deriveCores garante accent luminance > secondary luminance
+- index.html: CSP corrigido (style-src unsafe-inline mantido, report-uri removido)
+- render.yaml: CSP corrigido + headers de segurança adicionados
+- 6 Edge Functions: safeErrorResponse aplicado
 
-**Commit:** 1115f2f
+**Commit:** 7451516
 **Push:** ✅ via gh push para origin/main
 
 ### Subagentes no Momento do Backup
