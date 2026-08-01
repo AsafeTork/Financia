@@ -44,10 +44,8 @@ export function registerSW() {
 
   var cleanups = [];
 
-  // Check for version mismatch on load - force reload if deploy changed
   checkVersionAndReload();
 
-  // Troca de controlador = atualizacao aplicada -> recarrega uma unica vez.
   var refreshing = false;
   var onControllerChange = function() {
     if (refreshing) return;
@@ -57,7 +55,6 @@ export function registerSW() {
   navigator.serviceWorker.addEventListener('controllerchange', onControllerChange);
   cleanups.push(function() { navigator.serviceWorker.removeEventListener('controllerchange', onControllerChange); });
 
-  // Progresso de cache reportado pelo proprio SW durante a instalacao.
   var onMessage = function(e) {
     if (e.data && e.data.type === 'CACHE_PROGRESS') {
       emit({ status: 'downloading', pct: e.data.pct });
@@ -66,17 +63,15 @@ export function registerSW() {
   navigator.serviceWorker.addEventListener('message', onMessage);
   cleanups.push(function() { navigator.serviceWorker.removeEventListener('message', onMessage); });
 
-  navigator.serviceWorker.register('/sw.js').then(function(reg) {
+  navigator.serviceWorker.register('/sw.js', { scope: '/' }).then(function(reg) {
     reg.update();
 
-    // Atualizacao ja baixada enquanto o app estava fechado.
     if (reg.waiting && navigator.serviceWorker.controller) {
       waitingSW = reg.waiting;
       emit({ status: 'ready' });
     }
 
     var onUpdateFound = function() {
-      // So mostra banner se ja havia um SW controlando (e atualizacao, nao 1a instalacao).
       if (!navigator.serviceWorker.controller) return;
       watchInstall(reg.installing, reg);
     };

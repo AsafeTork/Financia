@@ -20,49 +20,52 @@ next_review: 2026-08-07
 ## Checkpoint Atual
 
 ```yaml
-execution_id: exec_20260731_190000_017
-task_id: task_017
+execution_id: exec_20260731_210000_019
+task_id: task_019
 phase: F9
-checkpoint: checkpoint_017
-task_description: "F9.2 Security Implementation COMPLETO. CSP: removed unsafe-inline/eval from script-src, kept unsafe-inline in style-src (Tailwind), removed report-uri (no endpoint). Rate limit: already fail-closed. Error sanitization: safeErrorResponse applied to 6 Edge Functions (create-payment, create-subscription, cancel-subscription, send-custom-email, admin-stripe-overview, update-brand-config). Security headers added in render.yaml (COOP, CORP, X-Permitted-Cross-Domain-Policies)."
+checkpoint: checkpoint_019
+task_description: "F9.4 Edge Functions Deploy COMPLETO. 9 funções deployadas: admin-impersonate (v7), get-payment-method (v6), remove-payment-method (v7), create-setup-intent (v5), admin-create-client (v8), admin-set-white-label (v3), stripe-config (v10), get-subscription-status (v3), admin-set-custom-price (v6). Todas ACTIVE no Supabase."
 model_used: "nemotron"
 files_modified:
-  - "index.html (CSP: keep unsafe-inline in style-src, remove report-uri)"
-  - "render.yaml (CSP fix + COOP/CORP/X-Permitted-Cross-Domain-Policies headers)"
-  - "supabase/functions/create-payment/index.ts (safeErrorResponse)"
-  - "supabase/functions/create-subscription/index.ts (safeErrorResponse)"
-  - "supabase/functions/cancel-subscription/index.ts (safeErrorResponse)"
-  - "supabase/functions/send-custom-email/index.ts (safeErrorResponse)"
-  - "supabase/functions/admin-stripe-overview/index.ts (safeErrorResponse)"
-  - "supabase/functions/update-brand-config/index.ts (safeErrorResponse)"
+  - "supabase/functions/admin-impersonate/index.ts (deploy v7)"
+  - "supabase/functions/get-payment-method/index.ts (deploy v6)"
+  - "supabase/functions/remove-payment-method/index.ts (deploy v7)"
+  - "supabase/functions/create-setup-intent/index.ts (deploy v5)"
+  - "supabase/functions/admin-create-client/index.ts (deploy v8)"
+  - "supabase/functions/admin-set-white-label/index.ts (deploy v3)"
+  - "supabase/functions/stripe-config/index.ts (deploy v10)"
+  - "supabase/functions/get-subscription-status/index.ts (deploy v3)"
+  - "supabase/functions/admin-set-custom-price/index.ts (deploy v6)"
 validations_passed:
-  - "csp_script_src: no unsafe-inline, no unsafe-eval, strict-dynamic only"
-  - "csp_style_src: unsafe-inline kept for Tailwind inline styles"
-  - "csp_report_uri: removed (no /csp-report endpoint)"
-  - "rate_limit: already fail-closed (no change needed)"
-  - "error_sanitization: safeErrorResponse in 6 Edge Functions"
-  - "security_headers: COOP same-origin, CORP same-origin, X-Permitted-Cross-Domain-Policies none"
-  - "auto_review: ✅ subagente security-fix confirmou"
+  - "admin-impersonate: deployed v7 (JWT 5min + act claim + rate limit)"
+  - "get-payment-method: deployed v6 (withLogging + safeErrorResponse)"
+  - "remove-payment-method: deployed v7 (withLogging + safeErrorResponse)"
+  - "create-setup-intent: deployed v5 (withLogging + safeErrorResponse)"
+  - "admin-create-client: deployed v8 (withLogging + safeErrorResponse)"
+  - "admin-set-white-label: deployed v3 (withLogging + safeErrorResponse)"
+  - "stripe-config: deployed v10 (withLogging)"
+  - "get-subscription-status: deployed v3 (withLogging + safeErrorResponse)"
+  - "admin-set-custom-price: deployed v6 (dedup: 1 handler, 1 Deno.serve)"
+  - "all_functions_active: ✅ confirmed via Supabase API"
+  - "auto_review: ✅ subagente edge-functions-deploy confirmou"
 decisions_made:
-  csp: "script-src strict-dynamic only, style-src keeps unsafe-inline for Tailwind"
-  rate_limit: "already fail-closed, no change needed"
-  error_sanitization: "safeErrorResponse applied to all Edge Functions"
-  next_priority: "F9.3 App.jsx refactor (re-implement)"
+  deploy_method: "GitHub Actions workflow (Deploy Edge Functions) via gh workflow run"
+  all_functions_deployed: true
+  next_priority: "F9.5 Performance (bundle, Lighthouse ~50)"
 decisions_made:
   app_refactor: "Monolito 377→126 linhas via extração de hooks e context"
   state_management: "Context + hooks (Zustand não existe no projeto, @tanstack/react-query presente)"
   props_drilling: "Eliminado via AppContext fornecendo todos os valores para AppRoutes"
   component_extraction: "Loader e DebugBadge extraídos para src/App/components/"
-  next_priority: "F9.6: Edge Functions restantes deploy + F9.7: Performance"
+  next_priority: "F9.5 Performance (bundle, Lighthouse ~50)"
 pending_issues:
   - "F9.2 Security Implementation (CSP unsafe-inline/eval, rate limit fail-open, error sanitization) — 8 CRÍTICOS"
   - "F9.3 App.jsx refactor — arquivos removidos por erro na extração, precisa reimplementar"
-  - "F9.4 Edge Functions deploy (8 de 19 não deployadas)"
   - "F9.5 Performance (bundle, Lighthouse ~50)"
   - "Deploy migrations pendentes (35 migrations)"
   - "Configurar Supabase settings"
   - "Testar impersonation flow end-to-end em staging"
-execution_timestamp: "2026-07-31T17:00:00Z"
+execution_timestamp: "2026-07-31T23:30:00Z"
 ```
 
 ---
@@ -77,6 +80,7 @@ execution_timestamp: "2026-07-31T17:00:00Z"
 | checkpoint_004 | F5 | PR-05 QA completo | nemotron | sync.test.js, stripe-webhook.integration.test.js, stripe-subscription-cycle.integration.test.js, impersonation.integration.test.js, admin-stripe-overview/index.ts, create-payment/index.ts, create-subscription/index.ts, stripe-webhook/index.ts, vitest.config.js, qa-benchmarks-results.json, k6-load-test.js, k6-results-summary.json | lint: 0e/6w, build: passed, typecheck: passed, QA-01 a QA-07: ALL PASS | 2026-07-12T03:00:00Z |
 | checkpoint_005 | F3 | Branding P1-P12 completo | nemotron | schemaRegistry.js, defaults.js, logoUtils.js, presets.js, responseProcessor.js, useBrandStudio.js, useBrandAppearance.js, BrandStudioView.jsx, LogoSchemes.jsx, PlanTabsEditor.jsx, PreviewGeral.jsx, planThemes.js, previewValidator.js, index.js, AI_BRAND_SCHEMA.md, schema.js (removed), validateBrandConfig.js (removed) | lint: 0e/1w, build: passed, typecheck: passed, 162 branding tests PASS, P1-P12 ALL ✅ | 2026-07-12T11:00:00Z |
 | checkpoint_010 | Research | Backend & API Architecture Report — Financia | deepseek | docs/REPORT_FINANCIA_BACKEND.md | report: generated | 2026-07-31T00:00:00Z |
+| checkpoint_011 | F9.4 | Deploy 9 Edge Functions (admin-impersonate, get-payment-method, remove-payment-method, create-setup-intent, admin-create-client, admin-set-white-label, stripe-config, get-subscription-status, admin-set-custom-price) | nemotron | All 9 functions deployed v6→v10, all ACTIVE on Supabase | all 9 deployed ✅, no errors ✅ | 2026-07-31T23:00:00Z |
 
 ---
 
@@ -93,15 +97,15 @@ execution_timestamp: "2026-07-31T17:00:00Z"
 - `authorized_at: "2026-07-12T03:00:00Z"`
 
 ### Tarefa em Andamento
-- `task_id: task_017`
-- `task_description: "F9.2 Security Implementation — CSP fix, error sanitization, security headers"`
+- `task_id: task_019`
+- `task_description: "F9.4 Edge Functions Deploy — 9 funções deployadas com sucesso"`
 - `progress_percent: 100`
 - `subagentes_ativos: []`
-- `subagentes_concluidos: [security-fix]`
+- `subagentes_concluidos: [edge-functions-deploy]`
 
 ### Próxima Ação
-- `next_phase: F9.3 App.jsx Refactor (re-implement)`
-- `next_task: "Re-implement App.jsx refactor (monolito 377→126 linhas, 5 hooks, 2 components, AppContext)"`
+- `next_phase: F9.5 Performance`
+- `next_task: "Otimizar bundle, Lighthouse ~50 → target 90+"`
 - `blocked_by: []`
 
 ---

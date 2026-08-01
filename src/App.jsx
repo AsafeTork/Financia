@@ -21,7 +21,6 @@ import { WidgetErrorBoundary } from './shared/WidgetErrorBoundary.jsx';
 import Login from './features/auth/Login.jsx';
 import AppRoutes from './routes/routes.jsx';
 import Loader from './App/components/Loader.jsx';
-import DebugBadge from './App/components/DebugBadge.jsx';
 import { AppProvider } from './App/contexts/AppContext.jsx';
 import { useAppState } from './hooks/useAppState.js';
 import { useToasts } from './hooks/useToasts.js';
@@ -32,6 +31,7 @@ import { usePlanEffects } from './hooks/usePlanEffects.js';
 const Landing = lazy(function() { return import('./features/landing/Landing.jsx'); });
 const PrivacyPolicy = lazy(function() { return import('./features/landing/PrivacyPolicy.jsx'); });
 const TermsOfService = lazy(function() { return import('./features/landing/TermsOfService.jsx'); });
+const DebugBadge = lazy(function() { return import('./App/components/DebugBadge.jsx'); });
 
 export default function App() {
   const s = useAppState();
@@ -107,7 +107,7 @@ export default function App() {
     <AppProvider value={ctx}>
       <div className="min-h-screen flex overflow-x-hidden" style={{background:'var(--bg-page)'}}>
         <a href="#main-content" onClick={function(e){e.preventDefault();var el=document.getElementById('main-content');if(el){el.setAttribute('tabindex','-1');el.focus();el.scrollIntoView();}}} className="skip-link">Pular para conte\u00fado</a>
-        <Offline/><WidgetErrorBoundary><UpdateBanner brand={appBrand}/></WidgetErrorBoundary><DebugBadge/><SyncBadge status={s.syncStatus}/>
+        <Offline/><WidgetErrorBoundary><UpdateBanner brand={appBrand}/></WidgetErrorBoundary><Suspense fallback={null}><DebugBadge/></Suspense><SyncBadge status={s.syncStatus}/>
         <WidgetErrorBoundary><Sidebar view={n.currentView} onNav={n.navTo} brand={appBrand} open={s.sidebarOpen} isAdmin={s.isAdminDB} onClose={handleCloseSidebar}/></WidgetErrorBoundary>
         <div className="hidden lg:block fixed top-4 right-4 z-30"><ThemeToggle theme={effectiveTheme} onToggle={toggleTheme} variant="floating"/></div>
         <div className="flex-1 lg:ml-64 flex flex-col min-h-screen min-w-0 w-full">

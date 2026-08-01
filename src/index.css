@@ -5,7 +5,7 @@
 * { font-family: 'Inter', system-ui, sans-serif; box-sizing: border-box; }
 .font-display { font-family: 'Fraunces', Georgia, 'Times New Roman', serif; font-optical-sizing: auto; }
 html, body { margin: 0; overflow-x: hidden; max-width: 100vw; }
-body { background: var(--bg-page, #f8fafc); color: var(--text-main, #0f172a); }
+body { background: var(--bg-page, #f8fafc); color: var(--text-main, #0f172a); content-visibility: auto; contain: layout style paint; }
 
 @keyframes slideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes fadeIn  { from { opacity: 0; } to { opacity: 1; } }
@@ -23,19 +23,15 @@ body { background: var(--bg-page, #f8fafc); color: var(--text-main, #0f172a); }
 @keyframes toastFadeOut { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-8px) scale(.96); } }
 .anim-out   { animation: toastFadeOut .25s cubic-bezier(.16,1,.3,1) forwards; }
 
-/* Transicoes globais */
 a, button { transition: opacity .15s ease, color .15s ease, transform .12s ease; }
 
-/* Tato no toque/clique */
 .btn:active { transform: scale(.97); }
 
-/* Foco acessivel com a cor da marca (segue o raio do proprio elemento) */
 button:focus-visible, a:focus-visible, [role="button"]:focus-visible {
   outline: none;
   box-shadow: 0 0 0 3px var(--brand-soft, rgba(0,47,89,0.12));
 }
 
-/* Skeleton de carregamento */
 .skeleton {
   background: linear-gradient(90deg, var(--bg-subtle) 25%, var(--border-md) 37%, var(--bg-subtle) 63%);
   background-size: 200% 100%;
@@ -49,69 +45,48 @@ html { scroll-behavior: smooth; }
   .btn:active { transform: none; }
 }
 
-/* Focus rings com brand color */
 input:focus, select:focus, textarea:focus {
   border-color: var(--brand, #002f59) !important;
   box-shadow: 0 0 0 3px var(--brand-soft, rgba(0,47,89,0.10)) !important;
   outline: none !important;
 }
 
-/* Card hover */
-.card-hover { transition: box-shadow .15s ease, transform .15s ease; }
+.card-hover { transition: box-shadow .15s ease, transform .15s ease; contain: layout style; }
 .card-hover:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.06); transform: translateY(-1px); }
 
-/* Numeros financeiros alinhados */
 .tabular { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
 
-/* Titulos de secao */
 .page-header { font-family: 'Fraunces', Georgia, serif; font-optical-sizing: auto; font-size: 1.625rem; font-weight: 600; letter-spacing: -0.5px; color: var(--text-main, #0f172a); line-height: 1.15; }
 .page-sub    { font-size: 0.8125rem; color: var(--text-sub, #5b6b7c); margin-top: 3px; }
 
-/* Valores monetarios */
 .value-xl { font-size: 2rem; font-weight: 800; letter-spacing: -1px; font-variant-numeric: tabular-nums; }
 .value-lg { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.5px; font-variant-numeric: tabular-nums; }
 
-/* Scrollbar customizada */
 ::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--brand-soft, rgba(0,0,0,0.10)); border-radius: 99px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--brand, #002f59); }
 
-/* ===========================================
-   PALETA FINANCIA — Navy / Teal / Green
-   Light: limpo, profissional, acolhedor
-   =========================================== */
 :root {
-  /* Backgrounds */
   --bg-page:    #f5f5f0;
   --bg-card:    #ffffff;
   --bg-input:   #ffffff;
   --bg-subtle:  #f5f5f0;
   --surface:    #ffffff;
-
-  /* Texto */
   --text-main:  #0f172a;
   --text-sub:   #5b6b7c;
   --text-muted: #94a3b8;
-
-  /* Bordas */
   --border:     #edeae3;
   --border-md:  #e2ddd4;
-
-  /* Marca — aplicado dinamicamente por applyBrandVars() */
   --brand:      #002f59;
   --brand-soft: rgba(0,47,89,0.08);
   --brand-secondary: #6ec6c8;
   --brand-accent:    #1a6b5c;
   --brand-accent-soft: rgba(26,107,92,0.10);
   --brand-grad: linear-gradient(135deg, #002f59 0%, #1a6b5c 100%);
-
-  /* Sombras — extremamente sutis */
   --shadow-sm:  0 1px 2px rgba(0,47,89,0.04), 0 1px 3px rgba(0,47,89,0.03);
   --shadow-md:  0 2px 8px rgba(0,47,89,0.05), 0 1px 3px rgba(0,47,89,0.03);
   --shadow-lg:  0 8px 24px rgba(0,47,89,0.08), 0 2px 8px rgba(0,47,89,0.04);
-
-  /* shadcn/ui CSS variables */
   --background: 60 16% 95%;
   --foreground: 221 47% 11%;
   --card: 0 0% 100%;
@@ -134,28 +109,20 @@ input:focus, select:focus, textarea:focus {
   --radius: 0.75rem;
 }
 
-/* ===========================================
-   DARK THEME — Profundo e confortavel
-   =========================================== */
 [data-theme="dark"] {
   --bg-page:    #0a1628;
   --bg-card:    #13243d;
   --bg-input:   #13243d;
   --bg-subtle:  #0f1e33;
   --surface:    #13243d;
-
   --text-main:  #e8edf2;
   --text-sub:   #8ba0b5;
   --text-muted: #8899aa;
-
   --border:     #1e3450;
   --border-md:  #274263;
-
   --shadow-sm:  0 1px 3px rgba(0,0,0,0.3);
   --shadow-md:  0 4px 12px rgba(0,0,0,0.35);
   --shadow-lg:  0 10px 30px rgba(0,0,0,0.45);
-
-  /* shadcn/ui dark */
   --background: 222 47% 6%;
   --foreground: 210 40% 98%;
   --card: 222 47% 10%;
@@ -177,7 +144,6 @@ input:focus, select:focus, textarea:focus {
   --ring: 208 100% 45%;
 }
 
-/* Dark mode — overrides para classes Tailwind residuais */
 [data-theme="dark"] body        { background: #0a1628; }
 [data-theme="dark"] .bg-white   { background-color: #13243d !important; }
 [data-theme="dark"] .bg-gray-50 { background-color: #0f1e33 !important; }
@@ -198,11 +164,16 @@ input:focus, select:focus, textarea:focus {
   color: #e8edf2 !important;
   border-color: #274263 !important;
 }
-[data-theme="dark"] .hover\\:bg-gray-50:hover,
-[data-theme="dark"] .hover\\:bg-gray-100:hover { background-color: #0f1e33 !important; }
+[data-theme="dark"] .hover\:bg-gray-50:hover,
+[data-theme="dark"] .hover\:bg-gray-100:hover { background-color: #0f1e33 !important; }
 [data-theme="dark"] .shadow-sm { box-shadow: 0 1px 3px rgba(0,0,0,0.3) !important; }
 
-/* ── View Transitions API ── */
+::view-transition-old(root) {
+  animation: vt-fade-out 0.2s ease-out both;
+}
+::view-transition-new(root) {
+  animation: vt-fade-in 0.25s ease-out both;
+}
 @keyframes vt-fade-in {
   from { opacity: 0; transform: translateY(8px); }
 }
@@ -218,14 +189,6 @@ input:focus, select:focus, textarea:focus {
   }
 }
 
-/* ===========================================
-   PLAN THEMES — Experiencia visual por plano
-   data-plan="free|pro|premium" no <html>
-   Controla sofisticacao, sombras, glow, badges.
-   White-label continua controlando --brand.
-   =========================================== */
-
-/* PRO — Indigo/Royal, tecnológico, Linear+Stripe */
 [data-plan="pro"] {
   --shadow-sm:  0 1px 3px rgba(37,99,235,0.05), 0 1px 2px rgba(37,99,235,0.03);
   --shadow-md:  0 4px 12px rgba(37,99,235,0.07), 0 2px 4px rgba(37,99,235,0.04);
@@ -239,14 +202,10 @@ input:focus, select:focus, textarea:focus {
   --sidebar-bg: linear-gradient(180deg, #1e1b4b 0%, #172554 50%, #1e1b4b 100%);
 }
 
-/* PREMIUM — Grafite/Dourado, executivo, Apple+Amex */
-/* NOTA: Premium NAO define bg/text/border — herda de [data-theme] ou :root.
-   Apenas acentos (glow, badge, sidebar, btn-grad) sao exclusivos do plano. */
 [data-plan="premium"] {
   --shadow-sm:  0 1px 3px rgba(0,0,0,0.4), 0 1px 2px rgba(212,175,106,0.03);
   --shadow-md:  0 4px 12px rgba(0,0,0,0.45), 0 2px 4px rgba(212,175,106,0.04);
   --shadow-lg:  0 10px 30px rgba(0,0,0,0.55), 0 4px 8px rgba(212,175,106,0.05);
-
   --glow-primary: rgba(212,175,106,0.10);
   --glow-card: rgba(212,175,106,0.03);
   --plan-badge: #D4AF6A;
@@ -256,7 +215,6 @@ input:focus, select:focus, textarea:focus {
   --sidebar-bg: linear-gradient(180deg, #0F172A 0%, #1A1A2E 50%, #0F172A 100%);
 }
 
-/* Plan card shadows por identidade */
 :root {
   --plan-shadow: var(--shadow-sm);
   --plan-shadow-elevated: var(--shadow-md);
@@ -277,23 +235,19 @@ input:focus, select:focus, textarea:focus {
   --plan-gold: #D4AF6A;
 }
 
-/* Botão com gradiente do plano (quando ativo) */
 .btn-plan-grad {
   background: var(--btn-grad, var(--brand));
 }
 
-/* Card com glow sutil do plano */
 .card-plan-glow {
   box-shadow: var(--shadow-sm), 0 0 0 1px var(--glow-card, transparent);
 }
 
-/* Badge do plano */
 .badge-plan {
   color: var(--plan-badge, #6b7280);
   background: var(--plan-badge-bg, rgba(107,114,128,0.10));
 }
 
-/* ── Botao duplo de exportacao: [PDF] vermelho | [Excel] verde ── */
 .exp-split {
   display: inline-flex;
   align-items: stretch;
@@ -323,12 +277,6 @@ input:focus, select:focus, textarea:focus {
 .exp-xls:hover { background: #16a34a; color: #fff; }
 .exp-divider { width: 1px; background: var(--border); align-self: stretch; }
 
-/* ── Notas de dinheiro flutuantes (Landing) ── */
-@keyframes moneyFloat {
-  0%   { transform: translateY(0) rotate(var(--rot, 0deg)); }
-  50%  { transform: translateY(-18px) rotate(var(--rot, 0deg)); }
-  100% { transform: translateY(0) rotate(var(--rot, 0deg)); }
-}
 .money-note {
   position: absolute;
   animation: moneyFloat var(--dur, 6s) ease-in-out infinite;
@@ -341,10 +289,14 @@ input:focus, select:focus, textarea:focus {
   filter: brightness(1.06) drop-shadow(0 10px 20px rgba(0,0,0,0.12));
   z-index: 5;
 }
+@keyframes moneyFloat {
+  0%   { transform: translateY(0) rotate(var(--rot, 0deg)); }
+  50%  { transform: translateY(-18px) rotate(var(--rot, 0deg)); }
+  100% { transform: translateY(0) rotate(var(--rot, 0deg)); }
+}
 @media (prefers-reduced-motion: reduce) {
   .money-note { animation: none; }
+}
 
-main:focus{outline:none}
 .skip-link{position:fixed;top:0;left:1rem;z-index:9999;padding:.75rem 1.5rem;background:#002f59;color:#fff;border-radius:0 0 .5rem .5rem;font-size:.875rem;font-weight:600;text-decoration:none;transition:transform .2s;transform:translateY(-100%)}.skip-link:focus{transform:translateY(0)}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border-width:0}
-}

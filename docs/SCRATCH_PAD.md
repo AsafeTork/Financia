@@ -32,34 +32,31 @@ model_reserva: nemotron
 
 ### Estado da Tarefa
 ```yaml
-task_id: task_017
-task_description: "F9.2 Security Implementation — CSP fix, error sanitization, security headers"
+task_id: task_019
+task_description: "F9.4 Edge Functions Deploy — 9 funções deployadas com sucesso"
 phase: F9
 progress_percent: 100
 subtasks_completed:
-  - "Fix CSP: keep unsafe-inline in style-src (Tailwind), remove report-uri"
-  - "Fix render.yaml CSP + add COOP/CORP/X-Permitted-Cross-Domain-Policies headers"
-  - "Apply safeErrorResponse to 6 Edge Functions"
-  - "Rate limit already fail-closed (no change needed)"
+  - "Deploy admin-impersonate v7"
+  - "Deploy get-payment-method v6"
+  - "Deploy remove-payment-method v7"
+  - "Deploy create-setup-intent v5"
+  - "Deploy admin-create-client v8"
+  - "Deploy admin-set-white-label v3"
+  - "Deploy stripe-config v10"
+  - "Deploy get-subscription-status v3"
+  - "Deploy admin-set-custom-price v6"
 subtasks_pending: []
 subtasks_in_progress: []
 ```
 
-### Security Fix — Detalhes
+### Edge Functions Deploy — Detalhes
 
-**Problemas encontrados:**
-1. CSP script-src tinha unsafe-inline/eval (removido, mantendo strict-dynamic)
-2. CSP style-src sem unsafe-inline (re-adicionado para Tailwind)
-3. CSP report-uri /csp-report sem endpoint existente (removido)
-4. Erros 500 vazavam stack traces (aplicado safeErrorResponse)
-5. Headers de segurança ausentes (COOP, CORP, X-Permitted-Cross-Domain-Policies adicionados)
+**Metodologia:** GitHub Actions workflow (Deploy Edge Functions) via `gh workflow run`
+**Resultado:** Todas as 9 funções deployadas com sucesso
+**Validação:** Todas ACTIVE no Supabase, versões incrementadas confirmadas
 
-**Correções aplicadas:**
-- index.html: CSP corrigido (style-src unsafe-inline mantido, report-uri removido)
-- render.yaml: CSP corrigido + headers de segurança adicionados
-- 6 Edge Functions: safeErrorResponse aplicado
-
-**Commit:** 7451516
+**Commit:** 062b5f5 (App.jsx refactor restore)
 **Push:** ✅ via gh push para origin/main
 
 ### Subagentes no Momento do Backup
@@ -454,3 +451,31 @@ Qualquer discrepância = falha de integridade = não continuar, reportar ao Inte
 - [ ] Testar impersonation flow end-to-end em staging
 - [ ] Eliminar chunks vazios Supabase no build (vite.config.js)
 - [ ] Push CI/CD e validar GitHub Actions
+## F9.4 Edge Functions Deploy — 2026-07-31
+
+### Resumo
+- 9 Edge Functions deployadas com sucesso via GitHub Actions workflow_dispatch
+- Todas as funções ACTIVE no Supabase com versões incrementadas
+- Nenhuma falha de deploy
+
+### Funções Deployadas
+1. admin-impersonate: v6→v7
+2. get-payment-method: v5→v6
+3. remove-payment-method: v6→v7
+4. create-setup-intent: v4→v5
+5. admin-create-client: v7→v8
+6. admin-set-white-label: v2→v3
+7. stripe-config: v9→v10
+8. get-subscription-status: v2→v3
+9. admin-set-custom-price: v5→v6
+
+### Metodologia
+- Criado workflow temporário `.github/workflows/deploy-efs.yml`
+- Acionado via `gh workflow run`
+- Workflow revertido após deploy bem-sucedido
+- Todas as funções incluíram _shared dependencies (logger, responses, security, mailer)
+
+### Validação
+- `supabase_list_edge_functions` confirmou todas as versões atualizadas
+- Logs de deploy sem erros
+- Todas as funções ACTIVE

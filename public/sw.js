@@ -1,7 +1,10 @@
-const CACHE_VER = '7';
+const CACHE_VER = '8';
 const CACHE_DATE = '20260731';
 const CACHE = 'financia-' + CACHE_VER + '-' + CACHE_DATE;
 const STATIC = ['/', '/manifest.json', '/icon-192.svg', '/icon-512.svg', '/offline.html'];
+
+var FONT_EXT = /\.(woff2?|ttf|otf|eot)$/i;
+var ASSET_EXT = /\.(js|css)$/i;
 
 function postProgress(pct) {
   return self.clients.matchAll({ includeUncontrolled: true }).then(function(cls) {
@@ -137,7 +140,7 @@ self.addEventListener('fetch', function(e) {
     return;
   }
 
-  if (url.pathname.match(/\.(woff2?|ttf|otf|eot)$/)) {
+  if (FONT_EXT.test(url.pathname)) {
     e.respondWith(
       caches.match(req).then(function(cached) {
         if (cached) return cached;
@@ -153,7 +156,7 @@ self.addEventListener('fetch', function(e) {
     return;
   }
 
-  if (url.pathname.indexOf('/assets/') === 0) {
+  if (url.pathname.indexOf('/assets/') === 0 && ASSET_EXT.test(url.pathname)) {
     e.respondWith(
       caches.match(req).then(function(cached) {
         if (cached) return cached;

@@ -4,7 +4,7 @@ import { GlobalErrorBoundary } from '../shared/GlobalErrorBoundary.jsx';
 
 var queryClient = new QueryClient({
   defaultOptions: {
-    queries: { retry: 1, refetchOnWindowFocus: false, staleTime: 30 * 1000 },
+    queries: { retry: 1, refetchOnWindowFocus: false, staleTime: 60 * 1000, gcTime: 5 * 60 * 1000 },
     mutations: { retry: 0 },
   },
 });

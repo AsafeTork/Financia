@@ -38,6 +38,7 @@ export default defineConfig(async function() {
       target: 'es2022',
       cssMinify: 'terser',
       sourcemap: false,
+      cacheDir: 'node_modules/.vite-build-cache',
       rollupOptions: {
         output: {
           compact: true,
@@ -46,16 +47,13 @@ export default defineConfig(async function() {
             if (id.includes('node_modules/react') && !id.includes('react-table')) return 'vendor-react';
             if (id.includes('node_modules/react-dom')) return 'vendor-react';
             if (id.includes('node_modules/scheduler')) return 'vendor-scheduler';
-            if (id.indexOf('@supabase/postgrest-js') !== -1) return 'supabase-db';
-            if (id.indexOf('@supabase/auth-js') !== -1) return 'supabase-auth';
-            if (id.indexOf('@supabase/storage-js') !== -1) return 'supabase-storage';
-            if (id.indexOf('@supabase/functions-js') !== -1) return 'supabase-functions';
-            if (id.includes('node_modules/@supabase')) return 'supabase';
-            if (id.includes('node_modules/@tanstack/query-core') || id.includes('node_modules/@tanstack/react-query')) return 'query';
-            if (id.includes('node_modules/dexie')) return 'dexie';
-            if (id.includes('node_modules/@radix-ui')) return 'radix';
-            if (id.includes('node_modules/@stripe')) return 'stripe';
-            if (id.includes('node_modules/nodemailer')) return 'nodemailer';
+            if (id.includes('node_modules/@supabase')) return 'vendor-supabase';
+            if (id.includes('node_modules/@tanstack/query-core') || id.includes('node_modules/@tanstack/react-query')) return 'vendor-query';
+            if (id.includes('node_modules/@radix-ui')) return 'vendor-radix';
+            if (id.includes('node_modules/@stripe')) return 'vendor-stripe';
+            if (id.includes('node_modules/react-router-dom')) return 'vendor-router';
+            if (id.includes('node_modules/dexie')) return 'vendor-dexie';
+            if (id.includes('node_modules/tailwindcss')) return 'vendor-tailwind';
             if (id.includes('node_modules')) return 'vendor';
           },
         },
