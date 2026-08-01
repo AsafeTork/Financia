@@ -6,6 +6,7 @@ import { Button } from './button.jsx';
 import { Textarea as ShadcnTextarea } from './textarea.jsx';
 import { Spinner } from './spinner.jsx';
 import { Label } from './label.jsx';
+import Tip from './Tip.jsx';
 
 var ShadcnCard = function({ className, children, ...p }) {
   return <div className={cn('rounded-xl border bg-card text-card-foreground shadow', className)} {...p}>{children}</div>;
@@ -31,7 +32,7 @@ export const Card = function({ children, className, hover, variant, accent, colo
   );
 };
 
-export const Inp = function({ label, hint, error, success, className, icon, id, ...p }) {
+export const Inp = function({ label, hint, error, success, className, icon, id, tip, ...p }) {
   var generatedId = React.useId();
   var inputId = id || generatedId;
   return (
@@ -40,6 +41,7 @@ export const Inp = function({ label, hint, error, success, className, icon, id, 
         <div className="flex items-center gap-1.5">
           {icon && <span className="text-muted-foreground">{icon}</span>}
           <Label htmlFor={inputId} className="text-xs font-semibold uppercase tracking-wide">{label}</Label>
+          {tip && <Tip text={tip}/>}
         </div>
       )}
       <Input id={inputId}

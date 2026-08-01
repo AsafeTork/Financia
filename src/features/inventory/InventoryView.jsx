@@ -6,6 +6,7 @@ import { fmt, fmtDate, today, safe, uid, brandAlpha } from '../../lib/utils.js';
 import { effectivePlan } from '../../lib/constants.js';
 import { exportPDF, exportXLS } from '../../lib/exporters.js';
 import { useDebouncedValue } from '../../shared/hooks/useDebouncedValue.js';
+import { useQuickIntent } from '../../lib/quickIntent.js';
 
 var INIT_PF = {name:'', category:'', price:'', cost:'', stock:''};
 
@@ -57,6 +58,9 @@ export default React.memo(function InventoryView({ products, losses, onAddProduc
   const {tab, search, collapsed, pm, editP, lm, editL, sm, pf, lf, sq, saving} = state;
   var debouncedSearch = useDebouncedValue(search, 250);
   var paid = effectivePlan(planInfo) !== 'free';
+
+  useQuickIntent('product', function() { dispatch({type:'OPEN_PM'}); });
+  useQuickIntent('loss', function() { dispatch({type:'OPEN_LM'}); });
 
   var doExport = function(kind) {
     var headers = ['Produto', 'Categoria', 'Preço', 'Custo', 'Estoque'];

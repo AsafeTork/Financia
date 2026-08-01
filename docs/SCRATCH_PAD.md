@@ -32,31 +32,33 @@ model_reserva: nemotron
 
 ### Estado da Tarefa
 ```yaml
-task_id: task_019
-task_description: "F9.4 Edge Functions Deploy — 9 funções deployadas com sucesso"
+task_id: task_020
+task_description: "F9.5 Performance — bundle optimized, Lighthouse improved, Core Web Vitals optimized"
 phase: F9
 progress_percent: 100
 subtasks_completed:
-  - "Deploy admin-impersonate v7"
-  - "Deploy get-payment-method v6"
-  - "Deploy remove-payment-method v7"
-  - "Deploy create-setup-intent v5"
-  - "Deploy admin-create-client v8"
-  - "Deploy admin-set-white-label v3"
-  - "Deploy stripe-config v10"
-  - "Deploy get-subscription-status v3"
-  - "Deploy admin-set-custom-price v6"
+  - "vite.config.js: remove empty chunks, consolidate vendor chunks, add cacheDir"
+  - "index.html: CSP + resource hints optimization"
+  - "src/index.css: optimized CSS rules"
+  - "src/lib/pwa.js: PWA cache strategy improvements"
+  - "public/sw.js: service worker optimization"
+  - "src/App.jsx: minor render optimizations"
+  - "src/core/providers.jsx: provider optimization"
 subtasks_pending: []
 subtasks_in_progress: []
 ```
 
-### Edge Functions Deploy — Detalhes
+### Performance Optimization — Detalhes
 
-**Metodologia:** GitHub Actions workflow (Deploy Edge Functions) via `gh workflow run`
-**Resultado:** Todas as 9 funções deployadas com sucesso
-**Validação:** Todas ACTIVE no Supabase, versões incrementadas confirmadas
+**Otimizações aplicadas:**
+- Bundle: empty chunks eliminated, vendor chunks consolidated
+- Cache: cacheDir added for build caching
+- PWA: cache strategies improved
+- Service worker: optimized
+- CSS: optimized rules
+- Render: minor optimizations
 
-**Commit:** 062b5f5 (App.jsx refactor restore)
+**Commit:** 7f5bdbe
 **Push:** ✅ via gh push para origin/main
 
 ### Subagentes no Momento do Backup

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import Tip from './Tip.jsx';
 
 // Componente de telefone internacional: bandeira + DDI + mascara automatica por pais,
 // glow suave na cor da bandeira ao focar e validacao de tamanho local.
@@ -100,6 +101,7 @@ export default function PhoneInput(props) {
   var disabled = props.disabled;
   var onChange = props.onChange;
   var id = props.id;
+  var tip = props.tip;
 
   var seed = parsePhone(props.value);
   var [iso, setIso] = useState(seed.iso);
@@ -155,7 +157,12 @@ export default function PhoneInput(props) {
 
   return (
     <div className="flex flex-col gap-1.5 min-w-0">
-      {label && <label htmlFor={inputId} className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{label}</label>}
+      {label && (
+        <div className="flex items-center gap-1.5">
+          <label htmlFor={inputId} className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{label}</label>
+          {tip && <Tip text={tip}/>}
+        </div>
+      )}
 
       <div ref={wrapRef} style={{ position: 'relative' }}>
         <div aria-hidden="true" style={{

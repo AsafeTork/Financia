@@ -8,6 +8,7 @@ import useBrandAppearance from './shared/hooks/useBrandAppearance.js';
 import Sidebar from './shared/ui/Sidebar.jsx';
 import BottomNav from './shared/ui/BottomNav.jsx';
 import Header from './shared/ui/Header.jsx';
+import QuickActions from './shared/ui/QuickActions.jsx';
 import ThemeToggle from './shared/ui/ThemeToggle.jsx';
 import Toast from './shared/ui/Toast.jsx';
 import Offline from './shared/ui/Offline.jsx';
@@ -101,7 +102,7 @@ export default function App() {
   const googleName = meta.full_name || meta.name || '';
   const needsName = !!googleName && s.brand.name === googleName;
   let needsPhone = false;
-  if (s.onboardingNeeded) { const finishOnboarding = function(data) { o.finishOnboarding(data, needsName); }; return <Onboarding brand={s.brand} needsName={needsName} needsPhone={needsPhone} onSave={finishOnboarding}/>; }
+  if (s.onboardingNeeded) { const finishOnboarding = function(data) { o.finishOnboarding(data, needsName); }; return <Onboarding brand={s.brand} needsName={needsName} needsPhone={needsPhone} onSave={finishOnboarding} uid={s.session.user.id}/>; }
 
   return (
     <AppProvider value={ctx}>
@@ -113,10 +114,13 @@ export default function App() {
         <div className="flex-1 lg:ml-64 flex flex-col min-h-screen min-w-0 w-full">
           <WidgetErrorBoundary><Header brand={appBrand} syncStatus={s.syncStatus} theme={effectiveTheme} onToggleTheme={toggleTheme} onMenuOpen={handleOpenSidebar}/></WidgetErrorBoundary>
           <main id="main-content" tabIndex="-1" className="flex-1 p-4 lg:p-8 max-w-5xl w-full mx-auto pb-24 lg:pb-8 min-w-0 overflow-x-hidden">
-            <FeatureErrorBoundary featureName={n.currentView}><AppRoutes context={ctx}/></FeatureErrorBoundary>
+            <div key={n.currentView} className="anim-page-view">
+              <FeatureErrorBoundary featureName={n.currentView}><AppRoutes context={ctx}/></FeatureErrorBoundary>
+            </div>
           </main>
         </div>
         <WidgetErrorBoundary><BottomNav view={n.currentView} onNav={n.navTo} brand={appBrand} isAdmin={s.isAdminDB}/></WidgetErrorBoundary>
+        <WidgetErrorBoundary><QuickActions view={n.currentView} onNav={n.navTo} brand={appBrand}/></WidgetErrorBoundary>
         <Toast toasts={s.toasts} onDismiss={t.dismissToast}/>
         {s.confirmData && <Confirm msg={s.confirmData.msg} onOk={handleConfirmOk} onCancel={handleCancel}/>}
         {s.showUpgrade && <UpgradeModal reason={typeof s.showUpgrade === 'object' ? s.showUpgrade : null} brand={appBrand} onClose={handleCloseUpgrade} onNav={handleNav}/>}

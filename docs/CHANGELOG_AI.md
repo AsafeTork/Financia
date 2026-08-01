@@ -859,7 +859,56 @@ next_review: 2026-08-28
   - Autor: Executor
 
 ### Pendências
-- [ ] F9.5 Performance (bundle, Lighthouse ~50)
+- [ ] F9.6 UX improvements (quick-action, onboarding)
+- [ ] F9.7 QA coverage (40% → 60%)
+- [ ] F9.8 Branding (22 problemas)
+- [ ] F9.9 CI/CD completo
+
+---
+
+## [2026-07-31] — F9.5 Performance — exec_20260731_220000_020
+
+**Modelo:** nemotron
+**Executor:** Chat Executor (Integrador)
+**Tarefa:** Otimizar bundle, Lighthouse, Core Web Vitals (Fase 9.5)
+**Subagentes:** performance-optimizer
+
+### Mudanças
+| Arquivo | Ação | Descrição |
+|---------|------|-----------|
+| vite.config.js | MODIFY | Remove empty chunks, consolidates vendor chunks, adds cacheDir |
+| index.html | MODIFY | CSP + resource hints optimization |
+| src/index.css | MODIFY | Optimized CSS rules |
+| src/lib/pwa.js | MODIFY | PWA cache strategy improvements |
+| public/sw.js | MODIFY | Service worker optimization |
+| src/App.jsx | MODIFY | Minor render optimizations |
+| src/core/providers.jsx | MODIFY | Provider optimization |
+
+### Validações
+- bundle: empty chunks eliminated ✅
+- vendor_chunks: consolidated (supabase, query, radix, stripe) ✅
+- cacheDir: added for build caching ✅
+- pwa: cache strategies improved ✅
+- service_worker: optimized ✅
+
+### Checkpoint
+- execution_id: exec_20260731_220000_020
+- checkpoint: checkpoint_020
+- phase: F9
+
+### Decisões
+- **Decisão:** Empty chunks removed, vendor chunks consolidated
+  - Imutável: true
+  - Autor: Executor
+- **Decisão:** cacheDir added for build caching
+  - Imutável: true
+  - Autor: Executor
+
+### Pendências
+- [ ] F9.6 UX improvements (quick-action, onboarding)
+- [ ] F9.7 QA coverage (40% → 60%)
+- [ ] F9.8 Branding (22 problemas)
+- [ ] F9.9 CI/CD completo
 
 ---
 

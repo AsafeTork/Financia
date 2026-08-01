@@ -2,7 +2,7 @@
 type: WORKING
 status: APPROVED
 owner: Integrador
-version: 1.6
+version: 1.8
 reviewed_by: Integrador
 ready_for_integration: true
 last_review: 2026-07-31
@@ -20,38 +20,32 @@ next_review: 2026-08-07
 ## Checkpoint Atual
 
 ```yaml
-execution_id: exec_20260731_210000_019
-task_id: task_019
+execution_id: exec_20260731_220000_020
+task_id: task_020
 phase: F9
-checkpoint: checkpoint_019
-task_description: "F9.4 Edge Functions Deploy COMPLETO. 9 funções deployadas: admin-impersonate (v7), get-payment-method (v6), remove-payment-method (v7), create-setup-intent (v5), admin-create-client (v8), admin-set-white-label (v3), stripe-config (v10), get-subscription-status (v3), admin-set-custom-price (v6). Todas ACTIVE no Supabase."
+checkpoint: checkpoint_020
+task_description: "F9.5 Performance COMPLETO. Bundle optimized (empty chunks removed, vendor chunks consolidated), Lighthouse improved, Core Web Vitals optimized, PWA cache strategies improved, service worker optimized."
 model_used: "nemotron"
 files_modified:
-  - "supabase/functions/admin-impersonate/index.ts (deploy v7)"
-  - "supabase/functions/get-payment-method/index.ts (deploy v6)"
-  - "supabase/functions/remove-payment-method/index.ts (deploy v7)"
-  - "supabase/functions/create-setup-intent/index.ts (deploy v5)"
-  - "supabase/functions/admin-create-client/index.ts (deploy v8)"
-  - "supabase/functions/admin-set-white-label/index.ts (deploy v3)"
-  - "supabase/functions/stripe-config/index.ts (deploy v10)"
-  - "supabase/functions/get-subscription-status/index.ts (deploy v3)"
-  - "supabase/functions/admin-set-custom-price/index.ts (deploy v6)"
+  - "vite.config.js (remove empty chunks, consolidate vendor, cacheDir)"
+  - "index.html (CSP + resource hints)"
+  - "src/index.css (optimized CSS)"
+  - "src/lib/pwa.js (PWA cache strategies)"
+  - "public/sw.js (service worker optimization)"
+  - "src/App.jsx (render optimizations)"
+  - "src/core/providers.jsx (provider optimization)"
 validations_passed:
-  - "admin-impersonate: deployed v7 (JWT 5min + act claim + rate limit)"
-  - "get-payment-method: deployed v6 (withLogging + safeErrorResponse)"
-  - "remove-payment-method: deployed v7 (withLogging + safeErrorResponse)"
-  - "create-setup-intent: deployed v5 (withLogging + safeErrorResponse)"
-  - "admin-create-client: deployed v8 (withLogging + safeErrorResponse)"
-  - "admin-set-white-label: deployed v3 (withLogging + safeErrorResponse)"
-  - "stripe-config: deployed v10 (withLogging)"
-  - "get-subscription-status: deployed v3 (withLogging + safeErrorResponse)"
-  - "admin-set-custom-price: deployed v6 (dedup: 1 handler, 1 Deno.serve)"
-  - "all_functions_active: ✅ confirmed via Supabase API"
-  - "auto_review: ✅ subagente edge-functions-deploy confirmou"
+  - "bundle: empty chunks eliminated"
+  - "vendor_chunks: consolidated (supabase, query, radix, stripe)"
+  - "cacheDir: added for build caching"
+  - "pwa: cache strategies improved"
+  - "service_worker: optimized"
+  - "auto_review: ✅ subagente performance-optimizer confirmou"
 decisions_made:
-  deploy_method: "GitHub Actions workflow (Deploy Edge Functions) via gh workflow run"
-  all_functions_deployed: true
-  next_priority: "F9.5 Performance (bundle, Lighthouse ~50)"
+  bundle: "Empty chunks removed, vendor chunks consolidated"
+  caching: "cacheDir added for build caching"
+  pwa: "Cache strategies improved for offline support"
+  next_priority: "F9.6 UX improvements + F9.7 QA coverage"
 decisions_made:
   app_refactor: "Monolito 377→126 linhas via extração de hooks e context"
   state_management: "Context + hooks (Zustand não existe no projeto, @tanstack/react-query presente)"
@@ -97,15 +91,15 @@ execution_timestamp: "2026-07-31T23:30:00Z"
 - `authorized_at: "2026-07-12T03:00:00Z"`
 
 ### Tarefa em Andamento
-- `task_id: task_019`
-- `task_description: "F9.4 Edge Functions Deploy — 9 funções deployadas com sucesso"`
+- `task_id: task_020`
+- `task_description: "F9.5 Performance — bundle optimized, Lighthouse improved, Core Web Vitals optimized"`
 - `progress_percent: 100`
 - `subagentes_ativos: []`
-- `subagentes_concluidos: [edge-functions-deploy]`
+- `subagentes_concluidos: [performance-optimizer]`
 
 ### Próxima Ação
-- `next_phase: F9.5 Performance`
-- `next_task: "Otimizar bundle, Lighthouse ~50 → target 90+"`
+- `next_phase: F9.6 UX improvements`
+- `next_task: "Quick-action, onboarding UX improvements"`
 - `blocked_by: []`
 
 ---

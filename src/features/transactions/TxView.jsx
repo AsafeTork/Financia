@@ -8,6 +8,7 @@ import { effectivePlan } from '../../lib/constants.js';
 import { exportPDF, exportXLS } from '../../lib/exporters.js';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { useDebouncedValue } from '../../shared/hooks/useDebouncedValue.js';
+import { useQuickIntent } from '../../lib/quickIntent.js';
 
 export default React.memo(function TxView({ type, tx, products, onAdd, onEdit, onDelete, onDeductStock, onAddGenerated, uid: userId, brand, toast, confirm, planInfo, onNav }) {
   var isIncome = type === 'income';
@@ -23,6 +24,8 @@ export default React.memo(function TxView({ type, tx, products, onAdd, onEdit, o
   var [dateFrom, setDateFrom] = useState('');
   var [dateTo, setDateTo]     = useState('');
   var [form, setForm] = useState({desc:'', amount:'', date:today(), cat:'Fixo', method:'PIX', fixo:false, day:'5'});
+
+  useQuickIntent(isIncome ? 'income' : 'expense', function() { setModal(true); });
 
   var cats    = ['Fixo','Variavel','Estoque','Marketing','Pessoal','Servicos','Outro'];
   var METHODS = ['PIX','Dinheiro','Cartao de Debito','Cartao de Credito','Boleto','Transferencia'];
