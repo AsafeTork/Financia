@@ -8,6 +8,7 @@ import useBrandAppearance from './shared/hooks/useBrandAppearance.js';
 import Sidebar from './shared/ui/Sidebar.jsx';
 import BottomNav from './shared/ui/BottomNav.jsx';
 import Header from './shared/ui/Header.jsx';
+import Footer, { MobileFooter } from './shared/ui/Footer.jsx';
 import QuickActions from './shared/ui/QuickActions.jsx';
 import ThemeToggle from './shared/ui/ThemeToggle.jsx';
 import Toast from './shared/ui/Toast.jsx';
@@ -118,6 +119,7 @@ export default function App() {
               <FeatureErrorBoundary featureName={n.currentView}><AppRoutes context={ctx}/></FeatureErrorBoundary>
             </div>
           </main>
+          <Footer brand={appBrand} onNav={handleNav}/>
         </div>
         <WidgetErrorBoundary><BottomNav view={n.currentView} onNav={n.navTo} brand={appBrand} isAdmin={s.isAdminDB}/></WidgetErrorBoundary>
         <WidgetErrorBoundary><QuickActions view={n.currentView} onNav={n.navTo} brand={appBrand}/></WidgetErrorBoundary>

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigationHistory } from '../shared/hooks/useNavigationHistory.js';
 
 export function useNavigation({ modalRef, setConfirmData, setShowUpgrade, setSidebarOpen, setShowLogin }) {
   const navigate = useNavigate();
@@ -7,10 +8,12 @@ export function useNavigation({ modalRef, setConfirmData, setShowUpgrade, setSid
   const path = location.pathname.replace(/^\//, '');
   const isLegal = path === 'privacidade' || path === 'termos';
   const isLanding = path === 'landing';
+  const navigationHistory = useNavigationHistory();
 
   const navTo = useCallback(function(v) {
     navigate('/' + v);
-  }, [navigate]);
+    navigationHistory.push('/' + v, { view: v });
+  }, [navigate, navigationHistory]);
 
   const currentView = ['dashboard','income','expense','inventory','email','report','settings','planos','brandstudio'].includes(path) ? path : 'dashboard';
 
@@ -61,5 +64,5 @@ export function useNavigation({ modalRef, setConfirmData, setShowUpgrade, setSid
     return function() { document.removeEventListener('keydown', onKeyDown); };
   }, [setConfirmData, setShowUpgrade, setSidebarOpen, setShowLogin, navTo]);
 
-  return { navigate, location, path, isLegal, isLanding, navTo, currentView };
+  return { navigate, location, path, isLegal, isLanding, navTo, currentView, navigationHistory };
 }

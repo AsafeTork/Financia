@@ -2,6 +2,7 @@
 import { Card, Inp, NumInp, Sel, Modal, EditBtn, DelBtn, Btn, PageHead } from '../../shared/ui/ui.jsx';
 import { SaleForm } from '../../shared/ui/SaleForm.jsx';
 import ExportButtons from '../../shared/ui/ExportButtons.jsx';
+import { TransactionCard, TransactionGroupHeader, EmptyTransactionState } from '../../shared/ui/TransactionCard.jsx';
 import { fmt, fmtDate, today, safe, uid, brandAlpha } from '../../lib/utils.js';
 import { isRecurringId, getRecurring, setRecurring, buildRecurringRow, periodOf } from '../../lib/recurring.js';
 import { effectivePlan } from '../../lib/constants.js';
@@ -229,7 +230,7 @@ export default React.memo(function TxView({ type, tx, products, onAdd, onEdit, o
               {isIncome ? 'Registrar venda' : 'Registrar despesa'}
             </Btn>
           </div>
-        ) : (
+          ) : (
           <div>
             <div ref={scrollRef} className="max-h-[calc(100vh-280px)] min-h-[200px] overflow-auto" style={{position:'relative'}}>
               <div role="list" data-testid="tx-list" style={{ height: virtualizer.getTotalSize() + 'px', position: 'relative' }}>
@@ -241,52 +242,41 @@ export default React.memo(function TxView({ type, tx, products, onAdd, onEdit, o
                     if (item.type === 'header') {
                       return (
                         <div key={item.date} style={{ position: 'absolute', top: 0, left: 0, width: '100%', transform: 'translateY(' + virtualItem.start + 'px)' }}>
-                          <div className="flex items-center justify-between px-4 py-2.5 bg-gray-50 border-b border-gray-100">
-                            <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{fmtDate(item.date)}</span>
-                            <span className="text-xs font-semibold tabular" style={{color: accentColor}}>{fmt(item.total)}</span>
-                          </div>
+                          <TransactionGroupHeader date={item.date} total={item.total} type={type} brand={brand}/>
                         </div>
                       );
                     }
                     var t = item.data;
                     var rowIndex = flatRows.slice(0, virtualItem.index).filter(function(r) { return r.type === 'row'; }).length + 1;
+                    var isEditing = editItem && editItem.id === t.id;
                     return (
-                      <div key={t.id} data-testid={'tx-item-' + t.id} role="listitem" aria-setsize={totalRowCount} aria-posinset={rowIndex} style={{ position: 'absolute', top: 0, left: 0, width: '100%', transform: 'translateY(' + virtualItem.start + 'px)' }}>
-                      <div className="flex items-center justify-between px-4 py-3.5 border-b border-gray-50 last:border-0 hover:bg-gray-50 transition-colors">
-                        <div className="flex items-center gap-3 min-w-0 flex-1">
-                          <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{background: accentBg}}>
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={accentColor} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                              <path d={isIncome ? 'M5 15l7-7 7 7' : 'M19 9l-7 7-7-7'}/>
-                            </svg>
-                          </div>
-                          <div className="min-w-0">
-                            <div className="flex items-center gap-1.5 min-w-0">
-                              <p className="text-sm font-semibold text-gray-800 truncate">{t.desc}</p>
-                              {t.items && t.items.length > 1 && (
-                                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full flex-shrink-0" style={{background: accentBg, color: accentColor}}>{t.items.length} itens</span>
-                              )}
-                              {isRecurringId(t.id) && (
-                                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full flex-shrink-0 bg-violet-50 text-violet-600">recorrente</span>
-                              )}
-                            </div>
-                            <p className="text-xs text-gray-400 truncate">
-                              {t.method || t.category || ''}
-                              {t.registered_by ? ' . ' + t.registered_by : ''}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-0.5 flex-shrink-0 ml-2">
-                          <span className="text-sm font-bold tabular mr-1" style={{color: accentColor}}>
-                            {(isIncome ? '+' : '-') + fmt(t.amount)}
-                          </span>
-                          <EditBtn onClick={function() { openEdit(t); }}/>
-                          <DelBtn onClick={function() { confirm('Excluir este registro?', async function() { var ok = await onDelete(t.id); if (ok) toast('Removido', 'success'); else toast('Erro ao excluir. Tente de novo.', 'error'); }); }}/>
-                        </div>
+                      <div key={t.id} style={{ position: 'absolute', top: 0, left: 0, width: '100%', transform: 'translateY(' + virtualItem.start + 'px)' }}>
+                        <TransactionCard
+                          transaction={t}
+                          type={type}
+                          brand={brand}
+                          products={products}
+                          onEdit={openEdit}
+                          onDelete={onDelete}
+                          onDeductStock={onDeductStock}
+                          onConfirm={confirm}
+                          index={rowIndex - 1}
+                          totalCount={totalRowCount}
+                          isEditing={isEditing}
+                          editData={isEditing ? editItem : null}
+                          onSaveEdit={function(id, data) {
+                            if (data.confirm) {
+                              saveEdit();
+                            } else {
+                              setEditItem(function(prev) { return Object.assign({}, prev, data); });
+                            }
+                          }}
+                          onCancelEdit={function() { setEditItem(null); }}
+                        />
                       </div>
-                    </div>
-                  );
-                });
-              }()}
+                    );
+                  });
+                }()}
               </div>
             </div>
           </div>
