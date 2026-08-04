@@ -647,37 +647,15 @@ jobs:
     steps:
       - name: Trigger Render Deploy
         run: |
-          curl -s -X POST \
-            "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID }}/deploys" \
-            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
-            -H "Content-Type: application/json" \
-            -d '{"auto": true}' || echo "Render deploy trigger failed (service may auto-deploy from GitHub)"
-
-       - name: Verify Deploy
-         run: |
-           echo "Render deploy triggered for production branch (main)"
-           echo "Verify at: https://financiabr.me"
-
-  validate-secrets:
-    name: Validate Secrets
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    if: github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main'
-    steps:
-      - name: Check required secrets
-        run: |
-          MISSING=0
-          for SECRET in SUPABASE_URL SUPABASE_ANON_KEY SUPABASE_SERVICE_ROLE_KEY; do
-            if [ -z "${!SECRET}" ]; then
-              echo "WARNING: $SECRET is not set"
-              MISSING=1
-            else
-              echo "OK: $SECRET is set"
-            fi
-          done
-          if [ "$MISSING" = "1" ]; then
-            echo "Some secrets are missing. Deploy may fail."
+          if [ -z "${{ secrets.RENDER_SERVICE_ID }}" ] || [ -z "${{ secrets.RENDER_API_KEY }}" ]; then
+            echo "SKIP: Render service secrets not configured (development environment)"
           else
-            echo "All required secrets are present."
+            curl -s -X POST \
+              "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID }}/deploys" \
+              -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+              -H "Content-Type: application/json" \
+              -d '{"auto": true}' || echo "Render deploy trigger failed (service may auto-deploy from GitHub)"
+            echo "Render deploy triggered for production branch (main)"
+            echo "Verify at: https://financiabr.me"
           fi
 
