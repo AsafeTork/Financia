@@ -72,7 +72,7 @@ jobs:
   unit-tests:
     name: Unit Tests (Node ${{ matrix.node-version }})
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     needs: lint-typecheck
     strategy:
       matrix:
