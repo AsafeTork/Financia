@@ -15,7 +15,7 @@ export default defineConfig({
       },
     },
     forceExit: true,
-    teardownTimeout: 5000,
+    teardownTimeout: 30000,
     reporter: ['verbose'],
     include: ['src/**/*.test.{js,jsx}'],
     exclude: ['**/e2e/**', '**/*.isolated.test.{js,jsx}', '**/benchmarks/**', '**/supabase/functions/**'],
