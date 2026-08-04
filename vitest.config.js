@@ -7,21 +7,14 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.js'],
     globals: true,
-    pool: 'vmThreads',
-    poolOptions: {
-      vmThreads: {
-        maxThreads: 2,
-        minThreads: 1,
-        vmMemoryLimit: '3g',
-      },
-    },
-    teardownTimeout: 5000,
+    pool: 'forks',
+    teardownTimeout: 3000,
     include: ['src/**/*.test.{js,jsx}'],
     exclude: ['**/e2e/**', '**/*.isolated.test.{js,jsx}', '**/benchmarks/**', '**/supabase/functions/**'],
     testTimeout: 15000,
     hookTimeout: 10000,
     deps: {
-      optimizer: { web: { include: ['dexie', 'fake-indexeddb'] } },
+      optimizer: { web: { include: ['dexie'] } },
     },
   },
 });
