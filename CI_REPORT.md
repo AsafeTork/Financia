@@ -1,7 +1,7 @@
 # CI Report
 
-**Gerado:** 2026-08-04 22:09 UTC
-**Commit:** `60e96e6c0ddaf79539bb36dc399368f8e1d3558e`
+**Gerado:** 2026-08-04 22:58 UTC
+**Commit:** `88f40433429ca97b150584e606affbfb01677fa1`
 **Branch:** `main`
 
 ---
@@ -31,29 +31,34 @@
 ## Test Results (ultimas 40 linhas)
 
 ```
-[2m10:04:46 PM[22m [33m[1m[vite][22m[39m [33mwarning: `esbuild` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `oxc` instead.[39m
-[2m10:04:46 PM[22m [33m[1m[vite][22m[39m [33mwarning: `optimizeDeps.esbuildOptions` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `optimizeDeps.rolldownOptions` instead.[39m
-[33mBoth esbuild and oxc options were set. oxc options will be used and esbuild options will be ignored.[39m The following esbuild options were set: `{ jsx: 'automatic', jsxImportSource: undefined }`
+10:50:34 PM [vite] warning: `esbuild` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `oxc` instead.
+10:50:34 PM [vite] warning: `optimizeDeps.esbuildOptions` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `optimizeDeps.rolldownOptions` instead.
+Both esbuild and oxc options were set. oxc options will be used and esbuild options will be ignored. The following esbuild options were set: `{ jsx: 'automatic', jsxImportSource: undefined }`
 
-[1m[30m[46m RUN [49m[39m[22m [36mv4.1.10 [39m[90m/home/runner/work/Financia/Financia[39m
+ RUN  v4.1.10 /home/runner/work/Financia/Financia
 
- [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mcheckout.session.completed -> invoice.payment_succeeded -> subscription created -> plan activated[2m > [22mprocesses checkout.session.completed and activates plan in company_profiles[32m 7[2mms[22m[39m
- [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mcheckout.session.completed -> invoice.payment_succeeded -> subscription created -> plan activated[2m > [22mprocesses invoice.payment_succeeded and updates plan[32m 2[2mms[22m[39m
- [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mcheckout.session.completed -> invoice.payment_succeeded -> subscription created -> plan activated[2m > [22mhandles subscription created event and activates plan[32m 1[2mms[22m[39m
- [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mcheckout.session.completed -> invoice.payment_succeeded -> subscription created -> plan activated[2m > [22mverifies company_profiles.plan updated and email sent via mailer[32m 2[2mms[22m[39m
- [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22minvoice.payment_failed handling[2m > [22msends failure email when invoice payment fails[32m 2[2mms[22m[39m
- [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mcustomer.subscription.updated handling[2m > [22mhandles plan upgrade/downgrade via subscription.updated[32m 1[2mms[22m[39m
- [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mcustomer.subscription.updated handling[2m > [22mhandles cancel_at_period_end and sends notification email[32m 21[2mms[22m[39m
- [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mcustomer.subscription.deleted handling[2m > [22mreverts to free plan and sends cancellation email[32m 1[2mms[22m[39m
- [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mpayment_intent.succeeded (white-label)[2m > [22mactivates white-label on successful payment[32m 2[2mms[22m[39m
- [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22minvoice.upcoming reminder[2m > [22msends upcoming invoice reminder email[32m 1[2mms[22m[39m
- [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mDLQ recording on failure[2m > [22mrecords failed webhook event to DLQ[32m 1[2mms[22m[39m
- [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mCreate subscription[2m > [22mcreates subscription and activates plan in company_profiles[32m 5[2mms[22m[39m
- [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mCreate subscription[2m > [22mcreates premium subscription with correct plan[32m 1[2mms[22m[39m
- [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mUpgrade subscription (pro -> premium) with proration[2m > [22mupgrades subscription and updates plan in company_profiles[32m 1[2mms[22m[39m
- [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mUpgrade subscription (pro -> premium) with proration[2m > [22mhandles proration invoice creation[32m 1[2mms[22m[39m
- [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mDowngrade subscription (premium -> pro) with proration[2m > [22mdowngrades subscription and updates plan[32m 1[2mms[22m[39m
- [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integratio
+ ✓ src/lib/stripe-webhook.integration.test.js > Stripe Webhook Integration - Full Cycle > checkout.session.completed -> invoice.payment_succeeded -> subscription created -> plan activated > processes checkout.session.completed and activates plan in company_profiles 6ms
+ ✓ src/lib/stripe-webhook.integration.test.js > Stripe Webhook Integration - Full Cycle > checkout.session.completed -> invoice.payment_succeeded -> subscription created -> plan activated > processes invoice.payment_succeeded and updates plan 1ms
+ ✓ src/lib/stripe-webhook.integration.test.js > Stripe Webhook Integration - Full Cycle > checkout.session.completed -> invoice.payment_succeeded -> subscription created -> plan activated > handles subscription created event and activates plan 1ms
+ ✓ src/lib/stripe-webhook.integration.test.js > Stripe Webhook Integration - Full Cycle > checkout.session.completed -> invoice.payment_succeeded -> subscription created -> plan activated > verifies company_profiles.plan updated and email sent via mailer 1ms
+ ✓ src/lib/stripe-webhook.integration.test.js > Stripe Webhook Integration - Full Cycle > invoice.payment_failed handling > sends failure email when invoice payment fails 1ms
+ ✓ src/lib/stripe-webhook.integration.test.js > Stripe Webhook Integration - Full Cycle > customer.subscription.updated handling > handles plan upgrade/downgrade via subscription.updated 1ms
+ ✓ src/lib/stripe-webhook.integration.test.js > Stripe Webhook Integration - Full Cycle > customer.subscription.updated handling > handles cancel_at_period_end and sends notification email 14ms
+ ✓ src/lib/stripe-webhook.integration.test.js > Stripe Webhook Integration - Full Cycle > customer.subscription.deleted handling > reverts to free plan and sends cancellation email 1ms
+ ✓ src/lib/stripe-webhook.integration.test.js > Stripe Webhook Integration - Full Cycle > payment_intent.succeeded (white-label) > activates white-label on successful payment 1ms
+ ✓ src/lib/stripe-webhook.integration.test.js > Stripe Webhook Integration - Full Cycle > invoice.upcoming reminder > sends upcoming invoice reminder email 1ms
+ ✓ src/lib/stripe-webhook.integration.test.js > Stripe Webhook Integration - Full Cycle > DLQ recording on failure > records failed webhook event to DLQ 1ms
+ ✓ src/lib/stripe-subscription-cycle.integration.test.js > Stripe Subscription Lifecycle Integration Test > Create subscription > creates subscription and activates plan in company_profiles 7ms
+ ✓ src/lib/stripe-subscription-cycle.integration.test.js > Stripe Subscription Lifecycle Integration Test > Create subscription > creates premium subscription with correct plan 1ms
+ ✓ src/lib/stripe-subscription-cycle.integration.test.js > Stripe Subscription Lifecycle Integration Test > Upgrade subscription (pro -> premium) with proration > upgrades subscription and updates plan in company_profiles 1ms
+ ✓ src/lib/stripe-subscription-cycle.integration.test.js > Stripe Subscription Lifecycle Integration Test > Upgrade subscription (pro -> premium) with proration > handles proration invoice creation 1ms
+ ✓ src/lib/stripe-subscription-cycle.integration.test.js > Stripe Subscription Lifecycle Integration Test > Downgrade subscription (premium -> pro) with proration > downgrades subscription and updates plan 1ms
+ ✓ src/lib/stripe-subscription-cycle.integration.test.js > Stripe Subscription Lifecycle Integration Test > Downgrade subscription (premium -> pro) with proration > creates credit proration invoice for downgrade 1ms
+ ✓ src/lib/stripe-subscription-cycle.integration.test.js > Stripe Subscription Lifecycle Integration Test > Cancel subscription > cancels subscription at period end 1ms
+ ✓ src/lib/stripe-subscription-cycle.integration.test.js > Stripe Subscription Lifecycle Integration Test > Cancel subscription > cancels subscription immediately 1ms
+ ✓ src/lib/stripe-subscription-cycle.integration.test.js > Stripe Subscription Lifecycle Integration Test > Revert to free plan after cancellation > reverts to free when subscription deleted webhook received 1ms
+ ✓ src/lib/stripe-subscription-cycle.integration.test.js > Stripe Subscription Lifecycle Integration Test > Revert to free plan after cancellation > reverts to free on incomplete_expired status 1ms
+ ✓ src/lib/stripe-subscription-cycle.integration.test.js > Stripe Subscription Lifecycle Integration Test > Full subscription cycle integration > completes full cycle: create -> upgrade -
 ```
 
 ---
@@ -106,9 +111,9 @@ computing gzip size...
 ```
 
 Running 26 tests using 4 workers
-°°°·°°°°°°°°····°°°°··°···
+°°°·°°°°°°°°···°·°°°··°···
   16 skipped
-  10 passed (14.0s)
+  10 passed (13.7s)
 
 ```
 
@@ -123,34 +128,14 @@ Running 26 tests using 4 workers
 ```
 
 Running 42 tests using 4 workers
-°°F····F·°°°°···°FF··[MONITOR] Waiting 15s to capture baseline network activity...
-···°F·····[BASELINE] 30 requests, 1 req/s, Score: GOOD
 
-[TEST] Navigating all routes to check for per-route network issues...
-·FF
-[TEST] Simulating theme toggle clicks...
-FFF
-[FINAL] 120 total requests, 4 req/s
-[FINAL] Score: CRITICAL
-[FINAL] Icon loop: true, Sync loop: false
-FFFFF
-
-  1) [chromium] › e2e/indexeddb-corruption.spec.ts:12:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should recover from corrupted IndexedDB data 
-
-    Error: page.evaluate: Execution context was destroyed, most likely because of a navigation.
-
-      37 |       await page.waitForLoadState('networkidle');
-      38 |
-    > 39 |       const transactions = await page.evaluate(async () => {
-         |                                       ^
-      40 |         const dbName = 'financia-db';
-      41 |         const storeName = 'transactions';
-      42 |         
-        at /home/runner/work/Financia/Financia/e2e/indexeddb-corruption.spec.ts:39:39
-
-    Error Context: test-results/indexeddb-corruption-Index-b9183-om-corrupted-IndexedDB-data-chromium/error-context.md
-
-  2) [chromium] › e2e/indexeddb-corruption.spec.ts:65:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should handle invalid schema gracefully 
+[1/42] [chromium] › e2e/deep-sync-conflict.spec.ts:120:3 › Deep Sync Conflict Scenarios › memory leak check after sync broadcast storm
+[2/42] [chromium] › e2e/deep-sync-conflict.spec.ts:62:3 › Deep Sync Conflict Scenarios › BroadcastChannel handles duplicate messages without errors
+[3/42] [chromium] › e2e/deep-sync-conflict.spec.ts:10:3 › Deep Sync Conflict Scenarios › BroadcastChannel ping/pong survives rapid tab switching
+[4/42] [chromium] › e2e/deep-sync-conflict.spec.ts:97:3 › Deep Sync Conflict Scenarios › sync worker survives unhandled rejection
+[5/42] [chromium] › e2e/indexeddb-corruption.spec.ts:12:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should recover from corrupted IndexedDB data
+[6/42] [chromium] › e2e/indexeddb-corruption.spec.ts:65:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should handle invalid schema gracefully
+  1) [chromium] › e2e/indexeddb-corruption.spec.ts:65:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should handle invalid schema gracefully 
 
     Error: expect(received).toBeTruthy()
 
@@ -167,7 +152,13 @@ FFFFF
 
     Error Context: test-results/indexeddb-corruption-Index-176cb-e-invalid-schema-gracefully-chromium/error-context.md
 
-  3) [chromium] › e2e/indexeddb-migration.spec.ts:12:5 › IndexedDB Recovery - Migration › Migration Test › should migrate from old schema to new schema 
+
+[7/42] [chromium] › e2e/indexeddb-eviction.spec.ts:12:5 › IndexedDB Recovery - Eviction › Eviction Test › should handle storage pressure and persist()
+[8/42] [chromium] › e2e/indexeddb-eviction.spec.ts:89:5 › IndexedDB Recovery - Eviction › Eviction Test › should estimate storage quota
+[9/42] [chromium] › e2e/indexeddb-migration.spec.ts:12:5 › IndexedDB Recovery - Migration › Migration Test › should migrate from old schema to new schema
+[10/42] [chromium] › e2e/indexeddb-migration.spec.ts:92:5 › IndexedDB Recovery - Migration › Migration Test › should preserve data integrity during migration
+[11/42] [chromium] › e2e/memory-leak.spec.ts:6:3 › Memory Leak Detection › cyclic navigation - no detached DOM nodes
+  2) [chromium] › e2e/indexeddb-migration.spec.ts:12:5 › IndexedDB Recovery - Migration › Migration Test › should migrate from old schema to new schema 
 
     Error: page.evaluate: AbortError: Version change transaction was aborted in upgradeneeded event handler.
 
@@ -182,7 +173,18 @@ FFFFF
 
     Error Context: test-results/indexeddb-migration-Indexe-ccb35-om-old-schema-to-new-schema-chromium/error-context.md
 
-  4) [chromium] › e2e/network-error-handling.spec.ts:36:3 › Network Error Handling Scenarios › app handles complete network disconnection gracefully 
+
+[12/42] [chromium] › e2e/memory-leak.spec.ts:84:3 › Memory Leak Detection › timers and intervals cleared on unmount
+[13/42] [chromium] › e2e/memory-leak.spec.ts:110:3 › Memory Leak Detection › IndexedDB connections closed properly
+[14/42] [chromium] › e2e/memory-leak.spec.ts:57:3 › Memory Leak Detection › event listeners cleaned up on unmount
+[15/42] [chromium] › e2e/memory-leak.spec.ts:135:3 › Memory Leak Detection › BroadcastChannel closed on unmount
+[16/42] [chromium] › e2e/memory-leak.spec.ts:164:3 › Memory Leak Detection › memory usage stable under load
+[17/42] [chromium] › e2e/memory-leak.spec.ts:207:3 › Offline Storage Persistence › navigator.storage.persist() prevents eviction
+[18/42] [chromium] › e2e/memory-leak.spec.ts:222:3 › Offline Storage Persistence › storage estimate available
+[19/42] [chromium] › e2e/network-error-handling.spec.ts:10:3 › Network Error Handling Scenarios › app loads successfully with slow network (3G)
+[20/42] [chromium] › e2e/network-error-handling.spec.ts:36:3 › Network Error Handling Scenarios › app handles complete network disconnection gracefully
+[21/42] [chromium] › e2e/network-error-handling.spec.ts:50:3 › Network Error Handling Scenarios › app handles intermittent network failures
+  3) [chromium] › e2e/network-error-handling.spec.ts:36:3 › Network Error Handling Scenarios › app handles complete network disconnection gracefully 
 
     Error: expect(received).not.toBe(expected) // Object.is equality
 
@@ -197,40 +199,7 @@ FFFFF
       48 |   });
         at /home/runner/work/Financia/Financia/e2e/network-error-handling.spec.ts:45:23
 
-    Error Context: test-results/network-error-handling-Net-95d77-rk-disconnection-gracefully-chromium/error-context.md
-
-  5) [chromium] › e2e/network-error-handling.spec.ts:50:3 › Network Error Handling Scenarios › app handles intermittent network failures 
-
-    Error: expect(received).not.toBe(expected) // Object.is equality
-
-    Expected: not ""
-
-      61 |
-      62 |     const title = await page.title();
-    > 63 |     expect(title).not.toBe('');
-         |                       ^
-      64 |   });
-      65 |
-      66 |   test('fetch to missing endpoint returns handled error', async ({ page }) => {
-        at /home/runner/work/Financia/Financia/e2e/network-error-handling.spec.ts:63:23
-
-    Error Context: test-results/network-error-handling-Net-da567-termittent-network-failures-chromium/error-context.md
-
-  6) [chromium] › e2e/network-perf.spec.ts:157:3 › Network Performance & Sync Loop Detection › detect sync loops, icon loops, and excessive network activity 
-
-    Error: icon-192.svg loop detected — theme toggle causes infinite re-fetches
-
-    expect(received).toBe(expected) // Object.is equality
-
-    Expected: false
-    Received: true
-
-      249 |     fs.writeFileSync(path.join(process.cwd(), 'network-perf-results.json'), JSON.stringify(finalReport, null, 2));
-      250 |
-    > 251 |     expect(finalReport.iconLoopDetected, 'icon-192.svg loop detected — theme toggle causes infinite re-fetches').toBe(false);
-          |                                                                                                                  ^
-      252 |     expect(finalReport.syncLoopDetected, 'company_profiles sync loop detected — realtime triggers infinite sync').toBe(false);
-      253 |     expect(finalReport.requestsPerS
+    Error Context: test-results/network-error-handling-Net-
 ```
 
 ---
@@ -262,4 +231,4 @@ Nenhum relatorio admin gerado.
 
 | Data | Correcao | Commit |
 |------|----------|--------|
-| 2026-08-04 22:09 UTC | CI report gerado automaticamente | `60e96e6c0ddaf79539bb36dc399368f8e1d3558e` |
+| 2026-08-04 22:58 UTC | CI report gerado automaticamente | `88f40433429ca97b150584e606affbfb01677fa1` |
