@@ -118,10 +118,11 @@ jobs:
       - name: Run unit tests
         id: test
         run: |
-          set -o pipefail
+          set +e
           timeout 120 npx vitest run --coverage.enabled=false 2>&1 | tee /tmp/test-output.txt
           TEST_EXIT=${PIPESTATUS[0]}
-          if [ $TEST_EXIT -eq 124 ]; then
+          set -e
+          if [ "$TEST_EXIT" -eq 124 ]; then
             echo "::warning::vitest timed out after 120s (process hung after tests completed)"
             echo "exit_code=0" >> $GITHUB_OUTPUT
           else
