@@ -6,11 +6,16 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.js'],
-    globalTeardown: ['./src/test/global-teardown.js'],
     globals: true,
-    pool: 'forks',
-    teardownTimeout: 3000,
-    reporter: ['verbose', 'hanging-process'],
+    pool: 'threads',
+    poolOptions: {
+      threads: {
+        singleThread: true,
+        maxThreads: 1,
+      },
+    },
+    teardownTimeout: 10000,
+    reporter: ['verbose'],
     include: ['src/**/*.test.{js,jsx}'],
     exclude: ['**/e2e/**', '**/*.isolated.test.{js,jsx}', '**/benchmarks/**', '**/supabase/functions/**'],
     testTimeout: 15000,

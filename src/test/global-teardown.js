@@ -1,4 +1,4 @@
-/* eslint-disable no-undef */
+/* global teardown for vitest - no longer needed with singleThread mode */
 export default function teardown() {
-  setTimeout(function() { process.exit(0); }, 2000);
+  // cleanup is handled by setup.js afterAll hooks
 }
