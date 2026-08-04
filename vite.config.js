@@ -36,7 +36,6 @@ export default defineConfig(async function() {
       outDir: 'dist',
       emptyOutDir: true,
       target: 'es2022',
-      cssMinify: 'terser',
       sourcemap: false,
       cacheDir: 'node_modules/.vite-build-cache',
       rollupOptions: {
@@ -66,23 +65,7 @@ export default defineConfig(async function() {
       },
       chunkSizeWarningLimit: 500,
       reportCompressedSize: true,
-      minify: 'terser',
-      terserOptions: {
-        compress: {
-          passes: 2,
-          pure_getters: true,
-          unsafe: true,
-          unsafe_comps: true,
-          unsafe_math: true,
-          unsafe_proto: true,
-        },
-        mangle: {
-          safari10: true,
-        },
-        format: {
-          comments: false,
-        },
-      },
+      minify: 'esbuild',
     },
     esbuild: {
       jsx: 'automatic',
