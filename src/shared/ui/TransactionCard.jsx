@@ -1,5 +1,6 @@
 import React from 'react';
-import { fmt, fmtDate, brandAlpha, safe, isRecurringId } from '../../lib/utils.js';
+import { fmt, fmtDate, brandAlpha, safe } from '../../lib/utils.js';
+import { isRecurringId } from '../../lib/recurring.js';
 
 export function TransactionCard({ 
   transaction, 
