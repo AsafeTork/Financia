@@ -1,7 +1,7 @@
 # CI Report
 
-**Gerado:** 2026-08-04 21:27 UTC
-**Commit:** `05dd2f1137fe902b5367700d924e3745043e6ab0`
+**Gerado:** 2026-08-04 22:09 UTC
+**Commit:** `60e96e6c0ddaf79539bb36dc399368f8e1d3558e`
 **Branch:** `main`
 
 ---
@@ -10,7 +10,7 @@
 
 | Verificacao | Status |
 |---|---|
-| Lint + Typecheck | com erros |
+| Lint + Typecheck | ok |
 | Testes Unitarios | com falhas |
 | Testes Integracao | com falhas |
 | Build | ok |
@@ -24,50 +24,6 @@
 
 ```
 
-/home/runner/work/Financia/Financia/src/features/admin/AdminPanel.jsx
-  67:6  warning  React Hook useCallback has an unnecessary dependency: 'session'. Either exclude it or remove the dependency array  react-hooks/exhaustive-deps
-
-/home/runner/work/Financia/Financia/src/features/admin/ClientEditModal.jsx
-  3:34  warning  'lightenHex' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
-
-/home/runner/work/Financia/Financia/src/features/auth/useImpersonation.js
-  1:34  warning  'useRef' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
-
-/home/runner/work/Financia/Financia/src/features/settings/SettingsView.jsx
-  76:7  warning  React Hook React.useCallback has an unnecessary dependency: 'cardReload'. Either exclude it or remove the dependency array  react-hooks/exhaustive-deps
-
-/home/runner/work/Financia/Financia/src/features/transactions/TxView.jsx
-  2:41  warning  'EditBtn' is defined but never used. Allowed unused vars must match /^_/u                @typescript-eslint/no-unused-vars
-  2:50  warning  'DelBtn' is defined but never used. Allowed unused vars must match /^_/u                 @typescript-eslint/no-unused-vars
-  5:51  warning  'EmptyTransactionState' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
-  7:10  warning  'isRecurringId' is defined but never used. Allowed unused vars must match /^_/u          @typescript-eslint/no-unused-vars
-
-/home/runner/work/Financia/Financia/src/hooks/useAppState.test.js
-  2:32  warning  'vi' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
-
-/home/runner/work/Financia/Financia/src/lib/sync-extra.test.js
-  121:10  warning  'sb' is defined but never used. Allowed unused vars must match /^_/u           @typescript-eslint/no-unused-vars
-  122:10  warning  'ldb' is defined but never used. Allowed unused vars must match /^_/u          @typescript-eslint/no-unused-vars
-  138:10  warning  'anyOfModify' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
-
-/home/runner/work/Financia/Financia/src/routes/routes.jsx
-  1:33  warning  'useCallback' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
-
-/home/runner/work/Financia/Financia/src/routes/routes.test.jsx
-  1:32  warning  'beforeEach' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
-
-/home/runner/work/Financia/Financia/src/shared/hooks/useDataLoader.test.js
-  2:48  warning  'afterEach' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
-
-/home/runner/work/Financia/Financia/src/shared/hooks/useRealtime.test.js
-  2:48  warning  'afterEach' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
-
-/home/runner/work/Financia/Financia/src/shared/hooks/useSyncLoop.js
-  17:7  warning  'canSync' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
-
-✖ 17 problems (0 errors, 17 warnings)
-
-
 ```
 
 ---
@@ -75,29 +31,29 @@
 ## Test Results (ultimas 40 linhas)
 
 ```
-[2m9:18:59 PM[22m [33m[1m[vite][22m[39m [33mwarning: `esbuild` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `oxc` instead.[39m
-[2m9:18:59 PM[22m [33m[1m[vite][22m[39m [33mwarning: `optimizeDeps.esbuildOptions` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `optimizeDeps.rolldownOptions` instead.[39m
+[2m10:04:46 PM[22m [33m[1m[vite][22m[39m [33mwarning: `esbuild` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `oxc` instead.[39m
+[2m10:04:46 PM[22m [33m[1m[vite][22m[39m [33mwarning: `optimizeDeps.esbuildOptions` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `optimizeDeps.rolldownOptions` instead.[39m
 [33mBoth esbuild and oxc options were set. oxc options will be used and esbuild options will be ignored.[39m The following esbuild options were set: `{ jsx: 'automatic', jsxImportSource: undefined }`
 
 [1m[30m[46m RUN [49m[39m[22m [36mv4.1.10 [39m[90m/home/runner/work/Financia/Financia[39m
 
- [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mcheckout.session.completed -> invoice.payment_succeeded -> subscription created -> plan activated[2m > [22mprocesses checkout.session.completed and activates plan in company_profiles[32m 6[2mms[22m[39m
+ [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mcheckout.session.completed -> invoice.payment_succeeded -> subscription created -> plan activated[2m > [22mprocesses checkout.session.completed and activates plan in company_profiles[32m 7[2mms[22m[39m
  [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mcheckout.session.completed -> invoice.payment_succeeded -> subscription created -> plan activated[2m > [22mprocesses invoice.payment_succeeded and updates plan[32m 2[2mms[22m[39m
  [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mcheckout.session.completed -> invoice.payment_succeeded -> subscription created -> plan activated[2m > [22mhandles subscription created event and activates plan[32m 1[2mms[22m[39m
- [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mcheckout.session.completed -> invoice.payment_succeeded -> subscription created -> plan activated[2m > [22mverifies company_profiles.plan updated and email sent via mailer[32m 1[2mms[22m[39m
- [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22minvoice.payment_failed handling[2m > [22msends failure email when invoice payment fails[32m 1[2mms[22m[39m
+ [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mcheckout.session.completed -> invoice.payment_succeeded -> subscription created -> plan activated[2m > [22mverifies company_profiles.plan updated and email sent via mailer[32m 2[2mms[22m[39m
+ [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22minvoice.payment_failed handling[2m > [22msends failure email when invoice payment fails[32m 2[2mms[22m[39m
  [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mcustomer.subscription.updated handling[2m > [22mhandles plan upgrade/downgrade via subscription.updated[32m 1[2mms[22m[39m
- [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mcustomer.subscription.updated handling[2m > [22mhandles cancel_at_period_end and sends notification email[32m 18[2mms[22m[39m
+ [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mcustomer.subscription.updated handling[2m > [22mhandles cancel_at_period_end and sends notification email[32m 21[2mms[22m[39m
  [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mcustomer.subscription.deleted handling[2m > [22mreverts to free plan and sends cancellation email[32m 1[2mms[22m[39m
  [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mpayment_intent.succeeded (white-label)[2m > [22mactivates white-label on successful payment[32m 2[2mms[22m[39m
  [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22minvoice.upcoming reminder[2m > [22msends upcoming invoice reminder email[32m 1[2mms[22m[39m
  [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mDLQ recording on failure[2m > [22mrecords failed webhook event to DLQ[32m 1[2mms[22m[39m
- [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mCreate subscription[2m > [22mcreates subscription and activates plan in company_profiles[32m 6[2mms[22m[39m
+ [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mCreate subscription[2m > [22mcreates subscription and activates plan in company_profiles[32m 5[2mms[22m[39m
  [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mCreate subscription[2m > [22mcreates premium subscription with correct plan[32m 1[2mms[22m[39m
  [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mUpgrade subscription (pro -> premium) with proration[2m > [22mupgrades subscription and updates plan in company_profiles[32m 1[2mms[22m[39m
  [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mUpgrade subscription (pro -> premium) with proration[2m > [22mhandles proration invoice creation[32m 1[2mms[22m[39m
  [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mDowngrade subscription (premium -> pro) with proration[2m > [22mdowngrades subscription and updates plan[32m 1[2mms[22m[39m
- [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration 
+ [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integratio
 ```
 
 ---
@@ -115,28 +71,28 @@ transforming...
 Generated an empty chunk: "vendor-supabase".
 rendering chunks...
 computing gzip size...
-[2mdist/[22m[32mindex.html                            [39m[1m[2m  3.95 kB[22m[1m[22m[2m │ gzip:  1.37 kB[22m
+[2mdist/[22m[32mindex.html                            [39m[1m[2m  3.05 kB[22m[1m[22m[2m │ gzip:  0.96 kB[22m
 [2mdist/[22m[2massets/[22m[35mindex-CnihwhkN.css             [39m[1m[2m 55.46 kB[22m[1m[22m[2m │ gzip: 11.41 kB[22m
 [2mdist/[22m[2massets/[22m[36mvendor-supabase-vwDjcXxQ.js    [39m[1m[2m  0.00 kB[22m[1m[22m[2m │ gzip:  0.02 kB[22m
-[2mdist/[22m[2massets/[22m[36museDebouncedValue-BcJFlH8a.js  [39m[1m[2m  0.21 kB[22m[1m[22m[2m │ gzip:  0.17 kB[22m
-[2mdist/[22m[2massets/[22m[36mlogoUtils-BP0Luz-Q.js          [39m[1m[2m  0.88 kB[22m[1m[22m[2m │ gzip:  0.46 kB[22m
-[2mdist/[22m[2massets/[22m[36mDebugBadge-Bm62t2gG.js         [39m[1m[2m  0.92 kB[22m[1m[22m[2m │ gzip:  0.52 kB[22m
-[2mdist/[22m[2massets/[22m[36maiClient-DJ5PNfPx.js           [39m[1m[2m  2.80 kB[22m[1m[22m[2m │ gzip:  1.47 kB[22m
-[2mdist/[22m[2massets/[22m[36mvendor-radix-65HWMJAE.js       [39m[1m[2m  2.85 kB[22m[1m[22m[2m │ gzip:  1.35 kB[22m
-[2mdist/[22m[2massets/[22m[36mvendor-scheduler-BXgSXwl1.js   [39m[1m[2m  3.86 kB[22m[1m[22m[2m │ gzip:  1.62 kB[22m
-[2mdist/[22m[2massets/[22m[36mexporters-DVBygq0B.js          [39m[1m[2m  4.23 kB[22m[1m[22m[2m │ gzip:  1.78 kB[22m
-[2mdist/[22m[2massets/[22m[36mEmailView-CEapE5c4.js          [39m[1m[2m  5.15 kB[22m[1m[22m[2m │ gzip:  2.06 kB[22m
-[2mdist/[22m[2massets/[22m[36mCardPreview-D4SS8h68.js        [39m[1m[2m  6.22 kB[22m[1m[22m[2m │ gzip:  2.74 kB[22m
-[2mdist/[22m[2massets/[22m[36mSaleForm-Dik4XewZ.js           [39m[1m[2m  7.32 kB[22m[1m[22m[2m │ gzip:  2.46 kB[22m
-[2mdist/[22m[2massets/[22m[36mPrivacyPolicy-DyyUmwan.js      [39m[1m[2m  7.99 kB[22m[1m[22m[2m │ gzip:  3.43 kB[22m
-[2mdist/[22m[2massets/[22m[36mTermsOfService-Ev-V2vlo.js     [39m[1m[2m  8.73 kB[22m[1m[22m[2m │ gzip:  3.66 kB[22m
-[2mdist/[22m[2massets/[22m[36mReportView-CvSzUVaZ.js         [39m[1m[2m 10.33 kB[22m[1m[22m[2m │ gzip:  3.13 kB[22m
-[2mdist/[22m[2massets/[22m[36mvendor-stripe-CgUSezxc.js      [39m[1m[2m 12.51 kB[22m[1m[22m[2m │ gzip:  4.63 kB[22m
-[2mdist/[22m[2massets/[22m[36mTxView-BpsKPYlh.js             [39m[1m[2m 19.04 kB[22m[1m[22m[2m │ gzip:  5.58 kB[22m
-[2mdist/[22m[2massets/[22m[36mInventoryView-BYlQo_eo.js      [39m[1m[2m 19.79 kB[22m[1m[22m[2m │ gzip:  5.44 kB[22m
-[2mdist/[22m[2massets/[22m[36mvendor-query-CZU5ZnEQ.js       [39m[1m[2m 24.36 kB[22m[1m[22m[2m │ gzip:  7.23 kB[22m
-[2mdist/[22m[2massets/[22m[36mDashboard-LQLOB8F3.js          [39m[1m[2m 27.58 kB[22m[1m[22m[2m │ gzip:  7.42 kB[22m
-[2mdist/[22m[2massets/[22m[36mPlansView-CUyX29z
+[2mdist/[22m[2massets/[22m[36museDebouncedValue-CJzge6Sj.js  [39m[1m[2m  0.21 kB[22m[1m[22m[2m │ gzip:  0.17 kB[22m
+[2mdist/[22m[2massets/[22m[36mDebugBadge-bdeUC7zi.js         [39m[1m[2m  0.88 kB[22m[1m[22m[2m │ gzip:  0.51 kB[22m
+[2mdist/[22m[2massets/[22m[36mlogoUtils-TWzfdVwe.js          [39m[1m[2m  0.89 kB[22m[1m[22m[2m │ gzip:  0.47 kB[22m
+[2mdist/[22m[2massets/[22m[36maiClient-Bolp7EyZ.js           [39m[1m[2m  2.87 kB[22m[1m[22m[2m │ gzip:  1.52 kB[22m
+[2mdist/[22m[2massets/[22m[36mvendor-radix-oLFQLB-t.js       [39m[1m[2m  2.95 kB[22m[1m[22m[2m │ gzip:  1.42 kB[22m
+[2mdist/[22m[2massets/[22m[36mexporters-DiDWOqRz.js          [39m[1m[2m  4.23 kB[22m[1m[22m[2m │ gzip:  1.80 kB[22m
+[2mdist/[22m[2massets/[22m[36mEmailView-C08Y_qYa.js          [39m[1m[2m  5.13 kB[22m[1m[22m[2m │ gzip:  2.06 kB[22m
+[2mdist/[22m[2massets/[22m[36mCardPreview-Bbbm6H8P.js        [39m[1m[2m  6.29 kB[22m[1m[22m[2m │ gzip:  2.78 kB[22m
+[2mdist/[22m[2massets/[22m[36mSaleForm-LvIkIlhv.js           [39m[1m[2m  7.45 kB[22m[1m[22m[2m │ gzip:  2.55 kB[22m
+[2mdist/[22m[2massets/[22m[36mPrivacyPolicy-CBSYOG9p.js      [39m[1m[2m  7.93 kB[22m[1m[22m[2m │ gzip:  3.43 kB[22m
+[2mdist/[22m[2massets/[22m[36mTermsOfService-DUEm3RKj.js     [39m[1m[2m  8.66 kB[22m[1m[22m[2m │ gzip:  3.65 kB[22m
+[2mdist/[22m[2massets/[22m[36mReportView-DMo6gJPC.js         [39m[1m[2m 10.36 kB[22m[1m[22m[2m │ gzip:  3.13 kB[22m
+[2mdist/[22m[2massets/[22m[36mvendor-stripe-DcHt2SCs.js      [39m[1m[2m 13.00 kB[22m[1m[22m[2m │ gzip:  4.88 kB[22m
+[2mdist/[22m[2massets/[22m[36mTxView-qtSC9QjK.js             [39m[1m[2m 19.17 kB[22m[1m[22m[2m │ gzip:  5.65 kB[22m
+[2mdist/[22m[2massets/[22m[36mInventoryView-CDlCzVMF.js      [39m[1m[2m 20.06 kB[22m[1m[22m[2m │ gzip:  5.54 kB[22m
+[2mdist/[22m[2massets/[22m[36mvendor-query-B3QQTXrc.js       [39m[1m[2m 24.61 kB[22m[1m[22m[2m │ gzip:  7.40 kB[22m
+[2mdist/[22m[2massets/[22m[36mDashboard-KlX9UdGX.js          [39m[1m[2m 27.69 kB[22m[1m[22m[2m │ gzip:  7.50 kB[22m
+[2mdist/[22m[2massets/[22m[36mPlansView-TkPi6tZm.js          [39m[1m[2m 31.25 kB[22m[1m[22m[2m │ gzip:  8.33 kB[22m
+[2mdist/[22m[2massets/[22m[36mLanding-GfgD-kHJ.
 ```
 
 ---
@@ -150,9 +106,9 @@ computing gzip size...
 ```
 
 Running 26 tests using 4 workers
-°°°·°°°°°°°°···°°°°···°···
+°°°·°°°°°°°°····°°°°··°···
   16 skipped
-  10 passed (12.2s)
+  10 passed (14.0s)
 
 ```
 
@@ -167,17 +123,17 @@ Running 26 tests using 4 workers
 ```
 
 Running 42 tests using 4 workers
-°°F····F·°°°°··°·F·F·[MONITOR] Waiting 15s to capture baseline network activity...
-···°·····F[BASELINE] 28 requests, 0.93 req/s, Score: GOOD
+°°F····F·°°°°···°FF··[MONITOR] Waiting 15s to capture baseline network activity...
+···°F·····[BASELINE] 30 requests, 1 req/s, Score: GOOD
 
 [TEST] Navigating all routes to check for per-route network issues...
-F·FFF
+·FF
 [TEST] Simulating theme toggle clicks...
 FFF
-[FINAL] 112 total requests, 3.73 req/s
+[FINAL] 120 total requests, 4 req/s
 [FINAL] Score: CRITICAL
 [FINAL] Icon loop: true, Sync loop: false
-FFF
+FFFFF
 
   1) [chromium] › e2e/indexeddb-corruption.spec.ts:12:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should recover from corrupted IndexedDB data 
 
@@ -274,7 +230,7 @@ FFF
     > 251 |     expect(finalReport.iconLoopDetected, 'icon-192.svg loop detected — theme toggle causes infinite re-fetches').toBe(false);
           |                                                                                                                  ^
       252 |     expect(finalReport.syncLoopDetected, 'company_profiles sync loop detected — realtime triggers infinite sync').toBe(false);
-      253 |     expect(finalReport.reques
+      253 |     expect(finalReport.requestsPerS
 ```
 
 ---
@@ -306,4 +262,4 @@ Nenhum relatorio admin gerado.
 
 | Data | Correcao | Commit |
 |------|----------|--------|
-| 2026-08-04 21:27 UTC | CI report gerado automaticamente | `05dd2f1137fe902b5367700d924e3745043e6ab0` |
+| 2026-08-04 22:09 UTC | CI report gerado automaticamente | `60e96e6c0ddaf79539bb36dc399368f8e1d3558e` |
