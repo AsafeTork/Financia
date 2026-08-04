@@ -1,7 +1,7 @@
 # CI Report
 
-**Gerado:** 2026-08-04 21:08 UTC
-**Commit:** `39abcd675b92ca50a7c09d467770688ddc7c955c`
+**Gerado:** 2026-08-04 21:16 UTC
+**Commit:** `69970db93e49c90141227f4b56cd299a86db9f77`
 **Branch:** `main`
 
 ---
@@ -24,16 +24,6 @@
 
 ```
 
-/home/runner/work/Financia/Financia/src/App.jsx
-  11:18   warning  'MobileFooter' is defined but never used. Allowed unused vars must match /^_/u                          @typescript-eslint/no-unused-vars
-  60:6    warning  React Hook useCallback has a missing dependency: 's'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
-  64:113  warning  React Hook useCallback has a missing dependency: 's'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
-  65:76   warning  React Hook useCallback has a missing dependency: 's'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
-  66:83   warning  React Hook useCallback has a missing dependency: 's'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
-  67:83   warning  React Hook useCallback has a missing dependency: 's'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
-  68:81   warning  React Hook useCallback has a missing dependency: 's'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
-  70:62   warning  React Hook useCallback has a missing dependency: 'n'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
-
 /home/runner/work/Financia/Financia/src/features/admin/AdminPanel.jsx
   67:6  warning  React Hook useCallback has an unnecessary dependency: 'session'. Either exclude it or remove the dependency array  react-hooks/exhaustive-deps
 
@@ -55,9 +45,6 @@
 /home/runner/work/Financia/Financia/src/hooks/useAppState.test.js
   2:32  warning  'vi' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
 
-/home/runner/work/Financia/Financia/src/hooks/useNavigation.js
-  65:6  warning  React Hook useEffect has a missing dependency: 'modalRef'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
-
 /home/runner/work/Financia/Financia/src/lib/sync-extra.test.js
   121:10  warning  'sb' is defined but never used. Allowed unused vars must match /^_/u           @typescript-eslint/no-unused-vars
   122:10  warning  'ldb' is defined but never used. Allowed unused vars must match /^_/u          @typescript-eslint/no-unused-vars
@@ -78,7 +65,7 @@
 /home/runner/work/Financia/Financia/src/shared/hooks/useSyncLoop.js
   17:7  warning  'canSync' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
 
-✖ 26 problems (0 errors, 26 warnings)
+✖ 17 problems (0 errors, 17 warnings)
 
 
 ```
@@ -88,29 +75,29 @@
 ## Test Results (ultimas 40 linhas)
 
 ```
-[2m9:05:49 PM[22m [33m[1m[vite][22m[39m [33mwarning: `esbuild` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `oxc` instead.[39m
-[2m9:05:49 PM[22m [33m[1m[vite][22m[39m [33mwarning: `optimizeDeps.esbuildOptions` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `optimizeDeps.rolldownOptions` instead.[39m
+[2m9:13:49 PM[22m [33m[1m[vite][22m[39m [33mwarning: `esbuild` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `oxc` instead.[39m
+[2m9:13:49 PM[22m [33m[1m[vite][22m[39m [33mwarning: `optimizeDeps.esbuildOptions` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `optimizeDeps.rolldownOptions` instead.[39m
 [33mBoth esbuild and oxc options were set. oxc options will be used and esbuild options will be ignored.[39m The following esbuild options were set: `{ jsx: 'automatic', jsxImportSource: undefined }`
 
 [1m[30m[46m RUN [49m[39m[22m [36mv4.1.10 [39m[90m/home/runner/work/Financia/Financia[39m
 
- [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mcheckout.session.completed -> invoice.payment_succeeded -> subscription created -> plan activated[2m > [22mprocesses checkout.session.completed and activates plan in company_profiles[32m 7[2mms[22m[39m
- [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mcheckout.session.completed -> invoice.payment_succeeded -> subscription created -> plan activated[2m > [22mprocesses invoice.payment_succeeded and updates plan[32m 2[2mms[22m[39m
- [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mcheckout.session.completed -> invoice.payment_succeeded -> subscription created -> plan activated[2m > [22mhandles subscription created event and activates plan[32m 1[2mms[22m[39m
- [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mcheckout.session.completed -> invoice.payment_succeeded -> subscription created -> plan activated[2m > [22mverifies company_profiles.plan updated and email sent via mailer[32m 1[2mms[22m[39m
- [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22minvoice.payment_failed handling[2m > [22msends failure email when invoice payment fails[32m 1[2mms[22m[39m
- [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mcustomer.subscription.updated handling[2m > [22mhandles plan upgrade/downgrade via subscription.updated[32m 1[2mms[22m[39m
- [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mcustomer.subscription.updated handling[2m > [22mhandles cancel_at_period_end and sends notification email[32m 16[2mms[22m[39m
- [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mcustomer.subscription.deleted handling[2m > [22mreverts to free plan and sends cancellation email[32m 1[2mms[22m[39m
- [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mpayment_intent.succeeded (white-label)[2m > [22mactivates white-label on successful payment[32m 2[2mms[22m[39m
- [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22minvoice.upcoming reminder[2m > [22msends upcoming invoice reminder email[32m 1[2mms[22m[39m
- [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mDLQ recording on failure[2m > [22mrecords failed webhook event to DLQ[32m 1[2mms[22m[39m
- [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mCreate subscription[2m > [22mcreates subscription and activates plan in company_profiles[32m 6[2mms[22m[39m
+ [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mCreate subscription[2m > [22mcreates subscription and activates plan in company_profiles[32m 5[2mms[22m[39m
  [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mCreate subscription[2m > [22mcreates premium subscription with correct plan[32m 1[2mms[22m[39m
  [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mUpgrade subscription (pro -> premium) with proration[2m > [22mupgrades subscription and updates plan in company_profiles[32m 1[2mms[22m[39m
  [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mUpgrade subscription (pro -> premium) with proration[2m > [22mhandles proration invoice creation[32m 1[2mms[22m[39m
  [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mDowngrade subscription (premium -> pro) with proration[2m > [22mdowngrades subscription and updates plan[32m 1[2mms[22m[39m
- [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration 
+ [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mDowngrade subscription (premium -> pro) with proration[2m > [22mcreates credit proration invoice for downgrade[32m 1[2mms[22m[39m
+ [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mCancel subscription[2m > [22mcancels subscription at period end[32m 1[2mms[22m[39m
+ [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mCancel subscription[2m > [22mcancels subscription immediately[32m 1[2mms[22m[39m
+ [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mRevert to free plan after cancellation[2m > [22mreverts to free when subscription deleted webhook received[32m 1[2mms[22m[39m
+ [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mRevert to free plan after cancellation[2m > [22mreverts to free on incomplete_expired status[32m 1[2mms[22m[39m
+ [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mFull subscription cycle integration[2m > [22mcompletes full cycle: create -> upgrade -> downgrade -> cancel -> free[32m 1[2mms[22m[39m
+ [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mFull subscription cycle integration[2m > [22mverifies plan transitions in company_profiles at each step[32m 1[2mms[22m[39m
+ [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mWhite-label addon subscription[2m > [22mcreates white-label subscription and activates addon[32m 1[2mms[22m[39m
+ [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mcheckout.session.completed -> invoice.payment_succeeded -> subscription created -> plan activated[2m > [22mprocesses checkout.session.completed and activates plan in company_profiles[32m 5[2mms[22m[39m
+ [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mcheckout.session.completed -> invoice.payment_succeeded -> subscription created -> plan activated[2m > [22mprocesses invoice.payment_succeeded and updates plan[32m 1[2mms[22m[39m
+ [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mcheckout.session.completed -> invoice.payment_succeeded -> subscription created -> plan activated[2m > [22mhandles subscription created event and activates plan[32m 1[2mms[22m[39m
+ [32m✓[39m src/lib/stripe-we
 ```
 
 ---
@@ -125,7 +112,7 @@
 [36mvite v5.4.21 [32mbuilding for production...[36m[39m
 transforming...
 [32m✓[39m 252 modules transformed.
-[31mx[39m Build failed in 1.99s
+[31mx[39m Build failed in 1.51s
 [31merror during build:
 [31msrc/shared/ui/TransactionCard.jsx (2:41): "isRecurringId" is not exported by "src/lib/utils.js", imported by "src/shared/ui/TransactionCard.jsx".[31m
 file: [36m/home/runner/work/Financia/Financia/src/shared/ui/TransactionCard.jsx:2:41[31m
@@ -201,4 +188,4 @@ Nenhum relatorio admin gerado.
 
 | Data | Correcao | Commit |
 |------|----------|--------|
-| 2026-08-04 21:08 UTC | CI report gerado automaticamente | `39abcd675b92ca50a7c09d467770688ddc7c955c` |
+| 2026-08-04 21:16 UTC | CI report gerado automaticamente | `69970db93e49c90141227f4b56cd299a86db9f77` |
