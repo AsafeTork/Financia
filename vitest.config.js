@@ -6,8 +6,14 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.js'],
+    globalTeardown: ['./src/test/global-teardown.js'],
     globals: true,
     pool: 'forks',
+    poolOptions: {
+      forks: {
+        singleFork: true,
+      },
+    },
     forceExit: true,
     teardownTimeout: 5000,
     reporter: ['verbose'],
