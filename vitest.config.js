@@ -14,7 +14,6 @@ export default defineConfig({
         minForks: 1,
       },
     },
-    forceExit: true,
     teardownTimeout: 5000,
     include: ['src/**/*.test.{js,jsx}'],
     exclude: ['**/e2e/**', '**/*.isolated.test.{js,jsx}', '**/benchmarks/**', '**/supabase/functions/**'],

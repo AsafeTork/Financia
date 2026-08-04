@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import 'fake-indexeddb/auto';
+import { IDBFactory } from 'fake-indexeddb';
 import { beforeAll, afterAll, afterEach, vi, expect } from 'vitest';
 import { setupServer } from 'msw/node';
 import { handlers } from './msw-handlers.js';
@@ -7,15 +7,20 @@ import * as matchers from 'vitest-dom/matchers';
 
 expect.extend(matchers);
 
+globalThis.indexedDB = new IDBFactory();
+
 const server = setupServer(...handlers);
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
-afterAll(() => server.close());
-afterEach(async () => {
+afterAll(async () => {
+  await server.close();
+  globalThis.indexedDB = new IDBFactory();
+});
+afterEach(() => {
   server.resetHandlers();
   vi.clearAllMocks();
   vi.clearAllTimers();
-  // Properly handle localStorage/sessionStorage in jsdom
+  globalThis.indexedDB = new IDBFactory();
   try {
     localStorage.clear();
   } catch (_) {
@@ -25,14 +30,6 @@ afterEach(async () => {
     sessionStorage.clear();
   } catch (_) {
     // ignore
-  }
-  if (indexedDB.databases) {
-    try {
-      const dbs = await indexedDB.databases();
-      dbs.forEach(db => {
-        if (db.name) indexedDB.deleteDatabase(db.name);
-      });
-    } catch (_) { /* ignore */ }
   }
 });
 
