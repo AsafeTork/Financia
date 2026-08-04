@@ -28,17 +28,109 @@ Toda conclusão DEVE ser comprovada por evidências concretas do repositório.
 
 ---
 
+## NOVO EXECUTOR — Foco em Funcionalidades do Produto
+
+### Regra Suprema: Zero Build/Lint/Testes Locais
+Node.js e npm **NÃO estão disponíveis** neste ambiente. Foram removidos intencionalmente.
+**NENHUM executor pode executar build, lint ou qualquer comando Node.js localmente.**
+Todo teste e validação deve ser feito exclusivamente via:
+- **GitHub Actions** — logs de CI, lint, typecheck, testes unitários, Playwright
+- **URL do produto final** — testar a aplicação ao vivo em https://financiabr.me
+
+Qualquer executor que tentar rodar `npm`, `node`, `npx`, `vitest`, `playwright` localmente será considerado em DESOBEDIÊNCIA. Esta regra não tem exceção.
+
+---
+
+## ESCOPO DO NOVO EXECUTOR
+
+**Fase 1: COMPONENTES DE UI E UX**
+├─ Header (desktop + mobile, responsivo)
+├─ Footer (consistente, acessibilidade)
+├─ Navigation (fluxo de histórico de navegação)
+├─ Dashboard (grid de KPIs, cards, quick-actions)
+├─ Card de transação (lista, detalhes, ações)
+└─ Modal de Onboarding (wizard para novo usuário)
+
+**Fase 2: FLUXOS E WORKFLOWS DE NEGÓCIO**
+├─ Fluxo de transação (criar, editar, excluir, categorizar)
+├─ Gerenciamento de contas (adicionar, alterar saldo)
+├─ Exportação/importação (CSV, PDF)
+├─ Alertas (orçamento, contas vencendo)
+└─ Menu lateral + navegação profunda
+
+**Fase 3: RELATÓRIOS E ANÁLISE DE DADOS**
+├─ Tela de resumo (gráficos, fluxo de caixa)
+├─ Tela de categoria (barra + torta)
+├─ Filtros de data (semana/mês/ano personalizado)
+├─ Exportação (PDF, Excel)
+├─ Alertas baseados em IA (insights sobre gastos)
+└─ Acessível no desktop + mobile
+
+**Fase 4: AUTH + COLABORAÇÃO NO PRODUCT**
+├─ UI de autenticação (login com email/Magic Link)
+├─ Fluxo de autenticação (JWT + refresh)
+├─ Gerenciamento de contatos (owner/admin/viewer)
+└─ Envio de e-mails (bem-vindo, lembrete)
+
+**Fase 5: CALENDÁRIO + NOTIFICAÇÕES**
+├─ Widget de calendário (visualização mensal/dia)
+├─ Alertas de eventos (vencimentos, lembretes)
+├─ Sistema de notificações (push, in-app)
+└─ Agendamento (criação/edição de eventos)
+
+**Fase 6: BRANDING + PERSONALIZAÇÃO**
+├─ Painel de edição de marca (logo, cores, fonte)
+├─ Editor completo (pré-visualização)
+├─ Geração de kits UI (tokens de design, componentes)
+└─ Integração de tema claro + escuro
+
+**Fase 7: TESTES E VALIDATION**
+├─ E2E (fluxos reais no navegador)
+├─ Testes unitários (componentes)
+├─ Teste de responsividade (320px–1440px)
+├─ Teste de acessibilidade (axe-core)
+└─ Teste de performance (bundle < 300KB gzipped)
+
+---
+
+## REGRA DE ORDEM CRUCIAL
+
+Nunca modifique área de outro executor. Cada executor é dono da sua própria responsabilidade.
+Nenhum desses executores pode implementar layout, CSS, estilização ou qualquer alteração visual que pertença ao executor de Frontend.
+Todos os componentes visuais (buttons, cards, inputs, headers, footers, navbars, ui-kit completo) são responsabilidade única do executor de Frontend.
+Executores de Backend, Database, Security, UX, Performance, QA, Branding, CI/CD só implementam APIs, lógica, estrutura, workflows, testes, segurança, CI/CD, testes EVIDENCIADOS que foram especificados acima.
+
+---
+
+## REGRAS DO NOVO EXECUTOR
+
+1. Somente UI/UX, componentes, fluxos e performance
+2. Nunca infraestrutura
+3. A cada arquivo criado/editado, garantir:
+   - Testes que passem (unitários + componentes)
+   - Sem warnings de lint
+   - Design responsivo
+   - Acessibilidade (WCAG)
+4. Checkpoint após cada subtarefa
+   - Atualizar EXECUTION_STATE.md
+   - Adicionar SCRATCH_PAD.md
+5. Revisão cruzada do NOVO Executor:
+   - Outro executor revisa o arquivo
+   - QA revisa a interação do usuário
+
+---
+
 ## REGRA DE OURO — EVIDÊNCIA OBRIGATÓRIA
 
-Antes de declarar qualquer tarefa como concluída, VOCÊ DEVE APRESENTAR:
+ANTES de declarar qualquer tarefa como concluída, VOCÊ DEVE APRESENTAR:
 
 | Evidência | Comando | Obrigatório |
 |-----------|---------|-------------|
 | **Arquivos alterados** | `git status` / `git diff --name-only` | ✅ SIM |
 | **Diff completo** | `git diff` | ✅ SIM |
-| **Build executado** | `npm run build` | ✅ SIM |
-| **Lint executado** | `npm run lint` | ✅ SIM |
-| **Testes executados** | `npm test` | ✅ SIM |
+| **Build executado** | `npm run build` | ❌ NÃO (npm não disponível localmente) |
+| **Lint executado** | `npm run lint` | ❌ NÃO (npm não disponível localmente) |
+| **Testes executados** | `npm test` | ❌ NÃO (npm não disponível localmente) |
 | **Saída dos comandos** | Captura de tela / log textual | ✅ SIM |
 | **Lista de arquivos** | Relatório explícito | ✅ SIM |
 | **Commits/alterações** | `git log --oneline -5` | ✅ SIM |
@@ -46,6 +138,8 @@ Antes de declarar qualquer tarefa como concluída, VOCÊ DEVE APRESENTAR:
 **NÃO RESPONDA "Concluído" SEM MOSTRAR TUDO ISSO.**
 
 Se faltar QUALQUER item → a implementação **NÃO EXISTE**.
+
+> **ATENÇÃO:** Build/Lint/Testes NÃO são possíveis localmente. Use GitHub Actions e URLs de produção para validação. Apenas Git diffs são válidos para evidência de implementação.
 
 ---
 
