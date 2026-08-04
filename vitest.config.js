@@ -7,7 +7,7 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.js'],
     globals: true,
-    pool: 'threads',
+    pool: 'forks',
     forceExit: true,
     teardownTimeout: 3000,
     include: ['src/**/*.test.{js,jsx}'],
