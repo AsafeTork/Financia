@@ -1,7 +1,7 @@
 # CI Report
 
-**Gerado:** 2026-08-04 20:06 UTC
-**Commit:** `d03e17d2c32c1ca012dc554f1a3ffed674998543`
+**Gerado:** 2026-08-04 20:26 UTC
+**Commit:** `53f0d98147cb5f68d4de0e75f85a6e2dfe37870c`
 **Branch:** `main`
 
 ---
@@ -83,29 +83,29 @@
 ## Test Results (ultimas 40 linhas)
 
 ```
-[2m8:01:49 PM[22m [33m[1m[vite][22m[39m [33mwarning: `esbuild` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `oxc` instead.[39m
-[2m8:01:49 PM[22m [33m[1m[vite][22m[39m [33mwarning: `optimizeDeps.esbuildOptions` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `optimizeDeps.rolldownOptions` instead.[39m
+[2m8:21:17 PM[22m [33m[1m[vite][22m[39m [33mwarning: `esbuild` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `oxc` instead.[39m
+[2m8:21:17 PM[22m [33m[1m[vite][22m[39m [33mwarning: `optimizeDeps.esbuildOptions` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `optimizeDeps.rolldownOptions` instead.[39m
 [33mBoth esbuild and oxc options were set. oxc options will be used and esbuild options will be ignored.[39m The following esbuild options were set: `{ jsx: 'automatic', jsxImportSource: undefined }`
 
 [1m[30m[46m RUN [49m[39m[22m [36mv4.1.10 [39m[90m/home/runner/work/Financia/Financia[39m
 
- [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mCreate subscription[2m > [22mcreates subscription and activates plan in company_profiles[32m 7[2mms[22m[39m
- [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mCreate subscription[2m > [22mcreates premium subscription with correct plan[32m 1[2mms[22m[39m
- [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mUpgrade subscription (pro -> premium) with proration[2m > [22mupgrades subscription and updates plan in company_profiles[32m 2[2mms[22m[39m
- [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mUpgrade subscription (pro -> premium) with proration[2m > [22mhandles proration invoice creation[32m 1[2mms[22m[39m
- [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mDowngrade subscription (premium -> pro) with proration[2m > [22mdowngrades subscription and updates plan[32m 1[2mms[22m[39m
- [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mDowngrade subscription (premium -> pro) with proration[2m > [22mcreates credit proration invoice for downgrade[32m 1[2mms[22m[39m
- [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mCancel subscription[2m > [22mcancels subscription at period end[32m 1[2mms[22m[39m
- [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mCancel subscription[2m > [22mcancels subscription immediately[32m 1[2mms[22m[39m
- [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mRevert to free plan after cancellation[2m > [22mreverts to free when subscription deleted webhook received[32m 1[2mms[22m[39m
- [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mRevert to free plan after cancellation[2m > [22mreverts to free on incomplete_expired status[32m 1[2mms[22m[39m
- [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mFull subscription cycle integration[2m > [22mcompletes full cycle: create -> upgrade -> downgrade -> cancel -> free[32m 2[2mms[22m[39m
- [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mFull subscription cycle integration[2m > [22mverifies plan transitions in company_profiles at each step[32m 1[2mms[22m[39m
- [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mWhite-label addon subscription[2m > [22mcreates white-label subscription and activates addon[32m 1[2mms[22m[39m
- [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mcheckout.session.completed -> invoice.payment_succeeded -> subscription created -> plan activated[2m > [22mprocesses checkout.session.completed and activates plan in company_profiles[32m 8[2mms[22m[39m
+ [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mcheckout.session.completed -> invoice.payment_succeeded -> subscription created -> plan activated[2m > [22mprocesses checkout.session.completed and activates plan in company_profiles[32m 6[2mms[22m[39m
  [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mcheckout.session.completed -> invoice.payment_succeeded -> subscription created -> plan activated[2m > [22mprocesses invoice.payment_succeeded and updates plan[32m 2[2mms[22m[39m
  [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mcheckout.session.completed -> invoice.payment_succeeded -> subscription created -> plan activated[2m > [22mhandles subscription created event and activates plan[32m 1[2mms[22m[39m
- [32m✓[39m src/lib/stripe-we
+ [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mcheckout.session.completed -> invoice.payment_succeeded -> subscription created -> plan activated[2m > [22mverifies company_profiles.plan updated and email sent via mailer[32m 1[2mms[22m[39m
+ [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22minvoice.payment_failed handling[2m > [22msends failure email when invoice payment fails[32m 1[2mms[22m[39m
+ [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mcustomer.subscription.updated handling[2m > [22mhandles plan upgrade/downgrade via subscription.updated[32m 1[2mms[22m[39m
+ [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mcustomer.subscription.updated handling[2m > [22mhandles cancel_at_period_end and sends notification email[32m 16[2mms[22m[39m
+ [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mcustomer.subscription.deleted handling[2m > [22mreverts to free plan and sends cancellation email[32m 1[2mms[22m[39m
+ [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mpayment_intent.succeeded (white-label)[2m > [22mactivates white-label on successful payment[32m 1[2mms[22m[39m
+ [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22minvoice.upcoming reminder[2m > [22msends upcoming invoice reminder email[32m 1[2mms[22m[39m
+ [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mDLQ recording on failure[2m > [22mrecords failed webhook event to DLQ[32m 1[2mms[22m[39m
+ [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mCreate subscription[2m > [22mcreates subscription and activates plan in company_profiles[32m 6[2mms[22m[39m
+ [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mCreate subscription[2m > [22mcreates premium subscription with correct plan[32m 1[2mms[22m[39m
+ [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mUpgrade subscription (pro -> premium) with proration[2m > [22mupgrades subscription and updates plan in company_profiles[32m 1[2mms[22m[39m
+ [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mUpgrade subscription (pro -> premium) with proration[2m > [22mhandles proration invoice creation[32m 1[2mms[22m[39m
+ [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mDowngrade subscription (premium -> pro) with proration[2m > [22mdowngrades subscription and updates plan[32m 1[2mms[22m[39m
+ [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration 
 ```
 
 ---
@@ -158,37 +158,68 @@ computing gzip size...
 ```
 
 Running 26 tests using 4 workers
-°°°°°°°°°°°····°°·°°··°··F
+°°°°°°°°°······°°°°···°TTT
 
-  1) [chromium] › e2e/auth-flow.spec.ts:10:3 › Auth Flow › landing page loads with enter button ────
+  1) [chromium] › e2e/auth-flow.spec.ts:23:3 › Auth Flow › landing page loads with enter button ────
 
-    Error: expect(locator).toBeVisible() failed
+    Test timeout of 45000ms exceeded.
 
-    Locator: locator('text=Entrar').or(locator('text=Começar')).or(locator('text=Enter')).or(locator('button')).first()
-    Expected: visible
-    Timeout: 15000ms
-    Error: element(s) not found
+    Error: page.waitForFunction: Test timeout of 45000ms exceeded.
 
-    Call log:
-      - Expect "toBeVisible" with timeout 15000ms
-      - waiting for locator('text=Entrar').or(locator('text=Começar')).or(locator('text=Enter')).or(locator('button')).first()
-
-
-      13 |
-      14 |     const enterBtn = page.locator('text=Entrar').or(page.locator('text=Começar')).or(page.locator('text=Enter')).or(page.locator('button')).first();
-    > 15 |     await expect(enterBtn).toBeVisible({ timeout: 15000 });
-         |                            ^
-      16 |   });
-      17 |
-      18 |   test('login form opens from landing page', async ({ page }) => {
-        at /home/runner/work/Financia/Financia/e2e/auth-flow.spec.ts:15:28
+       7 | async function waitForAppReady(page: import('@playwright/test').Page) {
+       8 |   await page.goto(BASE_URL, { waitUntil: 'load', timeout: 30000 });
+    >  9 |   await page.waitForFunction(
+         |              ^
+      10 |     () => {
+      11 |       const root = document.getElementById('root');
+      12 |       if (!root || root.children.length === 0) return false;
+        at waitForAppReady (/home/runner/work/Financia/Financia/e2e/auth-flow.spec.ts:9:14)
+        at /home/runner/work/Financia/Financia/e2e/auth-flow.spec.ts:24:5
 
     Error Context: test-results/auth-flow-Auth-Flow-landing-page-loads-with-enter-button-chromium/error-context.md
 
-  1 failed
-    [chromium] › e2e/auth-flow.spec.ts:10:3 › Auth Flow › landing page loads with enter button ─────
-  16 skipped
-  9 passed (20.1s)
+  2) [chromium] › e2e/auth-flow.spec.ts:30:3 › Auth Flow › login form opens from landing page ──────
+
+    Test timeout of 45000ms exceeded.
+
+    Error: page.waitForFunction: Test timeout of 45000ms exceeded.
+
+       7 | async function waitForAppReady(page: import('@playwright/test').Page) {
+       8 |   await page.goto(BASE_URL, { waitUntil: 'load', timeout: 30000 });
+    >  9 |   await page.waitForFunction(
+         |              ^
+      10 |     () => {
+      11 |       const root = document.getElementById('root');
+      12 |       if (!root || root.children.length === 0) return false;
+        at waitForAppReady (/home/runner/work/Financia/Financia/e2e/auth-flow.spec.ts:9:14)
+        at /home/runner/work/Financia/Financia/e2e/auth-flow.spec.ts:31:5
+
+    Error Context: test-results/auth-flow-Auth-Flow-login-form-opens-from-landing-page-chromium/error-context.md
+
+  3) [chromium] › e2e/auth-flow.spec.ts:45:3 › Auth Flow › login form shows validation errors on empty submit 
+
+    Test timeout of 45000ms exceeded.
+
+    Error: page.waitForFunction: Test timeout of 45000ms exceeded.
+
+       7 | async function waitForAppReady(page: import('@playwright/test').Page) {
+       8 |   await page.goto(BASE_URL, { waitUntil: 'load', timeout: 30000 });
+    >  9 |   await page.waitForFunction(
+         |              ^
+      10 |     () => {
+      11 |       const root = document.getElementById('root');
+      12 |       if (!root || root.children.length === 0) return false;
+        at waitForAppReady (/home/runner/work/Financia/Financia/e2e/auth-flow.spec.ts:9:14)
+        at /home/runner/work/Financia/Financia/e2e/auth-flow.spec.ts:46:5
+
+    Error Context: test-results/auth-flow-Auth-Flow-login--49015-tion-errors-on-empty-submit-chromium/error-context.md
+
+  3 failed
+    [chromium] › e2e/auth-flow.spec.ts:23:3 › Auth Flow › landing page loads with enter button ─────
+    [chromium] › e2e/auth-flow.spec.ts:30:3 › Auth Flow › login form opens from landing page ───────
+    [chromium] › e2e/auth-flow.spec.ts:45:3 › Auth Flow › login form shows validation errors on empty submit 
+  14 skipped
+  9 passed (47.8s)
 
 ```
 
@@ -203,13 +234,13 @@ Running 26 tests using 4 workers
 ```
 
 Running 42 tests using 4 workers
-°°F····F·°°°°··°·F·F[MONITOR] Waiting 15s to capture baseline network activity...
+°°F·····°°F°°··°·FF·[MONITOR] Waiting 15s to capture baseline network activity...
 ····°·····F[BASELINE] 14 requests, 0.47 req/s, Score: GOOD
 
 [TEST] Navigating all routes to check for per-route network issues...
-·FFFFF
+·FFFF
 [TEST] Simulating theme toggle clicks...
-F
+FF
 [FINAL] 112 total requests, 3.73 req/s
 [FINAL] Score: CRITICAL
 [FINAL] Icon loop: true, Sync loop: false
@@ -342,4 +373,4 @@ Nenhum relatorio admin gerado.
 
 | Data | Correcao | Commit |
 |------|----------|--------|
-| 2026-08-04 20:06 UTC | CI report gerado automaticamente | `d03e17d2c32c1ca012dc554f1a3ffed674998543` |
+| 2026-08-04 20:26 UTC | CI report gerado automaticamente | `53f0d98147cb5f68d4de0e75f85a6e2dfe37870c` |
