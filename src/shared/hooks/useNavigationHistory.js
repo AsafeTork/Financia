@@ -10,7 +10,7 @@ export function useNavigationHistory() {
 
   function notifyListeners() {
     listenersRef.current.forEach(function(listener) {
-      try { listener(history, currentIndex); } catch (_) {}
+      try { listener(history, currentIndex); } catch (_e) { /* listener error */ }
     });
   }
 
@@ -144,15 +144,4 @@ export function usePageViewTracking(pageName, onTrack) {
       onTrack?.(pageName + '_exit', { duration: duration, timestamp: Date.now() });
     };
   }, []);
-}
-
-export function createNavigationHistoryProvider() {
-  var historyInstance = useNavigationHistory();
-  
-  return {
-    Provider: function NavigationHistoryProvider({ children }) {
-      return children;
-    },
-    useHistory: function() { return historyInstance; },
-  };
 }
