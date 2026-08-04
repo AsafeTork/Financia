@@ -46,6 +46,8 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+        env:
+          ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
 
       - name: Lint
         id: lint
@@ -107,6 +109,8 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+        env:
+          ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
@@ -160,6 +164,8 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+        env:
+          ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
@@ -282,6 +288,8 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+        env:
+          ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
 
       - name: Run npm audit
         run: npm audit --audit-level=high || true
@@ -321,6 +329,8 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+        env:
+          ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
@@ -368,9 +378,11 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+        env:
+          ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
 
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium firefox
+        run: npx playwright install --with-deps chromium
 
       - name: Run admin audit
         run: npx playwright test e2e/admin-audit.spec.ts --project=chromium
@@ -437,6 +449,8 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+        env:
+          ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
