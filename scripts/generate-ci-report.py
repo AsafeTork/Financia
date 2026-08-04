@@ -83,6 +83,15 @@ def gen_report():
         e2e_status = "nao executado"
     e2e_content = read_file(find_file("ci-artifacts", "e2e-output.txt"), 5000)
 
+    integration_status = "ok"
+    integration_exists = bool(find_file("ci-artifacts", "integration-output.txt"))
+    if integration_exists:
+        if file_contains("ci-artifacts/integration-output.txt", r"failed|FAIL|fail|erro|error"):
+            integration_status = "com falhas"
+    else:
+        integration_status = "nao executado"
+    integration_content = read_file(find_file("ci-artifacts", "integration-output.txt"), 5000)
+
     admin_audit = ""
     for fname in ["admin-audit-report.md", "admin-audit-report.md.bak"]:
         fpath = find_file("ci-artifacts", fname)
@@ -130,6 +139,7 @@ def gen_report():
 |---|---|
 | Lint + Typecheck | {lint_status} |
 | Testes Unitarios | {test_status} |
+| Testes Integracao | {integration_status} |
 | Build | {build_status} |
 | E2E Tests | {e2e_status} |
 | Auditoria de Producao | ver resultado abaixo |
@@ -169,6 +179,18 @@ def gen_report():
 
 ```
 {e2e_content}
+```
+
+---
+
+## Integration Tests
+
+| Status |
+|---|
+| {integration_status} |
+
+```
+{integration_content}
 ```
 
 ---

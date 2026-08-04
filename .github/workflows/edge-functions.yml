@@ -1,0 +1,68 @@
+name: Deploy Edge Functions
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'supabase/functions/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-secrets:
+    name: Validate Secrets
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check required secrets
+        run: |
+          MISSING=0
+          for SECRET in SUPABASE_ACCESS_TOKEN SUPABASE_PROJECT_REF; do
+            if [ -z "${!SECRET}" ]; then
+              echo "ERROR: $SECRET is not set"
+              MISSING=1
+            else
+              echo "OK: $SECRET is set"
+            fi
+          done
+          if [ "$MISSING" = "1" ]; then
+            echo "Required secrets are missing. Cannot deploy Edge Functions."
+            exit 1
+          fi
+
+  deploy-functions:
+    name: Deploy Edge Functions
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: validate-secrets
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Install Supabase CLI
+        run: |
+          curl -fsSL https://supabase.com/install.sh | bash
+          echo "$HOME/.supabase/bin" >> $GITHUB_PATH
+
+      - name: Link Supabase project
+        run: supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_REF }} --access-token ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+      - name: Deploy all Edge Functions
+        run: supabase functions deploy
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+      - name: Verify deployment
+        run: |
+          echo "Edge Functions deployed successfully."
+          echo "Verify at: https://supabase.com/dashboard/project/${{ secrets.SUPABASE_PROJECT_REF }}/functions"

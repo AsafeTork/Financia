@@ -128,6 +128,73 @@ jobs:
             coverage/
           retention-days: 5
 
+  integration-tests:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Cache npm dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run integration E2E tests
+        id: integration
+        run: |
+          set -o pipefail
+          npx playwright test \
+            e2e/sync-conflict.spec.ts \
+            e2e/deep-sync-conflict.spec.ts \
+            e2e/offline-state-corruption.spec.ts \
+            e2e/state-corruption-recovery.spec.ts \
+            e2e/indexeddb-corruption.spec.ts \
+            e2e/indexeddb-eviction.spec.ts \
+            e2e/indexeddb-migration.spec.ts \
+            e2e/sync-broadcast.spec.ts \
+            e2e/sync-indexeddb.spec.ts \
+            e2e/network-error-handling.spec.ts \
+            e2e/network-perf.spec.ts \
+            e2e/memory-leak.spec.ts \
+            --project=chromium 2>&1 | tee /tmp/integration-output.txt
+          echo "exit_code=${PIPESTATUS[0]}" >> $GITHUB_OUTPUT
+
+      - name: Upload integration artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: integration-tests
+          path: |
+            /tmp/integration-output.txt
+            playwright-report/
+            test-results/
+          retention-days: 5
+
   build:
     name: Build
     runs-on: ubuntu-latest
@@ -173,6 +240,11 @@ jobs:
           set -o pipefail
           npm run build 2>&1 | tee /tmp/build-output.txt
           echo "exit_code=${PIPESTATUS[0]}" >> $GITHUB_OUTPUT
+
+      - name: Verify PWA manifest
+        run: |
+          test -f dist/manifest.json && echo "manifest.json OK" || (echo "manifest.json MISSING" && exit 1)
+          test -f dist/sw.js && echo "sw.js OK" || echo "sw.js not found (optional)"
 
       - name: Upload build artifacts
         if: always()
@@ -256,6 +328,14 @@ jobs:
       - name: Run production audit
         run: npx playwright test --config=playwright.prod.config.ts --project=chromium
 
+      - name: Upload prod audit results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: prod-audit-results
+          path: prod-audit-results.json
+          retention-days: 5
+
   admin-audit:
     name: Admin Audit (production)
     runs-on: ubuntu-latest
@@ -325,48 +405,6 @@ jobs:
             echo "No admin audit report generated." >> "$GITHUB_STEP_SUMMARY"
           fi
 
-  extract-errors:
-    name: Extract Errors & Generate Report
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    needs: [lint-typecheck, unit-tests, build, security-audit, production-audit, admin-audit, e2e]
-    if: always()
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          persist-credentials: false
-
-      - name: Download CI artifacts
-        if: always()
-        run: |
-          mkdir -p ci-artifacts
-          gh run download ${{ github.run_id }} -D ci-artifacts/ || true
-          find ci-artifacts/ -type f | head -30 || true
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Generate CI_REPORT.md
-        continue-on-error: true
-        run: python3 scripts/generate-ci-report.py
-
-      - name: Commit CI_REPORT.md
-        if: github.ref == 'refs/heads/main'
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add CI_REPORT.md
-          git diff --cached --quiet || git commit -m "chore: update CI_REPORT.md [skip ci]"
-          git push
-
-      - name: Upload report artifact
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: ci-report-md
-          path: CI_REPORT.md
-          retention-days: 30
-
   e2e:
     name: E2E Tests (chromium)
     runs-on: ubuntu-latest
@@ -432,10 +470,52 @@ jobs:
             test-results/
           retention-days: 5
 
+  extract-errors:
+    name: Extract Errors & Generate Report
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: [lint-typecheck, unit-tests, build, security-audit, production-audit, admin-audit, e2e, integration-tests]
+    if: always()
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          persist-credentials: false
+
+      - name: Download CI artifacts
+        if: always()
+        run: |
+          mkdir -p ci-artifacts
+          gh run download ${{ github.run_id }} -D ci-artifacts/ || true
+          find ci-artifacts/ -type f | head -30 || true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate CI_REPORT.md
+        continue-on-error: true
+        run: python3 scripts/generate-ci-report.py
+
+      - name: Commit CI_REPORT.md
+        if: github.ref == 'refs/heads/main'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add CI_REPORT.md
+          git diff --cached --quiet || git commit -m "chore: update CI_REPORT.md [skip ci]"
+          git push
+
+      - name: Upload report artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-report-md
+          path: CI_REPORT.md
+          retention-days: 30
+
   summary:
     name: Test Summary
     runs-on: ubuntu-latest
-    needs: [lint-typecheck, unit-tests, build, security-audit, production-audit, admin-audit, e2e, extract-errors]
+    needs: [lint-typecheck, unit-tests, build, security-audit, production-audit, admin-audit, e2e, integration-tests, extract-errors]
     if: always()
     steps:
       - uses: actions/checkout@v4
@@ -456,3 +536,123 @@ jobs:
           name: ci-summary-report
           path: CI_REPORT.md
           retention-days: 30
+
+      - name: Notification Summary
+        if: always()
+        run: |
+          echo "## CI/CD Pipeline Summary" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Job | Status |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|-----|--------|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Lint + Typecheck | ${{ needs.lint-typecheck.result }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Unit Tests | ${{ needs.unit-tests.result }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Integration Tests | ${{ needs.integration-tests.result }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Build | ${{ needs.build.result }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Security Audit | ${{ needs.security-audit.result }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Production Audit | ${{ needs.production-audit.result }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Admin Audit | ${{ needs.admin-audit.result }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| E2E Tests | ${{ needs.e2e.result }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Extract Errors | ${{ needs.extract-errors.result }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          if [ -f CI_REPORT.md ]; then
+            cat CI_REPORT.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+  notification:
+    name: Notify
+    runs-on: ubuntu-latest
+    needs: summary
+    if: always() && github.event_name != 'pull_request'
+    steps:
+      - name: Discord Notification
+        if: secrets.DISCORD_WEBHOOK_URL != ''
+        run: |
+          STATUS="${{ needs.summary.result }}"
+          COLOR=3066993
+          if [ "$STATUS" != "success" ]; then
+            COLOR=15158332
+          fi
+          PAYLOAD=$(cat <<EOF
+          {
+            "embeds": [{
+              "title": "Financia CI/CD Pipeline",
+              "description": "Status: ${STATUS}",
+              "color": ${COLOR},
+              "fields": [
+                {"name": "Branch", "value": "${{ github.ref_name }}", "inline": true},
+                {"name": "Commit", "value": "${{ github.sha }}", "inline": true},
+                {"name": "Workflow", "value": "${{ github.workflow }}", "inline": true}
+              ],
+              "footer": {"text": "GitHub Actions"}
+            }]
+          }
+          EOF
+          )
+          curl -s -H "Content-Type: application/json" -d "$PAYLOAD" "${{ secrets.DISCORD_WEBHOOK_URL }}" || true
+
+      - name: Slack Notification
+        if: secrets.SLACK_WEBHOOK_URL != ''
+        run: |
+          STATUS="${{ needs.summary.result }}"
+          COLOR="good"
+          if [ "$STATUS" != "success" ]; then
+            COLOR="danger"
+          fi
+          PAYLOAD=$(cat <<EOF
+          {
+            "attachments": [{
+              "color": "${COLOR}",
+              "title": "Financia CI/CD Pipeline",
+              "text": "Status: ${STATUS}",
+              "fields": [
+                {"title": "Branch", "value": "${{ github.ref_name }}", "short": true},
+                {"title": "Commit", "value": "${{ github.sha }}", "short": true}
+              ]
+            }]
+          }
+          EOF
+          )
+          curl -s -H "Content-Type: application/json" -d "$PAYLOAD" "${{ secrets.SLACK_WEBHOOK_URL }}" || true
+
+  deploy-render:
+    name: Deploy to Render
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [lint-typecheck, unit-tests, build, security-audit, production-audit, admin-audit, e2e, integration-tests]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - name: Trigger Render Deploy
+        run: |
+          curl -s -X POST \
+            "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID }}/deploys" \
+            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{"auto": true}' || echo "Render deploy trigger failed (service may auto-deploy from GitHub)"
+
+      - name: Verify Deploy
+        run: |
+          echo "Render deploy triggered for production branch (main)"
+          echo "Verify at: https://financiabr.me"
+
+  validate-secrets:
+    name: Validate Secrets
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main'
+    steps:
+      - name: Check required secrets
+        run: |
+          MISSING=0
+          for SECRET in SUPABASE_URL SUPABASE_ANON_KEY SUPABASE_SERVICE_ROLE_KEY; do
+            if [ -z "${!SECRET}" ]; then
+              echo "WARNING: $SECRET is not set"
+              MISSING=1
+            else
+              echo "OK: $SECRET is set"
+            fi
+          done
+          if [ "$MISSING" = "1" ]; then
+            echo "Some secrets are missing. Deploy may fail."
+          else
+            echo "All required secrets are present."
+          fi

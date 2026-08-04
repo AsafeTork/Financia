@@ -14,7 +14,7 @@ on:
       primary_color:
         description: 'Cor HEX sem # (ex: 002f59)'
         required: false
-        default: '002f59' 
+        default: '002f59'
 
 permissions:
   contents: write
@@ -118,6 +118,213 @@ jobs:
           path: apk-output/
           retention-days: 1
 
+  build-pwa:
+    runs-on: ubuntu-latest
+    outputs:
+      pwa_name: ${{ steps.rename.outputs.pwa_name }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Cache npm dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+
+      - name: Cache Vite
+        uses: actions/cache@v4
+        with:
+          path: node_modules/.vite
+          key: ${{ runner.os }}-vite-${{ hashFiles('vite.config.js', 'package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-vite-
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build PWA
+        run: npm run build
+
+      - name: Verify PWA artifacts
+        run: |
+          test -f dist/index.html && echo "index.html OK" || (echo "index.html MISSING" && exit 1)
+          test -f dist/manifest.json && echo "manifest.json OK" || (echo "manifest.json MISSING" && exit 1)
+          test -f dist/sw.js && echo "sw.js OK" || echo "sw.js not found (optional)"
+          find dist/ -type f | head -20
+
+      - name: Renomear PWA
+        id: rename
+        env:
+          CLIENT_NAME: ${{ github.event.inputs.client_name || 'financia' }}
+        run: |
+          SAFE=$(echo "$CLIENT_NAME" | tr ' ' '-' | tr -cd 'a-zA-Z0-9-' | tr '[:upper:]' '[:lower:]')
+          SAFE=${SAFE:-financia}
+          mkdir -p pwa-output
+          tar -czf "pwa-output/${SAFE}-pwa.tar.gz" -C dist .
+          echo "pwa_name=${SAFE}-pwa.tar.gz" >> "$GITHUB_OUTPUT"
+
+      - name: Upload PWA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pwa-${{ github.event.inputs.client_name || 'financia' }}
+          path: pwa-output/
+          retention-days: 90
+          if-no-files-found: warn
+
+      - name: Salvar PWA para release
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-pwa
+          path: pwa-output/
+          retention-days: 1
+
+  build-electron-macos:
+    runs-on: macos-latest
+    outputs:
+      dmg_name: ${{ steps.build.outputs.dmg_name }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Cache npm dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Instalar Python Pillow
+        run: pip install Pillow
+
+      - name: Baixar logo do cliente
+        env:
+          LOGO_URL: ${{ github.event.inputs.logo_url || '' }}
+        shell: bash
+        run: |
+          if [ -n "$LOGO_URL" ]; then
+            curl -fsSL "$LOGO_URL" -o /tmp/logo --max-time 20 && echo "Logo OK" || echo "Sem logo"
+          fi
+
+      - name: Gerar icone macOS
+        env:
+          HEX_COLOR: ${{ github.event.inputs.primary_color || '002f59' }}
+        run: python scripts/gen_icon_macos.py 2>/dev/null || echo "gen_icon_macos.py not found, skipping"
+
+      - name: Aplicar nome do app
+        env:
+          CLIENT_NAME: ${{ github.event.inputs.client_name || 'Financia' }}
+        shell: bash
+        run: |
+          sed -i "s|\"productName\": \".*\"|\"productName\": \"$CLIENT_NAME\"|" package.json
+
+      - name: Build Electron macOS DMG
+        id: build
+        env:
+          CLIENT_NAME: ${{ github.event.inputs.client_name || 'financia' }}
+        shell: bash
+        run: |
+          npx electron-builder --mac --publish never
+          SAFE=$(echo "$CLIENT_NAME" | tr ' ' '-' | tr -cd 'a-zA-Z0-9-' | tr '[:upper:]' '[:lower:]')
+          SAFE=${SAFE:-financia}
+          find dist -name "*.dmg" | head -1 | xargs -I{} cp {} "${SAFE}.dmg" 2>/dev/null || true
+          ls -lh *.dmg 2>/dev/null
+          echo "dmg_name=${SAFE}.dmg" >> "$GITHUB_OUTPUT"
+
+      - name: Salvar DMG para release
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-dmg
+          path: "*.dmg"
+          retention-days: 1
+
+  build-electron-linux:
+    runs-on: ubuntu-latest
+    outputs:
+      deb_name: ${{ steps.build.outputs.deb_name }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Cache npm dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Instalar dependencias de empacotamento
+        run: |
+          sudo apt-get install -y librsvg2-bin 2>/dev/null || true
+          pip install Pillow --break-system-packages --quiet
+
+      - name: Baixar logo do cliente
+        env:
+          LOGO_URL: ${{ github.event.inputs.logo_url || '' }}
+        shell: bash
+        run: |
+          if [ -n "$LOGO_URL" ]; then
+            curl -fsSL "$LOGO_URL" -o /tmp/logo --max-time 20 && echo "Logo OK" || echo "Sem logo"
+          fi
+
+      - name: Gerar icone Linux
+        env:
+          HEX_COLOR: ${{ github.event.inputs.primary_color || '002f59' }}
+        run: python scripts/gen_icon_linux.py 2>/dev/null || echo "gen_icon_linux.py not found, skipping"
+
+      - name: Aplicar nome do app
+        env:
+          CLIENT_NAME: ${{ github.event.inputs.client_name || 'Financia' }}
+        shell: bash
+        run: |
+          sed -i "s|\"productName\": \".*\"|\"productName\": \"$CLIENT_NAME\"|" package.json
+
+      - name: Build Electron Linux DEB
+        id: build
+        env:
+          CLIENT_NAME: ${{ github.event.inputs.client_name || 'financia' }}
+        shell: bash
+        run: |
+          npx electron-builder --linux --publish never
+          SAFE=$(echo "$CLIENT_NAME" | tr ' ' '-' | tr -cd 'a-zA-Z0-9-' | tr '[:upper:]' '[:lower:]')
+          SAFE=${SAFE:-financia}
+          find dist -name "*.deb" | head -1 | xargs -I{} cp {} "${SAFE}.deb" 2>/dev/null || true
+          find dist -name "*.AppImage" | head -1 | xargs -I{} cp {} "${SAFE}.AppImage" 2>/dev/null || true
+          ls -lh *.deb *.AppImage 2>/dev/null
+          echo "deb_name=${SAFE}.deb" >> "$GITHUB_OUTPUT"
+
+      - name: Salvar DEB para release
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-deb
+          path: "*.deb"
+          retention-days: 1
+
   build-windows:
     runs-on: windows-latest
     outputs:
@@ -125,7 +332,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - name: Setup Node.js 24
+        uses: actions/setup-node@v4
         with:
           node-version: '24'
           cache: 'npm'
@@ -186,13 +394,31 @@ jobs:
           retention-days: 1
 
   create-release:
-    needs: [build-apk, build-windows]
+    needs: [build-apk, build-pwa, build-electron-macos, build-electron-linux, build-windows]
     runs-on: ubuntu-latest
     steps:
       - name: Baixar APK
         uses: actions/download-artifact@v4
         with:
           name: release-apk
+          path: release-files/
+
+      - name: Baixar PWA
+        uses: actions/download-artifact@v4
+        with:
+          name: release-pwa
+          path: release-files/
+
+      - name: Baixar DMG
+        uses: actions/download-artifact@v4
+        with:
+          name: release-dmg
+          path: release-files/
+
+      - name: Baixar DEB
+        uses: actions/download-artifact@v4
+        with:
+          name: release-deb
           path: release-files/
 
       - name: Baixar EXE
