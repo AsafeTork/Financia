@@ -7,11 +7,12 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.js'],
     globals: true,
-    pool: 'forks',
+    pool: 'vmThreads',
     poolOptions: {
-      forks: {
-        maxForks: 2,
-        minForks: 1,
+      vmThreads: {
+        maxThreads: 2,
+        minThreads: 1,
+        vmMemoryLimit: '3g',
       },
     },
     teardownTimeout: 5000,
