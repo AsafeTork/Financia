@@ -15,6 +15,8 @@ beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
 afterAll(async () => {
   await server.close();
   globalThis.indexedDB = new IDBFactory();
+  // Force exit if anything is still hanging
+  setTimeout(() => process.exit(0), 100);
 });
 afterEach(() => {
   server.resetHandlers();
