@@ -2,7 +2,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useAppState } from './useAppState.js';
-import { INIT_BRAND, INIT_PLAN } from '../../lib/constants.js';
+import { INIT_BRAND, INIT_PLAN } from '../lib/constants.js';
 
 describe('useAppState', function() {
   it('retorna valores iniciais corretos', function() {

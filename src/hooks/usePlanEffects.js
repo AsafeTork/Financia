@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { effectivePlan } from '../../lib/constants.js';
+import { effectivePlan } from '../lib/constants.js';
 
 export function usePlanEffects({ dataLoading, setDataLoading, setSyncStatus, planInfo, session, toast, path, setAnnounceMsg, firstRender, toastTimeoutsRef }) {
   useEffect(function() {

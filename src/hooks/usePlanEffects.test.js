@@ -2,7 +2,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { usePlanEffects } from './usePlanEffects.js';
-import { INIT_PLAN } from '../../lib/constants.js';
+import { INIT_PLAN } from '../lib/constants.js';
 
 function makeHook(overrides) {
   const setDataLoading = vi.fn();

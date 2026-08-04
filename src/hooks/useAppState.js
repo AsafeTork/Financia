@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef } from 'react';
-import { INIT_BRAND, INIT_PLAN } from '../../lib/constants.js';
+import { INIT_BRAND, INIT_PLAN } from '../lib/constants.js';
 
 export function useAppState() {
   const [session, setSession] = useState(null);
