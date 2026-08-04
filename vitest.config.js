@@ -7,11 +7,13 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.js'],
     globals: true,
-    pool: 'threads',
+    pool: 'forks',
     forceExit: true,
-    minThreads: 2,
-    maxThreads: 4,
-    isolate: true,
+    poolOptions: {
+      forks: {
+        singleFork: true,
+      },
+    },
     include: ['src/**/*.test.{js,jsx}'],
     exclude: ['**/e2e/**', '**/*.isolated.test.{js,jsx}', '**/benchmarks/**', '**/supabase/functions/**'],
     testTimeout: 15000,
