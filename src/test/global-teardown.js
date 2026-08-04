@@ -1,3 +1,4 @@
-export default async function teardown() {
-  globalThis.process?.exit(0);
+/* eslint-disable */
+export default function teardown() {
+  process.exit(0);
 }
