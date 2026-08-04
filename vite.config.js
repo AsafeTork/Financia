@@ -46,7 +46,7 @@ export default defineConfig(async function() {
           manualChunks: function(id) {
             if (id.includes('node_modules/react') && !id.includes('react-table')) return 'vendor-react';
             if (id.includes('node_modules/react-dom')) return 'vendor-react';
-            if (id.includes('node_modules/scheduler')) return 'vendor-scheduler';
+            if (id.includes('node_modules/scheduler')) return 'vendor-react';
             if (id.includes('node_modules/@supabase')) return 'vendor-supabase';
             if (id.includes('node_modules/@tanstack/query-core') || id.includes('node_modules/@tanstack/react-query')) return 'vendor-query';
             if (id.includes('node_modules/@radix-ui')) return 'vendor-radix';
