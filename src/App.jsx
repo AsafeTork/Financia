@@ -126,6 +126,10 @@ export default function App() {
     };
   }, [tx, setTx, addTx, addGenerated, editTx, deleteTx, products, setProducts, addProduct, editProduct, deleteProduct, losses, setLosses, addLoss, editLoss, deleteLoss, adjustStock]);
 
+  const ctx = useMemo(function() {
+    return { ...stableCtx, ...dataCtx };
+  }, [stableCtx, dataCtx]);
+
   if (s.appLoading) return <Loader/>;
   if (n.isLegal) return <FeatureErrorBoundary featureName="Legal"><Suspense fallback={<Loader/>}>{n.path === 'privacidade' ? <PrivacyPolicy onNav={n.navTo}/> : <TermsOfService onNav={n.navTo}/>}</Suspense></FeatureErrorBoundary>;
   if (n.isLanding) return <FeatureErrorBoundary featureName="Landing"><Suspense fallback={<Loader/>}><Landing brand={s.brand} onEnter={function() { n.navTo(''); s.setShowLogin(true); }} onNav={n.navTo}/></Suspense></FeatureErrorBoundary>;
@@ -144,7 +148,7 @@ export default function App() {
   if (s.onboardingNeeded) { const finishOnboarding = function(data) { o.finishOnboarding(data, needsName); }; return <Onboarding brand={s.brand} needsName={needsName} needsPhone={needsPhone} onSave={finishOnboarding} uid={s.session.user.id}/>; }
 
   return (
-    <AppProvider value={{...stableCtx, ...dataCtx}}>
+    <AppProvider value={ctx}>
       <div className="min-h-screen flex overflow-x-hidden" style={{background:'var(--bg-page)'}}>
         <a href="#main-content" onClick={function(e){e.preventDefault();var el=document.getElementById('main-content');if(el){el.setAttribute('tabindex','-1');el.focus();el.scrollIntoView();}}} className="skip-link">Pular para conteúdo</a>
         <Offline/><WidgetErrorBoundary><UpdateBanner brand={appBrand}/></WidgetErrorBoundary><Suspense fallback={null}><DebugBadge/></Suspense><SyncBadge status={s.syncStatus}/>
