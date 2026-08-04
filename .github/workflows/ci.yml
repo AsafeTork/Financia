@@ -497,10 +497,10 @@ jobs:
     timeout-minutes: 5
     needs: [lint-typecheck, unit-tests, build, security-audit, production-audit, admin-audit, e2e, integration-tests]
     if: always()
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Download CI artifacts
         if: always()
@@ -653,10 +653,10 @@ jobs:
             -H "Content-Type: application/json" \
             -d '{"auto": true}' || echo "Render deploy trigger failed (service may auto-deploy from GitHub)"
 
-      - name: Verify Deploy
-        run: |
-          echo "Render deploy triggered for production branch (main)"
-          echo "Verify at: https://financiabr.me"
+       - name: Verify Deploy
+         run: |
+           echo "Render deploy triggered for production branch (main)"
+           echo "Verify at: https://financiabr.me"
 
   validate-secrets:
     name: Validate Secrets
@@ -680,3 +680,4 @@ jobs:
           else
             echo "All required secrets are present."
           fi
+
