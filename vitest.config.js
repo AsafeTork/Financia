@@ -8,6 +8,7 @@ export default defineConfig({
     setupFiles: ['./src/test/setup.js'],
     globals: true,
     pool: 'threads',
+    forceExit: true,
     minThreads: 2,
     maxThreads: 4,
     isolate: true,
