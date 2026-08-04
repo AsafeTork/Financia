@@ -69,7 +69,7 @@ const MODULE_DEFS = {
         url: { type: 'string', nullable: true },
         fallback: { type: 'string', minLength: 1, maxLength: 1 },
         radius: { type: 'string' },
-        colors: { type: 'object', additionalProperties: { type: 'string' } },
+        colors: { type: 'object', additionalProperties: { type: 'string' }, nullable: true },
       },
     },
     defaults: LOGO_DEFAULTS,
@@ -270,8 +270,14 @@ function validateField(value, schemaDef, path, errors) {
       errors.push(`tipo invalido em ${path}: esperado boolean, recebido ${typeof value}`);
     }
   } else if (t === 'object') {
-    if (value === null || typeof value !== 'object' || Array.isArray(value)) {
-      errors.push(`tipo invalido em ${path}: esperado object, recebido ${value === null ? 'null' : typeof value}`);
+    if (value === null) {
+      if (!schemaDef.nullable) {
+        errors.push(`tipo invalido em ${path}: esperado object, recebido null`);
+      }
+      return;
+    }
+    if (typeof value !== 'object' || Array.isArray(value)) {
+      errors.push(`tipo invalido em ${path}: esperado object, recebido ${typeof value}`);
       return;
     }
     const required = schemaDef.required || [];

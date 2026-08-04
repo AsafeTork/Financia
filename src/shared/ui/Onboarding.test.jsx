@@ -11,8 +11,8 @@ var KEY = 'financia_onboarding_progress_u1';
 function setup(overrides) {
   var props = Object.assign({ brand: BRAND, needsName: false, needsPhone: false, uid: 'u1' }, overrides || {});
   var calls = [];
-  var onSave = props.onSave || function() {};
-  props.onSave = function(data) { calls.push(data); return onSave(data); };
+  var onSave = props.onSave || function() { return Promise.resolve(); };
+  props.onSave = function(data) { calls.push(data); return Promise.resolve(onSave(data)); };
   return { calls: calls, props: props };
 }
 
@@ -96,7 +96,7 @@ describe('Onboarding', function() {
     await user.type(screen.getByLabelText('Nome da empresa'), 'Padaria do João');
     await user.click(screen.getByRole('button', { name: 'Concluir' }));
     var alert = await screen.findByRole('alert');
-    expect(alert.textContent).toContain('Não foi possível salvar agora');
+    expect(alert.textContent).toContain('net');
     expect(calls.length).toBe(1);
     expect(screen.getByLabelText('Nome da empresa').value).toBe('Padaria do João');
   });

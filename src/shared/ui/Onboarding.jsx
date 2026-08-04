@@ -183,14 +183,14 @@ export default function Onboarding({ brand, needsName, needsPhone, onSave, uid }
             </div>
           )}
 
-          {step === 1 && cur.key === 'name' && (
+          {cur.key === 'name' && (
             <div className="flex flex-col gap-4">
               <Inp label="Nome da empresa" tip="Esse nome aparece no topo do app, no relatório e nos arquivos exportados."
                 value={name} onChange={onName} placeholder="Ex: Padaria do João" error={nameErr} autoFocus />
             </div>
           )}
 
-          {step === 1 && cur.key === 'phone' && (
+          {cur.key === 'phone' && (
             <div className="flex flex-col gap-4">
               <PhoneInput label="Telefone (com DDD)" tip="Usamos só para contato sobre seu plano — você pode trocar depois nas configurações."
                 value={phoneValue} onChange={onPhone} error={phoneErr} autoFocus
@@ -213,7 +213,7 @@ export default function Onboarding({ brand, needsName, needsPhone, onSave, uid }
             </div>
           )}
 
-          {step === 1 && cur.key === 'name' && (
+          {cur.key === 'name' && (
             <div className="flex flex-col gap-3">
               {isLast
                 ? <PrimaryBtn submitBtn label="Concluir" />
@@ -225,7 +225,7 @@ export default function Onboarding({ brand, needsName, needsPhone, onSave, uid }
             </div>
           )}
 
-          {step === 1 && cur.key === 'phone' && (
+          {cur.key === 'phone' && (
             <div className="flex flex-col gap-3">
               <PrimaryBtn submitBtn label="Concluir" />
               <div className="flex gap-2">

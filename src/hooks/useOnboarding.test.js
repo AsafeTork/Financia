@@ -24,7 +24,7 @@ function makeHook(overrides) {
     savePhone: savePhone,
   }, overrides || {});
   const hook = renderHook(function() { return useOnboarding(props); });
-  return { hook: hook, setOnboardingNeeded: setOnboardingNeeded, onboardingRef: onboardingRef, saveBrand: saveBrand, savePhone: savePhone };
+  return { hook: hook, setOnboardingNeeded: setOnboardingNeeded, onboardingRef: props.onboardingRef, saveBrand: saveBrand, savePhone: savePhone };
 }
 
 describe('useOnboarding — deteccao de necessidade', function() {

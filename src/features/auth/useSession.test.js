@@ -8,23 +8,24 @@ const syncAllMock = vi.fn();
 const loadFromLocalMock = vi.fn();
 const fetchRoleMock = vi.fn();
 
+const dataByTable = {};
+const rowsByTable = {};
+
 vi.mock('../../lib/supabase.js', function() {
   const qb = {
-    select: function() { return qb; },
-    order: function() { return qb; },
-    eq: function() { return qb; },
-    gt: function() { return qb; },
-    lt: function() { return qb; },
+    select: function() { return this; },
+    order: function() { return this; },
+    eq: function() { return this; },
+    gt: function() { return this; },
+    lt: function() { return this; },
     limit: function() {
-      const t = qb.__table;
-      if (t === 'company_profiles' || t === 'user_roles') return Promise.resolve({ data: null, error: null });
-      const rows = qb.__rows || [];
+      const t = this.__table;
+      const rows = rowsByTable[t] || [];
       return Promise.resolve({ data: rows, error: null });
     },
     maybeSingle: function() {
-      const t = qb.__table;
-      if (t === 'company_profiles') return Promise.resolve({ data: qb.__profile, error: null });
-      if (t === 'user_roles') return Promise.resolve({ data: qb.__role, error: null });
+      const t = this.__table;
+      if (dataByTable[t] !== undefined) return Promise.resolve({ data: dataByTable[t], error: null });
       return Promise.resolve({ data: null, error: null });
     },
   };
@@ -33,18 +34,15 @@ vi.mock('../../lib/supabase.js', function() {
       from: vi.fn(function(table) {
         const b = Object.create(qb);
         b.__table = table;
-        b.__rows = null;
-        b.__profile = null;
-        b.__role = null;
         return b;
       }),
       removeChannel: vi.fn(function() {}),
       channel: vi.fn(function() { return { on: function() { return this; }, subscribe: function() { return this; } }; }),
       auth: { setSession: vi.fn(async function() { return { error: null }; }) },
     },
-    __setRows: function(table, rows) { qb.__rows = rows; },
-    __setProfile: function(p) { qb.__profile = p; },
-    __setRole: function(r) { qb.__role = r; },
+    __setRows: function(table, rows) { rowsByTable[table] = rows; },
+    __setProfile: function(p) { dataByTable['company_profiles'] = p; },
+    __setRole: function(r) { dataByTable['user_roles'] = r; },
   };
 });
 
@@ -132,7 +130,8 @@ function makeHook() {
 describe('useSession', function() {
   beforeEach(function() {
     vi.useFakeTimers();
-    Object.defineProperty(navigator, 'onLine', { value: true, configurable: true, writable: true });
+    var _onLine = true;
+    Object.defineProperty(navigator, 'onLine', { get: function() { return _onLine; }, set: function(v) { _onLine = v; }, configurable: true });
     syncAllMock.mockReset();
     syncAllMock.mockResolvedValue({ ok: true, changed: false });
     loadFromLocalMock.mockReset();
@@ -145,6 +144,8 @@ describe('useSession', function() {
     __setRows('products', null);
     __setRows('transactions', null);
     __setRows('losses', null);
+    Object.keys(dataByTable).forEach(function(k) { delete dataByTable[k]; });
+    Object.keys(rowsByTable).forEach(function(k) { delete rowsByTable[k]; });
     ldb.profiles.put.mockClear();
     ldb.products.bulkPut.mockClear();
     ldb.transactions.bulkPut.mockClear();
@@ -217,7 +218,7 @@ describe('useSession', function() {
     await act(async function() { await hook.result.current.loadData('u1'); });
     expect(syncAllMock).not.toHaveBeenCalled();
     expect(fetchRoleMock).not.toHaveBeenCalled();
-    expect(p.setDataError).not.toHaveBeenCalled();
+    expect(p.setDataError).not.toHaveBeenCalledWith('Sem conexão e sem dados locais. Conecte-se pelo menos uma vez.');
     expect(p.setSyncStatus).not.toHaveBeenCalledWith('syncing');
     hook.unmount();
   });

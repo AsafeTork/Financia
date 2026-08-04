@@ -15,6 +15,20 @@ vi.mock('../shared/ui/ui.jsx', () => ({
   PageSkeleton: function() { return React.createElement('div', { 'data-testid': 'skeleton' }); }
 }));
 
+vi.mock('../App/contexts/AppContext.jsx', () => ({
+  useAppContext: () => ({
+    tx: null, products: null, losses: [], brand: null,
+    planInfo: null, navTo: vi.fn(), toast: { current: null },
+    confirm: vi.fn(), session: null,
+    addTx: vi.fn(), editTx: vi.fn(), deleteTx: vi.fn(),
+    addGenerated: vi.fn(), handleDeductStock: vi.fn(),
+    addProduct: vi.fn(), editProduct: vi.fn(), deleteProduct: vi.fn(),
+    addLoss: vi.fn(), editLoss: vi.fn(), deleteLoss: vi.fn(),
+    adjustStock: vi.fn(), saveBrand: vi.fn(), savePhone: vi.fn(),
+    isAdminDB: false, dataLoading: false,
+  }),
+}));
+
 async function loadAppRoutes() {
   const mod = await import('./routes.jsx');
   return mod.default;

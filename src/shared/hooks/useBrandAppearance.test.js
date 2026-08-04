@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import useBrandAppearance, { applyBrandVars } from './useBrandAppearance.js';
 
@@ -33,6 +33,10 @@ beforeEach(function() {
     configurable: true,
     writable: true,
   });
+});
+
+afterEach(function() {
+  vi.useRealTimers();
 });
 
 function makeBrand(overrides) {
@@ -144,23 +148,37 @@ describe('useBrandAppearance', function() {
   });
 
   it('toggleTheme switches from light to dark and saves', function() {
+    vi.useFakeTimers();
     const brand = makeBrand({ white_label: true, custom_palette: true, theme: 'light' });
     const { result } = renderHook(function() { return useBrandAppearance(brand, makePlanInfo()); });
     act(function() { result.current.toggleTheme(); });
+    vi.runAllTimers();
+    act(function() {});
     expect(result.current.themePref).toBe('dark');
     expect(result.current.effectiveTheme).toBe('dark');
     expect(lsData['financia_theme']).toBe('dark');
     act(function() { result.current.toggleTheme(); });
+    vi.runAllTimers();
+    act(function() {});
     expect(result.current.themePref).toBe('light');
+    vi.useRealTimers();
   });
 
   it('toggleTheme returns previous themePref for null start', function() {
+    vi.useFakeTimers();
     const brand = makeBrand({ white_label: true, custom_palette: true, theme: 'light' });
     const { result } = renderHook(function() { return useBrandAppearance(brand, makePlanInfo()); });
     act(function() { result.current.toggleTheme(); });
+    vi.runAllTimers();
+    act(function() {});
     act(function() { result.current.toggleTheme(); });
+    vi.runAllTimers();
+    act(function() {});
     act(function() { result.current.toggleTheme(); });
+    vi.runAllTimers();
+    act(function() {});
     expect(result.current.themePref).toBe('dark');
+    vi.useRealTimers();
   });
 
   it('white-label with partial colors and custom_palette=false uses fallback', function() {

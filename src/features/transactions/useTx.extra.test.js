@@ -82,7 +82,8 @@ describe('useTx — addGenerated', function() {
     mockGet.mockClear();
     mockUpsert.mockClear();
     mockAddSkip.mockClear();
-    Object.defineProperty(navigator, 'onLine', { value: false, configurable: true });
+    var _onLine = false;
+    Object.defineProperty(navigator, 'onLine', { get: function() { return _onLine; }, set: function(v) { _onLine = v; }, configurable: true });
   });
 
   it('adiciona transacao gerada e sincroniza quando online', async function() {
@@ -151,7 +152,8 @@ describe('useTx — deleteTx com recorrência', function() {
     mockGet.mockClear();
     mockAddSkip.mockClear();
     mockUpdate.mockClear();
-    Object.defineProperty(navigator, 'onLine', { value: false, configurable: true });
+    var _onLine = false;
+    Object.defineProperty(navigator, 'onLine', { get: function() { return _onLine; }, set: function(v) { _onLine = v; }, configurable: true });
   });
 
   it('id recorrente: marca skip para o usuario', async function() {
@@ -190,7 +192,8 @@ describe('useTx — sincronizacao online apos CRUD', function() {
     mockUpsert.mockClear();
     mockSbUpdate.mockClear();
     mockSbDelete.mockClear();
-    Object.defineProperty(navigator, 'onLine', { value: true, configurable: true });
+    var _onLine = true;
+    Object.defineProperty(navigator, 'onLine', { get: function() { return _onLine; }, set: function(v) { _onLine = v; }, configurable: true });
   });
 
   it('addTx online: upsert com payload e marca _synced 1', async function() {

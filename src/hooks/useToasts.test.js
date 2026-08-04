@@ -24,7 +24,7 @@ function makeHook() {
 
 function addToast(hook, msg, type) {
   act(function() { hook.result.current.toast(msg, type); });
-  hook.refresh();
+  act(function() { hook.rerender(); });
 }
 
 describe('useToasts', function() {
@@ -55,10 +55,10 @@ describe('useToasts', function() {
     const { hook } = makeHook();
     addToast(hook, 'Erro', 'error');
     act(function() { vi.advanceTimersByTime(3999); });
-    hook.refresh();
+    act(function() { hook.rerender(); });
     expect(hook.result.current.toasts).toHaveLength(1);
     act(function() { vi.advanceTimersByTime(1); });
-    hook.refresh();
+    act(function() { hook.rerender(); });
     expect(hook.result.current.toasts).toHaveLength(0);
   });
 
@@ -66,10 +66,10 @@ describe('useToasts', function() {
     const { hook } = makeHook();
     addToast(hook, 'Ok');
     act(function() { vi.advanceTimersByTime(2999); });
-    hook.refresh();
+    act(function() { hook.rerender(); });
     expect(hook.result.current.toasts).toHaveLength(1);
     act(function() { vi.advanceTimersByTime(1); });
-    hook.refresh();
+    act(function() { hook.rerender(); });
     expect(hook.result.current.toasts).toHaveLength(0);
   });
 
@@ -84,20 +84,20 @@ describe('useToasts', function() {
   it('multiplicidade: varios toasts convivem e expiram juntos', function() {
     const { hook } = makeHook();
     act(function() { hook.result.current.toast('A'); hook.result.current.toast('B'); });
-    hook.refresh();
+    act(function() { hook.rerender(); });
     expect(hook.result.current.toasts).toHaveLength(2);
     expect(hook.result.current.toasts[1].id).toBe(2);
     act(function() { vi.advanceTimersByTime(3000); });
-    hook.refresh();
+    act(function() { hook.rerender(); });
     expect(hook.result.current.toasts).toHaveLength(0);
   });
 
   it('dismissToast remove apenas o toast alvo', function() {
     const { hook } = makeHook();
     act(function() { hook.result.current.toast('A'); hook.result.current.toast('B'); });
-    hook.refresh();
+    act(function() { hook.rerender(); });
     act(function() { hook.result.current.dismissToast(1); });
-    hook.refresh();
+    act(function() { hook.rerender(); });
     const left = hook.result.current.toasts;
     expect(left).toHaveLength(1);
     expect(left[0].msg).toBe('B');
@@ -106,9 +106,9 @@ describe('useToasts', function() {
   it('dismissToast com id inexistente nao altera a lista', function() {
     const { hook } = makeHook();
     act(function() { hook.result.current.toast('A'); });
-    hook.refresh();
+    act(function() { hook.rerender(); });
     act(function() { hook.result.current.dismissToast(99); });
-    hook.refresh();
+    act(function() { hook.rerender(); });
     expect(hook.result.current.toasts).toHaveLength(1);
   });
 });

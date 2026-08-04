@@ -225,11 +225,9 @@ describe('useDataLoader — fetchRole', function() {
       maybeSingleMock.mockImplementation(function() { return new Promise(function() {}); });
       const { hook } = makeHook();
       let ret;
-      act(function() {
-        hook.result.current.fetchRole('u1').then(function(v) { ret = v; });
-        vi.advanceTimersByTime(5000);
-      });
-      await Promise.resolve();
+      const p = hook.result.current.fetchRole('u1').then(function(v) { ret = v; });
+      vi.advanceTimersByTime(5000);
+      await p;
       expect(ret).toBe(false);
     } finally {
       vi.useRealTimers();

@@ -73,7 +73,8 @@ describe('useBrandManager — saveBrand', function() {
     updateEqMock.mockResolvedValue({ error: null });
     updateBrandConfigMock.mockReset();
     updateBrandConfigMock.mockResolvedValue({ ok: true });
-    Object.defineProperty(navigator, 'onLine', { value: false, configurable: true, writable: true });
+    var _onLine = false;
+    Object.defineProperty(navigator, 'onLine', { get: function() { return _onLine; }, set: function(v) { _onLine = v; }, configurable: true });
     Object.defineProperty(navigator, 'serviceWorker', { value: { controller: null }, configurable: true });
   });
 
@@ -163,7 +164,8 @@ describe('useBrandManager — savePhone', function() {
     profilesUpdateMock.mockResolvedValue(undefined);
     updateEqMock.mockReset();
     updateEqMock.mockResolvedValue({ error: null });
-    Object.defineProperty(navigator, 'onLine', { value: false, configurable: true, writable: true });
+    var _onLine = false;
+    Object.defineProperty(navigator, 'onLine', { get: function() { return _onLine; }, set: function(v) { _onLine = v; }, configurable: true });
   });
 
   it('offline: salva local e informa que sincroniza depois', async function() {

@@ -1,3 +1,19 @@
+// @vitest-environment jsdom
+if (typeof globalThis.ImageData === 'undefined') {
+  globalThis.ImageData = class ImageData {
+    constructor(dataOrSw, width, height) {
+      if (dataOrSw instanceof Uint8ClampedArray) {
+        this.data = dataOrSw;
+        this.width = width;
+        this.height = height;
+      } else {
+        this.width = dataOrSw;
+        this.height = width;
+        this.data = new Uint8ClampedArray(this.width * this.height * 4);
+      }
+    }
+  };
+}
 import { describe, it, expect } from 'vitest';
 
 function luminance(hex) {

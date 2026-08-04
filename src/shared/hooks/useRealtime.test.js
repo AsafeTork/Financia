@@ -61,7 +61,8 @@ describe('useRealtime', function() {
     removeChannelMock.mockReset();
     channelHandlers = [];
     subscribeCallback = null;
-    Object.defineProperty(navigator, 'onLine', { value: true, configurable: true, writable: true });
+    var _onLine = true;
+    Object.defineProperty(navigator, 'onLine', { get: function() { return _onLine; }, set: function(v) { _onLine = v; }, configurable: true });
   });
 
   it('registra canal para as 5 tabelas', function() {
@@ -81,15 +82,15 @@ describe('useRealtime', function() {
   });
 
   it('CHANNEL_ERROR: agenda retry com backoff dobrado', function() {
+    const ctx = makeCtx();
+    const { hook } = makeHook(ctx);
     vi.useFakeTimers();
     try {
-      const ctx = makeCtx();
-      const { hook } = makeHook(ctx);
       act(function() { subscribeCallback('CHANNEL_ERROR'); });
       expect(ctx.retryDelayRef.current).toBe(2000);
       channelOnMock.mockClear();
       channelSubscribeMock.mockClear();
-      act(function() { vi.advanceTimersByTime(1999); });
+      act(function() { vi.advanceTimersByTime(999); });
       expect(channelOnMock).not.toHaveBeenCalled();
       act(function() { vi.advanceTimersByTime(1); });
       expect(channelOnMock).toHaveBeenCalledTimes(5);
@@ -100,13 +101,16 @@ describe('useRealtime', function() {
   });
 
   it('TIMED_OUT: agenda retry', function() {
+    const ctx = makeCtx();
+    const { hook } = makeHook(ctx);
     vi.useFakeTimers();
     try {
-      const ctx = makeCtx();
-      const { hook } = makeHook(ctx);
       act(function() { subscribeCallback('TIMED_OUT'); });
       expect(ctx.retryDelayRef.current).toBe(2000);
-      act(function() { vi.advanceTimersByTime(2000); });
+      channelOnMock.mockClear();
+      act(function() { vi.advanceTimersByTime(999); });
+      expect(channelOnMock).not.toHaveBeenCalled();
+      act(function() { vi.advanceTimersByTime(1); });
       expect(channelOnMock).toHaveBeenCalledTimes(5);
       hook.unmount();
     } finally {
@@ -115,11 +119,11 @@ describe('useRealtime', function() {
   });
 
   it('retry nao reconecta quando uid e nulo', function() {
+    const ctx = makeCtx();
+    ctx.uidRef.current = null;
+    const { hook } = makeHook(ctx);
     vi.useFakeTimers();
     try {
-      const ctx = makeCtx();
-      ctx.uidRef.current = null;
-      const { hook } = makeHook(ctx);
       act(function() { subscribeCallback('CHANNEL_ERROR'); });
       channelOnMock.mockClear();
       act(function() { vi.advanceTimersByTime(2000); });
@@ -131,11 +135,12 @@ describe('useRealtime', function() {
   });
 
   it('retry nao reconecta offline', function() {
+    var _onLine = false;
+    Object.defineProperty(navigator, 'onLine', { get: function() { return _onLine; }, set: function(v) { _onLine = v; }, configurable: true });
+    const ctx = makeCtx();
+    const { hook } = makeHook(ctx);
     vi.useFakeTimers();
     try {
-      navigator.onLine = false;
-      const ctx = makeCtx();
-      const { hook } = makeHook(ctx);
       act(function() { subscribeCallback('CHANNEL_ERROR'); });
       channelOnMock.mockClear();
       act(function() { vi.advanceTimersByTime(2000); });
@@ -178,10 +183,10 @@ describe('useRealtime', function() {
   });
 
   it('doSync (postgres_changes) agenda sync com debounce de 2s', function() {
+    const ctx = makeCtx();
+    const { hook } = makeHook(ctx);
     vi.useFakeTimers();
     try {
-      const ctx = makeCtx();
-      const { hook } = makeHook(ctx);
       const h = findHandler('transactions');
       act(function() { h.cb({}); });
       expect(ctx.runSync).not.toHaveBeenCalled();
@@ -196,11 +201,11 @@ describe('useRealtime', function() {
   });
 
   it('doSync nao agenda quando ja sincronizando', function() {
+    const ctx = makeCtx();
+    ctx.syncingRef.current = true;
+    const { hook } = makeHook(ctx);
     vi.useFakeTimers();
     try {
-      const ctx = makeCtx();
-      ctx.syncingRef.current = true;
-      const { hook } = makeHook(ctx);
       const h = findHandler('transactions');
       act(function() { h.cb({}); });
       act(function() { vi.advanceTimersByTime(2000); });
@@ -212,11 +217,11 @@ describe('useRealtime', function() {
   });
 
   it('doSync nao agenda dentro do cooldown', function() {
+    const ctx = makeCtx();
+    ctx.lastSyncEndRef.current = Date.now();
+    const { hook } = makeHook(ctx);
     vi.useFakeTimers();
     try {
-      const ctx = makeCtx();
-      ctx.lastSyncEndRef.current = Date.now();
-      const { hook } = makeHook(ctx);
       const h = findHandler('products');
       act(function() { h.cb({}); });
       act(function() { vi.advanceTimersByTime(2000); });

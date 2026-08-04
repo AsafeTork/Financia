@@ -120,7 +120,7 @@ describe('usePlanEffects — announce de path', function() {
       planInfo: INIT_PLAN, session: null, toast: vi.fn(), path: 'dashboard',
       setAnnounceMsg: setAnnounceMsg, firstRender: firstRender, toastTimeoutsRef: { current: [] },
     };
-    const { hook } = renderHook(function() { return usePlanEffects(props); });
+    const hook = renderHook(function() { return usePlanEffects(props); });
     expect(setAnnounceMsg).not.toHaveBeenCalled();
     props.path = 'inventory';
     hook.rerender();
@@ -139,7 +139,7 @@ describe('usePlanEffects — announce de path', function() {
       planInfo: INIT_PLAN, session: null, toast: vi.fn(), path: 'x1',
       setAnnounceMsg: setAnnounceMsg, firstRender: firstRender, toastTimeoutsRef: { current: [] },
     };
-    const { hook } = renderHook(function() { return usePlanEffects(props); });
+    const hook = renderHook(function() { return usePlanEffects(props); });
     props.path = 'x2';
     hook.rerender();
     act(function() { vi.advanceTimersByTime(20); });
