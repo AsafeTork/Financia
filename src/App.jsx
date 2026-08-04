@@ -42,7 +42,13 @@ export default function App() {
   const n = useNavigation({ modalRef: s.modalRef, setConfirmData: s.setConfirmData, setShowUpgrade: s.setShowUpgrade, setSidebarOpen: s.setSidebarOpen, setShowLogin: s.setShowLogin });
   const { navTo } = n;
   usePlanEffects({ dataLoading: s.dataLoading, setDataLoading: s.setDataLoading, setSyncStatus: s.setSyncStatus, planInfo, session: s.session, toast: t.toast, path: n.path, setAnnounceMsg: s.setAnnounceMsg, firstRender: s.firstRender, toastTimeoutsRef: s.toastTimeoutsRef });
-  const { appBrand, effectiveTheme, toggleTheme } = useBrandAppearance(s.brand, planInfo);
+   const { appBrand, effectiveTheme, toggleTheme } = useBrandAppearance(s.brand, planInfo);
+   const enforceLimit = useCallback(function(kind, currentCount) {
+     if (atLimit(planInfo, kind, currentCount)) { setShowUpgrade({ kind: kind, limit: limitFor(planInfo, kind) }); return false; } return true;
+   }, [planInfo, setShowUpgrade]);
+   const { tx, setTx, addTx, addGenerated, editTx, deleteTx } = useTx(s.session, enforceLimit, t.toast);
+   const { products, setProducts, addProduct, editProduct, deleteProduct, adjustStock } = useProducts(s.session, enforceLimit, t.toast);
+   const { losses, setLosses, addLoss, editLoss, deleteLoss } = useLosses(s.session, enforceLimit, t.toast);
    const sessionProps = useMemo(function() {
      return { toast: t.toast, session: s.session, setSession: s.setSession, isAdminDB: s.isAdminDB, setIsAdminDB: s.setIsAdminDB,
        setAppLoading: s.setAppLoading, setDataLoading: s.setDataLoading, setDataError: s.setDataError,
@@ -57,12 +63,6 @@ export default function App() {
      return function() { delete window.__financia_reload_plan; };
    }, [s.session]);
    const o = useOnboarding({ session: s.session, dataLoading: s.dataLoading, brand: s.brand, setOnboardingNeeded: s.setOnboardingNeeded, onboardingRef: s.onboardingRef, saveBrand, savePhone });
-   const enforceLimit = useCallback(function(kind, currentCount) {
-     if (atLimit(planInfo, kind, currentCount)) { setShowUpgrade({ kind: kind, limit: limitFor(planInfo, kind) }); return false; } return true;
-   }, [planInfo, setShowUpgrade]);
-   const { tx, setTx, addTx, addGenerated, editTx, deleteTx } = useTx(s.session, enforceLimit, t.toast);
-   const { products, setProducts, addProduct, editProduct, deleteProduct, adjustStock } = useProducts(s.session, enforceLimit, t.toast);
-   const { losses, setLosses, addLoss, editLoss, deleteLoss } = useLosses(s.session, enforceLimit, t.toast);
    const handleConfirmOk = useCallback(async function() { await confirmData.onOk(); setConfirmData(null); }, [confirmData, setConfirmData]);
    const handleCancel = useCallback(function() { setConfirmData(null); }, [setConfirmData]);
    const handleCloseUpgrade = useCallback(function() { setShowUpgrade(false); }, [setShowUpgrade]);
