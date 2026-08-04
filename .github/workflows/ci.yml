@@ -117,17 +117,7 @@ jobs:
 
       - name: Run unit tests
         id: test
-        run: |
-          set +e
-          timeout 180 npx vitest run --coverage.enabled=false --no-color 2>&1 | tee /tmp/test-output.txt
-          TEST_EXIT=${PIPESTATUS[0]}
-          set -e
-          if [ "$TEST_EXIT" -eq 124 ]; then
-            echo "::warning::vitest timed out after 180s"
-            echo "exit_code=0" >> $GITHUB_OUTPUT
-          else
-            echo "exit_code=$TEST_EXIT" >> $GITHUB_OUTPUT
-          fi
+        run: npx vitest run --coverage.enabled=false --no-color 2>&1 | tee /tmp/test-output.txt; echo "exit_code=${PIPESTATUS[0]}" >> $GITHUB_OUTPUT
 
       - name: Upload test artifacts
         if: always()
@@ -401,26 +391,26 @@ jobs:
         run: |
           if [ -z "$PLAYWRIGHT_USERNAME" ]; then
             echo "SKIP: PLAYWRIGHT_USERNAME not configured"
+            echo "ran=false" >> $GITHUB_OUTPUT
             exit 0
           fi
+          echo "ran=true" >> $GITHUB_OUTPUT
           npx playwright test e2e/admin-audit.spec.ts --project=chromium
         env:
           PLAYWRIGHT_USERNAME: ${{ secrets.PLAYWRIGHT_USERNAME }}
           PLAYWRIGHT_PASSWORD: ${{ secrets.PLAYWRIGHT_PASSWORD }}
 
       - name: Upload admin audit report
-        if: always()
+        if: always() && steps.run-admin-audit.outputs.ran == 'true'
         uses: actions/upload-artifact@v6
-        continue-on-error: true
         with:
           name: admin-audit-report-md
           path: admin-audit-report.md
           retention-days: 30
 
       - name: Upload admin audit JSON
-        if: always()
+        if: always() && steps.run-admin-audit.outputs.ran == 'true'
         uses: actions/upload-artifact@v6
-        continue-on-error: true
         with:
           name: admin-audit-results-json
           path: admin-audit-results.json
