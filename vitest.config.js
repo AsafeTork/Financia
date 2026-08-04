@@ -7,14 +7,14 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.js'],
     globals: true,
-    pool: 'threads',
+    pool: 'vmThreads',
     poolOptions: {
-      threads: {
+      vmThreads: {
         singleThread: true,
         maxThreads: 1,
       },
     },
-    teardownTimeout: 10000,
+    teardownTimeout: 5000,
     reporter: ['verbose'],
     include: ['src/**/*.test.{js,jsx}'],
     exclude: ['**/e2e/**', '**/*.isolated.test.{js,jsx}', '**/benchmarks/**', '**/supabase/functions/**'],
