@@ -11,7 +11,7 @@ test.describe('IndexedDB Recovery - Corruption', () => {
   test.describe('Corruption Simulation', () => {
     test('should recover from corrupted IndexedDB data', async ({ page }) => {
       await page.evaluate(async () => {
-        const dbName = 'financia-db';
+        const dbName = 'gestao_offline';
         const storeName = 'transactions';
         
         await new Promise<void>((resolve, reject) => {
@@ -37,7 +37,7 @@ test.describe('IndexedDB Recovery - Corruption', () => {
       await page.waitForLoadState('networkidle');
 
       const transactions = await page.evaluate(async () => {
-        const dbName = 'financia-db';
+        const dbName = 'gestao_offline';
         const storeName = 'transactions';
         
         return new Promise<any[]>((resolve, reject) => {
@@ -64,7 +64,7 @@ test.describe('IndexedDB Recovery - Corruption', () => {
 
     test('should handle invalid schema gracefully', async ({ page }) => {
       await page.evaluate(async () => {
-        const dbName = 'financia-db';
+        const dbName = 'gestao_offline';
         
         await new Promise<void>((resolve, reject) => {
           const request = indexedDB.open(dbName);
@@ -96,7 +96,7 @@ test.describe('IndexedDB Recovery - Corruption', () => {
       await page.reload();
       await page.waitForLoadState('networkidle');
       
-      const hasAppLoaded = await page.locator('[data-testid="app-root"]').isVisible().catch(() => false);
+      const hasAppLoaded = await page.locator('#root').isVisible().catch(() => false);
       expect(hasAppLoaded).toBeTruthy();
     });
   });

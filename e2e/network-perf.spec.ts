@@ -2,7 +2,7 @@ import { test, expect, Page } from '@playwright/test';
 import * as fs from 'fs';
 import * as path from 'path';
 
-const PROD_URL = 'https://financiabr.me';
+const PROD_URL = 'http://localhost:4173';
 
 interface RequestLog {
   url: string;
@@ -203,9 +203,9 @@ test.describe('Network Performance & Sync Loop Detection', () => {
     }
 
     console.log('\n[TEST] Navigating all routes to check for per-route network issues...');
-    const routes = ['/', '/income', '/expense', '/inventory', '/report', '/settings', '/planos', '/brandstudio'];
+    const routes = ['/#/', '/#/vendas', '/#/despesas', '/#/estoque', '/#/relatorios', '/#/configuracoes', '/#/planos'];
     for (const route of routes) {
-      const url = route === '/' ? PROD_URL : `${PROD_URL}${route}`;
+      const url = `${PROD_URL}${route}`;
       await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 15000 });
       await page.waitForTimeout(2000);
     }

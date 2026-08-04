@@ -8,22 +8,21 @@ test.describe('Multi-tab / BroadcastChannel Sync - Conflict Resolution', () => {
 
   test.describe('Conflict Resolution (Last-Write-Wins)', () => {
     test('should resolve concurrent transaction updates with last-write-wins', async ({ browser }) => {
-      const context1 = await browser.newContext({ storageState });
-      const context2 = await browser.newContext({ storageState });
+      const context = await browser.newContext({ storageState });
       
-      const page1 = await context1.newPage();
-      const page2 = await context2.newPage();
+      const page1 = await context.newPage();
+      const page2 = await context.newPage();
       
       await page1.goto('/');
       await page2.goto('/');
       
-      await page1.waitForLoadState('networkidle');
-      await page2.waitForLoadState('networkidle');
+      await page1.waitForLoadState('domcontentloaded');
+      await page2.waitForLoadState('domcontentloaded');
 
       const txnId = `conflict-${Date.now()}`;
 
       await page1.evaluate(async (id) => {
-        const dbName = 'financia-db';
+        const dbName = 'gestao_offline';
         const storeName = 'transactions';
         
         return new Promise<void>((resolve, reject) => {
@@ -52,7 +51,7 @@ test.describe('Multi-tab / BroadcastChannel Sync - Conflict Resolution', () => {
       }, txnId);
 
       await page2.evaluate(async (id) => {
-        const dbName = 'financia-db';
+        const dbName = 'gestao_offline';
         const storeName = 'transactions';
         
         return new Promise<void>((resolve, reject) => {
@@ -95,7 +94,7 @@ test.describe('Multi-tab / BroadcastChannel Sync - Conflict Resolution', () => {
       await page2.waitForTimeout(2000);
 
       const resolved = await page1.evaluate(async (id) => {
-        const dbName = 'financia-db';
+        const dbName = 'gestao_offline';
         const storeName = 'transactions';
         
         return new Promise<any>((resolve, reject) => {
@@ -121,27 +120,25 @@ test.describe('Multi-tab / BroadcastChannel Sync - Conflict Resolution', () => {
       expect(resolved.amount).toBe(200);
       expect(resolved.version).toBe(2);
       
-      await context1.close();
-      await context2.close();
+      await context.close();
     });
 
     test('should handle concurrent product updates', async ({ browser }) => {
-      const context1 = await browser.newContext({ storageState });
-      const context2 = await browser.newContext({ storageState });
+      const context = await browser.newContext({ storageState });
       
-      const page1 = await context1.newPage();
-      const page2 = await context2.newPage();
+      const page1 = await context.newPage();
+      const page2 = await context.newPage();
       
       await page1.goto('/');
       await page2.goto('/');
       
-      await page1.waitForLoadState('networkidle');
-      await page2.waitForLoadState('networkidle');
+      await page1.waitForLoadState('domcontentloaded');
+      await page2.waitForLoadState('domcontentloaded');
 
       const productId = `prod-conflict-${Date.now()}`;
 
       await page1.evaluate(async (id) => {
-        const dbName = 'financia-db';
+        const dbName = 'gestao_offline';
         const storeName = 'products';
         
         return new Promise<void>((resolve, reject) => {
@@ -170,7 +167,7 @@ test.describe('Multi-tab / BroadcastChannel Sync - Conflict Resolution', () => {
       }, productId);
 
       await page2.evaluate(async (id) => {
-        const dbName = 'financia-db';
+        const dbName = 'gestao_offline';
         const storeName = 'products';
         
         return new Promise<void>((resolve, reject) => {
@@ -213,7 +210,7 @@ test.describe('Multi-tab / BroadcastChannel Sync - Conflict Resolution', () => {
       await page2.waitForTimeout(2000);
 
       const resolved = await page1.evaluate(async (id) => {
-        const dbName = 'financia-db';
+        const dbName = 'gestao_offline';
         const storeName = 'products';
         
         return new Promise<any>((resolve, reject) => {
@@ -238,24 +235,22 @@ test.describe('Multi-tab / BroadcastChannel Sync - Conflict Resolution', () => {
       expect(resolved.name).toBe('Product from Tab 2');
       expect(resolved.price).toBe(200);
       
-      await context1.close();
-      await context2.close();
+      await context.close();
     });
   });
 
   test.describe('Storage Event Fallback', () => {
     test('should fall back to storage events when BroadcastChannel unavailable', async ({ browser }) => {
-      const context1 = await browser.newContext({ storageState });
-      const context2 = await browser.newContext({ storageState });
+      const context = await browser.newContext({ storageState });
       
-      const page1 = await context1.newPage();
-      const page2 = await context2.newPage();
+      const page1 = await context.newPage();
+      const page2 = await context.newPage();
       
       await page1.goto('/');
       await page2.goto('/');
       
-      await page1.waitForLoadState('networkidle');
-      await page2.waitForLoadState('networkidle');
+      await page1.waitForLoadState('domcontentloaded');
+      await page2.waitForLoadState('domcontentloaded');
 
       const received = await page2.evaluate(async () => {
         return new Promise<any>((resolve) => {
@@ -287,8 +282,7 @@ test.describe('Multi-tab / BroadcastChannel Sync - Conflict Resolution', () => {
       expect(received).toBeTruthy();
       expect(received.test).toBe('storage-event-sync');
       
-      await context1.close();
-      await context2.close();
+      await context.close();
     });
   });
 });

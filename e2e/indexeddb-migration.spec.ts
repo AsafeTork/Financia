@@ -11,7 +11,7 @@ test.describe('IndexedDB Recovery - Migration', () => {
   test.describe('Migration Test', () => {
     test('should migrate from old schema to new schema', async ({ page }) => {
       await page.evaluate(async () => {
-        const dbName = 'financia-db';
+        const dbName = 'gestao_offline';
         
         await new Promise<void>((resolve, reject) => {
           const request = indexedDB.open(dbName, 1);
@@ -39,7 +39,7 @@ test.describe('IndexedDB Recovery - Migration', () => {
       await page.waitForLoadState('networkidle');
 
       const migratedData = await page.evaluate(async () => {
-        const dbName = 'financia-db';
+        const dbName = 'gestao_offline';
         
         return new Promise<any[]>((resolve, reject) => {
           const request = indexedDB.open(dbName, 2);
@@ -91,7 +91,7 @@ test.describe('IndexedDB Recovery - Migration', () => {
 
     test('should preserve data integrity during migration', async ({ page }) => {
       await page.evaluate(async () => {
-        const dbName = 'financia-db';
+        const dbName = 'gestao_offline';
         
         await new Promise<void>((resolve, reject) => {
           const request = indexedDB.open(dbName, 3);
@@ -118,7 +118,7 @@ test.describe('IndexedDB Recovery - Migration', () => {
       await page.waitForLoadState('networkidle');
 
       const products = await page.evaluate(async () => {
-        const dbName = 'financia-db';
+        const dbName = 'gestao_offline';
         
         return new Promise<any[]>((resolve, reject) => {
           const request = indexedDB.open(dbName);

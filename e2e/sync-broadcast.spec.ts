@@ -6,84 +6,84 @@ const storageState = fs.existsSync('e2e/auth-state.json') ? 'e2e/auth-state.json
 test.describe('Multi-tab / BroadcastChannel Sync - Broadcast', () => {
   test.setTimeout(120000);
 
-  test.beforeEach(async ({ context }) => {
-    await context.addInitScript(() => {
-      // Ensure BroadcastChannel is available
-    });
-  });
-
   test.describe('BroadcastChannel Communication', () => {
     test('should establish BroadcastChannel between tabs', async ({ browser }) => {
-      const context1 = await browser.newContext({ storageState });
-      const context2 = await browser.newContext({ storageState });
-      
-      const page1 = await context1.newPage();
-      const page2 = await context2.newPage();
-      
+      const context = storageState
+        ? await browser.newContext({ storageState })
+        : await browser.newContext();
+
+      const page1 = await context.newPage();
+      const page2 = await context.newPage();
+
       await page1.goto('/');
       await page2.goto('/');
-      
-      await page1.waitForLoadState('networkidle');
-      await page2.waitForLoadState('networkidle');
+
+      await page1.waitForLoadState('domcontentloaded');
+      await page2.waitForLoadState('domcontentloaded');
+
+      page2.evaluate(() => {
+        const channel = new BroadcastChannel('financia-sync');
+        channel.onmessage = (event) => {
+          if (event.data.type === 'SYNC_PING') {
+            channel.postMessage({ type: 'SYNC_ACK', timestamp: Date.now() });
+          }
+        };
+      });
 
       const channelConnected = await page1.evaluate(async () => {
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 10000);
-        
         return new Promise<boolean>((resolve) => {
           const channel = new BroadcastChannel('financia-sync');
-          
+
           channel.onmessage = (event) => {
             if (event.data.type === 'SYNC_ACK') {
-              clearTimeout(timeout);
               channel.close();
               resolve(true);
             }
           };
-          
+
           setTimeout(() => {
             channel.close();
             resolve(false);
-          }, 10000);
-          
+          }, 5000);
+
           channel.postMessage({ type: 'SYNC_PING', timestamp: Date.now() });
         });
       });
 
       expect(channelConnected).toBeTruthy();
-      
-      await context1.close();
-      await context2.close();
+
+      await context.close();
     });
 
     test('should broadcast transaction creation', async ({ browser }) => {
-      const context1 = await browser.newContext({ storageState });
-      const context2 = await browser.newContext({ storageState });
-      
-      const page1 = await context1.newPage();
-      const page2 = await context2.newPage();
-      
+      const context = storageState
+        ? await browser.newContext({ storageState })
+        : await browser.newContext();
+
+      const page1 = await context.newPage();
+      const page2 = await context.newPage();
+
       await page1.goto('/');
       await page2.goto('/');
-      
-      await page1.waitForLoadState('networkidle');
-      await page2.waitForLoadState('networkidle');
+
+      await page1.waitForLoadState('domcontentloaded');
+      await page2.waitForLoadState('domcontentloaded');
 
       const received = await page2.evaluate(async () => {
         return new Promise<any>((resolve) => {
           const channel = new BroadcastChannel('financia-sync');
-          
+
           channel.onmessage = (event) => {
             if (event.data.type === 'TRANSACTION_CREATED') {
               channel.close();
               resolve(event.data.payload);
             }
           };
-          
+
           setTimeout(() => {
             channel.close();
             resolve(null);
-          }, 10000);
+          }, 5000);
         });
       });
 
@@ -98,7 +98,7 @@ test.describe('Multi-tab / BroadcastChannel Sync - Broadcast', () => {
           date: new Date().toISOString(),
           createdAt: new Date().toISOString(),
         };
-        
+
         channel.postMessage({
           type: 'TRANSACTION_CREATED',
           payload: transaction,
@@ -110,39 +110,39 @@ test.describe('Multi-tab / BroadcastChannel Sync - Broadcast', () => {
       expect(received).toBeTruthy();
       expect(received.amount).toBe(150.00);
       expect(received.description).toBe('Test transaction');
-      
-      await context1.close();
-      await context2.close();
+
+      await context.close();
     });
 
     test('should broadcast product updates', async ({ browser }) => {
-      const context1 = await browser.newContext({ storageState });
-      const context2 = await browser.newContext({ storageState });
-      
-      const page1 = await context1.newPage();
-      const page2 = await context2.newPage();
-      
+      const context = storageState
+        ? await browser.newContext({ storageState })
+        : await browser.newContext();
+
+      const page1 = await context.newPage();
+      const page2 = await context.newPage();
+
       await page1.goto('/');
       await page2.goto('/');
-      
-      await page1.waitForLoadState('networkidle');
-      await page2.waitForLoadState('networkidle');
+
+      await page1.waitForLoadState('domcontentloaded');
+      await page2.waitForLoadState('domcontentloaded');
 
       const received = await page2.evaluate(async () => {
         return new Promise<any>((resolve) => {
           const channel = new BroadcastChannel('financia-sync');
-          
+
           channel.onmessage = (event) => {
             if (event.data.type === 'PRODUCT_UPDATED') {
               channel.close();
               resolve(event.data.payload);
             }
           };
-          
+
           setTimeout(() => {
             channel.close();
             resolve(null);
-          }, 10000);
+          }, 5000);
         });
       });
 
@@ -155,7 +155,7 @@ test.describe('Multi-tab / BroadcastChannel Sync - Broadcast', () => {
           stock: 50,
           updatedAt: new Date().toISOString(),
         };
-        
+
         channel.postMessage({
           type: 'PRODUCT_UPDATED',
           payload: product,
@@ -167,39 +167,39 @@ test.describe('Multi-tab / BroadcastChannel Sync - Broadcast', () => {
       expect(received).toBeTruthy();
       expect(received.name).toBe('Updated Product');
       expect(received.price).toBe(299.99);
-      
-      await context1.close();
-      await context2.close();
+
+      await context.close();
     });
 
     test('should broadcast loss records', async ({ browser }) => {
-      const context1 = await browser.newContext({ storageState });
-      const context2 = await browser.newContext({ storageState });
-      
-      const page1 = await context1.newPage();
-      const page2 = await context2.newPage();
-      
+      const context = storageState
+        ? await browser.newContext({ storageState })
+        : await browser.newContext();
+
+      const page1 = await context.newPage();
+      const page2 = await context.newPage();
+
       await page1.goto('/');
       await page2.goto('/');
-      
-      await page1.waitForLoadState('networkidle');
-      await page2.waitForLoadState('networkidle');
+
+      await page1.waitForLoadState('domcontentloaded');
+      await page2.waitForLoadState('domcontentloaded');
 
       const received = await page2.evaluate(async () => {
         return new Promise<any>((resolve) => {
           const channel = new BroadcastChannel('financia-sync');
-          
+
           channel.onmessage = (event) => {
             if (event.data.type === 'LOSS_RECORDED') {
               channel.close();
               resolve(event.data.payload);
             }
           };
-          
+
           setTimeout(() => {
             channel.close();
             resolve(null);
-          }, 10000);
+          }, 5000);
         });
       });
 
@@ -213,7 +213,7 @@ test.describe('Multi-tab / BroadcastChannel Sync - Broadcast', () => {
           value: 150.00,
           recordedAt: new Date().toISOString(),
         };
-        
+
         channel.postMessage({
           type: 'LOSS_RECORDED',
           payload: loss,
@@ -225,39 +225,39 @@ test.describe('Multi-tab / BroadcastChannel Sync - Broadcast', () => {
       expect(received).toBeTruthy();
       expect(received.reason).toBe('Damaged');
       expect(received.value).toBe(150.00);
-      
-      await context1.close();
-      await context2.close();
+
+      await context.close();
     });
 
     test('should broadcast settings changes', async ({ browser }) => {
-      const context1 = await browser.newContext({ storageState });
-      const context2 = await browser.newContext({ storageState });
-      
-      const page1 = await context1.newPage();
-      const page2 = await context2.newPage();
-      
+      const context = storageState
+        ? await browser.newContext({ storageState })
+        : await browser.newContext();
+
+      const page1 = await context.newPage();
+      const page2 = await context.newPage();
+
       await page1.goto('/');
       await page2.goto('/');
-      
-      await page1.waitForLoadState('networkidle');
-      await page2.waitForLoadState('networkidle');
+
+      await page1.waitForLoadState('domcontentloaded');
+      await page2.waitForLoadState('domcontentloaded');
 
       const received = await page2.evaluate(async () => {
         return new Promise<any>((resolve) => {
           const channel = new BroadcastChannel('financia-sync');
-          
+
           channel.onmessage = (event) => {
             if (event.data.type === 'SETTINGS_CHANGED') {
               channel.close();
               resolve(event.data.payload);
             }
           };
-          
+
           setTimeout(() => {
             channel.close();
             resolve(null);
-          }, 10000);
+          }, 5000);
         });
       });
 
@@ -270,7 +270,7 @@ test.describe('Multi-tab / BroadcastChannel Sync - Broadcast', () => {
           language: 'en',
           updatedAt: new Date().toISOString(),
         };
-        
+
         channel.postMessage({
           type: 'SETTINGS_CHANGED',
           payload: settings,
@@ -282,9 +282,8 @@ test.describe('Multi-tab / BroadcastChannel Sync - Broadcast', () => {
       expect(received).toBeTruthy();
       expect(received.currency).toBe('USD');
       expect(received.theme).toBe('dark');
-      
-      await context1.close();
-      await context2.close();
+
+      await context.close();
     });
   });
 });

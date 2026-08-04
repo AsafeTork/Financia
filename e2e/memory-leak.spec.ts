@@ -4,7 +4,7 @@ test.describe('Memory Leak Detection', () => {
   test.setTimeout(120000);
 
   test('cyclic navigation - no detached DOM nodes', async ({ page }) => {
-    const routes = ['/', '/dashboard', '/transactions', '/products', '/losses', '/settings'];
+    const routes = ['/#/', '/#/vendas', '/#/despesas', '/#/estoque', '/#/configuracoes', '/#/relatorios'];
     
     // Initial heap snapshot
     await page.goto('/');
@@ -57,7 +57,7 @@ test.describe('Memory Leak Detection', () => {
   test('event listeners cleaned up on unmount', async ({ page }) => {
     test.fixme(true, 'getEventListeners() is a DevTools API, not available in page context');
 
-    await page.goto('/dashboard');
+    await page.goto('/#/vendas');
     await page.waitForLoadState('networkidle');
     
     const initialListeners = await page.evaluate(() => {
@@ -67,9 +67,9 @@ test.describe('Memory Leak Detection', () => {
     });
     
     // Navigate away and back
-    await page.goto('/transactions');
+    await page.goto('/#/despesas');
     await page.waitForLoadState('networkidle');
-    await page.goto('/dashboard');
+    await page.goto('/#/vendas');
     await page.waitForLoadState('networkidle');
     
     const finalListeners = await page.evaluate(() => {
@@ -84,7 +84,7 @@ test.describe('Memory Leak Detection', () => {
   test('timers and intervals cleared on unmount', async ({ page }) => {
     test.fixme(true, '__activeTimers is not exposed by the application');
 
-    await page.goto('/dashboard');
+    await page.goto('/#/vendas');
     await page.waitForLoadState('networkidle');
     
     const initialTimers = await page.evaluate(() => {
@@ -92,11 +92,11 @@ test.describe('Memory Leak Detection', () => {
     });
     
     // Navigate through multiple pages
-    await page.goto('/transactions');
+    await page.goto('/#/despesas');
     await page.waitForLoadState('networkidle');
-    await page.goto('/products');
+    await page.goto('/#/estoque');
     await page.waitForLoadState('networkidle');
-    await page.goto('/settings');
+    await page.goto('/#/configuracoes');
     await page.waitForLoadState('networkidle');
     
     const finalTimers = await page.evaluate(() => {
@@ -108,7 +108,7 @@ test.describe('Memory Leak Detection', () => {
   });
 
   test('IndexedDB connections closed properly', async ({ page }) => {
-    await page.goto('/dashboard');
+    await page.goto('/#/vendas');
     await page.waitForLoadState('networkidle');
     
     // Check IndexedDB connections
@@ -118,7 +118,7 @@ test.describe('Memory Leak Detection', () => {
     });
     
     // Navigate and perform operations
-    for (const route of ['/transactions', '/products', '/losses', '/settings']) {
+    for (const route of ['/#/despesas', '/#/estoque', '/#/configuracoes', '/#/relatorios']) {
       await page.goto(route);
       await page.waitForLoadState('networkidle');
     }
@@ -139,8 +139,8 @@ test.describe('Memory Leak Detection', () => {
     const page1 = await context.newPage();
     const page2 = await context.newPage();
     
-    await page1.goto('/dashboard');
-    await page2.goto('/dashboard');
+    await page1.goto('/#/vendas');
+    await page2.goto('/#/vendas');
     await page1.waitForLoadState('networkidle');
     await page2.waitForLoadState('networkidle');
     
@@ -164,7 +164,7 @@ test.describe('Memory Leak Detection', () => {
   test('memory usage stable under load', async ({ page }) => {
     test.fixme(true, 'performance.memory is Chrome-only non-standard API');
 
-    await page.goto('/dashboard');
+    await page.goto('/#/vendas');
     await page.waitForLoadState('networkidle');
     
     // Get initial memory
@@ -174,11 +174,11 @@ test.describe('Memory Leak Detection', () => {
     
     // Heavy interaction: rapid navigation + data operations
     for (let i = 0; i < 20; i++) {
-      await page.goto('/transactions');
+      await page.goto('/#/vendas');
       await page.waitForLoadState('networkidle');
-      await page.goto('/products');
+      await page.goto('/#/estoque');
       await page.waitForLoadState('networkidle');
-      await page.goto('/dashboard');
+      await page.goto('/#/configuracoes');
       await page.waitForLoadState('networkidle');
     }
     
@@ -205,7 +205,7 @@ test.describe('Offline Storage Persistence', () => {
   test.setTimeout(120000);
 
   test('navigator.storage.persist() prevents eviction', async ({ page }) => {
-    await page.goto('/dashboard');
+    await page.goto('/#/vendas');
     await page.waitForLoadState('networkidle');
     
     const persisted = await page.evaluate(async () => {
@@ -220,7 +220,7 @@ test.describe('Offline Storage Persistence', () => {
   });
 
   test('storage estimate available', async ({ page }) => {
-    await page.goto('/dashboard');
+    await page.goto('/#/vendas');
     await page.waitForLoadState('networkidle');
     
     const estimate = await page.evaluate(async () => {

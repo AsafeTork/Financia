@@ -8,17 +8,15 @@ test.describe('Network Error Handling Scenarios', () => {
   test.setTimeout(30000);
 
   test('app loads successfully with slow network (3G)', async ({ page, browser }) => {
-    if (!storageState) {
-      test.skip('No storageState.json');
-    }
-
-    const context = await browser.newContext({ storageState, offline: false });
+    const context = await browser.newContext({ offline: false });
     const slowPage = await context.newPage();
 
     await slowPage.goto(BASE_URL, { waitUntil: 'domcontentloaded', timeout: 30000 });
     await slowPage.waitForLoadState('networkidle');
 
-    await slowPage.context().setNetworkConditions({
+    const client = await context.newCDPSession(slowPage);
+    await client.send('Network.emulateNetworkConditions', {
+      offline: false,
       downloadThroughput: 500 * 1024 / 8,
       uploadThroughput: 500 * 1024 / 8,
       latency: 400,
@@ -29,7 +27,7 @@ test.describe('Network Error Handling Scenarios', () => {
     const hasRoot = await slowPage.locator('#root').isVisible().catch(() => false);
     expect(hasRoot).toBeTruthy();
 
-    await slowPage.context().setNetworkConditions(null);
+    await client.send('Network.emulateNetworkConditions', { offline: false, downloadThroughput: -1, uploadThroughput: -1, latency: 0 });
     await context.close();
   });
 
@@ -42,7 +40,7 @@ test.describe('Network Error Handling Scenarios', () => {
     await page.waitForTimeout(2000);
 
     const title = await page.title();
-    expect(title).not.toBe('');
+    expect(title).toBeTruthy();
 
     await page.context().setOffline(false);
   });
@@ -60,7 +58,7 @@ test.describe('Network Error Handling Scenarios', () => {
     }
 
     const title = await page.title();
-    expect(title).not.toBe('');
+    expect(title).toBeTruthy();
   });
 
   test('fetch to missing endpoint returns handled error', async ({ page }) => {

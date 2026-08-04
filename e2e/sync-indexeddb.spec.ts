@@ -6,30 +6,25 @@ const storageState = fs.existsSync('e2e/auth-state.json') ? 'e2e/auth-state.json
 test.describe('Multi-tab / BroadcastChannel Sync - IndexedDB', () => {
   test.setTimeout(120000);
 
-  test.beforeEach(async ({ context }) => {
-    await context.addInitScript(() => {
-      // Ensure BroadcastChannel is available
-    });
-  });
-
   test.describe('IndexedDB Sync via BroadcastChannel', () => {
     test('should sync IndexedDB writes across tabs', async ({ browser }) => {
-      const context1 = await browser.newContext({ storageState });
-      const context2 = await browser.newContext({ storageState });
-      
-      const page1 = await context1.newPage();
-      const page2 = await context2.newPage();
-      
+      const context = storageState
+        ? await browser.newContext({ storageState })
+        : await browser.newContext();
+
+      const page1 = await context.newPage();
+      const page2 = await context.newPage();
+
       await page1.goto('/');
       await page2.goto('/');
-      
-      await page1.waitForLoadState('networkidle');
-      await page2.waitForLoadState('networkidle');
+
+      await page1.waitForLoadState('domcontentloaded');
+      await page2.waitForLoadState('domcontentloaded');
 
       await page1.evaluate(async () => {
-        const dbName = 'financia-db';
+        const dbName = 'gestao_offline';
         const storeName = 'transactions';
-        
+
         return new Promise<void>((resolve, reject) => {
           const request = indexedDB.open(dbName);
           request.onsuccess = () => {
@@ -67,12 +62,12 @@ test.describe('Multi-tab / BroadcastChannel Sync - IndexedDB', () => {
         channel.close();
       });
 
-      await page2.waitForTimeout(3000);
+      await page2.waitForTimeout(2000);
 
       const syncedData = await page2.evaluate(async () => {
-        const dbName = 'financia-db';
+        const dbName = 'gestao_offline';
         const storeName = 'transactions';
-        
+
         return new Promise<any[]>((resolve, reject) => {
           const request = indexedDB.open(dbName);
           request.onsuccess = () => {
@@ -94,9 +89,8 @@ test.describe('Multi-tab / BroadcastChannel Sync - IndexedDB', () => {
       const syncedTxn = syncedData.find(t => t.description === 'Synced transaction');
       expect(syncedTxn).toBeTruthy();
       expect(syncedTxn.amount).toBe(200);
-      
-      await context1.close();
-      await context2.close();
+
+      await context.close();
     });
   });
 });
