@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useRef } from 'react';
+import { useEffect, useCallback } from 'react';
 import { sb } from '../../lib/supabase.js';
 
 // In-memory storage for impersonation token (not persisted to localStorage)

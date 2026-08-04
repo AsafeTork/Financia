@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { sb } from '../../lib/supabase.js';
-import { luminance, deriveCores, lightenHex, fmt } from '../../lib/utils.js';
+import { luminance, deriveCores, fmt } from '../../lib/utils.js';
 import { THEME_PRESETS, WHITELABEL, waLinkTo } from '../../lib/constants.js';
 import ColorField from '../../shared/ui/ColorField.jsx';
 import { setClientCustomPrice, setClientWhiteLabel } from '../../lib/sync.js';

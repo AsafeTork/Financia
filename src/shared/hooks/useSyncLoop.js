@@ -14,12 +14,6 @@ export function useSyncLoop(props, ctx) {
     setSyncStatus(next);
   };
 
-  var canSync = function() {
-    if (syncingRef.current) return false;
-    if (Date.now() - lastSyncEndRef.current < SYNC_COOLDOWN_MS) return false;
-    return true;
-  };
-
   var doSyncRef = useRef(null);
   doSyncRef.current = function(userId, showStatus) {
     if (!userId || !navigator.onLine) return;

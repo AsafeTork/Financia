@@ -73,7 +73,7 @@ export default React.memo(function SettingsView({ brand, session, planInfo, onSa
        if (toast) toast('Erro ao carregar forma de pagamento.', 'error');
      });
      return function() { alive = false; };
-   }, [effectiveTab, cardReload, setPaymentLoading, toast]);
+    }, [effectiveTab, setPaymentLoading, toast]);
 
    React.useEffect(function() { return loadPayment(); }, [loadPayment]);
 

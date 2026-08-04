@@ -64,7 +64,7 @@ export default function AdminPanel({ toast, confirm, session, brand }) {
       }
       return next;
     });
-  }, [session]);
+  }, []);
   const [planFilter, setPlanFilter] = useState('all');
   const [usage, setUsage] = useState({});
   const [stripeOv, setStripeOv] = useState(null);

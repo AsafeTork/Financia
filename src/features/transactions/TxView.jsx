@@ -1,10 +1,10 @@
 ﻿import React, { useState, useMemo, useRef } from 'react';
-import { Card, Inp, NumInp, Sel, Modal, EditBtn, DelBtn, Btn, PageHead } from '../../shared/ui/ui.jsx';
+import { Card, Inp, NumInp, Sel, Modal, Btn, PageHead } from '../../shared/ui/ui.jsx';
 import { SaleForm } from '../../shared/ui/SaleForm.jsx';
 import ExportButtons from '../../shared/ui/ExportButtons.jsx';
-import { TransactionCard, TransactionGroupHeader, EmptyTransactionState } from '../../shared/ui/TransactionCard.jsx';
+import { TransactionCard, TransactionGroupHeader } from '../../shared/ui/TransactionCard.jsx';
 import { fmt, fmtDate, today, safe, uid, brandAlpha } from '../../lib/utils.js';
-import { isRecurringId, getRecurring, setRecurring, buildRecurringRow, periodOf } from '../../lib/recurring.js';
+import { getRecurring, setRecurring, buildRecurringRow, periodOf } from '../../lib/recurring.js';
 import { effectivePlan } from '../../lib/constants.js';
 import { exportPDF, exportXLS } from '../../lib/exporters.js';
 import { useVirtualizer } from '@tanstack/react-virtual';

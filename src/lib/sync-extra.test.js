@@ -118,8 +118,6 @@ vi.mock('./supabase.js', function() {
 });
 
 import { syncAll, resetSyncBackoff } from './sync.js';
-import { sb } from './supabase.js';
-import { ldb } from './dexie.js';
 
 function emptyUnsynced(table) {
   table.where.mockReturnValue({ equals: function() { return { and: function() { return { toArray: function() { return Promise.resolve([]); } }; } }; } });
@@ -133,10 +131,6 @@ function unsyncedRows(table, rows) {
     }
     return { anyOf: function() { return { modify: async function() {} }; } };
   });
-}
-
-function anyOfModify(table) {
-  table.where.mockReturnValue({ anyOf: function() { return { modify: async function() {} }; } });
 }
 
 describe('syncAll — upload de dados locais', function() {
