@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import * as fs from 'fs';
 
-const BASE_URL = 'http://localhost:5173';
+const BASE_URL = 'http://localhost:4173';
 const storageState = fs.existsSync('e2e/storageState.json') ? 'e2e/storageState.json' : undefined;
 
 test.describe('Dashboard Analytics', () => {

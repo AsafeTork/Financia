@@ -6,7 +6,7 @@ async function globalSetup(config: FullConfig) {
   const page = await context.newPage();
 
   // Navigate to the app and handle any auth/login if needed
-  await page.goto('http://localhost:5173');
+  await page.goto('http://localhost:4173');
   await page.waitForLoadState('networkidle');
 
   // Save storage state for authenticated tests

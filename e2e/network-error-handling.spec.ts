@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import * as fs from 'fs';
 
-const BASE_URL = 'http://localhost:5173';
+const BASE_URL = 'http://localhost:4173';
 const storageState = fs.existsSync('e2e/storageState.json') ? 'e2e/storageState.json' : undefined;
 
 test.describe('Network Error Handling Scenarios', () => {
@@ -88,7 +88,7 @@ test.describe('Network Error Handling Scenarios', () => {
 
     const wsStatus = await page.evaluate(() => {
       return new Promise<{ connected: boolean; error?: string }>((resolve) => {
-        const ws = new WebSocket('ws://localhost:5173/.well-known/not-a-ws');
+        const ws = new WebSocket('ws://localhost:4173/.well-known/not-a-ws');
         const timeout = setTimeout(() => {
           ws.close();
           resolve({ connected: false, error: 'timeout-or-refused' });
