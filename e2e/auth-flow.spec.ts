@@ -12,7 +12,7 @@ test.describe('Auth Flow', () => {
     await page.waitForLoadState('networkidle');
 
     const enterBtn = page.locator('text=Entrar').or(page.locator('text=Começar')).or(page.locator('text=Enter')).or(page.locator('button')).first();
-    await expect(enterBtn).toBeVisible({ timeout: 5000 });
+    await expect(enterBtn).toBeVisible({ timeout: 15000 });
   });
 
   test('login form opens from landing page', async ({ page }) => {

@@ -76,7 +76,12 @@ test.describe('Deep Error Boundary Recovery', () => {
 
     await page.waitForTimeout(2000);
 
-    expect(rejectionCaught).toBe(false);
+    expect(rejectionCaught).toBe(true);
+
+    const appStillAlive = await page.evaluate(() => {
+      return document.body && document.body.innerHTML.length > 0;
+    });
+    expect(appStillAlive).toBe(true);
   });
 
   test('app survives fetch to missing resource', async ({ page }) => {

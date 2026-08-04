@@ -62,7 +62,7 @@ test.describe('Deep Edge Cases — Offline State Corruption & Recovery', () => {
     expect(quotaResult).toBeTruthy();
   });
 
-  test('sessionStorage does not survive page refresh', async ({ page }) => {
+  test('sessionStorage does not survive new tab', async ({ page }) => {
     await page.goto(BASE_URL, { waitUntil: 'domcontentloaded', timeout: 15000 });
     await page.waitForLoadState('networkidle');
 
@@ -70,11 +70,17 @@ test.describe('Deep Edge Cases — Offline State Corruption & Recovery', () => {
       sessionStorage.setItem('test_key', 'test_value');
     });
 
-    await page.reload({ waitUntil: 'networkidle' });
-    await page.waitForTimeout(1000);
+    const valueAfterReload = await page.evaluate(() => sessionStorage.getItem('test_key'));
+    expect(valueAfterReload).toBe('test_value');
 
-    const value = await page.evaluate(() => sessionStorage.getItem('test_key'));
-    expect(value).toBeNull();
+    const newPage = await page.context().newPage();
+    await newPage.goto(BASE_URL, { waitUntil: 'domcontentloaded', timeout: 15000 });
+    await newPage.waitForLoadState('networkidle');
+
+    const valueInNewTab = await newPage.evaluate(() => sessionStorage.getItem('test_key'));
+    expect(valueInNewTab).toBeNull();
+
+    await newPage.close();
   });
 
   test('multiple rapid navigations do not break app', async ({ page, browser }) => {
