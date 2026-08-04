@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default async function teardown() {
-  process.exit(0);
+  globalThis.process?.exit(0);
 }

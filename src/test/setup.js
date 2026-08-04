@@ -16,7 +16,7 @@ afterAll(async () => {
   await server.close();
   globalThis.indexedDB = new IDBFactory();
   // Force exit if anything is still hanging
-  setTimeout(() => process.exit(0), 100);
+  setTimeout(() => globalThis.process?.exit(0), 100);
 });
 afterEach(() => {
   server.resetHandlers();
