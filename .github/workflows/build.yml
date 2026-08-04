@@ -148,7 +148,7 @@ jobs:
             ${{ runner.os }}-vite-
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Build PWA
         run: npm run build
@@ -208,7 +208,7 @@ jobs:
             ${{ runner.os }}-npm-
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Instalar Python Pillow
         run: pip install Pillow
@@ -276,7 +276,7 @@ jobs:
             ${{ runner.os }}-npm-
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Instalar dependencias de empacotamento
         run: |
@@ -347,7 +347,7 @@ jobs:
             ${{ runner.os }}-npm-
 
       - name: Instalar dependencias
-        run: npm ci
+        run: npm install
 
       - name: Instalar Python Pillow
         run: pip install Pillow

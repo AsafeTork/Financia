@@ -565,7 +565,9 @@ jobs:
     if: always() && github.event_name != 'pull_request'
     steps:
       - name: Discord Notification
-        if: secrets.DISCORD_WEBHOOK_URL != ''
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        if: env.DISCORD_WEBHOOK_URL != ''
         run: |
           STATUS="${{ needs.summary.result }}"
           COLOR=3066993
@@ -588,10 +590,12 @@ jobs:
           }
           EOF
           )
-          curl -s -H "Content-Type: application/json" -d "$PAYLOAD" "${{ secrets.DISCORD_WEBHOOK_URL }}" || true
+          curl -s -H "Content-Type: application/json" -d "$PAYLOAD" "${DISCORD_WEBHOOK_URL}" || true
 
       - name: Slack Notification
-        if: secrets.SLACK_WEBHOOK_URL != ''
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        if: env.SLACK_WEBHOOK_URL != ''
         run: |
           STATUS="${{ needs.summary.result }}"
           COLOR="good"
@@ -612,7 +616,7 @@ jobs:
           }
           EOF
           )
-          curl -s -H "Content-Type: application/json" -d "$PAYLOAD" "${{ secrets.SLACK_WEBHOOK_URL }}" || true
+          curl -s -H "Content-Type: application/json" -d "$PAYLOAD" "${SLACK_WEBHOOK_URL}" || true
 
   deploy-render:
     name: Deploy to Render
