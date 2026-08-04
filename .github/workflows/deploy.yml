@@ -27,33 +27,10 @@ permissions:
   contents: read
 
 jobs:
-  validate-secrets:
-    name: Validate Secrets
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - name: Check required secrets
-        run: |
-          MISSING=0
-          for SECRET in RENDER_SERVICE_ID RENDER_API_KEY; do
-            if [ -z "${!SECRET}" ]; then
-              echo "ERROR: $SECRET is not set"
-              MISSING=1
-            else
-              echo "OK: $SECRET is set"
-            fi
-          done
-          if [ "$MISSING" = "1" ]; then
-            echo "Required secrets are missing. Cannot deploy."
-            exit 1
-          fi
-          echo "All required secrets are present."
-
   deploy-production:
     name: Deploy to Production (Render)
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    needs: validate-secrets
     if: github.ref == 'refs/heads/main' || github.event.inputs.environment == 'production'
     environment: production
     steps:
@@ -112,7 +89,6 @@ jobs:
     name: Deploy to Staging (Render)
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    needs: validate-secrets
     if: github.ref == 'refs/heads/develop' || github.event.inputs.environment == 'staging'
     environment: staging
     steps:
