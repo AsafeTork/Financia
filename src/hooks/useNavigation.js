@@ -62,6 +62,7 @@ export function useNavigation({ modalRef, setConfirmData, setShowUpgrade, setSid
 
     document.addEventListener('keydown', onKeyDown);
     return function() { document.removeEventListener('keydown', onKeyDown); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setConfirmData, setShowUpgrade, setSidebarOpen, setShowLogin, navTo]);
 
   return { navigate, location, path, isLegal, isLanding, navTo, currentView, navigationHistory };
