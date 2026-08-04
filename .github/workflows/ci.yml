@@ -359,7 +359,7 @@ jobs:
   admin-audit:
     name: Admin Audit (production)
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 10
     needs: build
     steps:
       - uses: actions/checkout@v6
@@ -395,6 +395,7 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Run admin audit
+        if: ${{ secrets.PLAYWRIGHT_USERNAME != '' }}
         run: npx playwright test e2e/admin-audit.spec.ts --project=chromium
         env:
           PLAYWRIGHT_USERNAME: ${{ secrets.PLAYWRIGHT_USERNAME }}
