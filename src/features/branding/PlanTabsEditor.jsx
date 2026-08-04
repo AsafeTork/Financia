@@ -1,14 +1,6 @@
 import React from 'react';
 import { PALETTE_UI_FIELDS, PLAN_META, getDefaultPaletteForPlan } from './defaults.js';
 
-const PLAN_META_LOCAL = {
-  ...PLAN_META,
-  white_label: {
-    label: 'White Label',
-    icon: 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4',
-  },
-};
-
 export default function PlanTabsEditor({ brandConfig, onSavePlan, onCopyJSON, onCopyDocs, brandColor, toast }) {
   const [activePlan, setActivePlan] = React.useState('free');
   const planOverrides = React.useMemo(() => (brandConfig && brandConfig.modules && brandConfig.modules.planOverrides) || {}, [brandConfig]);
@@ -65,8 +57,8 @@ export default function PlanTabsEditor({ brandConfig, onSavePlan, onCopyJSON, on
   return (
     <div className="flex flex-col gap-4">
       <div className="flex border-b gap-1" style={{borderColor:'var(--border, #e2e8f0)'}} role="tablist" aria-label="Planos">
-        {Object.keys(PLAN_META_LOCAL).map(k => {
-          const meta = PLAN_META_LOCAL[k];
+        {Object.keys(PLAN_META).map(k => {
+          const meta = PLAN_META[k];
           const active = activePlan === k;
           return (
             <button key={k} onClick={() => setActivePlan(k)} role="tab" aria-selected={active}
@@ -93,8 +85,8 @@ export default function PlanTabsEditor({ brandConfig, onSavePlan, onCopyJSON, on
       </div>
 
       <div>
-        <p className="text-sm font-semibold mb-1" style={{color:'var(--text-main, #0f172a)'}}>Paleta de cores — {PLAN_META_LOCAL[activePlan].label}</p>
-        <p className="text-xs mb-4" style={{color:'var(--text-muted, #94a3b8)'}}>Essas cores aparecem nos elementos do sistema para usuarios do plano {PLAN_META_LOCAL[activePlan].label}.</p>
+        <p className="text-sm font-semibold mb-1" style={{color:'var(--text-main, #0f172a)'}}>Paleta de cores — {PLAN_META[activePlan].label}</p>
+        <p className="text-xs mb-4" style={{color:'var(--text-muted, #94a3b8)'}}>Essas cores aparecem nos elementos do sistema para usuarios do plano {PLAN_META[activePlan].label}.</p>
         <div className="flex items-center gap-3 mb-5">
           {palPreview.map((c, i) => {
             const labels = ['Primaria', 'Secundaria', 'Destaque'];
@@ -121,7 +113,7 @@ export default function PlanTabsEditor({ brandConfig, onSavePlan, onCopyJSON, on
       </div>
 
       <div className="border-t pt-4" style={{borderColor:'var(--border, #e2e8f0)'}}>
-        <p className="text-xs font-semibold uppercase tracking-wide mb-2" style={{color:'var(--text-muted, #94a3b8)'}}>Preview — {PLAN_META_LOCAL[activePlan].label}</p>
+        <p className="text-xs font-semibold uppercase tracking-wide mb-2" style={{color:'var(--text-muted, #94a3b8)'}}>Preview — {PLAN_META[activePlan].label}</p>
         <div className="rounded-2xl overflow-hidden" style={{background: form.bgPage || '#f5f5f0', color: form.textMain || '#0f172a'}}>
           <div className="flex items-center justify-between px-4 py-2.5" style={{background: form.primary || '#002f59', color:'#ffffff'}}>
             <div className="flex items-center gap-2">
@@ -170,7 +162,7 @@ export default function PlanTabsEditor({ brandConfig, onSavePlan, onCopyJSON, on
       <button onClick={doSave} disabled={saving || !hasChanges}
         className="w-full text-white rounded-xl py-3 text-sm font-semibold hover:opacity-90 disabled:opacity-40 flex items-center justify-center gap-2 min-h-[44px] transition"
         style={{background: brandColor}}>
-        {saving ? 'Salvando...' : 'Salvar configuracao do plano ' + PLAN_META_LOCAL[activePlan].label}
+        {saving ? 'Salvando...' : 'Salvar configuracao do plano ' + PLAN_META[activePlan].label}
       </button>
     </div>
   );

@@ -60,7 +60,7 @@ function buildProposedBrand(normalized, currentBrand, originalJson) {
  */
 export function requiresServiceRole(brand) {
   if (!brand) return true;
-  var wl = brand.white_label;
+  const wl = brand.white_label;
   if (typeof wl === 'boolean') return !wl;
   return true;
 }
@@ -73,11 +73,11 @@ export function requiresServiceRole(brand) {
  */
 export async function updateBrandConfig(supabaseClient, brandConfig) {
   try {
-    var res = await supabaseClient.functions.invoke('update-brand-config', {
+    const res = await supabaseClient.functions.invoke('update-brand-config', {
       body: { brand_config: brandConfig },
     });
     if (res.error) return { ok: false, error: String(res.error.message || res.error) };
-    var data = res.data || {};
+    const data = res.data || {};
     if (data.error) return { ok: false, error: String(data.error) };
     return { ok: true };
   } catch (e) {

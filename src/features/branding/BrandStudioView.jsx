@@ -78,7 +78,7 @@ function LogoTabContent({ brand, bs, brandColor, applyLogoScheme, toast }) {
 
   const doReset = async () => {
     if (isGlobal) {
-      const orig = { blue: '#002f59', green: '#1a6b5c', teal: '#6ec6c8', check: '#8cf2d1' };
+      const orig = { ...OFFICIAL_LOGO_COLORS };
       const svg = generateLogoSvg(orig);
       applyLogoScheme(logoSvgToDataUrl(svg), orig);
     } else {
