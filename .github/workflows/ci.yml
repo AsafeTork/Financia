@@ -119,11 +119,13 @@ jobs:
         id: test
         run: |
           set +e
-          timeout 120 npx vitest run --coverage.enabled=false 2>&1 | tee /tmp/test-output.txt
+          timeout 240 npx vitest run --coverage.enabled=false --no-color 2>&1 | tee /tmp/test-output.txt
           TEST_EXIT=${PIPESTATUS[0]}
+          # Always kill any lingering vitest processes
+          pkill -f vitest || true
           set -e
           if [ "$TEST_EXIT" -eq 124 ]; then
-            echo "::warning::vitest timed out after 120s (process hung after tests completed)"
+            echo "::warning::vitest timed out after 240s (process hung after tests completed)"
             echo "exit_code=0" >> $GITHUB_OUTPUT
           else
             echo "exit_code=$TEST_EXIT" >> $GITHUB_OUTPUT
@@ -183,7 +185,7 @@ jobs:
       - name: Run integration E2E tests
         id: integration
         run: |
-          set -o pipefail
+          set +e
           npx playwright test \
             e2e/sync-conflict.spec.ts \
             e2e/deep-sync-conflict.spec.ts \
@@ -197,8 +199,10 @@ jobs:
             e2e/network-error-handling.spec.ts \
             e2e/network-perf.spec.ts \
             e2e/memory-leak.spec.ts \
-            --project=chromium 2>&1 | tee /tmp/integration-output.txt
-          echo "exit_code=${PIPESTATUS[0]}" >> $GITHUB_OUTPUT
+            --project=chromium --reporter=line 2>&1 | tee /tmp/integration-output.txt
+          INTEGRATION_EXIT=${PIPESTATUS[0]}
+          set -e
+          echo "exit_code=$INTEGRATION_EXIT" >> $GITHUB_OUTPUT
 
       - name: Upload integration artifacts
         if: always()
@@ -395,6 +399,7 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Run admin audit
+        id: run-admin-audit
         run: |
           if [ -z "$PLAYWRIGHT_USERNAME" ]; then
             echo "SKIP: PLAYWRIGHT_USERNAME not configured"
@@ -406,20 +411,22 @@ jobs:
           PLAYWRIGHT_PASSWORD: ${{ secrets.PLAYWRIGHT_PASSWORD }}
 
       - name: Upload admin audit report
-        if: always()
+        if: steps.run-admin-audit.outcome == 'success'
         uses: actions/upload-artifact@v6
         with:
           name: admin-audit-report-md
           path: admin-audit-report.md
           retention-days: 30
+          continue-on-error: true
 
       - name: Upload admin audit JSON
-        if: always()
+        if: steps.run-admin-audit.outcome == 'success'
         uses: actions/upload-artifact@v6
         with:
           name: admin-audit-results-json
           path: admin-audit-results.json
           retention-days: 30
+          continue-on-error: true
 
       - name: Admin audit summary
         if: always()
