@@ -1,5 +1,5 @@
 import React, { useCallback, useRef, useMemo, Suspense, lazy, useEffect } from 'react';
-import { INIT_BRAND, atLimit, limitFor } from './lib/constants.js';
+import { atLimit, limitFor } from './lib/constants.js';
 import { useTx } from './features/transactions/useTx.js';
 import { useProducts } from './features/inventory/useProducts.js';
 import { useLosses } from './features/inventory/useLosses.js';
@@ -56,15 +56,15 @@ export default function App() {
   const o = useOnboarding({ session: s.session, dataLoading: s.dataLoading, brand: s.brand, setOnboardingNeeded: s.setOnboardingNeeded, onboardingRef: s.onboardingRef, saveBrand, savePhone });
   const enforceLimit = useCallback(function(kind, currentCount) {
     if (atLimit(s.planInfo, kind, currentCount)) { s.setShowUpgrade({ kind: kind, limit: limitFor(s.planInfo, kind) }); return false; } return true;
-  }, [s.planInfo]);
+  }, [s.planInfo, s.setShowUpgrade]);
   const { tx, setTx, addTx, addGenerated, editTx, deleteTx } = useTx(s.session, enforceLimit, t.toast);
   const { products, setProducts, addProduct, editProduct, deleteProduct, adjustStock } = useProducts(s.session, enforceLimit, t.toast);
   const { losses, setLosses, addLoss, editLoss, deleteLoss } = useLosses(s.session, enforceLimit, t.toast);
-  const handleConfirmOk = useCallback(async function() { await s.confirmData.onOk(); s.setConfirmData(null); }, [s.confirmData]);
-  const handleCancel = useCallback(function() { s.setConfirmData(null); }, []);
-  const handleCloseUpgrade = useCallback(function() { s.setShowUpgrade(false); }, []);
-  const handleCloseSidebar = useCallback(function() { s.setSidebarOpen(false); }, []);
-  const handleOpenSidebar = useCallback(function() { s.setSidebarOpen(true); }, []);
+  const handleConfirmOk = useCallback(async function() { await s.confirmData.onOk(); s.setConfirmData(null); }, [s.confirmData, s.setConfirmData]);
+  const handleCancel = useCallback(function() { s.setConfirmData(null); }, [s.setConfirmData]);
+  const handleCloseUpgrade = useCallback(function() { s.setShowUpgrade(false); }, [s.setShowUpgrade]);
+  const handleCloseSidebar = useCallback(function() { s.setSidebarOpen(false); }, [s.setSidebarOpen]);
+  const handleOpenSidebar = useCallback(function() { s.setSidebarOpen(true); }, [s.setSidebarOpen]);
   const handleDeductStock = useCallback(function(id, qty) { adjustStock(id, -qty); }, [adjustStock]);
   const handleNav = useCallback(function(v) { n.navTo(v); }, [n.navTo]);
   const ctx = useMemo(function() {
@@ -85,7 +85,7 @@ export default function App() {
       losses, setLosses, addLoss, editLoss, deleteLoss, adjustStock,
       path: n.path, isLegal: n.isLegal, isLanding: n.isLanding,
     };
-  }, [s, appBrand, effectiveTheme, toggleTheme, n, t, handleConfirmOk, handleCancel, handleCloseUpgrade, handleDeductStock, saveBrand, savePhone, loadData, enforceLimit, tx, setTx, addTx, addGenerated, editTx, deleteTx, products, setProducts, addProduct, editProduct, deleteProduct, losses, setLosses, addLoss, editLoss, deleteLoss, adjustStock]);
+  }, [s, appBrand, effectiveTheme, toggleTheme, n, t, handleConfirmOk, handleCancel, handleCloseUpgrade, handleNav, handleCloseSidebar, handleOpenSidebar, handleDeductStock, saveBrand, savePhone, loadData, enforceLimit, tx, setTx, addTx, addGenerated, editTx, deleteTx, products, setProducts, addProduct, editProduct, deleteProduct, losses, setLosses, addLoss, editLoss, deleteLoss, adjustStock]);
 
   if (s.appLoading) return <Loader/>;
   if (n.isLegal) return <FeatureErrorBoundary featureName="Legal"><Suspense fallback={<Loader/>}>{n.path === 'privacidade' ? <PrivacyPolicy onNav={n.navTo}/> : <TermsOfService onNav={n.navTo}/>}</Suspense></FeatureErrorBoundary>;

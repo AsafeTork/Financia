@@ -143,5 +143,5 @@ export function usePageViewTracking(pageName, onTrack) {
       var duration = Date.now() - startTimeRef.current;
       onTrack?.(pageName + '_exit', { duration: duration, timestamp: Date.now() });
     };
-  }, []);
+  }, [pageName, onTrack]);
 }
