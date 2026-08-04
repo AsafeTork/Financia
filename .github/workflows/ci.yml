@@ -395,8 +395,12 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Run admin audit
-        if: ${{ secrets.PLAYWRIGHT_USERNAME != '' }}
-        run: npx playwright test e2e/admin-audit.spec.ts --project=chromium
+        run: |
+          if [ -z "$PLAYWRIGHT_USERNAME" ]; then
+            echo "SKIP: PLAYWRIGHT_USERNAME not configured"
+            exit 0
+          fi
+          npx playwright test e2e/admin-audit.spec.ts --project=chromium
         env:
           PLAYWRIGHT_USERNAME: ${{ secrets.PLAYWRIGHT_USERNAME }}
           PLAYWRIGHT_PASSWORD: ${{ secrets.PLAYWRIGHT_PASSWORD }}

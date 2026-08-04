@@ -32,7 +32,7 @@ export default React.memo(function SettingsView({ brand, session, planInfo, onSa
   var [cardOpen, setCardOpen] = useState(false);
   var [savedCard, setSavedCard] = useState(null);
   var [cardLoading, setCardLoading] = useState(true);
-  var [cardReload, setCardReload] = useState(0);
+  var [_cardReload, setCardReload] = useState(0);
   var planId = effectivePlan(planInfo || {});
   var [subStatus, setSubStatus] = useState(null);
   var subLoadingState = useState(false);
