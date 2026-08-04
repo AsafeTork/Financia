@@ -8,8 +8,14 @@ export default defineConfig({
     setupFiles: ['./src/test/setup.js'],
     globals: true,
     pool: 'forks',
+    poolOptions: {
+      forks: {
+        maxForks: 2,
+        minForks: 1,
+      },
+    },
     forceExit: true,
-    teardownTimeout: 3000,
+    teardownTimeout: 5000,
     include: ['src/**/*.test.{js,jsx}'],
     exclude: ['**/e2e/**', '**/*.isolated.test.{js,jsx}', '**/benchmarks/**', '**/supabase/functions/**'],
     testTimeout: 15000,
