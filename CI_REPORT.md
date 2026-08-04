@@ -1,7 +1,7 @@
 # CI Report
 
-**Gerado:** 2026-08-04 19:07 UTC
-**Commit:** `2d34476dc7def887dca26f62284c44ccbc53da1e`
+**Gerado:** 2026-08-04 19:52 UTC
+**Commit:** `a4c6d94340d988dbc51ec9d9f34970f8a9e07a85`
 **Branch:** `main`
 
 ---
@@ -83,26 +83,26 @@
 ## Test Results (ultimas 40 linhas)
 
 ```
-[2m7:02:26 PM[22m [33m[1m[vite][22m[39m [33mwarning: `esbuild` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `oxc` instead.[39m
-[2m7:02:26 PM[22m [33m[1m[vite][22m[39m [33mwarning: `optimizeDeps.esbuildOptions` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `optimizeDeps.rolldownOptions` instead.[39m
+[2m7:47:53 PM[22m [33m[1m[vite][22m[39m [33mwarning: `esbuild` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `oxc` instead.[39m
+[2m7:47:53 PM[22m [33m[1m[vite][22m[39m [33mwarning: `optimizeDeps.esbuildOptions` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `optimizeDeps.rolldownOptions` instead.[39m
 [33mBoth esbuild and oxc options were set. oxc options will be used and esbuild options will be ignored.[39m The following esbuild options were set: `{ jsx: 'automatic', jsxImportSource: undefined }`
 
 [1m[30m[46m RUN [49m[39m[22m [36mv4.1.10 [39m[90m/home/runner/work/Financia/Financia[39m
 
- [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mcheckout.session.completed -> invoice.payment_succeeded -> subscription created -> plan activated[2m > [22mprocesses checkout.session.completed and activates plan in company_profiles[32m 5[2mms[22m[39m
+ [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mcheckout.session.completed -> invoice.payment_succeeded -> subscription created -> plan activated[2m > [22mprocesses checkout.session.completed and activates plan in company_profiles[32m 8[2mms[22m[39m
  [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mcheckout.session.completed -> invoice.payment_succeeded -> subscription created -> plan activated[2m > [22mprocesses invoice.payment_succeeded and updates plan[32m 2[2mms[22m[39m
  [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mcheckout.session.completed -> invoice.payment_succeeded -> subscription created -> plan activated[2m > [22mhandles subscription created event and activates plan[32m 1[2mms[22m[39m
  [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mcheckout.session.completed -> invoice.payment_succeeded -> subscription created -> plan activated[2m > [22mverifies company_profiles.plan updated and email sent via mailer[32m 1[2mms[22m[39m
  [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22minvoice.payment_failed handling[2m > [22msends failure email when invoice payment fails[32m 1[2mms[22m[39m
  [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mcustomer.subscription.updated handling[2m > [22mhandles plan upgrade/downgrade via subscription.updated[32m 1[2mms[22m[39m
- [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mcustomer.subscription.updated handling[2m > [22mhandles cancel_at_period_end and sends notification email[32m 15[2mms[22m[39m
+ [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mcustomer.subscription.updated handling[2m > [22mhandles cancel_at_period_end and sends notification email[32m 14[2mms[22m[39m
  [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mcustomer.subscription.deleted handling[2m > [22mreverts to free plan and sends cancellation email[32m 1[2mms[22m[39m
  [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mpayment_intent.succeeded (white-label)[2m > [22mactivates white-label on successful payment[32m 1[2mms[22m[39m
  [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22minvoice.upcoming reminder[2m > [22msends upcoming invoice reminder email[32m 1[2mms[22m[39m
  [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mDLQ recording on failure[2m > [22mrecords failed webhook event to DLQ[32m 1[2mms[22m[39m
- [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mCreate subscription[2m > [22mcreates subscription and activates plan in company_profiles[32m 4[2mms[22m[39m
+ [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mCreate subscription[2m > [22mcreates subscription and activates plan in company_profiles[32m 8[2mms[22m[39m
  [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mCreate subscription[2m > [22mcreates premium subscription with correct plan[32m 1[2mms[22m[39m
- [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mUpgrade subscription (pro -> premium) with proration[2m > [22mupgrades subscription and updates plan in company_profiles[32m 1[2mms[22m[39m
+ [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mUpgrade subscription (pro -> premium) with proration[2m > [22mupgrades subscription and updates plan in company_profiles[32m 2[2mms[22m[39m
  [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mUpgrade subscription (pro -> premium) with proration[2m > [22mhandles proration invoice creation[32m 1[2mms[22m[39m
  [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mDowngrade subscription (premium -> pro) with proration[2m > [22mdowngrades subscription and updates plan[32m 1[2mms[22m[39m
  [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration 
@@ -127,24 +127,24 @@ computing gzip size...
 [2mdist/[22m[2massets/[22m[35mindex-CGL27DYf.css             [39m[1m[2m 54.54 kB[22m[1m[22m[2m │ gzip: 11.30 kB[22m
 [2mdist/[22m[2massets/[22m[36mvendor-supabase-vwDjcXxQ.js    [39m[1m[2m  0.00 kB[22m[1m[22m[2m │ gzip:  0.02 kB[22m
 [2mdist/[22m[2massets/[22m[36museDebouncedValue-BcJFlH8a.js  [39m[1m[2m  0.21 kB[22m[1m[22m[2m │ gzip:  0.17 kB[22m
-[2mdist/[22m[2massets/[22m[36mlogoUtils-D21a6PEK.js          [39m[1m[2m  0.88 kB[22m[1m[22m[2m │ gzip:  0.46 kB[22m
+[2mdist/[22m[2massets/[22m[36mlogoUtils-DfA9nHK5.js          [39m[1m[2m  0.88 kB[22m[1m[22m[2m │ gzip:  0.46 kB[22m
 [2mdist/[22m[2massets/[22m[36mDebugBadge-Bm62t2gG.js         [39m[1m[2m  0.92 kB[22m[1m[22m[2m │ gzip:  0.52 kB[22m
-[2mdist/[22m[2massets/[22m[36maiClient-U8cgWxM9.js           [39m[1m[2m  2.80 kB[22m[1m[22m[2m │ gzip:  1.47 kB[22m
+[2mdist/[22m[2massets/[22m[36maiClient-CJsIs6Rm.js           [39m[1m[2m  2.80 kB[22m[1m[22m[2m │ gzip:  1.47 kB[22m
 [2mdist/[22m[2massets/[22m[36mvendor-radix-65HWMJAE.js       [39m[1m[2m  2.85 kB[22m[1m[22m[2m │ gzip:  1.35 kB[22m
 [2mdist/[22m[2massets/[22m[36mvendor-scheduler-BXgSXwl1.js   [39m[1m[2m  3.86 kB[22m[1m[22m[2m │ gzip:  1.62 kB[22m
 [2mdist/[22m[2massets/[22m[36mexporters-DVBygq0B.js          [39m[1m[2m  4.23 kB[22m[1m[22m[2m │ gzip:  1.78 kB[22m
-[2mdist/[22m[2massets/[22m[36mEmailView-HHxv7mdg.js          [39m[1m[2m  5.15 kB[22m[1m[22m[2m │ gzip:  2.06 kB[22m
-[2mdist/[22m[2massets/[22m[36mCardPreview-BzWp6j_g.js        [39m[1m[2m  6.22 kB[22m[1m[22m[2m │ gzip:  2.74 kB[22m
-[2mdist/[22m[2massets/[22m[36mSaleForm-t5BwrBPx.js           [39m[1m[2m  7.32 kB[22m[1m[22m[2m │ gzip:  2.47 kB[22m
+[2mdist/[22m[2massets/[22m[36mEmailView-BxRr4ys8.js          [39m[1m[2m  5.15 kB[22m[1m[22m[2m │ gzip:  2.06 kB[22m
+[2mdist/[22m[2massets/[22m[36mCardPreview-CUi-nDH0.js        [39m[1m[2m  6.22 kB[22m[1m[22m[2m │ gzip:  2.74 kB[22m
+[2mdist/[22m[2massets/[22m[36mSaleForm-BEBd9a3V.js           [39m[1m[2m  7.32 kB[22m[1m[22m[2m │ gzip:  2.46 kB[22m
 [2mdist/[22m[2massets/[22m[36mPrivacyPolicy-DyyUmwan.js      [39m[1m[2m  7.99 kB[22m[1m[22m[2m │ gzip:  3.43 kB[22m
 [2mdist/[22m[2massets/[22m[36mTermsOfService-Ev-V2vlo.js     [39m[1m[2m  8.73 kB[22m[1m[22m[2m │ gzip:  3.66 kB[22m
-[2mdist/[22m[2massets/[22m[36mReportView-CTlONUgP.js         [39m[1m[2m 10.33 kB[22m[1m[22m[2m │ gzip:  3.14 kB[22m
+[2mdist/[22m[2massets/[22m[36mReportView-BQ3jN5gA.js         [39m[1m[2m 10.33 kB[22m[1m[22m[2m │ gzip:  3.14 kB[22m
 [2mdist/[22m[2massets/[22m[36mvendor-stripe-CgUSezxc.js      [39m[1m[2m 12.51 kB[22m[1m[22m[2m │ gzip:  4.63 kB[22m
-[2mdist/[22m[2massets/[22m[36mTxView-BZQmuwTA.js             [39m[1m[2m 14.57 kB[22m[1m[22m[2m │ gzip:  4.74 kB[22m
-[2mdist/[22m[2massets/[22m[36mInventoryView-CIumeiHK.js      [39m[1m[2m 19.79 kB[22m[1m[22m[2m │ gzip:  5.44 kB[22m
-[2mdist/[22m[2massets/[22m[36mindex-CNC8P0jE.js              [39m[1m[2m 22.95 kB[22m[1m[22m[2m │ gzip:  9.10 kB[22m
+[2mdist/[22m[2massets/[22m[36mTxView-DuZZzqMq.js             [39m[1m[2m 14.57 kB[22m[1m[22m[2m │ gzip:  4.73 kB[22m
+[2mdist/[22m[2massets/[22m[36mInventoryView-CDe2lEMz.js      [39m[1m[2m 19.79 kB[22m[1m[22m[2m │ gzip:  5.44 kB[22m
+[2mdist/[22m[2massets/[22m[36mindex-BAwu0jqQ.js              [39m[1m[2m 23.02 kB[22m[1m[22m[2m │ gzip:  9.11 kB[22m
 [2mdist/[22m[2massets/[22m[36mvendor-query-CZU5ZnEQ.js       [39m[1m[2m 24.36 kB[22m[1m[22m[2m │ gzip:  7.23 kB[22m
-[2mdist/[22m[2massets/[22m[36mDashboard-DKLhasm
+[2mdist/[22m[2massets/[22m[36mDashboard-RKf4bwq
 ```
 
 ---
@@ -158,7 +158,7 @@ computing gzip size...
 ```
 
 Running 26 tests using 4 workers
-°°°°°°°°°°°····F·°°°F°·°·F
+°°°°°°°°°°°···F··°°°°F·°F·
 
   1) [chromium] › e2e/auth-flow.spec.ts:10:3 › Auth Flow › landing page loads with enter button ────
 
@@ -225,7 +225,7 @@ Running 26 tests using 4 workers
     [chromium] › e2e/error-boundary-recovery.spec.ts:62:3 › Deep Error Boundary Recovery › unhandled promise rejection does not crash the app 
     [chromium] › e2e/offline-state-corruption.spec.ts:65:3 › Deep Edge Cases — Offline State Corruption & Recovery › sessionStorage does not survive page refresh 
   16 skipped
-  7 passed (13.8s)
+  7 passed (13.4s)
 
 ```
 
@@ -240,13 +240,13 @@ Running 26 tests using 4 workers
 ```
 
 Running 42 tests using 4 workers
-°°F····F·°°°°··°·F·F·[MONITOR] Waiting 15s to capture baseline network activity...
-··F°·····F[BASELINE] 14 requests, 0.47 req/s, Score: GOOD
+°°F····F·°°°°··°·F·F[MONITOR] Waiting 15s to capture baseline network activity...
+···F°·····F[BASELINE] 14 requests, 0.47 req/s, Score: GOOD
 
 [TEST] Navigating all routes to check for per-route network issues...
-·FFFFF
+·FFF
 [TEST] Simulating theme toggle clicks...
-FF
+FFFF
 [FINAL] 112 total requests, 3.73 req/s
 [FINAL] Score: CRITICAL
 [FINAL] Icon loop: true, Sync loop: false
@@ -379,4 +379,4 @@ Nenhum relatorio admin gerado.
 
 | Data | Correcao | Commit |
 |------|----------|--------|
-| 2026-08-04 19:07 UTC | CI report gerado automaticamente | `2d34476dc7def887dca26f62284c44ccbc53da1e` |
+| 2026-08-04 19:52 UTC | CI report gerado automaticamente | `a4c6d94340d988dbc51ec9d9f34970f8a9e07a85` |
