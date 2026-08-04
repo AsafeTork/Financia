@@ -9,6 +9,7 @@ export default defineConfig({
     globals: true,
     pool: 'forks',
     forceExit: true,
+    teardownTimeout: 3000,
     poolOptions: {
       forks: {
         singleFork: true,

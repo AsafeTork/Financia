@@ -11,7 +11,7 @@ const server = setupServer(...handlers);
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
 afterAll(() => server.close());
-afterEach(() => {
+afterEach(async () => {
   server.resetHandlers();
   vi.clearAllMocks();
   vi.clearAllTimers();
@@ -26,11 +26,14 @@ afterEach(() => {
   } catch (_) {
     // ignore
   }
-  indexedDB.databases ? indexedDB.databases().then(dbs => {
-    dbs.forEach(db => {
-      if (db.name) indexedDB.deleteDatabase(db.name);
-    });
-  }) : void 0;
+  if (indexedDB.databases) {
+    try {
+      const dbs = await indexedDB.databases();
+      dbs.forEach(db => {
+        if (db.name) indexedDB.deleteDatabase(db.name);
+      });
+    } catch (_) { /* ignore */ }
+  }
 });
 
 globalThis.cleanupMocks = () => {
