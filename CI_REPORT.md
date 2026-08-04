@@ -1,7 +1,7 @@
 # CI Report
 
-**Gerado:** 2026-08-04 20:45 UTC
-**Commit:** `c8c90cb754385348261312070d40352838a1f060`
+**Gerado:** 2026-08-04 21:08 UTC
+**Commit:** `39abcd675b92ca50a7c09d467770688ddc7c955c`
 **Branch:** `main`
 
 ---
@@ -12,9 +12,9 @@
 |---|---|
 | Lint + Typecheck | com erros |
 | Testes Unitarios | com falhas |
-| Testes Integracao | com falhas |
-| Build | ok |
-| E2E Tests | com falhas |
+| Testes Integracao | nao executado |
+| Build | com erros |
+| E2E Tests | nao executado |
 | Auditoria de Producao | ver resultado abaixo |
 | Admin Audit | ver resultado abaixo |
 
@@ -25,15 +25,14 @@
 ```
 
 /home/runner/work/Financia/Financia/src/App.jsx
-   2:10   warning  'INIT_BRAND' is defined but never used. Allowed unused vars must match /^_/u                                                                                 @typescript-eslint/no-unused-vars
-  59:6    warning  React Hook useCallback has a missing dependency: 's'. Either include it or remove the dependency array                                                       react-hooks/exhaustive-deps
-  63:113  warning  React Hook useCallback has a missing dependency: 's'. Either include it or remove the dependency array                                                       react-hooks/exhaustive-deps
-  64:76   warning  React Hook useCallback has a missing dependency: 's'. Either include it or remove the dependency array                                                       react-hooks/exhaustive-deps
-  65:83   warning  React Hook useCallback has a missing dependency: 's'. Either include it or remove the dependency array                                                       react-hooks/exhaustive-deps
-  66:83   warning  React Hook useCallback has a missing dependency: 's'. Either include it or remove the dependency array                                                       react-hooks/exhaustive-deps
-  67:81   warning  React Hook useCallback has a missing dependency: 's'. Either include it or remove the dependency array                                                       react-hooks/exhaustive-deps
-  69:62   warning  React Hook useCallback has a missing dependency: 'n'. Either include it or remove the dependency array                                                       react-hooks/exhaustive-deps
-  88:6    warning  React Hook useMemo has missing dependencies: 'handleCloseSidebar', 'handleNav', and 'handleOpenSidebar'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+  11:18   warning  'MobileFooter' is defined but never used. Allowed unused vars must match /^_/u                          @typescript-eslint/no-unused-vars
+  60:6    warning  React Hook useCallback has a missing dependency: 's'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  64:113  warning  React Hook useCallback has a missing dependency: 's'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  65:76   warning  React Hook useCallback has a missing dependency: 's'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  66:83   warning  React Hook useCallback has a missing dependency: 's'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  67:83   warning  React Hook useCallback has a missing dependency: 's'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  68:81   warning  React Hook useCallback has a missing dependency: 's'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  70:62   warning  React Hook useCallback has a missing dependency: 'n'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
 
 /home/runner/work/Financia/Financia/src/features/admin/AdminPanel.jsx
   67:6  warning  React Hook useCallback has an unnecessary dependency: 'session'. Either exclude it or remove the dependency array  react-hooks/exhaustive-deps
@@ -47,11 +46,17 @@
 /home/runner/work/Financia/Financia/src/features/settings/SettingsView.jsx
   76:7  warning  React Hook React.useCallback has an unnecessary dependency: 'cardReload'. Either exclude it or remove the dependency array  react-hooks/exhaustive-deps
 
+/home/runner/work/Financia/Financia/src/features/transactions/TxView.jsx
+  2:41  warning  'EditBtn' is defined but never used. Allowed unused vars must match /^_/u                @typescript-eslint/no-unused-vars
+  2:50  warning  'DelBtn' is defined but never used. Allowed unused vars must match /^_/u                 @typescript-eslint/no-unused-vars
+  5:51  warning  'EmptyTransactionState' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  7:10  warning  'isRecurringId' is defined but never used. Allowed unused vars must match /^_/u          @typescript-eslint/no-unused-vars
+
 /home/runner/work/Financia/Financia/src/hooks/useAppState.test.js
   2:32  warning  'vi' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
 
 /home/runner/work/Financia/Financia/src/hooks/useNavigation.js
-  62:6  warning  React Hook useEffect has a missing dependency: 'modalRef'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  65:6  warning  React Hook useEffect has a missing dependency: 'modalRef'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
 
 /home/runner/work/Financia/Financia/src/lib/sync-extra.test.js
   121:10  warning  'sb' is defined but never used. Allowed unused vars must match /^_/u           @typescript-eslint/no-unused-vars
@@ -67,16 +72,15 @@
 /home/runner/work/Financia/Financia/src/shared/hooks/useDataLoader.test.js
   2:48  warning  'afterEach' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
 
-/home/runner/work/Financia/Financia/src/shared/hooks/useNavigationHistory.js
-  146:6  warning  React Hook useEffect has missing dependencies: 'onTrack' and 'pageName'. Either include them or remove the dependency array. If 'onTrack' changes too often, find the parent component that defines it and wrap that definition in useCallback  react-hooks/exhaustive-deps
-
 /home/runner/work/Financia/Financia/src/shared/hooks/useRealtime.test.js
   2:48  warning  'afterEach' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
 
 /home/runner/work/Financia/Financia/src/shared/hooks/useSyncLoop.js
   17:7  warning  'canSync' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
 
-✖ 24 
+✖ 26 problems (0 errors, 26 warnings)
+
+
 ```
 
 ---
@@ -84,34 +88,29 @@
 ## Test Results (ultimas 40 linhas)
 
 ```
-[2m8:36:48 PM[22m [33m[1m[vite][22m[39m [33mwarning: `esbuild` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `oxc` instead.[39m
-[2m8:36:48 PM[22m [33m[1m[vite][22m[39m [33mwarning: `optimizeDeps.esbuildOptions` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `optimizeDeps.rolldownOptions` instead.[39m
+[2m9:05:49 PM[22m [33m[1m[vite][22m[39m [33mwarning: `esbuild` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `oxc` instead.[39m
+[2m9:05:49 PM[22m [33m[1m[vite][22m[39m [33mwarning: `optimizeDeps.esbuildOptions` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `optimizeDeps.rolldownOptions` instead.[39m
 [33mBoth esbuild and oxc options were set. oxc options will be used and esbuild options will be ignored.[39m The following esbuild options were set: `{ jsx: 'automatic', jsxImportSource: undefined }`
 
 [1m[30m[46m RUN [49m[39m[22m [36mv4.1.10 [39m[90m/home/runner/work/Financia/Financia[39m
 
- [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mCreate subscription[2m > [22mcreates subscription and activates plan in company_profiles[32m 8[2mms[22m[39m
+ [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mcheckout.session.completed -> invoice.payment_succeeded -> subscription created -> plan activated[2m > [22mprocesses checkout.session.completed and activates plan in company_profiles[32m 7[2mms[22m[39m
+ [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mcheckout.session.completed -> invoice.payment_succeeded -> subscription created -> plan activated[2m > [22mprocesses invoice.payment_succeeded and updates plan[32m 2[2mms[22m[39m
+ [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mcheckout.session.completed -> invoice.payment_succeeded -> subscription created -> plan activated[2m > [22mhandles subscription created event and activates plan[32m 1[2mms[22m[39m
+ [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mcheckout.session.completed -> invoice.payment_succeeded -> subscription created -> plan activated[2m > [22mverifies company_profiles.plan updated and email sent via mailer[32m 1[2mms[22m[39m
+ [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22minvoice.payment_failed handling[2m > [22msends failure email when invoice payment fails[32m 1[2mms[22m[39m
+ [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mcustomer.subscription.updated handling[2m > [22mhandles plan upgrade/downgrade via subscription.updated[32m 1[2mms[22m[39m
+ [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mcustomer.subscription.updated handling[2m > [22mhandles cancel_at_period_end and sends notification email[32m 16[2mms[22m[39m
+ [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mcustomer.subscription.deleted handling[2m > [22mreverts to free plan and sends cancellation email[32m 1[2mms[22m[39m
+ [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mpayment_intent.succeeded (white-label)[2m > [22mactivates white-label on successful payment[32m 2[2mms[22m[39m
+ [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22minvoice.upcoming reminder[2m > [22msends upcoming invoice reminder email[32m 1[2mms[22m[39m
+ [32m✓[39m src/lib/stripe-webhook.integration.test.js[2m > [22mStripe Webhook Integration - Full Cycle[2m > [22mDLQ recording on failure[2m > [22mrecords failed webhook event to DLQ[32m 1[2mms[22m[39m
+ [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mCreate subscription[2m > [22mcreates subscription and activates plan in company_profiles[32m 6[2mms[22m[39m
  [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mCreate subscription[2m > [22mcreates premium subscription with correct plan[32m 1[2mms[22m[39m
- [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mUpgrade subscription (pro -> premium) with proration[2m > [22mupgrades subscription and updates plan in company_profiles[32m 2[2mms[22m[39m
+ [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mUpgrade subscription (pro -> premium) with proration[2m > [22mupgrades subscription and updates plan in company_profiles[32m 1[2mms[22m[39m
  [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mUpgrade subscription (pro -> premium) with proration[2m > [22mhandles proration invoice creation[32m 1[2mms[22m[39m
  [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mDowngrade subscription (premium -> pro) with proration[2m > [22mdowngrades subscription and updates plan[32m 1[2mms[22m[39m
- [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mDowngrade subscription (premium -> pro) with proration[2m > [22mcreates credit proration invoice for downgrade[32m 1[2mms[22m[39m
- [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mCancel subscription[2m > [22mcancels subscription at period end[32m 1[2mms[22m[39m
- [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mCancel subscription[2m > [22mcancels subscription immediately[32m 1[2mms[22m[39m
- [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mRevert to free plan after cancellation[2m > [22mreverts to free when subscription deleted webhook received[32m 1[2mms[22m[39m
- [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mRevert to free plan after cancellation[2m > [22mreverts to free on incomplete_expired status[32m 1[2mms[22m[39m
- [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mFull subscription cycle integration[2m > [22mcompletes full cycle: create -> upgrade -> downgrade -> cancel -> free[32m 2[2mms[22m[39m
- [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mFull subscription cycle integration[2m > [22mverifies plan transitions in company_profiles at each step[32m 1[2mms[22m[39m
- [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration Test[2m > [22mWhite-label addon subscription[2m > [22mcreates white-label subscription and activates addon[32m 1[2mms[22m[39m
- [32m✓[39m src/test/utils.test.js[2m > [22mfmt[2m > [22mformata zero[32m 18[2mms[22m[39m
- [32m✓[39m src/test/utils.test.js[2m > [22mfmt[2m > [22mformata zero (inclui R$)[32m 1[2mms[22m[39m
- [32m✓[39m src/test/utils.test.js[2m > [22mfmt[2m > [22mformata inteiro positivo[32m 1[2mms[22m[39m
- [32m✓[39m src/test/utils.test.js[2m > [22mfmt[2m > [22musa vírgula como separador decimal[32m 0[2mms[22m[39m
- [32m✓[39m src/test/utils.test.js[2m > [22mfmt[2m > [22mformata null como zero[32m 0[2mms[22m[39m
- [32m✓[39m src/test/utils.test.js[2m > [22mfmt[2m > [22mformata undefined como zero[32m 0[2mms[22m[39m
- [32m✓[39m src/test/utils.test.js[2m > [22mfmt[2m > [22mformata valor com centavos[32m 0[2mms[22m[39m
- [32m✓[39m src/test/utils.test.js[2m > [22mfmt[2m > [22mformata 1000 com separador de milhar[32m 0[2mms[22m[39m
- [32m✓[39m src/test/utils.test.js[2m > [22mfmt[2m > [22mretorna
+ [32m✓[39m src/lib/stripe-subscription-cycle.integration.test.js[2m > [22mStripe Subscription Lifecycle Integration 
 ```
 
 ---
@@ -125,32 +124,29 @@
 
 [36mvite v5.4.21 [32mbuilding for production...[36m[39m
 transforming...
-[32m✓[39m 249 modules transformed.
-Generated an empty chunk: "vendor-supabase".
-rendering chunks...
-computing gzip size...
-[2mdist/[22m[32mindex.html                            [39m[1m[2m  3.96 kB[22m[1m[22m[2m │ gzip:  1.38 kB[22m
-[2mdist/[22m[2massets/[22m[35mindex-CnihwhkN.css             [39m[1m[2m 55.46 kB[22m[1m[22m[2m │ gzip: 11.41 kB[22m
-[2mdist/[22m[2massets/[22m[36mvendor-supabase-vwDjcXxQ.js    [39m[1m[2m  0.00 kB[22m[1m[22m[2m │ gzip:  0.02 kB[22m
-[2mdist/[22m[2massets/[22m[36museDebouncedValue-BcJFlH8a.js  [39m[1m[2m  0.21 kB[22m[1m[22m[2m │ gzip:  0.17 kB[22m
-[2mdist/[22m[2massets/[22m[36mlogoUtils-DNq0MdnU.js          [39m[1m[2m  0.88 kB[22m[1m[22m[2m │ gzip:  0.46 kB[22m
-[2mdist/[22m[2massets/[22m[36mDebugBadge-Bm62t2gG.js         [39m[1m[2m  0.92 kB[22m[1m[22m[2m │ gzip:  0.52 kB[22m
-[2mdist/[22m[2massets/[22m[36maiClient-DIBcdrqS.js           [39m[1m[2m  2.80 kB[22m[1m[22m[2m │ gzip:  1.47 kB[22m
-[2mdist/[22m[2massets/[22m[36mvendor-radix-65HWMJAE.js       [39m[1m[2m  2.85 kB[22m[1m[22m[2m │ gzip:  1.35 kB[22m
-[2mdist/[22m[2massets/[22m[36mvendor-scheduler-BXgSXwl1.js   [39m[1m[2m  3.86 kB[22m[1m[22m[2m │ gzip:  1.62 kB[22m
-[2mdist/[22m[2massets/[22m[36mexporters-DVBygq0B.js          [39m[1m[2m  4.23 kB[22m[1m[22m[2m │ gzip:  1.78 kB[22m
-[2mdist/[22m[2massets/[22m[36mEmailView-D1xKbAxU.js          [39m[1m[2m  5.15 kB[22m[1m[22m[2m │ gzip:  2.06 kB[22m
-[2mdist/[22m[2massets/[22m[36mCardPreview-D7zIZDTT.js        [39m[1m[2m  6.22 kB[22m[1m[22m[2m │ gzip:  2.74 kB[22m
-[2mdist/[22m[2massets/[22m[36mSaleForm-cENUHKvC.js           [39m[1m[2m  7.32 kB[22m[1m[22m[2m │ gzip:  2.47 kB[22m
-[2mdist/[22m[2massets/[22m[36mPrivacyPolicy-DyyUmwan.js      [39m[1m[2m  7.99 kB[22m[1m[22m[2m │ gzip:  3.43 kB[22m
-[2mdist/[22m[2massets/[22m[36mTermsOfService-Ev-V2vlo.js     [39m[1m[2m  8.73 kB[22m[1m[22m[2m │ gzip:  3.66 kB[22m
-[2mdist/[22m[2massets/[22m[36mReportView-BZoKDv4U.js         [39m[1m[2m 10.33 kB[22m[1m[22m[2m │ gzip:  3.14 kB[22m
-[2mdist/[22m[2massets/[22m[36mvendor-stripe-CgUSezxc.js      [39m[1m[2m 12.51 kB[22m[1m[22m[2m │ gzip:  4.63 kB[22m
-[2mdist/[22m[2massets/[22m[36mTxView-C1vTOrMI.js             [39m[1m[2m 14.57 kB[22m[1m[22m[2m │ gzip:  4.74 kB[22m
-[2mdist/[22m[2massets/[22m[36mInventoryView-Bn8MF3kZ.js      [39m[1m[2m 19.79 kB[22m[1m[22m[2m │ gzip:  5.44 kB[22m
-[2mdist/[22m[2massets/[22m[36mvendor-query-CZU5ZnEQ.js       [39m[1m[2m 24.36 kB[22m[1m[22m[2m │ gzip:  7.23 kB[22m
-[2mdist/[22m[2massets/[22m[36mDashboard-D3JvbfLT.js          [39m[1m[2m 27.58 kB[22m[1m[22m[2m │ gzip:  7.42 kB[22m
-[2mdist/[22m[2massets/[22m[36mPlansView-DLNALub
+[32m✓[39m 252 modules transformed.
+[31mx[39m Build failed in 1.99s
+[31merror during build:
+[31msrc/shared/ui/TransactionCard.jsx (2:41): "isRecurringId" is not exported by "src/lib/utils.js", imported by "src/shared/ui/TransactionCard.jsx".[31m
+file: [36m/home/runner/work/Financia/Financia/src/shared/ui/TransactionCard.jsx:2:41[31m
+[33m
+1: import React from 'react';
+2: import { fmt, fmtDate, brandAlpha, safe, isRecurringId } from '../../lib/utils.js';
+                                            ^
+3: 
+4: export function TransactionCard({ 
+[31m
+    at getRollupError (file:///home/runner/work/Financia/Financia/node_modules/rollup/dist/es/shared/parseAst.js:317:41)
+    at error (file:///home/runner/work/Financia/Financia/node_modules/rollup/dist/es/shared/parseAst.js:313:42)
+    at Module.error (file:///home/runner/work/Financia/Financia/node_modules/rollup/dist/es/shared/node-entry.js:17396:16)
+    at Module.traceVariable (file:///home/runner/work/Financia/Financia/node_modules/rollup/dist/es/shared/node-entry.js:17829:29)
+    at ModuleScope.findVariable (file:///home/runner/work/Financia/Financia/node_modules/rollup/dist/es/shared/node-entry.js:15419:39)
+    at FunctionScope.findVariable (file:///home/runner/work/Financia/Financia/node_modules/rollup/dist/es/shared/node-entry.js:5684:38)
+    at FunctionBodyScope.findVariable (file:///home/runner/work/Financia/Financia/node_modules/rollup/dist/es/shared/node-entry.js:5684:38)
+    at Identifier.bind (file:///home/runner/work/Financia/Financia/node_modules/rollup/dist/es/shared/node-entry.js:5451:40)
+    at CallExpression.bind (file:///home/runner/work/Financia/Financia/node_modules/rollup/dist/es/shared/node-entry.js:2833:23)
+    at CallExpression.bind (file:///home/runner/work/Financia/Financia/node_modules/rollup/dist/es/shared/node-entry.js:12528:15)[39m
+
 ```
 
 ---
@@ -159,73 +155,9 @@ computing gzip size...
 
 | Status |
 |---|
-| com falhas |
+| nao executado |
 
 ```
-
-Running 26 tests using 4 workers
-°°°°°°°°°······°°°°···°TTT
-
-  1) [chromium] › e2e/auth-flow.spec.ts:23:3 › Auth Flow › landing page loads with enter button ────
-
-    Test timeout of 45000ms exceeded.
-
-    Error: page.waitForFunction: Test timeout of 45000ms exceeded.
-
-       7 | async function waitForAppReady(page: import('@playwright/test').Page) {
-       8 |   await page.goto(BASE_URL, { waitUntil: 'load', timeout: 30000 });
-    >  9 |   await page.waitForFunction(
-         |              ^
-      10 |     () => {
-      11 |       const root = document.getElementById('root');
-      12 |       if (!root || root.children.length === 0) return false;
-        at waitForAppReady (/home/runner/work/Financia/Financia/e2e/auth-flow.spec.ts:9:14)
-        at /home/runner/work/Financia/Financia/e2e/auth-flow.spec.ts:24:5
-
-    Error Context: test-results/auth-flow-Auth-Flow-landing-page-loads-with-enter-button-chromium/error-context.md
-
-  2) [chromium] › e2e/auth-flow.spec.ts:30:3 › Auth Flow › login form opens from landing page ──────
-
-    Test timeout of 45000ms exceeded.
-
-    Error: page.waitForFunction: Test timeout of 45000ms exceeded.
-
-       7 | async function waitForAppReady(page: import('@playwright/test').Page) {
-       8 |   await page.goto(BASE_URL, { waitUntil: 'load', timeout: 30000 });
-    >  9 |   await page.waitForFunction(
-         |              ^
-      10 |     () => {
-      11 |       const root = document.getElementById('root');
-      12 |       if (!root || root.children.length === 0) return false;
-        at waitForAppReady (/home/runner/work/Financia/Financia/e2e/auth-flow.spec.ts:9:14)
-        at /home/runner/work/Financia/Financia/e2e/auth-flow.spec.ts:31:5
-
-    Error Context: test-results/auth-flow-Auth-Flow-login-form-opens-from-landing-page-chromium/error-context.md
-
-  3) [chromium] › e2e/auth-flow.spec.ts:45:3 › Auth Flow › login form shows validation errors on empty submit 
-
-    Test timeout of 45000ms exceeded.
-
-    Error: page.waitForFunction: Test timeout of 45000ms exceeded.
-
-       7 | async function waitForAppReady(page: import('@playwright/test').Page) {
-       8 |   await page.goto(BASE_URL, { waitUntil: 'load', timeout: 30000 });
-    >  9 |   await page.waitForFunction(
-         |              ^
-      10 |     () => {
-      11 |       const root = document.getElementById('root');
-      12 |       if (!root || root.children.length === 0) return false;
-        at waitForAppReady (/home/runner/work/Financia/Financia/e2e/auth-flow.spec.ts:9:14)
-        at /home/runner/work/Financia/Financia/e2e/auth-flow.spec.ts:46:5
-
-    Error Context: test-results/auth-flow-Auth-Flow-login--49015-tion-errors-on-empty-submit-chromium/error-context.md
-
-  3 failed
-    [chromium] › e2e/auth-flow.spec.ts:23:3 › Auth Flow › landing page loads with enter button ─────
-    [chromium] › e2e/auth-flow.spec.ts:30:3 › Auth Flow › login form opens from landing page ───────
-    [chromium] › e2e/auth-flow.spec.ts:45:3 › Auth Flow › login form shows validation errors on empty submit 
-  14 skipped
-  9 passed (49.2s)
 
 ```
 
@@ -235,119 +167,10 @@ Running 26 tests using 4 workers
 
 | Status |
 |---|
-| com falhas |
+| nao executado |
 
 ```
 
-Running 42 tests using 4 workers
-°°F····F°°·°°··°·F·F··[MONITOR] Waiting 15s to capture baseline network activity...
-··°·····F[BASELINE] 14 requests, 0.47 req/s, Score: GOOD
-
-[TEST] Navigating all routes to check for per-route network issues...
-·FFFFFF
-[TEST] Simulating theme toggle clicks...
-FF
-[FINAL] 112 total requests, 3.73 req/s
-[FINAL] Score: CRITICAL
-[FINAL] Icon loop: true, Sync loop: false
-FF
-
-  1) [chromium] › e2e/indexeddb-corruption.spec.ts:12:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should recover from corrupted IndexedDB data 
-
-    Error: page.evaluate: Execution context was destroyed, most likely because of a navigation.
-
-      37 |       await page.waitForLoadState('networkidle');
-      38 |
-    > 39 |       const transactions = await page.evaluate(async () => {
-         |                                       ^
-      40 |         const dbName = 'financia-db';
-      41 |         const storeName = 'transactions';
-      42 |         
-        at /home/runner/work/Financia/Financia/e2e/indexeddb-corruption.spec.ts:39:39
-
-    Error Context: test-results/indexeddb-corruption-Index-b9183-om-corrupted-IndexedDB-data-chromium/error-context.md
-
-  2) [chromium] › e2e/indexeddb-corruption.spec.ts:65:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should handle invalid schema gracefully 
-
-    Error: expect(received).toBeTruthy()
-
-    Received: false
-
-       98 |       
-       99 |       const hasAppLoaded = await page.locator('[data-testid="app-root"]').isVisible().catch(() => false);
-    > 100 |       expect(hasAppLoaded).toBeTruthy();
-          |                            ^
-      101 |     });
-      102 |   });
-      103 | });
-        at /home/runner/work/Financia/Financia/e2e/indexeddb-corruption.spec.ts:100:28
-
-    Error Context: test-results/indexeddb-corruption-Index-176cb-e-invalid-schema-gracefully-chromium/error-context.md
-
-  3) [chromium] › e2e/indexeddb-migration.spec.ts:12:5 › IndexedDB Recovery - Migration › Migration Test › should migrate from old schema to new schema 
-
-    Error: page.evaluate: AbortError: Version change transaction was aborted in upgradeneeded event handler.
-
-      39 |       await page.waitForLoadState('networkidle');
-      40 |
-    > 41 |       const migratedData = await page.evaluate(async () => {
-         |                                       ^
-      42 |         const dbName = 'financia-db';
-      43 |         
-      44 |         return new Promise<any[]>((resolve, reject) => {
-        at /home/runner/work/Financia/Financia/e2e/indexeddb-migration.spec.ts:41:39
-
-    Error Context: test-results/indexeddb-migration-Indexe-ccb35-om-old-schema-to-new-schema-chromium/error-context.md
-
-  4) [chromium] › e2e/network-error-handling.spec.ts:36:3 › Network Error Handling Scenarios › app handles complete network disconnection gracefully 
-
-    Error: expect(received).not.toBe(expected) // Object.is equality
-
-    Expected: not ""
-
-      43 |
-      44 |     const title = await page.title();
-    > 45 |     expect(title).not.toBe('');
-         |                       ^
-      46 |
-      47 |     await page.context().setOffline(false);
-      48 |   });
-        at /home/runner/work/Financia/Financia/e2e/network-error-handling.spec.ts:45:23
-
-    Error Context: test-results/network-error-handling-Net-95d77-rk-disconnection-gracefully-chromium/error-context.md
-
-  5) [chromium] › e2e/network-error-handling.spec.ts:50:3 › Network Error Handling Scenarios › app handles intermittent network failures 
-
-    Error: expect(received).not.toBe(expected) // Object.is equality
-
-    Expected: not ""
-
-      61 |
-      62 |     const title = await page.title();
-    > 63 |     expect(title).not.toBe('');
-         |                       ^
-      64 |   });
-      65 |
-      66 |   test('fetch to missing endpoint returns handled error', async ({ page }) => {
-        at /home/runner/work/Financia/Financia/e2e/network-error-handling.spec.ts:63:23
-
-    Error Context: test-results/network-error-handling-Net-da567-termittent-network-failures-chromium/error-context.md
-
-  6) [chromium] › e2e/network-perf.spec.ts:157:3 › Network Performance & Sync Loop Detection › detect sync loops, icon loops, and excessive network activity 
-
-    Error: icon-192.svg loop detected — theme toggle causes infinite re-fetches
-
-    expect(received).toBe(expected) // Object.is equality
-
-    Expected: false
-    Received: true
-
-      249 |     fs.writeFileSync(path.join(process.cwd(), 'network-perf-results.json'), JSON.stringify(finalReport, null, 2));
-      250 |
-    > 251 |     expect(finalReport.iconLoopDetected, 'icon-192.svg loop detected — theme toggle causes infinite re-fetches').toBe(false);
-          |                                                                                                                  ^
-      252 |     expect(finalReport.syncLoopDetected, 'company_profiles sync loop detected — realtime triggers infinite sync').toBe(false);
-      253 |     expect(finalReport.reques
 ```
 
 ---
@@ -356,8 +179,7 @@ FF
 
 | Metric | Valor |
 |---|---|
-| Passou | 1 |
-| Falhou | 0 |
+
 
 ---
 
@@ -379,4 +201,4 @@ Nenhum relatorio admin gerado.
 
 | Data | Correcao | Commit |
 |------|----------|--------|
-| 2026-08-04 20:45 UTC | CI report gerado automaticamente | `c8c90cb754385348261312070d40352838a1f060` |
+| 2026-08-04 21:08 UTC | CI report gerado automaticamente | `39abcd675b92ca50a7c09d467770688ddc7c955c` |
