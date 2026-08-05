@@ -1,6 +1,22 @@
 import { registerSW } from '../lib/pwa.js';
 
+function sanitizeCorruptedStorage() {
+  try {
+    for (var i = localStorage.length - 1; i >= 0; i--) {
+      var key = localStorage.key(i);
+      if (!key) continue;
+      if (key.indexOf('sb-') === 0 || key.indexOf('supabase') !== -1) {
+        var raw = localStorage.getItem(key);
+        if (raw && raw.charAt(0) === '{') {
+          try { JSON.parse(raw); } catch (_) { localStorage.removeItem(key); }
+        }
+      }
+    }
+  } catch (_) { /* ignore */ }
+}
+
 export function bootApp() {
+  sanitizeCorruptedStorage();
   registerSW();
   // Defer version check until after React has fully hydrated
   if (typeof requestIdleCallback !== 'undefined') {

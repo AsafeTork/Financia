@@ -1,19 +1,34 @@
-import React, { Suspense, useState, useEffect, useCallback } from 'react';
+import React, { Suspense, useState, useEffect, useRef, useCallback } from 'react';
 import Loader from './Loader.jsx';
 
 var DEFAULT_TIMEOUT = 12000;
 
+function ResetTimer({ onMount }) {
+  useEffect(function() { onMount(); }, [onMount]);
+  return null;
+}
+
 function LazyPage({ children, fallback, timeout }) {
   var ms = timeout || DEFAULT_TIMEOUT;
   var [timedOut, setTimedOut] = useState(false);
+  var cleared = useRef(false);
+  var timerRef = useRef(null);
 
   useEffect(function() {
-    var id = setTimeout(function() { setTimedOut(true); }, ms);
-    return function() { clearTimeout(id); };
+    timerRef.current = setTimeout(function() {
+      if (!cleared.current) setTimedOut(true);
+    }, ms);
+    return function() { clearTimeout(timerRef.current); };
   }, [ms]);
+
+  var handleResolved = useCallback(function() {
+    cleared.current = true;
+    clearTimeout(timerRef.current);
+  }, []);
 
   var handleRetry = useCallback(function() {
     setTimedOut(false);
+    cleared.current = false;
     window.location.reload();
   }, []);
 
@@ -31,7 +46,12 @@ function LazyPage({ children, fallback, timeout }) {
     );
   }
 
-  return <Suspense fallback={fallback || <Loader/>}>{children}</Suspense>;
+  return (
+    <Suspense fallback={fallback || <Loader/>}>
+      <ResetTimer onMount={handleResolved}/>
+      {children}
+    </Suspense>
+  );
 }
 
 export default LazyPage;
