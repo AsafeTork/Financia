@@ -31,12 +31,9 @@ export function usePlanEffects({ dataLoading, setDataLoading, setSyncStatus, pla
       firstRender.current = false;
       return;
     }
-    const names = { dashboard:'Dashboard', income:'Vendas e Ganhos', expense:'Despesas', inventory:'Estoque', report:'Relat\u00f3rio', email:'Comunicar', settings:'Configura\u00e7\u00f5es', planos:'Planos', brandstudio:'Brand Studio' };
+    var names = { dashboard:'Dashboard', income:'Vendas e Ganhos', expense:'Despesas', inventory:'Estoque', report:'Relat\u00f3rio', email:'Comunicar', settings:'Configura\u00e7\u00f5es', planos:'Planos', brandstudio:'Brand Studio' };
     var name = names[path] || path;
-    setAnnounceMsg('');
-    var rafId = requestAnimationFrame(function() {
-      setAnnounceMsg(name);
-    });
+    var rafId = requestAnimationFrame(function() { setAnnounceMsg(name); });
     var main = document.getElementById('main-content');
     if (main) main.focus();
     var t = setTimeout(function() { setAnnounceMsg(''); }, 3000);

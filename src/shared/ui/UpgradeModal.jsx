@@ -1,8 +1,8 @@
-
+import React from 'react';
 import { PRICING_PLANS, WHATSAPP, PLAN_KIND_LABEL } from '../../lib/constants.js';
 import { brandAlpha, fmt } from '../../lib/utils.js';
 
-export default function UpgradeModal({ reason, brand, onClose, onNav }) {
+export default React.memo(function UpgradeModal({ reason, brand, onClose, onNav }) {
   var c = (brand && brand.color) || '#002f59';
   var plans = PRICING_PLANS.filter(function(p) { return p.id !== 'free'; });
   var waBase = 'https://wa.me/' + WHATSAPP + '?text=';
@@ -81,4 +81,4 @@ export default function UpgradeModal({ reason, brand, onClose, onNav }) {
       </div>
     </div>
   );
-}
+});

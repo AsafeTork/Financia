@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { bootApp } from './boot.js';
 import { registerSW } from '../lib/pwa.js';
 
@@ -7,18 +7,19 @@ vi.mock('../lib/pwa.js', () => ({
 }));
 
 describe('bootApp', () => {
-  let reloadSpy;
+  let originalReload;
 
   beforeEach(() => {
     localStorage.clear();
     document.documentElement.removeAttribute('data-app-version');
     vi.clearAllMocks();
-    reloadSpy = vi.fn();
-    vi.stubGlobal('location', { reload: reloadSpy });
+    vi.restoreAllMocks();
+    originalReload = window.location.reload;
+    window.location.reload = vi.fn();
   });
 
   afterEach(() => {
-    vi.unstubAllGlobals();
+    window.location.reload = originalReload;
   });
 
   it('calls registerSW from pwa.js', () => {
@@ -38,7 +39,7 @@ describe('bootApp', () => {
 
     bootApp();
 
-    expect(reloadSpy).not.toHaveBeenCalled();
+    expect(window.location.reload).not.toHaveBeenCalled();
   });
 
   it('reload is called and localStorage updated when version changes', () => {
@@ -47,7 +48,7 @@ describe('bootApp', () => {
 
     bootApp();
 
-    expect(reloadSpy).toHaveBeenCalledTimes(1);
+    expect(window.location.reload).toHaveBeenCalledTimes(1);
     expect(localStorage.getItem('financia_app_version')).toBe('2.0.0');
   });
 

@@ -4,10 +4,8 @@ import { renderToString } from 'react-dom/server';
 
 vi.mock('react-router-dom', () => {
   return {
-    Routes: function({ children }) { return React.createElement('div', { 'data-testid': 'routes' }, children); },
-    Route: function({ path, element }) { return React.createElement('div', { 'data-testid': `route-${path || 'unknown'}` }, element); },
     useNavigate: () => vi.fn(),
-    useParams: () => ({})
+    useLocation: () => ({ pathname: '/' }),
   };
 });
 
@@ -15,18 +13,52 @@ vi.mock('../shared/ui/ui.jsx', () => ({
   PageSkeleton: function() { return React.createElement('div', { 'data-testid': 'skeleton' }); }
 }));
 
+var mockCtx = {
+  tx: null, products: null, losses: [], brand: null,
+  planInfo: null, navTo: vi.fn(), toast: { current: null },
+  confirm: vi.fn(), session: null,
+  handleDeductStock: vi.fn(),
+  saveBrand: vi.fn(), savePhone: vi.fn(),
+  isAdminDB: false, dataLoading: false,
+};
+
+var mockDataCtx = {
+  tx: null, products: null, losses: [],
+  addTx: vi.fn(), editTx: vi.fn(), deleteTx: vi.fn(),
+  addGenerated: vi.fn(),
+  addProduct: vi.fn(), editProduct: vi.fn(), deleteProduct: vi.fn(),
+  addLoss: vi.fn(), editLoss: vi.fn(), deleteLoss: vi.fn(),
+  adjustStock: vi.fn(),
+};
+
 vi.mock('../App/contexts/AppContext.jsx', () => ({
-  useAppContext: () => ({
-    tx: null, products: null, losses: [], brand: null,
-    planInfo: null, navTo: vi.fn(), toast: { current: null },
-    confirm: vi.fn(), session: null,
-    addTx: vi.fn(), editTx: vi.fn(), deleteTx: vi.fn(),
-    addGenerated: vi.fn(), handleDeductStock: vi.fn(),
-    addProduct: vi.fn(), editProduct: vi.fn(), deleteProduct: vi.fn(),
-    addLoss: vi.fn(), editLoss: vi.fn(), deleteLoss: vi.fn(),
-    adjustStock: vi.fn(), saveBrand: vi.fn(), savePhone: vi.fn(),
-    isAdminDB: false, dataLoading: false,
-  }),
+  useAppContext: () => mockCtx,
+  useDataContext: () => mockDataCtx,
+}));
+
+vi.mock('../features/dashboard/Dashboard.jsx', () => ({
+  default: function Dashboard() { return React.createElement('div', { 'data-testid': 'dashboard' }, 'Dashboard'); }
+}));
+vi.mock('../features/transactions/TxView.jsx', () => ({
+  default: function TxView(props) { return React.createElement('div', { 'data-testid': `txview-${props.type}` }, 'TxView'); }
+}));
+vi.mock('../features/inventory/InventoryView.jsx', () => ({
+  default: function InventoryView() { return React.createElement('div', { 'data-testid': 'inventory' }, 'Inventory'); }
+}));
+vi.mock('../features/email/EmailView.jsx', () => ({
+  default: function EmailView() { return React.createElement('div', { 'data-testid': 'email' }, 'Email'); }
+}));
+vi.mock('../features/reports/ReportView.jsx', () => ({
+  default: function ReportView() { return React.createElement('div', { 'data-testid': 'report' }, 'Report'); }
+}));
+vi.mock('../features/settings/SettingsView.jsx', () => ({
+  default: function SettingsView() { return React.createElement('div', { 'data-testid': 'settings' }, 'Settings'); }
+}));
+vi.mock('../features/plans/PlansView.jsx', () => ({
+  default: function PlansView() { return React.createElement('div', { 'data-testid': 'planos' }, 'Plans'); }
+}));
+vi.mock('../features/branding/BrandStudioView.jsx', () => ({
+  default: function BrandStudioView() { return React.createElement('div', { 'data-testid': 'brandstudio' }, 'BrandStudio'); }
 }));
 
 async function loadAppRoutes() {
@@ -34,69 +66,29 @@ async function loadAppRoutes() {
   return mod.default;
 }
 
-describe('AppRoutes — route memoization', () => {
-  it('AppRoutes renders all defined route paths', async () => {
+describe('AppRoutes — conditional rendering', () => {
+  it('renders Dashboard by default (path /)', async () => {
     const AppRoutes = await loadAppRoutes();
-    const props = {
-      tx: null, products: null, losses: [], brand: null, planInfo: null,
-      onNav: vi.fn(), toast: { current: null }, confirm: vi.fn(),
-      uid: null, addTx: vi.fn(), editTx: vi.fn(), deleteTx: vi.fn(),
-      addGenerated: vi.fn(), onDeductStock: vi.fn(), addProduct: vi.fn(),
-      editProduct: vi.fn(), deleteProduct: vi.fn(), addLoss: vi.fn(),
-      editLoss: vi.fn(), deleteLoss: vi.fn(), adjustStock: vi.fn(),
-      saveBrand: vi.fn(), savePhone: vi.fn(), session: null, isAdmin: false,
-      dataLoading: false
-    };
-
-    const tree = renderToString(React.createElement(AppRoutes, props));
-
-    expect(tree).toContain('route-');
-    expect(tree).toContain('data-testid="routes"');
+    const tree = renderToString(React.createElement(AppRoutes));
+    expect(tree).toContain('dashboard');
   });
 
-  it('route elements are memoized — identical props produce same tree', async () => {
+  it('renderizes only the active route, not all routes', async () => {
     const AppRoutes = await loadAppRoutes();
-    const onNav = vi.fn();
-    const saveBrand = vi.fn();
-    const addTx = vi.fn();
-    const editTx = vi.fn();
-    const deleteTx = vi.fn();
-    const addProduct = vi.fn();
-    const editProduct = vi.fn();
-    const deleteProduct = vi.fn();
+    const tree = renderToString(React.createElement(AppRoutes));
+    expect(tree).toContain('dashboard');
+    expect(tree).not.toContain('txview-');
+    expect(tree).not.toContain('inventory');
+    expect(tree).not.toContain('email');
+    expect(tree).not.toContain('settings');
+    expect(tree).not.toContain('planos');
+    expect(tree).not.toContain('brandstudio');
+  });
 
-    const props1 = {
-      tx: null, products: null, losses: [], brand: { id: '1', primary: '#002f59' },
-      planInfo: null, onNav, toast: { current: null }, confirm: vi.fn(),
-      uid: null, addTx, editTx, deleteTx, addGenerated: vi.fn(),
-      onDeductStock: vi.fn(), addProduct, editProduct, deleteProduct,
-      addLoss: vi.fn(), editLoss: vi.fn(), deleteLoss: vi.fn(),
-      adjustStock: vi.fn(), saveBrand, savePhone: vi.fn(),
-      session: null, isAdmin: false, dataLoading: false
-    };
-
-    const tree1 = renderToString(React.createElement(AppRoutes, props1));
-    const tree2 = renderToString(React.createElement(AppRoutes, { ...props1 }));
-
+  it('same props produce same tree (memoization works)', async () => {
+    const AppRoutes = await loadAppRoutes();
+    const tree1 = renderToString(React.createElement(AppRoutes));
+    const tree2 = renderToString(React.createElement(AppRoutes));
     expect(tree1).toBe(tree2);
-  });
-
-  it('brandstudio route path is /brandstudio', async () => {
-    const AppRoutes = await loadAppRoutes();
-    const onNav = vi.fn();
-
-    const props = {
-      tx: null, products: null, losses: [], brand: null, planInfo: null,
-      onNav, toast: { current: null }, confirm: vi.fn(), uid: null,
-      addTx: vi.fn(), editTx: vi.fn(), deleteTx: vi.fn(), addGenerated: vi.fn(),
-      onDeductStock: vi.fn(), addProduct: vi.fn(), editProduct: vi.fn(),
-      deleteProduct: vi.fn(), addLoss: vi.fn(), editLoss: vi.fn(),
-      deleteLoss: vi.fn(), adjustStock: vi.fn(), saveBrand: vi.fn(),
-      savePhone: vi.fn(), session: null, isAdmin: false, dataLoading: false
-    };
-
-    const tree = renderToString(React.createElement(AppRoutes, props));
-
-    expect(tree).toContain('route-/brandstudio');
   });
 });

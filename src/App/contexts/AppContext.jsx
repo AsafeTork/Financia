@@ -1,6 +1,7 @@
 import React, { createContext, useContext } from 'react';
 
-const AppContext = createContext(null);
+var AppContext = createContext(null);
+var DataContext = createContext(null);
 
 export function AppProvider({ children, value }) {
   return (
@@ -10,10 +11,26 @@ export function AppProvider({ children, value }) {
   );
 }
 
+export function DataProvider({ children, value }) {
+  return (
+    <DataContext.Provider value={value}>
+      {children}
+    </DataContext.Provider>
+  );
+}
+
 export function useAppContext() {
-  const ctx = useContext(AppContext);
+  var ctx = useContext(AppContext);
   if (!ctx) {
     throw new Error('useAppContext must be used within AppProvider');
+  }
+  return ctx;
+}
+
+export function useDataContext() {
+  var ctx = useContext(DataContext);
+  if (!ctx) {
+    throw new Error('useDataContext must be used within DataProvider');
   }
   return ctx;
 }

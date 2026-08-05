@@ -20,7 +20,7 @@ var NavLink = React.memo(function NavLink({ href, label, onClick, variant = 'def
   );
 });
 
-export default function Footer({ brand, onNav, isMobile }) {
+export default React.memo(function Footer({ brand, onNav, isMobile }) {
   var brandColor = (brand && brand.color) || 'var(--brand)';
   var brandColorHex = (brand && brand.color) || '#002f59';
   var currentYear = new Date().getFullYear();
@@ -129,7 +129,7 @@ export default function Footer({ brand, onNav, isMobile }) {
       </div>
     </footer>
   );
-}
+});
 
 export function MobileFooter({ brand, onNav, currentView }) {
   var brandColor = (brand && brand.color) || 'var(--brand)';

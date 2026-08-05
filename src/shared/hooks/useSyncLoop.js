@@ -139,5 +139,6 @@ export function useSyncLoop(props, ctx) {
     };
   }, [loadFromLocal, reconnectRef, setSyncStatus, syncingRef, uidRef, lastSyncEndRef]);
 
-  return { runSync: function() { runSyncRef.current(); } };
+  var runSync = useCallback(function() { runSyncRef.current(); }, []);
+  return { runSync: runSync };
 }

@@ -32,7 +32,7 @@ function clearProgress(uid) {
   try { localStorage.removeItem(STORE_PREFIX + uid); } catch (_) { /* ignore */ }
 }
 
-export default function Onboarding({ brand, needsName, needsPhone, onSave, uid }) {
+export default React.memo(function Onboarding({ brand, needsName, needsPhone, onSave, uid }) {
   var brandColor = (brand && brand.color) || '#002f59';
   var steps = [{ key: 'welcome', label: 'Boas-vindas' }];
   if (needsName) steps.push({ key: 'name', label: 'Empresa' });
@@ -258,4 +258,4 @@ export default function Onboarding({ brand, needsName, needsPhone, onSave, uid }
       </div>
     </div>
   );
-}
+});

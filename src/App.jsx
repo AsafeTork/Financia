@@ -24,7 +24,7 @@ import Login from './features/auth/Login.jsx';
 import AppRoutes from './routes/routes.jsx';
 import Loader from './App/components/Loader.jsx';
 import LazyPage from './App/components/LazyPage.jsx';
-import { AppProvider } from './App/contexts/AppContext.jsx';
+import { AppProvider, DataProvider } from './App/contexts/AppContext.jsx';
 import { useAppState } from './hooks/useAppState.js';
 import { useToasts } from './hooks/useToasts.js';
 import { useNavigation } from './hooks/useNavigation.js';
@@ -130,10 +130,6 @@ export default function App() {
     };
   }, [tx, setTx, addTx, addGenerated, editTx, deleteTx, products, setProducts, addProduct, editProduct, deleteProduct, losses, setLosses, addLoss, editLoss, deleteLoss, adjustStock]);
 
-  const ctx = useMemo(function() {
-    return { ...stableCtx, ...dataCtx };
-  }, [stableCtx, dataCtx]);
-
   if (s.appLoading) return <Loader/>;
   if (n.isLegal) return <FeatureErrorBoundary featureName="Legal"><LazyPage fallback={<Loader/>}>{n.path === 'privacidade' ? <PrivacyPolicy onNav={n.navTo}/> : <TermsOfService onNav={n.navTo}/>}</LazyPage></FeatureErrorBoundary>;
   if (n.isLanding) return <FeatureErrorBoundary featureName="Landing"><LazyPage fallback={<Loader/>}><Landing brand={s.brand} onEnter={function() { n.navTo(''); s.setShowLogin(true); }} onNav={n.navTo}/></LazyPage></FeatureErrorBoundary>;
@@ -152,28 +148,30 @@ export default function App() {
   if (s.onboardingNeeded) { const finishOnboarding = function(data) { o.finishOnboarding(data, needsName); }; return <Onboarding brand={s.brand} needsName={needsName} needsPhone={needsPhone} onSave={finishOnboarding} uid={s.session.user.id}/>; }
 
   return (
-    <AppProvider value={ctx}>
-      <div className="min-h-screen flex overflow-x-hidden" style={{background:'var(--bg-page)'}}>
-        <a href="#main-content" onClick={function(e){e.preventDefault();var el=document.getElementById('main-content');if(el){el.setAttribute('tabindex','-1');el.focus();el.scrollIntoView();}}} className="skip-link">Pular para conteúdo</a>
-        <Offline/><WidgetErrorBoundary><UpdateBanner brand={appBrand}/></WidgetErrorBoundary><LazyPage fallback={null}><DebugBadge/></LazyPage><SyncBadge status={s.syncStatus}/>
-        <WidgetErrorBoundary><Sidebar view={n.currentView} onNav={n.navTo} brand={appBrand} open={s.sidebarOpen} isAdmin={s.isAdminDB} onClose={handleCloseSidebar}/></WidgetErrorBoundary>
-        <div className="hidden lg:block fixed top-4 right-4 z-30"><ThemeToggle theme={effectiveTheme} onToggle={toggleTheme} variant="floating"/></div>
-        <div className="flex-1 lg:ml-64 flex flex-col min-h-screen min-w-0 w-full">
-          <WidgetErrorBoundary><Header brand={appBrand} syncStatus={s.syncStatus} theme={effectiveTheme} onToggleTheme={toggleTheme} onMenuOpen={handleOpenSidebar}/></WidgetErrorBoundary>
-          <main id="main-content" tabIndex="-1" className="flex-1 p-4 lg:p-8 max-w-5xl w-full mx-auto pb-8 lg:pb-8 min-w-0 overflow-x-hidden">
-            <div key={n.currentView} className="anim-page-view">
-              <FeatureErrorBoundary featureName={n.currentView}><AppRoutes/></FeatureErrorBoundary>
-            </div>
-          </main>
-          <Footer brand={appBrand} onNav={handleNav}/>
+    <AppProvider value={stableCtx}>
+      <DataProvider value={dataCtx}>
+        <div className="min-h-screen flex overflow-x-hidden" style={{background:'var(--bg-page)'}}>
+          <a href="#main-content" onClick={function(e){e.preventDefault();var el=document.getElementById('main-content');if(el){el.setAttribute('tabindex','-1');el.focus();el.scrollIntoView();}}} className="skip-link">Pular para conteúdo</a>
+          <Offline/><WidgetErrorBoundary><UpdateBanner brand={appBrand}/></WidgetErrorBoundary><LazyPage fallback={null}><DebugBadge/></LazyPage><SyncBadge status={s.syncStatus}/>
+          <WidgetErrorBoundary><Sidebar view={n.currentView} onNav={n.navTo} brand={appBrand} open={s.sidebarOpen} isAdmin={s.isAdminDB} onClose={handleCloseSidebar}/></WidgetErrorBoundary>
+          <div className="hidden lg:block fixed top-4 right-4 z-30"><ThemeToggle theme={effectiveTheme} onToggle={toggleTheme} variant="floating"/></div>
+          <div className="flex-1 lg:ml-64 flex flex-col min-h-screen min-w-0 w-full">
+            <WidgetErrorBoundary><Header brand={appBrand} syncStatus={s.syncStatus} theme={effectiveTheme} onToggleTheme={toggleTheme} onMenuOpen={handleOpenSidebar}/></WidgetErrorBoundary>
+            <main id="main-content" tabIndex="-1" className="flex-1 p-4 lg:p-8 max-w-5xl w-full mx-auto pb-8 lg:pb-8 min-w-0 overflow-x-hidden">
+              <div key={n.currentView} className="anim-page-view">
+                <FeatureErrorBoundary featureName={n.currentView}><AppRoutes/></FeatureErrorBoundary>
+              </div>
+            </main>
+            <Footer brand={appBrand} onNav={handleNav}/>
+          </div>
+          <WidgetErrorBoundary><BottomNav view={n.currentView} onNav={n.navTo} brand={appBrand} isAdmin={s.isAdminDB}/></WidgetErrorBoundary>
+          <WidgetErrorBoundary><QuickActions view={n.currentView} onNav={n.navTo} brand={appBrand}/></WidgetErrorBoundary>
+          <Toast toasts={s.toasts} onDismiss={t.dismissToast}/>
+          {s.confirmData && <Confirm msg={s.confirmData.msg} onOk={handleConfirmOk} onCancel={handleCancel}/>}
+          {s.showUpgrade && <UpgradeModal reason={typeof s.showUpgrade === 'object' ? s.showUpgrade : null} brand={appBrand} onClose={handleCloseUpgrade} onNav={handleNav}/>}
+          <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">{s.announceMsg}</div>
         </div>
-        <WidgetErrorBoundary><BottomNav view={n.currentView} onNav={n.navTo} brand={appBrand} isAdmin={s.isAdminDB}/></WidgetErrorBoundary>
-        <WidgetErrorBoundary><QuickActions view={n.currentView} onNav={n.navTo} brand={appBrand}/></WidgetErrorBoundary>
-        <Toast toasts={s.toasts} onDismiss={t.dismissToast}/>
-        {s.confirmData && <Confirm msg={s.confirmData.msg} onOk={handleConfirmOk} onCancel={handleCancel}/>}
-        {s.showUpgrade && <UpgradeModal reason={typeof s.showUpgrade === 'object' ? s.showUpgrade : null} brand={appBrand} onClose={handleCloseUpgrade} onNav={handleNav}/>}
-        <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">{s.announceMsg}</div>
-      </div>
+      </DataProvider>
     </AppProvider>
   );
 }

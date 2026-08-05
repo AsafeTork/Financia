@@ -1,6 +1,6 @@
-import { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 
-export default function Confirm({ msg, onOk, onCancel }) {
+export default React.memo(function Confirm({ msg, onOk, onCancel }) {
   var dialogRef = useRef(null);
   var prevFocus = useRef(null);
   var cancelRef = useRef(onCancel);
@@ -65,4 +65,4 @@ export default function Confirm({ msg, onOk, onCancel }) {
       </div>
     </div>
   );
-}
+});
