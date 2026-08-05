@@ -74,7 +74,7 @@ jobs:
   unit-tests:
     name: Unit Tests (Node 24)
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 10
     needs: lint-typecheck
     outputs:
       test_exit_code: ${{ steps.test.outputs.exit_code }}
@@ -97,25 +97,16 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-npm-
 
-      - name: Cache Playwright browsers
-        uses: actions/cache@v5
-        with:
-          path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
-
       - name: Install dependencies
         run: npm install
         env:
           ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
 
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
-
       - name: Run unit tests
         id: test
         run: |
           set -o pipefail
-          npx vitest run --coverage.enabled=false --no-color 2>&1 | tee /tmp/test-output.txt
+          npx vitest run --coverage.enabled=false --reporter=basic --no-color 2>&1 | tee /tmp/test-output.txt
           echo "exit_code=${PIPESTATUS[0]}" >> $GITHUB_OUTPUT
 
       - name: Upload test artifacts

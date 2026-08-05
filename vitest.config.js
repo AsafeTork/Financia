@@ -19,7 +19,7 @@ export default defineConfig({
     fileParallelism: true,
     forceExit: true,
     teardownTimeout: 5000,
-    reporter: ['verbose'],
+    reporter: ['basic'],
     include: ['src/**/*.test.{js,jsx}'],
     exclude: ['**/e2e/**', '**/*.isolated.test.{js,jsx}', '**/benchmarks/**', '**/supabase/functions/**'],
     testTimeout: 8000,

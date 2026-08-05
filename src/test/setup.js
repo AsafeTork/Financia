@@ -16,14 +16,11 @@ const server = setupServer(...handlers);
 beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
 afterAll(async () => {
   try { await server.close(); } catch (_) { /* ignore close error */ }
-  globalThis.indexedDB = new IDBFactory();
 });
 afterEach(() => {
-  server.resetHandlers();
   vi.clearAllMocks();
   vi.clearAllTimers();
   vi.useRealTimers();
-  globalThis.indexedDB = new IDBFactory();
   try { localStorage.clear(); } catch (_) { /* ignore clear error */ }
   try { sessionStorage.clear(); } catch (_) { /* ignore clear error */ }
 });
