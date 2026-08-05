@@ -1,12 +1,6 @@
 /* global process */
-import '@testing-library/jest-dom';
-import { IDBFactory } from 'fake-indexeddb';
-import { beforeAll, afterAll, afterEach, vi, expect } from 'vitest';
-import { setupServer } from 'msw/node';
-import { handlers } from './msw-handlers.js';
-import * as matchers from 'vitest-dom/matchers';
 
-// Polyfills for MSW on Node 24+
+// Polyfills for MSW on Node 24+ - MUST be before msw import
 import { TextEncoder, TextDecoder } from 'util';
 import { TransformStream, ReadableStream, WritableStream } from 'stream/web';
 globalThis.TextEncoder = TextEncoder;
@@ -14,6 +8,13 @@ globalThis.TextDecoder = TextDecoder;
 globalThis.TransformStream = TransformStream;
 globalThis.ReadableStream = ReadableStream;
 globalThis.WritableStream = WritableStream;
+
+import '@testing-library/jest-dom';
+import { IDBFactory } from 'fake-indexeddb';
+import { beforeAll, afterAll, afterEach, vi, expect } from 'vitest';
+import { setupServer } from 'msw/node';
+import { handlers } from './msw-handlers.js';
+import * as matchers from 'vitest-dom/matchers';
 
 expect.extend(matchers);
 
@@ -25,7 +26,6 @@ beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
 afterAll(async () => {
   try { await server.close(); } catch (_) { /* ignore close error */ }
   globalThis.indexedDB = new IDBFactory();
-  // Force exit if anything is still hanging
   setTimeout(() => process.exit(0), 100);
 });
 afterEach(() => {
