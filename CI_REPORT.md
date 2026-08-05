@@ -1,7 +1,7 @@
 # CI Report
 
-**Gerado:** 2026-08-05 17:09 UTC
-**Commit:** `f2a7e82f4d7dc37ac6df942f53a4ab0f4461d780`
+**Gerado:** 2026-08-05 17:21 UTC
+**Commit:** `e9a5ea8521180cca4519ef6b0bdcfef832ef0059`
 **Branch:** `main`
 
 ---
@@ -11,7 +11,7 @@
 | Verificacao | Status |
 |---|---|
 | Lint + Typecheck | com erros |
-| Testes Unitarios | com falhas |
+| Testes Unitarios | nao executado |
 | Testes Integracao | nao executado |
 | Build | nao executado |
 | E2E Tests | nao executado |
@@ -33,13 +33,23 @@
 /home/runner/work/Financia/Financia/src/shared/hooks/useBrandAppearance.js
   24:9  warning  'bgLum' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
 
+/home/runner/work/Financia/Financia/src/test/conflict.test.js
+  54:13  warning  'merged' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
 /home/runner/work/Financia/Financia/src/test/global-teardown.js
   2:1  warning  Unused eslint-disable directive (no problems were reported)
+
+/home/runner/work/Financia/Financia/src/test/leader-election.test.js
+  22:5   error  'global' is not defined  no-undef
+  26:12  error  'global' is not defined  no-undef
+
+/home/runner/work/Financia/Financia/src/test/sync-e2e.test.js
+  3:10  warning  'syncAll' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
 
 /home/runner/work/Financia/Financia/src/workers/sync.worker.js
   146:22  warning  'action' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
 
-✖ 5 problems (0 errors, 5 warnings)
+✖ 9 problems (2 errors, 7 warnings)
   0 errors and 1 warning potentially fixable with the `--fix` option.
 
 
@@ -50,76 +60,7 @@
 ## Test Results (ultimas 40 linhas)
 
 ```
-5:09:12 PM [vite] warning: `esbuild` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `oxc` instead.
-5:09:12 PM [vite] warning: `optimizeDeps.esbuildOptions` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `optimizeDeps.rolldownOptions` instead.
-Both esbuild and oxc options were set. oxc options will be used and esbuild options will be ignored. The following esbuild options were set: `{ jsx: 'automatic', jsxImportSource: undefined }`
 
- RUN  v4.1.10 /home/runner/work/Financia/Financia
-
-
-⎯⎯⎯⎯⎯⎯ Failed Suites 50 ⎯⎯⎯⎯⎯⎯
-
- FAIL  src/core/boot.test.js [ src/core/boot.test.js ]
- FAIL  src/hooks/useNavigation.test.js [ src/hooks/useNavigation.test.js ]
- FAIL  src/hooks/usePlanEffects.test.js [ src/hooks/usePlanEffects.test.js ]
- FAIL  src/hooks/useToasts.test.js [ src/hooks/useToasts.test.js ]
- FAIL  src/lib/cleanNumeric.test.js [ src/lib/cleanNumeric.test.js ]
- FAIL  src/lib/constants.test.js [ src/lib/constants.test.js ]
- FAIL  src/lib/impersonation.integration.test.js [ src/lib/impersonation.integration.test.js ]
- FAIL  src/lib/plans.test.js [ src/lib/plans.test.js ]
- FAIL  src/lib/quickIntent.test.js [ src/lib/quickIntent.test.js ]
- FAIL  src/lib/recurring.test.js [ src/lib/recurring.test.js ]
- FAIL  src/lib/stripe.test.js [ src/lib/stripe.test.js ]
- FAIL  src/lib/sync-extra.test.js [ src/lib/sync-extra.test.js ]
- FAIL  src/lib/utils.test.js [ src/lib/utils.test.js ]
- FAIL  src/test/constants.test.js [ src/test/constants.test.js ]
- FAIL  src/test/utils.test.js [ src/test/utils.test.js ]
- FAIL  src/features/inventory/useProducts.test.js [ src/features/inventory/useProducts.test.js ]
- FAIL  src/features/branding/LogoSchemes.test.js [ src/features/branding/LogoSchemes.test.js ]
- FAIL  src/features/branding/LogoSchemes.test.jsx [ src/features/branding/LogoSchemes.test.jsx ]
- FAIL  src/features/branding/accessibility.test.jsx [ src/features/branding/accessibility.test.jsx ]
- FAIL  src/features/branding/components.test.jsx [ src/features/branding/components.test.jsx ]
- FAIL  src/features/branding/presets.test.js [ src/features/branding/presets.test.js ]
- FAIL  src/features/transactions/useTx.extra.test.js [ src/features/transactions/useTx.extra.test.js ]
- FAIL  src/shared/hooks/useBrandAppearance.extra.test.js [ src/shared/hooks/useBrandAppearance.extra.test.js ]
- FAIL  src/shared/hooks/useBrandManager.test.js [ src/shared/hooks/useBrandManager.test.js ]
- FAIL  src/shared/hooks/useDataLoader.test.js [ src/shared/hooks/useDataLoader.test.js ]
- FAIL  src/shared/hooks/useRealtime.test.js [ src/shared/hooks/useRealtime.test.js ]
- FAIL  src/shared/hooks/useSyncLoop.test.js [ src/shared/hooks/useSyncLoop.test.js ]
- FAIL  src/shared/ui/ColorField.test.jsx [ src/shared/ui/ColorField.test.jsx ]
- FAIL  src/shared/ui/Onboarding.test.jsx [ src/shared/ui/Onboarding.test.jsx ]
- FAIL  src/shared/ui/PhoneInput.test.jsx [ src/shared/ui/PhoneInput.test.jsx ]
- FAIL  src/shared/ui/QuickActions.test.jsx [ src/shared/ui/QuickActions.test.jsx ]
-Error: Failed to resolve import "./test/msw-handlers.js" from "src/test/setup.js". Does the file exist?
-  Plugin: vite:import-analysis
-  File: /home/runner/work/Financia/Financia/src/test/setup.js:8:26
-  6  |  import { beforeAll, afterAll, afterEach, vi, expect } from 'vitest';
-  7  |  import { setupServer } from 'msw/node';
-  8  |  import { handlers } from './test/msw-handlers.js';
-     |                            ^
-  9  |  import * as matchers from 'vitest-dom/matchers';
-  10 |  
- ❯ TransformPluginContext._formatLog node_modules/vitest/node_modules/vite/dist/node/chunks/node.js:30366:39
- ❯ TransformPluginContext.error node_modules/vitest/node_modules/vite/dist/node/chunks/node.js:30363:14
- ❯ normalizeUrl node_modules/vitest/node_modules/vite/dist/node/chunks/node.js:27393:18
- ❯ node_modules/vitest/node_modules/vite/dist/node/chunks/node.js:27456:30
- ❯ TransformPluginContext.transform node_modules/vitest/node_modules/vite/dist/node/chunks/node.js:27424:4
- ❯ EnvironmentPluginContainer.transform node_modules/vitest/node_modules/vite/dist/node/chunks/node.js:30151:14
- ❯ loadAndTransform node_modules/vitest/node_modules/vite/dist/node/chunks/node.js:20098:26
-
-⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/50]⎯
-
- FAIL  src/hooks/useAppState.test.js [ src/hooks/useAppState.test.js ]
- FAIL  src/hooks/useOnboarding.test.js [ src/hooks/useOnboarding.test.js ]
- FAIL  src/routes/routes.test.jsx [ src/routes/routes.test.jsx ]
- FAIL  src/lib/auth.test.js [ src/lib/auth.test.js ]
- FAIL  src/lib/crud.test.js [ src/lib/crud.test.js ]
- FAIL  src/lib/dexie.test.js [ src/lib/dexie.test.js ]
- FAIL  src/lib/revenue.test.js [ src/lib/revenue.test.js ]
- FAIL  src/lib/stripe-subscription-cycle.integration.test.js [ src/lib/stripe-subscription-cycle.integration.test.js ]
- FAIL  src/lib/stripe-webhook.integration.test.js [ src/lib/stripe-webhook.integration.test.js ]
- FAIL  src/lib/sync.test.js [ src/lib/sync.test.js ]
- FAIL  src/test/components.test.js [ src/test
 ```
 
 ---
@@ -182,4 +123,4 @@ Nenhum relatorio admin gerado.
 
 | Data | Correcao | Commit |
 |------|----------|--------|
-| 2026-08-05 17:09 UTC | CI report gerado automaticamente | `f2a7e82f4d7dc37ac6df942f53a4ab0f4461d780` |
+| 2026-08-05 17:21 UTC | CI report gerado automaticamente | `e9a5ea8521180cca4519ef6b0bdcfef832ef0059` |
