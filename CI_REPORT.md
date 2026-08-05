@@ -1,7 +1,7 @@
 # CI Report
 
-**Gerado:** 2026-08-05 03:55 UTC
-**Commit:** `058d08b2488192c97a443693abb085f3858d29dd`
+**Gerado:** 2026-08-05 04:06 UTC
+**Commit:** `25dc0cc18a9f634926d7ab80c714ef0f1ebe70c4`
 **Branch:** `main`
 
 ---
@@ -38,8 +38,8 @@
 ## Test Results (ultimas 40 linhas)
 
 ```
-3:55:15 AM [vite] warning: `esbuild` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `oxc` instead.
-3:55:15 AM [vite] warning: `optimizeDeps.esbuildOptions` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `optimizeDeps.rolldownOptions` instead.
+4:05:46 AM [vite] warning: `esbuild` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `oxc` instead.
+4:05:46 AM [vite] warning: `optimizeDeps.esbuildOptions` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `optimizeDeps.rolldownOptions` instead.
 Both esbuild and oxc options were set. oxc options will be used and esbuild options will be ignored. The following esbuild options were set: `{ jsx: 'automatic', jsxImportSource: undefined }`
  DEPRECATED  `test.poolOptions` was removed in Vitest 4. All previous `poolOptions` are now top-level options. Please, refer to the migration guide: https://vitest.dev/guide/migration#pool-rework
 
@@ -75,7 +75,6 @@ Both esbuild and oxc options were set. oxc options will be used and esbuild opti
  FAIL  src/test/constants.test.js [ src/test/constants.test.js ]
  FAIL  src/test/utils.test.js [ src/test/utils.test.js ]
  FAIL  src/workers/color-extract.worker.test.js [ src/workers/color-extract.worker.test.js ]
- FAIL  src/features/auth/useSession.test.js [ src/features/auth/useSession.test.js ]
  FAIL  src/features/branding/LogoSchemes.test.js [ src/features/branding/LogoSchemes.test.js ]
  FAIL  src/features/branding/LogoSchemes.test.jsx [ src/features/branding/LogoSchemes.test.jsx ]
  FAIL  src/features/branding/accessibility.test.jsx [ src/features/branding/accessibility.test.jsx ]
@@ -83,6 +82,7 @@ Both esbuild and oxc options were set. oxc options will be used and esbuild opti
  FAIL  src/features/branding/logoUtils.test.js [ src/features/branding/logoUtils.test.js ]
  FAIL  src/features/branding/presets.test.js [ src/features/branding/presets.test.js ]
  FAIL  src/features/branding/responseProcessor.test.js [ src/features/branding/responseProcessor.test.js ]
+ FAIL  src/features/auth/useSession.test.js [ src/features/auth/useSession.test.js ]
  FAIL  src/features/inventory/useLosses.test.js [ src/features/inventory/useLosses.test.js ]
  FAIL  src/features/inventory/useProducts.test.js [ src/features/inventory/useProducts.test.js ]
  FAIL  src/features/transactions/useTx.extra.test.js [ src/features/transactions/useTx.extra.test.js ]
@@ -100,9 +100,9 @@ Both esbuild and oxc options were set. oxc options will be used and esbuild opti
  FAIL  src/shared/ui/QuickActions.test.jsx [ src/shared/ui/QuickActions.test.jsx ]
 ReferenceError: TransformStream is not defined
  ❯ node_modules/@mswjs/interceptors/src/interceptors/fetch/utils/brotli-decompress.ts:3:0
- ❯ src/test/setup.js:5:1
-      3| import { IDBFactory } from 'fake-indexeddb';
-      4| import { beforeAll, afterAll, a
+ ❯ src/test/setup.js:15:1
+     13| import { IDBFactory } from 'fake-indexeddb';
+     14| import { beforeAll, afterAll, 
 ```
 
 ---
@@ -165,4 +165,4 @@ Nenhum relatorio admin gerado.
 
 | Data | Correcao | Commit |
 |------|----------|--------|
-| 2026-08-05 03:55 UTC | CI report gerado automaticamente | `058d08b2488192c97a443693abb085f3858d29dd` |
+| 2026-08-05 04:06 UTC | CI report gerado automaticamente | `25dc0cc18a9f634926d7ab80c714ef0f1ebe70c4` |
