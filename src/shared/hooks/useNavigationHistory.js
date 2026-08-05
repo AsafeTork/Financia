@@ -121,7 +121,7 @@ export function useNavigationTracker(onNav) {
   var trackedNav = useCallback(function(path, metadata) {
     onNav(path);
     history.push(path, metadata);
-  }, [onNav, history.push]);
+  }, [onNav, history]);
 
   return useMemo(function() {
     var result = {};
@@ -137,9 +137,6 @@ export function usePageViewTracking(pageName, onTrack) {
   var mountedRef = useRef(false);
   var startTimeRef = useRef(Date.now());
 
-  var _onTrack = onTrack;
-  var _pageName = pageName;
-
   useEffect(function() {
     if (!mountedRef.current) {
       mountedRef.current = true;
@@ -147,14 +144,14 @@ export function usePageViewTracking(pageName, onTrack) {
     }
 
     var loadTime = Date.now() - startTimeRef.current;
-    if (_onTrack) _onTrack(_pageName, { loadTime: loadTime, timestamp: Date.now() });
+    if (onTrack) onTrack(pageName, { loadTime: loadTime, timestamp: Date.now() });
     startTimeRef.current = Date.now();
-  }, [_pageName]);
+  }, [pageName, onTrack]);
 
   useEffect(function() {
     return function() {
       var duration = Date.now() - startTimeRef.current;
-      if (_onTrack) _onTrack(_pageName + '_exit', { duration: duration, timestamp: Date.now() });
+      if (onTrack) onTrack(pageName + '_exit', { duration: duration, timestamp: Date.now() });
     };
-  }, [_pageName]);
+  }, [pageName, onTrack]);
 }
