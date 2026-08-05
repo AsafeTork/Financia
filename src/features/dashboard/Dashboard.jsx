@@ -165,10 +165,10 @@ export default React.memo(function Dashboard({ tx, products, brand, onNav, planI
       {tx.length === 0 && products.length === 0 ? (
         <div className="grid grid-cols-2 gap-3">
           {[
-            { icon:'M12 4v16m8-8l-8-8-8 8', label:'Entradas', desc:'Registre vendas para ver o quanto entrou', action:'Registrar venda', nav:'income', color:'#22c55e' },
-            { icon:'M12 20V4m-8 8l8 8 8-8', label:'Despesas', desc:'Cadastre contas e veja para onde vai o dinheiro', action:'Registrar despesa', nav:'expense', color:'#ef4444' },
+            { icon:'M12 4v16m8-8l-8-8-8 8', label:'Entradas', desc:'Registre vendas para ver o quanto entrou', action:'Registrar venda', nav:'income', color:'var(--success)' },
+            { icon:'M12 20V4m-8 8l8 8 8-8', label:'Despesas', desc:'Cadastre contas e veja para onde vai o dinheiro', action:'Registrar despesa', nav:'expense', color:'var(--danger)' },
             { icon:'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4', label:'Estoque', desc:'Gerencie produtos, precos e controle de quantidade', action:'Adicionar produto', nav:'inventory', color:brand.color },
-            { icon:'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z', label:'Relatorios', desc:'Exporte PDF e Excel com dados organizados', action:'Ver relatorios', nav:'report', color:'#3b82f6' },
+            { icon:'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z', label:'Relatorios', desc:'Exporte PDF e Excel com dados organizados', action:'Ver relatorios', nav:'report', color:'var(--info)' },
           ].map(function(k) {
             return (
               <div key={k.label} className="rounded-[20px] p-4 sm:p-5 hover:-translate-y-0.5" style={{background:'var(--bg-card)', border:'1px solid var(--border)', boxShadow:'var(--shadow-sm)', transition:'background-color .15s ease, transform .12s ease'}}>
@@ -188,15 +188,15 @@ export default React.memo(function Dashboard({ tx, products, brand, onNav, planI
         <div className="grid grid-cols-2 gap-3">
           <KpiCard label="Entradas do mes"
             value={fmt(ti)}
-            color="#22c55e"
-            accentBar="#22c55e"
+            color="var(--success)"
+            accentBar="var(--success)"
             variation={inVar}
             onClick={function() { onNav('income'); }}
             sub={inVar === null ? 'Sem dados anteriores' : undefined}/>
           <KpiCard label="Saidas do mes"
             value={fmt(to)}
-            color="#ef4444"
-            accentBar="#ef4444"
+            color="var(--danger)"
+            accentBar="var(--danger)"
             variation={outVar}
             invert={true}
             onClick={function() { onNav('expense'); }}
@@ -209,8 +209,8 @@ export default React.memo(function Dashboard({ tx, products, brand, onNav, planI
             sub={profVar === null ? 'Sem dados anteriores' : undefined}/>
           <KpiCard label="Saldo hoje"
             value={fmt(di - dout)}
-            color="#3b82f6"
-            accentBar="#3b82f6"
+            color="var(--info)"
+            accentBar="var(--info)"
             sub={di > 0 || dout > 0 ? ('+' + fmt(di) + ' / -' + fmt(dout)) : 'Sem movimento hoje'}/>
         </div>
       )}
@@ -229,7 +229,7 @@ export default React.memo(function Dashboard({ tx, products, brand, onNav, planI
                Entradas
              </span>
              <span className="flex items-center gap-1.5">
-               <span className="w-2.5 h-2.5 rounded-sm inline-block" style={{background:'#ef4444'}} aria-label="Saídas"/>
+               <span className="w-2.5 h-2.5 rounded-sm inline-block" style={{background:'var(--danger)'}} aria-label="Saídas"/>
               <span className="sr-only">Saída</span>
                Saidas
             </span>
@@ -274,8 +274,8 @@ export default React.memo(function Dashboard({ tx, products, brand, onNav, planI
               </svg>
               <p className="text-sm" style={{color:'var(--text-muted)'}}>Registre vendas e despesas para ver aqui</p>
               <div className="flex gap-3">
-                <button onClick={function() { onNav('income'); }} className="text-xs font-semibold px-4 py-3 rounded-lg text-white min-h-[44px] hover:opacity-90" style={{background:'#22c55e'}}>+ Venda</button>
-                <button onClick={function() { onNav('expense'); }} className="text-xs font-semibold px-4 py-3 rounded-lg text-white min-h-[44px] hover:opacity-90" style={{background:'#ef4444'}}>+ Despesa</button>
+<button onClick={function() { onNav('income'); }} className="text-xs font-semibold px-4 py-3 rounded-lg text-white min-h-[44px] hover:opacity-90" style={{background:'var(--success)'}}>+ Venda</button>
+<button onClick={function() { onNav('expense'); }} className="text-xs font-semibold px-4 py-3 rounded-lg text-white min-h-[44px] hover:opacity-90" style={{background:'var(--danger)'}}>+ Despesa</button>
               </div>
             </div>
           )
@@ -289,7 +289,7 @@ export default React.memo(function Dashboard({ tx, products, brand, onNav, planI
                       <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
                         style={{background: isInc ? brandAlpha(brand.color, 0.1) : 'rgba(239,68,68,0.08)'}}>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-                          stroke={isInc ? brand.color : '#ef4444'} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          stroke={isInc ? brand.color : 'var(--danger)'} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                           <path d={isInc ? 'M5 15l7-7 7 7' : 'M19 9l-7 7-7-7'}/>
                         </svg>
                       </div>
@@ -298,7 +298,7 @@ export default React.memo(function Dashboard({ tx, products, brand, onNav, planI
                         <p className="text-xs truncate" style={{color:'var(--text-muted)'}}>{fmtDate(t.date)}{t.method ? ' . ' + t.method : ''}{t.category ? ' . ' + t.category : ''}</p>
                       </div>
                     </div>
-                    <span className="text-sm font-bold tabular flex-shrink-0 ml-3" style={{color: isInc ? brand.color : '#ef4444'}}>
+                    <span className="text-sm font-bold tabular flex-shrink-0 ml-3" style={{color: isInc ? brand.color : 'var(--danger)'}}>
                       {(isInc ? '+' : '-') + fmt(t.amount)}
                     </span>
                   </div>

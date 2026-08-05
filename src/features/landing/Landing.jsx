@@ -106,7 +106,7 @@ export default function Landing({ onEnter, onNav }) {
       </div>
 
       {/* ─── NAVBAR ─── */}
-      <header className="sticky top-0 z-50" style={{ background: 'rgba(255,255,255,0.80)', backdropFilter: 'blur(16px) saturate(1.8)', WebkitBackdropFilter: 'blur(16px) saturate(1.8)', borderBottom: '1px solid var(--border)' }}>
+      <header className="sticky top-0 z-50" style={{ background: 'var(--navbar-text-color)', backdropFilter: 'blur(16px) saturate(1.8)', WebkitBackdropFilter: 'blur(16px) saturate(1.8)', borderBottom: '1px solid var(--border)' }}>
         <div className="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <img src="/icon-192.svg" alt="Financia" fetchPriority="high" decoding="sync" className="w-7 h-7" />
@@ -178,7 +178,7 @@ export default function Landing({ onEnter, onNav }) {
 
             {/* Card principal com glass sutil */}
             <div className="relative float-slow" style={{ transform: 'perspective(1200px) rotateY(-2deg)', transition: 'transform 0.4s' }}>
-              <div className="rounded-[20px] overflow-hidden" style={{ background: 'rgba(255,255,255,0.97)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-xl)' }}>
+              <div className="rounded-[20px] overflow-hidden" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-xl)' }}>
                 {/* Barra de titulo */}
                 <div className="flex items-center gap-2 px-5 py-3" style={{ background: 'var(--bg-subtle)', borderBottom: '1px solid var(--border)' }}>
                   <span className="w-2.5 h-2.5 rounded-full" style={{ background: 'var(--danger)' }} />
@@ -222,7 +222,7 @@ export default function Landing({ onEnter, onNav }) {
 
             {/* Card flutuante 1 (receita) */}
             <div className="absolute -bottom-4 -left-8 hidden md:block" style={{ animation: 'floatSlow 5s ease-in-out infinite', animationDelay: '-1s' }}>
-              <div className="rounded-2xl px-4 py-3" style={{ background: 'rgba(255,255,255,0.95)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-lg)', backdropFilter: 'blur(8px)' }}>
+              <div className="rounded-2xl px-4 py-3" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-lg)', backdropFilter: 'blur(8px)' }}>
                 <p className="text-[11px] font-medium" style={{ color: 'var(--text-sub)' }}>Receita hoje</p>
                 <p className="font-bold tabular text-sm" style={{ color: 'var(--success)' }}>R$ 2.340</p>
               </div>
@@ -230,7 +230,7 @@ export default function Landing({ onEnter, onNav }) {
 
             {/* Card flutuante 2 (ping) */}
             <div className="absolute -top-3 -right-6 hidden md:block" style={{ animation: 'floatSlow 5s ease-in-out infinite', animationDelay: '-2.5s' }}>
-              <div className="rounded-2xl px-4 py-3" style={{ background: 'rgba(255,255,255,0.95)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-lg)', backdropFilter: 'blur(8px)' }}>
+              <div className="rounded-2xl px-4 py-3" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-lg)', backdropFilter: 'blur(8px)' }}>
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full" style={{ background: 'var(--green)' }} />
                   <span className="text-[11px] font-medium" style={{ color: 'var(--text-sub)' }}>Ao vivo</span>
@@ -453,7 +453,7 @@ export default function Landing({ onEnter, onNav }) {
                   )}>
 
                   {popular && (
-                    <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap" style={{ background: 'var(--brand-grad)', color: '#fff', boxShadow: '0 4px 16px rgba(59,191,160,0.35)' }}>
+                    <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap" style={{ background: 'var(--brand-grad)', color: 'var(--bg-card)', boxShadow: '0 4px 16px rgba(59,191,160,0.35)' }}>
                       Mais escolhido
                     </div>
                   )}
