@@ -6,7 +6,7 @@ globalThis.TextEncoder = TextEncoder;
 globalThis.TextDecoder = TextDecoder;
 
 try {
-  var _streamWeb = await import('stream/web');
+  const _streamWeb = import('stream/web');
   globalThis.TransformStream = _streamWeb.TransformStream;
   globalThis.ReadableStream = _streamWeb.ReadableStream;
   globalThis.WritableStream = _streamWeb.WritableStream;
