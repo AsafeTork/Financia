@@ -1,7 +1,7 @@
 # CI Report
 
-**Gerado:** 2026-08-05 00:01 UTC
-**Commit:** `4b59197c3ad9192d8b46043ae603966580bf74be`
+**Gerado:** 2026-08-05 00:37 UTC
+**Commit:** `fc6e28d218a8cd1791110a4bbeb9f18bd4dd5233`
 **Branch:** `main`
 
 ---
@@ -25,12 +25,16 @@
 ```
 
 /home/runner/work/Financia/Financia/src/App.jsx
-  98:6  warning  React Hook useMemo has a missing dependency: 'setShowUpgrade'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  98:6  warning  React Hook useMemo has an unnecessary dependency: 's.setShowUpgrade'. Either exclude it or remove the dependency array  react-hooks/exhaustive-deps
 
 /home/runner/work/Financia/Financia/src/test/setup.js
-  19:20  error  'process' is not defined  no-undef
+   8:1   warning  Unused eslint-disable directive (no problems were reported from 'no-undef')
+  19:43  error    Empty block statement                                                        no-empty
+  30:43  error    Empty block statement                                                        no-empty
+  31:45  error    Empty block statement                                                        no-empty
 
-✖ 2 problems (1 error, 1 warning)
+✖ 5 problems (3 errors, 2 warnings)
+  0 errors and 1 warning potentially fixable with the `--fix` option.
 
 
 ```
@@ -103,4 +107,4 @@ Nenhum relatorio admin gerado.
 
 | Data | Correcao | Commit |
 |------|----------|--------|
-| 2026-08-05 00:01 UTC | CI report gerado automaticamente | `4b59197c3ad9192d8b46043ae603966580bf74be` |
+| 2026-08-05 00:37 UTC | CI report gerado automaticamente | `fc6e28d218a8cd1791110a4bbeb9f18bd4dd5233` |
