@@ -35,7 +35,7 @@ export default defineConfig(async function() {
     build: {
       outDir: 'dist',
       emptyOutDir: true,
-      target: 'baseline-widely-available',
+      target: 'es2020',
       sourcemap: false,
       cacheDir: 'node_modules/.vite-build-cache',
       rollupOptions: {
@@ -59,6 +59,9 @@ export default defineConfig(async function() {
             if (id.includes('node_modules/tailwind-merge') || id.includes('node_modules/tailwindcss-animate')) return 'vendor-tailwind-utils';
             if (id.includes('node_modules/class-variance-authority') || id.includes('node_modules/clsx')) return 'vendor-class-utils';
             if (id.includes('node_modules/@ai-sdk')) return 'vendor-ai';
+            if (id.includes('node_modules/date-fns') || id.includes('node_modules/luxon')) return 'vendor-date';
+            if (id.includes('node_modules/zod') || id.includes('node_modules/yup')) return 'vendor-validation';
+            if (id.includes('node_modules/recharts') || id.includes('node_modules/d3-')) return 'vendor-charts';
             if (id.includes('node_modules')) return 'vendor-misc';
           },
         },
