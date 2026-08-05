@@ -7,19 +7,22 @@ let impersonationTokenRef = null;
 export function useImpersonation({ toast }) {
   const handleImpersonation = useCallback(async () => {
     try {
+      const apiUrl = import.meta.env.VITE_API_URL;
+      if (!apiUrl) return;
+
       // Request impersonation token from backend (which sets HttpOnly cookie)
-      const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/impersonation-token`, {
+      const response = await fetch(`${apiUrl}/api/impersonation-token`, {
         method: 'POST',
         credentials: 'include', // Include HttpOnly cookie
         headers: { 'Content-Type': 'application/json' },
       });
       
-      if (!response.ok) {
-        if (toast) toast('Erro ao iniciar impersonação', 'error');
-        return;
-      }
+      if (!response.ok) return;
       
-      const { impersonation_token } = await response.json();
+      const text = await response.text();
+      let data;
+      try { data = JSON.parse(text); } catch (_) { return; }
+      const { impersonation_token } = data;
       if (!impersonation_token) return;
       
       // Store in memory only (not localStorage)
