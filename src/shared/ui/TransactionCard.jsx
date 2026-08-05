@@ -185,7 +185,7 @@ export var TransactionCard = React.memo(function TransactionCard({
       </div>
     </div>
   );
-}
+});
 
 export var TransactionGroupHeader = React.memo(function TransactionGroupHeader({ date, total, type, brand }) {
   var isIncome = type === 'income';
