@@ -23,7 +23,7 @@ export const PALETTE_DEFAULTS = {
 
 export const TYPOGRAPHY_DEFAULTS = {
   fontFamily: 'Inter, system-ui, sans-serif',
-  fontDisplay: 'Fraunces, Georgia, Times New Roman, serif',
+  fontDisplay: 'Montserrat, sans-serif',
   style: 'modern',
   size: 'medium',
 };

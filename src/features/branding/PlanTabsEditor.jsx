@@ -114,8 +114,8 @@ export default function PlanTabsEditor({ brandConfig, onSavePlan, onCopyJSON, on
 
       <div className="border-t pt-4" style={{borderColor:'var(--border, #e2e8f0)'}}>
         <p className="text-xs font-semibold uppercase tracking-wide mb-2" style={{color:'var(--text-muted, #94a3b8)'}}>Preview — {PLAN_META[activePlan].label}</p>
-        <div className="rounded-2xl overflow-hidden" style={{background: form.bgPage || '#f5f5f0', color: form.textMain || '#0f172a'}}>
-          <div className="flex items-center justify-between px-4 py-2.5" style={{background: form.primary || '#002f59', color:'#ffffff'}}>
+        <div className="rounded-2xl overflow-hidden" style={{background: form.bgPage || 'var(--bg-subtle)', color: form.textMain || 'var(--text-main)'}}>
+          <div className="flex items-center justify-between px-4 py-2.5" style={{background: form.primary || 'var(--brand)', color:'#ffffff'}}>
             <div className="flex items-center gap-2">
               <div className="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold" style={{background:'rgba(255,255,255,0.2)'}}>F</div>
               <span className="text-sm font-semibold">Financia</span>
@@ -123,7 +123,7 @@ export default function PlanTabsEditor({ brandConfig, onSavePlan, onCopyJSON, on
             <div className="w-6 h-6 rounded-full flex items-center justify-center text-[8px] font-bold" style={{background:'rgba(255,255,255,0.2)'}}>U</div>
           </div>
           <div className="flex">
-            <div className="w-16 flex-shrink-0 p-1.5 flex flex-col gap-1" style={{background: form.primary || '#1e293b'}}>
+            <div className="w-16 flex-shrink-0 p-1.5 flex flex-col gap-1" style={{background: form.primary || 'var(--brand)'}}>
               {[1,2,3,4].map(i => (
                 <div key={i} className="h-6 rounded-lg flex items-center justify-center" style={{background: i === 2 ? 'rgba(255,255,255,0.14)' : 'transparent'}}>
                   <div className="w-3 h-3 rounded" style={{background: i === 2 ? '#ffffff' : 'rgba(255,255,255,0.4)'}} />
@@ -132,27 +132,27 @@ export default function PlanTabsEditor({ brandConfig, onSavePlan, onCopyJSON, on
             </div>
             <div className="flex-1 p-3 flex flex-col gap-2.5">
               <div className="flex items-center gap-2">
-                <div className="px-3 py-1.5 text-[10px] font-semibold text-white rounded-lg" style={{background: form.primary || '#002f59'}}>Salvar</div>
-                <div className="px-3 py-1.5 text-[10px] font-semibold rounded-lg" style={{background: form.secondary || '#e8f0f7', color: form.primary || '#002f59'}}>Cancelar</div>
+                <div className="px-3 py-1.5 text-[10px] font-semibold text-white rounded-lg" style={{background: form.primary || 'var(--brand)'}}>Salvar</div>
+                <div className="px-3 py-1.5 text-[10px] font-semibold rounded-lg" style={{background: form.secondary || 'var(--brand-soft)', color: form.primary || 'var(--brand)'}}>Cancelar</div>
               </div>
               <div className="grid grid-cols-2 gap-2">
-                <div className="p-2 rounded-xl flex flex-col gap-1.5" style={{background: form.bgCard || '#ffffff', border:'1px solid ' + (form.border || '#edeae3'), borderRadius:'10px'}}>
-                  <div className="h-2 w-2/3 rounded" style={{background: form.bgSubtle || '#f5f5f0'}} />
-                  <div className="h-1.5 rounded-full" style={{background: form.bgSubtle || '#f5f5f0'}}>
-                    <div className="h-full rounded-full" style={{width:'60%', background: form.accent || '#1a6b5c'}} />
+                <div className="p-2 rounded-xl flex flex-col gap-1.5" style={{background: form.bgCard || 'var(--bg-card)', border:'1px solid ' + (form.border || 'var(--border)'), borderRadius:'10px'}}>
+                  <div className="h-2 w-2/3 rounded" style={{background: form.bgSubtle || 'var(--bg-subtle)'}} />
+                  <div className="h-1.5 rounded-full" style={{background: form.bgSubtle || 'var(--bg-subtle)'}}>
+                    <div className="h-full rounded-full" style={{width:'60%', background: form.accent || 'var(--brand-accent)'}} />
                   </div>
                 </div>
-                <div className="p-2 rounded-xl flex flex-col gap-1.5" style={{background: form.bgCard || '#ffffff', border:'1px solid ' + (form.border || '#edeae3'), borderRadius:'10px'}}>
-                  <div className="h-2 w-1/2 rounded" style={{background: form.bgSubtle || '#f5f5f0'}} />
+                <div className="p-2 rounded-xl flex flex-col gap-1.5" style={{background: form.bgCard || 'var(--bg-card)', border:'1px solid ' + (form.border || 'var(--border)'), borderRadius:'10px'}}>
+                  <div className="h-2 w-1/2 rounded" style={{background: form.bgSubtle || 'var(--bg-subtle)'}} />
                   <div className="flex items-center gap-1">
-                    <div className="w-1.5 h-1.5 rounded-full" style={{background: form.secondary || '#e8f0f7'}} />
-                    <span className="text-[7px]" style={{color: form.textSub || '#5b6b7c'}}>Tag</span>
+                    <div className="w-1.5 h-1.5 rounded-full" style={{background: form.secondary || 'var(--brand-soft)'}} />
+                    <span className="text-[7px]" style={{color: form.textSub || 'var(--text-sub)'}}>Tag</span>
                   </div>
                 </div>
               </div>
               <div className="flex gap-1.5">
-                <div className="text-[7px] font-bold px-1.5 py-0.5 rounded-full text-white" style={{background: form.primary || '#002f59'}}>NOVO</div>
-                <div className="text-[7px] font-bold px-1.5 py-0.5 rounded-full" style={{background: form.secondary || '#e8f0f7', color: form.primary || '#002f59'}}>ATIVO</div>
+                <div className="text-[7px] font-bold px-1.5 py-0.5 rounded-full text-white" style={{background: form.primary || 'var(--brand)'}}>NOVO</div>
+                <div className="text-[7px] font-bold px-1.5 py-0.5 rounded-full" style={{background: form.secondary || 'var(--brand-soft)', color: form.primary || 'var(--brand)'}}>ATIVO</div>
               </div>
             </div>
           </div>

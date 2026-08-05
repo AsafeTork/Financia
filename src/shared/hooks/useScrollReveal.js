@@ -45,7 +45,7 @@ export function useScrollRevealMultiple(containerRef, selector) {
           if (entry.isIntersecting) {
             const tid = setTimeout(() => {
               entry.target.classList.add('visible');
-            }, index * 100);
+            }, index * 40); // --stagger-base: 40ms from design system
             timeouts.push(tid);
 
             observer.unobserve(entry.target);

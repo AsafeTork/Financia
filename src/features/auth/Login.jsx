@@ -5,7 +5,7 @@ import { passwordStrength, safe, onColor, readableBrand } from '../../lib/utils.
 import { SUPPORT_EMAIL } from '../../lib/constants.js';
 import PhoneInput from '../../shared/ui/PhoneInput.jsx';
 
-var ACCENT = '#0f9d6c';
+var ACCENT = 'var(--green)';
 
 function GoogleBtn({ onClick, loading, label }) {
   return (
@@ -157,7 +157,7 @@ export default function Login({ brand, onNav }) {
           <p className="font-display font-semibold text-2xl mt-4" style={{ color: onBrand, letterSpacing: '-0.3px' }}>{brandName}</p>
         </div>
         <div className="relative">
-          <p className="font-display font-semibold anim-up" style={Object.assign({ color: onBrand, fontSize: '2.25rem', lineHeight: 1.1, letterSpacing: '-1px' }, revealDelay(80))}>
+          <p className="font-display font-semibold anim-up" style={Object.assign({ color: onBrand, fontSize: 'var(--text-h1)', lineHeight: 1.1, letterSpacing: '-1px' }, revealDelay(80))}>
             O controle do seu negócio começa aqui.
           </p>
           <div className="mt-7 flex flex-col gap-3">
@@ -193,7 +193,7 @@ export default function Login({ brand, onNav }) {
               var active = mode === t[0] && !resetMode;
               return (
                 <button key={t[0]} type="button" role="tab" aria-selected={active} onClick={function() { switchMode(t[0]); }}
-                  className={'flex-1 min-h-[44px] rounded-xl text-sm font-semibold transition-all duration-200' + (active ? '' : ' hover:text-[#002f59]')}
+                  className={'flex-1 min-h-[44px] rounded-xl text-sm font-semibold transition-all duration-200' + (active ? '' : ' hover:text-[var(--brand)]')}
                   style={active ? { background: '#fff', color: brandText, boxShadow: '0 1px 4px rgba(0,0,0,0.08)' } : { color: '#7a8794' }}>
                   {t[1]}
                 </button>
@@ -217,7 +217,7 @@ export default function Login({ brand, onNav }) {
               </div>
             ) : (
               <form onSubmit={onSubmit} className="flex flex-col gap-4">
-                <h2 className="font-display text-2xl font-semibold" style={{ color: '#111827', letterSpacing: '-0.5px' }}>Recuperar senha</h2>
+                <h2 className="font-display text-2xl font-semibold" style={{ color: 'var(--text-main)', letterSpacing: '-0.5px' }}>Recuperar senha</h2>
                 <Inp ref={resetEmailRef} label="E-mail" type="email" value={resetEmail} onChange={function(e) { setResetEmail(e.target.value); }} placeholder="seu@email.com" />
                 {err && <p className="text-xs text-red-500">{err}</p>}
                 <div className="flex gap-2">
@@ -231,7 +231,7 @@ export default function Login({ brand, onNav }) {
             )
           ) : (
             <form onSubmit={onSubmit} className="flex flex-col gap-4">
-              <h2 className="font-display text-2xl font-semibold" style={{ color: '#111827', letterSpacing: '-0.5px' }}>
+              <h2 className="font-display text-2xl font-semibold" style={{ color: 'var(--text-main)', letterSpacing: '-0.5px' }}>
                 {mode === 'login' ? 'Bem-vindo de volta' : 'Crie sua conta grátis'}
               </h2>
 

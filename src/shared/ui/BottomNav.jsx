@@ -32,7 +32,7 @@ function BottomNav({ view, onNav, brand, isAdmin }) {
             <button key={item.key} onClick={function() { onNav(item.key); }}
               aria-label={item.label} aria-current={active ? 'page' : undefined}
               className="relative flex-1 flex flex-col items-center justify-center gap-1 transition-colors min-w-0 pt-1"
-              style={{color: active ? brand.color : '#94a3b8'}}>
+              style={{color: active ? brand.color : 'var(--text-muted)'}}>
               {active && (
                 <div className="absolute top-0 left-1/2 w-8 h-0.5 rounded-b-full" style={indicatorBg}/>
               )}

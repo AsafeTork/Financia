@@ -300,8 +300,8 @@ export default function AdminPanel({ toast, confirm, session, brand }) {
   return (
     <div className="flex flex-col gap-5">
       {/* === FINANCEIRO (Stripe) — azul === */}
-      <div className="rounded-2xl p-4" style={{background:'var(--bg-card)', border:'1px solid var(--border)', borderTop:'3px solid #2563eb'}}>
-        <SectionHead color="#2563eb" title="Financeiro — Stripe"
+      <div className="rounded-2xl p-4" style={{background:'var(--bg-card)', border:'1px solid var(--border)', borderTop:'3px solid var(--info)'}}>
+        <SectionHead color="var(--info)" title="Financeiro — Stripe"
           icon="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
           right={loadingFin ? <span className="text-[11px]" style={{color:'var(--text-muted)'}}>carregando...</span> : null}/>
         {loadingFin ? (
@@ -310,10 +310,10 @@ export default function AdminPanel({ toast, confirm, session, brand }) {
           <React.Fragment>
             <div className="grid grid-cols-2 gap-2">
               {[
-                ['Saldo disponível', centsBR(stripeOv.available_cents), '#16a34a', 'quantia real, pronta para saque'],
-                ['A caminho', centsBR(stripeOv.pending_cents), '#2563eb', 'liberando nos próximos dias'],
-                ['Receita/mês (estimada)', centsBR(stripeOv.mrr_cents), '#7c3aed', 'soma das assinaturas ativas'],
-                ['Assinaturas ativas', String(stripeOv.active_count), '#0f766e', 'pagantes recorrentes na Stripe'],
+                ['Saldo disponível', centsBR(stripeOv.available_cents), 'var(--success)', 'quantia real, pronta para saque'],
+                ['A caminho', centsBR(stripeOv.pending_cents), 'var(--info)', 'liberando nos próximos dias'],
+                ['Receita/mês (estimada)', centsBR(stripeOv.mrr_cents), 'var(--brand)', 'soma das assinaturas ativas'],
+                ['Assinaturas ativas', String(stripeOv.active_count), 'var(--brand-accent)', 'pagantes recorrentes na Stripe'],
               ].map(function(kv) {
                 return (
                   <div key={kv[0]} className="rounded-xl p-3" style={{background:'var(--bg-subtle)', border:'1px solid var(--border)'}}>
@@ -416,7 +416,7 @@ export default function AdminPanel({ toast, confirm, session, brand }) {
                 return (
                   <div key={c.user_id} className="rounded-xl p-3 flex flex-col gap-2" style={{background:'var(--bg-subtle)', border:'1px solid var(--border)'}}>
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-10 h-10 rounded-lg flex-shrink-0 overflow-hidden flex items-center justify-center" style={{background: c.color || '#002f59'}}>
+                      <div className="w-10 h-10 rounded-lg flex-shrink-0 overflow-hidden flex items-center justify-center" style={{background: c.color || 'var(--brand)'}}>
                         {function() { var planUrl = planLogoSvg(brand, c); return c.logo_url
                           ? <img src={c.logo_url} alt="" decoding="async" className="w-full h-full object-cover"/>
                           : planUrl
@@ -427,7 +427,7 @@ export default function AdminPanel({ toast, confirm, session, brand }) {
                         <p className="text-sm font-semibold truncate" style={{color:'var(--text-main)'}}>{c.name || 'Sem nome'}</p>
                         <p className="text-xs truncate" style={{color:'var(--text-sub)'}}>Nicho: {c.niche || c.segment || 'Não informado'}</p>
                       </div>
-                      <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md flex-shrink-0" style={{background: c.logo_url ? '#dcfce7' : '#fee2e2', color: c.logo_url ? '#16a34a' : '#dc2626'}}>{c.logo_url ? 'Logo OK' : 'Sem logo'}</span>
+                      <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md flex-shrink-0" style={{background: c.logo_url ? 'var(--success-bg, #dcfce7)' : 'var(--danger-bg, #fee2e2)', color: c.logo_url ? 'var(--success)' : 'var(--danger)'}}>{c.logo_url ? 'Logo OK' : 'Sem logo'}</span>
                     </div>
                     <div className="flex items-center gap-2 flex-wrap">
                       {cores.length > 0
@@ -445,7 +445,7 @@ export default function AdminPanel({ toast, confirm, session, brand }) {
         )}
 
         <div className="rounded-2xl p-3 mb-1" style={{background:'var(--bg-card)', border:'1px solid var(--border)'}}>
-          <SectionHead color="#0ea5e9" title="Clientes"
+          <SectionHead color="var(--info)" title="Clientes"
             icon="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m6-1.13a4 4 0 10-4-4 4 4 0 004 4zm6 0a4 4 0 10-3-6.7"
             right={<span className="text-xs" style={{color:'var(--text-muted)'}}>{visibleClients.length} de {clients.length}</span>}/>
           <div className="relative mb-2">
@@ -500,7 +500,7 @@ export default function AdminPanel({ toast, confirm, session, brand }) {
                         <div className="flex items-center gap-1.5 flex-shrink-0">
                           {wa && (
                             <a href={wa} target="_blank" rel="noreferrer" aria-label="Falar no WhatsApp"
-                            className="w-9 h-9 rounded-lg flex items-center justify-center text-white transition hover:opacity-90" style={{background:'#16a34a'}}>
+                            className="w-9 h-9 rounded-lg flex items-center justify-center text-white transition hover:opacity-90" style={{background:'var(--success)'}}>
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.945C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 018.413 3.488 11.82 11.82 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 001.51 5.26l-.999 3.648 3.477-.913z"/></svg>
                             </a>
                           )}
@@ -509,7 +509,7 @@ export default function AdminPanel({ toast, confirm, session, brand }) {
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                           </button>
                           <button onClick={function() { handleDelete(c); }} aria-label="Excluir cliente"
-                            className="w-9 h-9 rounded-lg border border-red-200 text-red-500 hover:bg-red-50 transition flex items-center justify-center">
+                            className="w-9 h-9 rounded-lg border border-red-200 text-red-500 hover:bg-red-50 transition flex items-center justify-center" style={{borderColor:'var(--danger-bg, #fecaca)', color:'var(--danger)', background:'var(--danger-bg, #fef2f2)'}}>
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                           </button>
                         </div>
@@ -541,19 +541,19 @@ export default function AdminPanel({ toast, confirm, session, brand }) {
         />
       )}
 
-      <div className="rounded-2xl p-4" style={{background:'var(--bg-card)', border:'1px solid var(--border)', borderTop:'3px solid #6b21a8'}}>
-        <SectionHead color="#6b21a8" title="Debug Mode" icon="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      <div className="rounded-2xl p-4" style={{background:'var(--bg-card)', border:'1px solid var(--border)', borderTop:'3px solid var(--brand)'}}>
+        <SectionHead color="var(--brand)" title="Debug Mode" icon="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
         <p className="text-xs mb-3" style={{color:'var(--text-muted)'}}>Ativa logs detalhados no console do navegador para depuração.</p>
         <label className="flex items-center gap-3 cursor-pointer">
           <div className="relative">
             <input type="checkbox" className="sr-only peer" checked={debug} onChange={toggleDebug} />
-            <div className="w-10 h-6 rounded-full transition-colors peer-checked:bg-purple-600 bg-gray-300" />
+            <div className="w-10 h-6 rounded-full transition-colors peer-checked:bg-[var(--brand)] bg-gray-300" />
             <div className="absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform peer-checked:translate-x-4" />
           </div>
           <span className="text-sm font-medium" style={{color:'var(--text-main)'}}>{debug ? 'Ativado' : 'Desativado'}</span>
         </label>
         {debug && (
-          <div className="mt-3 rounded-lg p-3 text-xs" style={{background:'#fef9c3', border:'1px solid #eab308', color:'#713f12'}}>
+          <div className="mt-3 rounded-lg p-3 text-xs" style={{background:'var(--warning-bg, #fef9c3)', border:'1px solid var(--warning)', color:'var(--warning)'}}>
             Logs de depuração ativos no console (F12 → Console). Não mantenha ativo em produção.
           </div>
         )}

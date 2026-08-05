@@ -1069,4 +1069,108 @@ next_review: 2026-08-28
 
 ---
 
+## [2026-08-04] — Visual Identity Package — exec_20260804_210000_023
+
+**Modelo:** nemotron
+**Executor:** Executor (chat separado)
+**Tarefa:** Criação do Visual Identity Package completo para Financia (paleta, tipografia, design system, assets)
+**Subagentes:** branding-visual-identity
+
+### Mudanças
+| Arquivo | Ação | Descrição |
+|---------|------|-----------|
+| VISUAL_IDENTITY.md | CREATE | Pacote completo de identidade visual (paleta, tipografia, design system, componentes, motion, acessibilidade) |
+| CANVA_AI_PROMPT.md | CREATE | Prompt otimizado para geração de conteúdo no Canva AI com especificações exatas |
+| src/index.css | MODIFY | Atualização com design tokens completos (tipografia Montserrat/Inter/JetBrains, espaçamento, radius, motion, plan variants) |
+
+### Validações
+- visual_identity_complete: ✅ 15 seções do pacote criadas
+- canva_prompt_ready: ✅ pronto para copiar/colar
+- css_tokens_updated: ✅ fontes, espaçamento, motion, planos
+- typography_system: ✅ Montserrat (display), Inter (UI), JetBrains Mono (numeros)
+
+### Checkpoint
+- execution_id: exec_20260804_210000_023
+- checkpoint: checkpoint_023
+- phase: Branding
+
+### Decisões
+- **Decisão:** Design system baseado em tokens CSS com paleta oficial (Navy #002F59, Teal #1A6B5C, Green #3BBFA0, Light Teal #6EC6C8, Off White #F5F5F0)
+  - Imutável: false
+  - Autor: Executor
+- **Decisão:** Tipografia hierárquica: Montserrat Bold (display), Inter Regular/Medium (UI), JetBrains Mono (numeros)
+  - Imutável: false
+  - Autor: Executor
+
+### Pendências
+- [ ] Aplicar design system nas views principais (Landing, Dashboard, Brand Studio)
+- [ ] Gerar assets de logo (SVG, favicon, app icon) a partir do símbolo existente
+- [ ] Atualizar tailwind.config.js com novos tokens de design
+
+---
+
+## [2026-08-04] — UI Design System Application — exec_20260804_230000_024
+
+**Modelo:** nemotron
+**Executor:** Executor (chat separado)
+**Tarefa:** Aplicação completa do design system em toda a UI do Financia (20+ arquivos), usando skills design-taste-frontend, motion-design, design-dna
+**Subagentes:** ui-landing, ui-shell, ui-cleanup, ui-motion
+
+### Mudanças
+| Arquivo | Ação | Descrição |
+|---------|------|-----------|
+| index.html | MODIFY | Google Fonts: Fraunces removido → Montserrat/Inter/JetBrains Mono |
+| src/index.css | MODIFY | .page-header: Fraunces→Montserrat; tokens de design completos |
+| src/features/branding/defaults.js | MODIFY | fontDisplay: Fraunces→Montserrat |
+| tailwind.config.js | MODIFY | fontFamily, fontSize (fluid), borderRadius, colors, transitionTimingFunction extendidos |
+| src/features/landing/Landing.jsx | MODIFY | 7 color constants + 20+ inline styles → CSS vars; gradients/shadows via tokens |
+| src/features/landing/PrivacyPolicy.jsx | MODIFY | INK constant + hardcoded sizes → CSS vars |
+| src/features/landing/TermsOfService.jsx | MODIFY | Same cleanup as PrivacyPolicy |
+| src/shared/ui/Sidebar.jsx | MODIFY | Hardcoded rgba → CSS vars; brand fallback #002f59 |
+| src/shared/ui/Header.jsx | MODIFY | #111827→var(--text-main) |
+| src/shared/ui/Footer.jsx | MODIFY | Brand fallback #002f59→var(--brand); #94a3b8→var(--text-muted) |
+| src/shared/ui/BottomNav.jsx | MODIFY | #94a3b8→var(--text-muted) |
+| src/features/auth/Login.jsx | MODIFY | ACCENT→var(--green); #111827→var(--text-main); 2.25rem→var(--text-h1) |
+| src/features/admin/AdminPanel.jsx | MODIFY | Success/danger/info hex → CSS vars (--success, --danger, --info, etc.) |
+| src/features/admin/ClientEditModal.jsx | MODIFY | All hex colors → CSS vars |
+| src/shared/ui/ThemeToggle.jsx | MODIFY | #f59e0b→var(--warning), #4f46e5→var(--brand) |
+| src/shared/ui/TransactionCard.jsx | MODIFY | Danger hex→var(--danger); violet badge→var(--brand-soft)/var(--brand) |
+| src/features/branding/PlanTabsEditor.jsx | MODIFY | All hex → CSS vars (brand, brand-soft, border, text-sub, etc.) |
+| src/features/branding/ModuleEditor.jsx | MODIFY | #ef4444→var(--danger) |
+| src/animations.css | MODIFY | All rgba/hex colors → CSS vars; easings/durations/shadows → design tokens |
+| src/shared/hooks/useScrollReveal.js | MODIFY | Stagger 100ms→40ms (--stagger-base) |
+
+### Validações
+- fonts_updated: ✅ Fraunces removed, Montserrat/Inter/JetBrains loaded
+- landing_cleaned: ✅ All hardcoded values replaced with CSS vars
+- shell_components: ✅ Sidebar, Header, Footer, BottomNav, Login use tokens
+- admin_cleaned: ✅ AdminPanel, ClientEditModal use semantic color vars
+- branding_components: ✅ PlanTabsEditor, ModuleEditor, TransactionCard use tokens
+- motion_tokens: ✅ animations.css + useScrollReveal use design system easing/duration/stagger
+- tailwind_extended: ✅ New design tokens available as utility classes
+- no_logic_changes: ✅ Component structure/logic preserved 100%
+
+### Checkpoint
+- execution_id: exec_20260804_230000_024
+- checkpoint: checkpoint_024
+- phase: Branding/UI
+
+### Decisões
+- **Decisão:** CSS variables como fonte única da verdade para cores/spacing/typography/motion — sem hardcoded hex
+  - Imutável: false
+  - Autor: Executor
+- **Decisão:** GSAP não instalado (regra: não instalar sem aprovação) — motion via CSS + useScrollReveal
+  - Imutável: false
+  - Autor: Executor
+- **Decisão:** Arbitrary Tailwind sizes (text-[10px]) mantidos — mudança adiciona risco sem benefício visual
+  - Imutável: false
+  - Autor: Executor
+
+### Pendências
+- [ ] Validação visual final: responsividade, dark mode, plan variants (Free/Pro/Premium), a11y
+- [ ] Gerar assets de logo (SVG, favicon, app icon) a partir do símbolo existente
+- [ ] Testar build/lint via GitHub Actions (Node.js não disponível localmente)
+
+---
+
 *Este arquivo é IMUTÁVEL — apenas APPEND permitido. Nunca editar entradas passadas.*

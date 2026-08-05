@@ -3,19 +3,6 @@ import { useScrollReveal } from '../../shared/hooks/useScrollReveal.js';
 import { fmt } from '../../lib/utils.js';
 import { waLink, PRICING_PLANS } from '../../lib/constants.js';
 
-const NAVY = '#002f59';
-const TEAL = '#1a6b5c';
-const GREEN = '#3bbfa0';
-const _SKY = '#6ec6c8';
-const OFF_WHITE = '#f5f5f0';
-const INK = '#0a2540';
-const MUTED = '#5b6b7c';
-
-const GRADIENT_TEAL = 'linear-gradient(135deg, #1a6b5c, #3bbfa0)';
-const GRADIENT_PRIMARY = 'linear-gradient(135deg, #002f59, #1a6b5c)';
-const _GLOW_GREEN = '0 0 40px rgba(59,191,160,0.2)';
-const GLOW_NAVY = '0 0 40px rgba(0,47,89,0.15)';
-
 const delay = function(ms) { return { animationDelay: ms + 'ms', animationFillMode: 'both' }; };
 
 // ─── COUNTER HOOK ───
@@ -109,7 +96,7 @@ export default function Landing({ onEnter, onNav }) {
   const toggleFaq = function(idx) { setOpenFaq(function(prev) { return prev === idx ? null : idx; }); };
 
   return (
-    <div className="relative overflow-hidden" style={{ color: INK, minHeight: '100vh', background: '#fff' }}>
+    <div className="relative overflow-hidden" style={{ color: 'var(--text-main)', minHeight: '100vh', background: 'var(--bg-card)' }}>
 
       {/* Orbes de fundo com blur sutil */}
       <div className="fixed inset-0 pointer-events-none" style={{ zIndex: -10 }} aria-hidden="true">
@@ -119,19 +106,19 @@ export default function Landing({ onEnter, onNav }) {
       </div>
 
       {/* ─── NAVBAR ─── */}
-      <header className="sticky top-0 z-50" style={{ background: 'rgba(255,255,255,0.80)', backdropFilter: 'blur(16px) saturate(1.8)', WebkitBackdropFilter: 'blur(16px) saturate(1.8)', borderBottom: '1px solid rgba(10,37,64,0.06)' }}>
+      <header className="sticky top-0 z-50" style={{ background: 'rgba(255,255,255,0.80)', backdropFilter: 'blur(16px) saturate(1.8)', WebkitBackdropFilter: 'blur(16px) saturate(1.8)', borderBottom: '1px solid var(--border)' }}>
         <div className="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <img src="/icon-192.svg" alt="Financia" fetchPriority="high" decoding="sync" className="w-7 h-7" />
-            <span className="font-display text-lg font-semibold" style={{ color: NAVY, letterSpacing: '-0.3px' }}>Financia</span>
+            <span className="font-display text-lg font-semibold tracking-tight" style={{ color: 'var(--brand)' }}>Financia</span>
           </div>
-          <nav className="hidden md:flex items-center gap-6 text-sm" style={{ color: MUTED }}>
-            <button onClick={function() { document.getElementById('beneficios').scrollIntoView({behavior:'smooth'}); }} className="hover:text-[#002f59] transition-colors">Recursos</button>
-            <button onClick={function() { document.getElementById('planos').scrollIntoView({behavior:'smooth'}); }} className="hover:text-[#002f59] transition-colors">Planos</button>
-            <button onClick={function() { document.getElementById('faq').scrollIntoView({behavior:'smooth'}); }} className="hover:text-[#002f59] transition-colors">FAQ</button>
+          <nav className="hidden md:flex items-center gap-6 text-sm" style={{ color: 'var(--text-sub)' }}>
+            <button onClick={function() { document.getElementById('beneficios').scrollIntoView({behavior:'smooth'}); }} className="hover:text-[var(--brand)] transition-colors">Recursos</button>
+            <button onClick={function() { document.getElementById('planos').scrollIntoView({behavior:'smooth'}); }} className="hover:text-[var(--brand)] transition-colors">Planos</button>
+            <button onClick={function() { document.getElementById('faq').scrollIntoView({behavior:'smooth'}); }} className="hover:text-[var(--brand)] transition-colors">FAQ</button>
           </nav>
           <div className="flex items-center gap-2">
-            <button onClick={onEnter} className="text-sm font-semibold px-5 py-2.5 min-h-[44px] rounded-xl text-white transition-all duration-200 hover:brightness-110 hover:-translate-y-0.5" style={{ background: GRADIENT_PRIMARY, boxShadow: GLOW_NAVY }}>
+            <button onClick={onEnter} className="text-sm font-semibold px-5 py-2.5 min-h-[44px] rounded-xl text-white transition-all duration-200 hover:brightness-110 hover:-translate-y-0.5" style={{ background: 'var(--brand-grad)', boxShadow: '0 0 40px rgba(0,47,89,0.15)' }}>
               Entrar
             </button>
           </div>
@@ -146,36 +133,36 @@ export default function Landing({ onEnter, onNav }) {
 
           {/* Esquerda: texto */}
           <div className="relative z-10">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold mb-6 anim-fade-up" style={{ background: 'rgba(26,107,92,0.08)', border: '1px solid rgba(26,107,92,0.15)', color: TEAL }}>
-              <span className="w-1.5 h-1.5 rounded-full" style={{ background: TEAL }} />
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold mb-6 anim-fade-up" style={{ background: 'var(--brand-accent-soft)', border: '1px solid rgba(26,107,92,0.15)', color: 'var(--brand-accent)' }}>
+              <span className="w-1.5 h-1.5 rounded-full" style={{ background: 'var(--brand-accent)' }} />
               Para o pequeno negocio brasileiro
             </div>
 
-            <h1 className="anim-fade-up font-display font-semibold" style={Object.assign({ color: NAVY, fontSize: 'clamp(2.5rem, 5.8vw, 4.25rem)', lineHeight: 1.0, letterSpacing: '-1.8px' }, delay(80))}>
+            <h1 className="anim-fade-up font-display font-semibold tracking-tight" style={Object.assign({ color: 'var(--brand)', fontSize: 'var(--text-display)', lineHeight: 1.0 }, delay(80))}>
               Suas financas no<br/>
-              <span style={{ background: GRADIENT_TEAL, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>controle total</span>.
+              <span style={{ background: 'var(--brand-grad)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>controle total</span>.
             </h1>
 
-            <p className="anim-fade-up mt-5 text-base sm:text-lg max-w-lg leading-relaxed" style={Object.assign({ color: MUTED, lineHeight: 1.6 }, delay(160))}>
+            <p className="anim-fade-up mt-5 text-base sm:text-lg max-w-lg leading-relaxed" style={Object.assign({ color: 'var(--text-sub)', lineHeight: 1.6 }, delay(160))}>
               Vendas, despesas e estoque do seu negocio em um so lugar. 
               Sem planilha, sem complicacao. Funciona ate offline.
             </p>
 
             <div className="anim-fade-up mt-8 flex flex-col sm:flex-row gap-3" style={delay(240)}>
-              <button onClick={onEnter} className="group text-sm font-semibold px-8 py-4 rounded-2xl text-white transition-all duration-200 hover:-translate-y-0.5" style={{ background: GRADIENT_PRIMARY, boxShadow: '0 8px 32px rgba(0,47,89,0.25)' }}>
+              <button onClick={onEnter} className="group text-sm font-semibold px-8 py-4 rounded-2xl text-white transition-all duration-200 hover:-translate-y-0.5" style={{ background: 'var(--brand-grad)', boxShadow: 'var(--shadow-xl)' }}>
                 Criar conta gratis
                 <svg className="inline-block ml-2 w-4 h-4 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 12h14M12 5l7 7-7 7"/></svg>
               </button>
-              <button onClick={function() { document.getElementById('planos').scrollIntoView({behavior:'smooth'}); }} className="text-sm font-semibold px-8 py-4 rounded-2xl transition-all duration-200 hover:bg-black/[0.04] text-center" style={{ border: '1px solid rgba(10,37,64,0.12)', color: INK }}>
+              <button onClick={function() { document.getElementById('planos').scrollIntoView({behavior:'smooth'}); }} className="text-sm font-semibold px-8 py-4 rounded-2xl transition-all duration-200 hover:bg-black/[0.04] text-center" style={{ border: '1px solid var(--border-md)', color: 'var(--text-main)' }}>
                 Ver planos
               </button>
             </div>
 
-            <div className="anim-fade-up mt-6 flex flex-wrap gap-x-5 gap-y-2 text-xs" style={Object.assign({ color: MUTED }, delay(300))}>
+            <div className="anim-fade-up mt-6 flex flex-wrap gap-x-5 gap-y-2 text-xs" style={Object.assign({ color: 'var(--text-sub)' }, delay(300))}>
               {['Sem cartao de credito', 'Funciona offline', 'Pronto em 1 minuto'].map(function(t) {
                 return (
                   <span key={t} className="flex items-center gap-1.5">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={GREEN} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 13l4 4L19 7" /></svg>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 13l4 4L19 7" /></svg>
                     {t}
                   </span>
                 );
@@ -191,42 +178,42 @@ export default function Landing({ onEnter, onNav }) {
 
             {/* Card principal com glass sutil */}
             <div className="relative float-slow" style={{ transform: 'perspective(1200px) rotateY(-2deg)', transition: 'transform 0.4s' }}>
-              <div className="rounded-[20px] overflow-hidden" style={{ background: 'rgba(255,255,255,0.97)', border: '1px solid rgba(10,37,64,0.07)', boxShadow: '0 24px 64px -12px rgba(0,47,89,0.18), 0 8px 24px rgba(0,0,0,0.04)' }}>
+              <div className="rounded-[20px] overflow-hidden" style={{ background: 'rgba(255,255,255,0.97)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-xl)' }}>
                 {/* Barra de titulo */}
-                <div className="flex items-center gap-2 px-5 py-3" style={{ background: '#fcfcfa', borderBottom: '1px solid rgba(10,37,64,0.05)' }}>
-                  <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#ef4444' }} />
-                  <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#eab308' }} />
-                  <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#22c55e' }} />
-                  <span className="ml-2 text-[11px] font-medium" style={{ color: MUTED }}>financia.app / dashboard</span>
+                <div className="flex items-center gap-2 px-5 py-3" style={{ background: 'var(--bg-subtle)', borderBottom: '1px solid var(--border)' }}>
+                  <span className="w-2.5 h-2.5 rounded-full" style={{ background: 'var(--danger)' }} />
+                  <span className="w-2.5 h-2.5 rounded-full" style={{ background: 'var(--warning)' }} />
+                  <span className="w-2.5 h-2.5 rounded-full" style={{ background: 'var(--success)' }} />
+                  <span className="ml-2 text-[11px] font-medium" style={{ color: 'var(--text-sub)' }}>financia.app / dashboard</span>
                 </div>
 
                 {/* Conteudo do mockup */}
                 <div className="p-5 sm:p-6">
                   <div className="flex items-center justify-between mb-4">
                     <div>
-                      <p className="text-xs font-medium" style={{ color: MUTED }}>Resultado do mes</p>
-                      <p className="font-display font-bold tabular" style={{ color: NAVY, fontSize: '2rem', letterSpacing: '-1px', lineHeight: 1.1 }}>R$ 8.420</p>
+                      <p className="text-xs font-medium" style={{ color: 'var(--text-sub)' }}>Resultado do mes</p>
+                      <p className="font-display font-bold tabular tracking-tight" style={{ color: 'var(--brand)', fontSize: 'var(--text-h2)', lineHeight: 1.1 }}>R$ 8.420</p>
                     </div>
-                    <span className="text-xs font-bold px-2.5 py-1 rounded-full" style={{ background: 'rgba(59,191,160,0.1)', color: TEAL }}>+18%</span>
+                    <span className="text-xs font-bold px-2.5 py-1 rounded-full" style={{ background: 'rgba(59,191,160,0.1)', color: 'var(--brand-accent)' }}>+18%</span>
                   </div>
 
                   <div className="flex items-end gap-1.5 h-28 mb-4">
                     {MOCK_CHART.map(function(m, i) {
                       const h = Math.max(Math.round((m.i + m.o) / 18), 6);
                       return (
-                        <div key={'hc-' + i} className="flex-1 rounded-t-md" style={{ height: h + '%', background: i === MOCK_CHART.length - 1 ? 'linear-gradient(180deg, #3bbfa0, #1a6b5c)' : 'rgba(0,47,89,0.10)', minHeight: 4 }} />
+                        <div key={'hc-' + i} className="flex-1 rounded-t-md" style={{ height: h + '%', background: i === MOCK_CHART.length - 1 ? 'var(--brand-grad)' : 'var(--brand-soft)', minHeight: 4 }} />
                       );
                     })}
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
-                    <div className="rounded-2xl p-3.5" style={{ background: '#f8faf7' }}>
-                      <p className="text-xs" style={{ color: MUTED }}>Entradas</p>
-                      <p className="font-bold tabular mt-0.5" style={{ color: NAVY }}>R$ 14.200</p>
+                    <div className="rounded-2xl p-3.5" style={{ background: 'var(--bg-subtle)' }}>
+                      <p className="text-xs" style={{ color: 'var(--text-sub)' }}>Entradas</p>
+                      <p className="font-bold tabular mt-0.5" style={{ color: 'var(--brand)' }}>R$ 14.200</p>
                     </div>
-                    <div className="rounded-2xl p-3.5" style={{ background: '#f8faf7' }}>
-                      <p className="text-xs" style={{ color: MUTED }}>Saidas</p>
-                      <p className="font-bold tabular mt-0.5" style={{ color: NAVY }}>R$ 5.780</p>
+                    <div className="rounded-2xl p-3.5" style={{ background: 'var(--bg-subtle)' }}>
+                      <p className="text-xs" style={{ color: 'var(--text-sub)' }}>Saidas</p>
+                      <p className="font-bold tabular mt-0.5" style={{ color: 'var(--brand)' }}>R$ 5.780</p>
                     </div>
                   </div>
                 </div>
@@ -235,18 +222,18 @@ export default function Landing({ onEnter, onNav }) {
 
             {/* Card flutuante 1 (receita) */}
             <div className="absolute -bottom-4 -left-8 hidden md:block" style={{ animation: 'floatSlow 5s ease-in-out infinite', animationDelay: '-1s' }}>
-              <div className="rounded-2xl px-4 py-3" style={{ background: 'rgba(255,255,255,0.95)', border: '1px solid rgba(10,37,64,0.06)', boxShadow: '0 8px 24px rgba(0,47,89,0.08)', backdropFilter: 'blur(8px)' }}>
-                <p className="text-[11px] font-medium" style={{ color: MUTED }}>Receita hoje</p>
-                <p className="font-bold tabular text-sm" style={{ color: '#22c55e' }}>R$ 2.340</p>
+              <div className="rounded-2xl px-4 py-3" style={{ background: 'rgba(255,255,255,0.95)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-lg)', backdropFilter: 'blur(8px)' }}>
+                <p className="text-[11px] font-medium" style={{ color: 'var(--text-sub)' }}>Receita hoje</p>
+                <p className="font-bold tabular text-sm" style={{ color: 'var(--success)' }}>R$ 2.340</p>
               </div>
             </div>
 
             {/* Card flutuante 2 (ping) */}
             <div className="absolute -top-3 -right-6 hidden md:block" style={{ animation: 'floatSlow 5s ease-in-out infinite', animationDelay: '-2.5s' }}>
-              <div className="rounded-2xl px-4 py-3" style={{ background: 'rgba(255,255,255,0.95)', border: '1px solid rgba(10,37,64,0.06)', boxShadow: '0 8px 24px rgba(0,47,89,0.08)', backdropFilter: 'blur(8px)' }}>
+              <div className="rounded-2xl px-4 py-3" style={{ background: 'rgba(255,255,255,0.95)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-lg)', backdropFilter: 'blur(8px)' }}>
                 <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full" style={{ background: GREEN }} />
-                  <span className="text-[11px] font-medium" style={{ color: MUTED }}>Ao vivo</span>
+                  <span className="w-2 h-2 rounded-full" style={{ background: 'var(--green)' }} />
+                  <span className="text-[11px] font-medium" style={{ color: 'var(--text-sub)' }}>Ao vivo</span>
                 </div>
               </div>
             </div>
@@ -255,29 +242,29 @@ export default function Landing({ onEnter, onNav }) {
       </section>
 
       {/* ═══════ SOCIAL PROOF ═══════ */}
-      <section ref={statsRef} className="px-5 py-14 scroll-reveal" style={{ background: OFF_WHITE }}>
+      <section ref={statsRef} className="px-5 py-14 scroll-reveal" style={{ background: 'var(--bg-subtle)' }}>
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-10">
-            <p className="text-xs font-bold uppercase tracking-[0.15em]" style={{ color: MUTED }}>Confianca de quem usa</p>
+            <p className="text-xs font-bold uppercase tracking-[0.15em]" style={{ color: 'var(--text-sub)' }}>Confianca de quem usa</p>
           </div>
           <div className="grid md:grid-cols-3 gap-8 text-center">
             <div>
-              <p className="font-display font-bold" style={{ color: NAVY, fontSize: 'clamp(2rem, 5vw, 3rem)', letterSpacing: '-1.5px' }}>{users > 0 ? users + '+' : '2.8k+'}</p>
-              <p className="text-sm mt-1" style={{ color: MUTED }}>empresas usando o Financia</p>
+              <p className="font-display font-bold tracking-tight" style={{ color: 'var(--brand)', fontSize: 'var(--text-h1)' }}>{users > 0 ? users + '+' : '2.8k+'}</p>
+              <p className="text-sm mt-1" style={{ color: 'var(--text-sub)' }}>empresas usando o Financia</p>
             </div>
             <div>
-              <p className="font-display font-bold" style={{ color: NAVY, fontSize: 'clamp(2rem, 5vw, 3rem)', letterSpacing: '-1.5px' }}>{rating > 0 ? rating + '%' : '95%'}</p>
-              <p className="text-sm mt-1" style={{ color: MUTED }}>avaliam como excelente</p>
+              <p className="font-display font-bold tracking-tight" style={{ color: 'var(--brand)', fontSize: 'var(--text-h1)' }}>{rating > 0 ? rating + '%' : '95%'}</p>
+              <p className="text-sm mt-1" style={{ color: 'var(--text-sub)' }}>avaliam como excelente</p>
             </div>
             <div>
-              <p className="font-display font-bold" style={{ color: NAVY, fontSize: 'clamp(2rem, 5vw, 3rem)', letterSpacing: '-1.5px' }}>4.9</p>
-              <p className="text-sm mt-1" style={{ color: MUTED }}>avaliacao media nas lojas</p>
+              <p className="font-display font-bold tracking-tight" style={{ color: 'var(--brand)', fontSize: 'var(--text-h1)' }}>4.9</p>
+              <p className="text-sm mt-1" style={{ color: 'var(--text-sub)' }}>avaliacao media nas lojas</p>
             </div>
           </div>
           {/* Logos placeholder */}
           <div className="flex items-center justify-center gap-8 mt-10 flex-wrap opacity-30 select-none">
             {['Mercado Livre', 'Shopee', 'Magalu', 'Nuvemshop', 'Correios'].map(function(n) {
-              return <span key={n} className="text-sm font-bold tracking-wider" style={{ color: NAVY }}>{n}</span>;
+              return <span key={n} className="text-sm font-bold tracking-wider" style={{ color: 'var(--brand)' }}>{n}</span>;
             })}
           </div>
         </div>
@@ -286,11 +273,11 @@ export default function Landing({ onEnter, onNav }) {
       {/* ═══════ MOCKUP DASHBOARD ═══════ */}
       <section ref={dashRef} className="max-w-6xl mx-auto px-5 py-20 scroll-reveal">
         <div className="text-center mb-14">
-          <p className="text-xs font-bold uppercase tracking-[0.15em]" style={{ color: TEAL }}>Painel financeiro</p>
-          <h2 className="font-display font-semibold mt-3" style={{ color: NAVY, fontSize: 'clamp(1.8rem, 4.5vw, 2.8rem)', letterSpacing: '-1px', lineHeight: 1.1 }}>
+          <p className="text-xs font-bold uppercase tracking-[0.15em]" style={{ color: 'var(--brand-accent)' }}>Painel financeiro</p>
+          <h2 className="font-display font-semibold mt-3 tracking-tight" style={{ color: 'var(--brand)', fontSize: 'var(--text-h1)', lineHeight: 1.1 }}>
             O que aparece ao abrir o app
           </h2>
-          <p className="mt-3 text-sm max-w-lg mx-auto" style={{ color: MUTED }}>
+          <p className="mt-3 text-sm max-w-lg mx-auto" style={{ color: 'var(--text-sub)' }}>
             Seus numeros, graficos e movimentos em tempo real. Tudo que importa em uma tela.
           </p>
         </div>
@@ -298,34 +285,34 @@ export default function Landing({ onEnter, onNav }) {
         {/* KPIs */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
           {[
-            { label: 'Entradas', val: 'R$ 14.200', color: '#22c55e', icon: 'M5 15l7-7 7 7' },
-            { label: 'Saidas', val: 'R$ 5.780', color: '#ef4444', icon: 'M19 9l-7 7-7-7' },
-            { label: 'Resultado', val: 'R$ 8.420', color: TEAL, icon: 'M12 2l4 8 8 4-8 4-4 8-4-8-8-4 8-4z' },
-            { label: 'Saldo hoje', val: 'R$ 2.340', color: '#3b82f6', icon: 'M3 12h18M12 3v18' },
+            { label: 'Entradas', val: 'R$ 14.200', color: 'var(--success)', icon: 'M5 15l7-7 7 7' },
+            { label: 'Saidas', val: 'R$ 5.780', color: 'var(--danger)', icon: 'M19 9l-7 7-7-7' },
+            { label: 'Resultado', val: 'R$ 8.420', color: 'var(--brand-accent)', icon: 'M12 2l4 8 8 4-8 4-4 8-4-8-8-4 8-4z' },
+            { label: 'Saldo hoje', val: 'R$ 2.340', color: 'var(--info)', icon: 'M3 12h18M12 3v18' },
           ].map(function(k, i) {
             return (
-              <div key={'k-' + i} className="preview-card rounded-2xl p-4 sm:p-5" style={{ background: '#fff', border: '1px solid rgba(10,37,64,0.06)', boxShadow: '0 2px 8px rgba(0,47,89,0.03)' }}>
+              <div key={'k-' + i} className="preview-card rounded-2xl p-4 sm:p-5" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)' }}>
                 <div className="flex items-center gap-2.5 mb-2">
                   <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: k.color + '14' }}>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={k.color} strokeWidth="2.5" strokeLinecap="round"><path d={k.icon} /></svg>
                   </div>
                 </div>
-                <p className="text-xs font-medium" style={{ color: MUTED }}>{k.label}</p>
-                <p className="font-display font-bold tabular mt-0.5" style={{ color: k.color, fontSize: '1.15rem', letterSpacing: '-0.3px' }}>{k.val}</p>
+                <p className="text-xs font-medium" style={{ color: 'var(--text-sub)' }}>{k.label}</p>
+                <p className="font-display font-bold tabular mt-0.5 tracking-tight" style={{ color: k.color, fontSize: 'var(--text-h4)' }}>{k.val}</p>
               </div>
             );
           })}
         </div>
 
         {/* Grafico + movimentacoes */}
-        <div className="preview-card rounded-[20px] overflow-hidden" style={{ background: '#fff', border: '1px solid rgba(10,37,64,0.06)', boxShadow: '0 2px 16px rgba(0,47,89,0.04)' }}>
+        <div className="preview-card rounded-[20px] overflow-hidden" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-md)' }}>
           {/* Header do grafico */}
-          <div className="p-5 sm:p-6 border-b" style={{ borderColor: 'rgba(10,37,64,0.05)' }}>
+          <div className="p-5 sm:p-6 border-b" style={{ borderColor: 'var(--border)' }}>
             <div className="flex items-center justify-between mb-5">
-              <p className="text-sm font-semibold" style={{ color: NAVY }}>Ultimos 7 dias</p>
-              <div className="flex gap-4 text-xs" style={{ color: MUTED }}>
-                <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-sm" style={{ background: GREEN }} />Entradas</span>
-                <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-sm" style={{ background: '#ef4444' }} />Saidas</span>
+              <p className="text-sm font-semibold" style={{ color: 'var(--brand)' }}>Ultimos 7 dias</p>
+              <div className="flex gap-4 text-xs" style={{ color: 'var(--text-sub)' }}>
+                <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-sm" style={{ background: 'var(--green)' }} />Entradas</span>
+                <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-sm" style={{ background: 'var(--danger)' }} />Saidas</span>
               </div>
             </div>
             <div className="flex items-end gap-2 h-36">
@@ -334,9 +321,9 @@ export default function Landing({ onEnter, onNav }) {
                 const oh = Math.max((m.o / maxChart) * 100, 4);
                 return (
                   <div key={'bc-' + i} className="flex-1 flex flex-col items-center gap-0.5 justify-end">
-                    <div className="w-3/4 rounded-t-sm" style={{ height: oh + '%', background: '#ef4444', minHeight: 3 }} />
-                    <div className="w-3/4 rounded-t-sm" style={{ height: ih + '%', background: GREEN, minHeight: 3 }} />
-                    <span className="text-[10px] tabular mt-0.5" style={{ color: MUTED }}>{m.day}</span>
+                    <div className="w-3/4 rounded-t-sm" style={{ height: oh + '%', background: 'var(--danger)', minHeight: 3 }} />
+                    <div className="w-3/4 rounded-t-sm" style={{ height: ih + '%', background: 'var(--green)', minHeight: 3 }} />
+                    <span className="text-[10px] tabular mt-0.5" style={{ color: 'var(--text-sub)' }}>{m.day}</span>
                   </div>
                 );
               })}
@@ -344,23 +331,23 @@ export default function Landing({ onEnter, onNav }) {
           </div>
 
           {/* Movimentacoes */}
-          <div className="px-5 sm:px-6 py-4 border-b" style={{ borderColor: 'rgba(10,37,64,0.05)' }}>
-            <p className="text-sm font-semibold" style={{ color: NAVY }}>Movimentacoes recentes</p>
+          <div className="px-5 sm:px-6 py-4 border-b" style={{ borderColor: 'var(--border)' }}>
+            <p className="text-sm font-semibold" style={{ color: 'var(--brand)' }}>Movimentacoes recentes</p>
           </div>
           {MOCK_MOVEMENTS.map(function(t, i) {
             const inc = t.type === 'income';
             return (
-              <div key={'mov-' + i} className="flex items-center justify-between px-5 sm:px-6 py-3.5 hover:bg-[#fafaf8] transition-colors" style={{ borderBottom: i < MOCK_MOVEMENTS.length - 1 ? '1px solid rgba(10,37,64,0.04)' : 'none' }}>
+              <div key={'mov-' + i} className="flex items-center justify-between px-5 sm:px-6 py-3.5 hover:bg-[var(--bg-subtle)] transition-colors" style={{ borderBottom: i < MOCK_MOVEMENTS.length - 1 ? '1px solid var(--border)' : 'none' }}>
                 <div className="flex items-center gap-3 min-w-0 flex-1">
                   <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: inc ? 'rgba(59,191,160,0.1)' : 'rgba(239,68,68,0.07)' }}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={inc ? GREEN : '#ef4444'} strokeWidth="2.5" strokeLinecap="round"><path d={inc ? 'M5 15l7-7 7 7' : 'M19 9l-7 7-7-7'} /></svg>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={inc ? 'var(--green)' : 'var(--danger)'} strokeWidth="2.5" strokeLinecap="round"><path d={inc ? 'M5 15l7-7 7 7' : 'M19 9l-7 7-7-7'} /></svg>
                   </div>
                   <div className="min-w-0">
-                    <p className="text-sm font-medium" style={{ color: NAVY }}>{t.desc}</p>
-                    <p className="text-xs" style={{ color: MUTED }}>{t.detail}</p>
+                    <p className="text-sm font-medium" style={{ color: 'var(--brand)' }}>{t.desc}</p>
+                    <p className="text-xs" style={{ color: 'var(--text-sub)' }}>{t.detail}</p>
                   </div>
                 </div>
-                <span className="text-sm font-bold tabular" style={{ color: inc ? GREEN : '#ef4444' }}>{t.val}</span>
+                <span className="text-sm font-bold tabular" style={{ color: inc ? 'var(--green)' : 'var(--danger)' }}>{t.val}</span>
               </div>
             );
           })}
@@ -368,21 +355,21 @@ export default function Landing({ onEnter, onNav }) {
       </section>
 
       {/* ═══════ MOCKUP TRANSACOES (off white bg) ═══════ */}
-      <section ref={txRef} className="px-5 py-20 scroll-reveal" style={{ background: OFF_WHITE }}>
+      <section ref={txRef} className="px-5 py-20 scroll-reveal" style={{ background: 'var(--bg-subtle)' }}>
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-14">
-            <p className="text-xs font-bold uppercase tracking-[0.15em]" style={{ color: TEAL }}>Extrato completo</p>
-            <h2 className="font-display font-semibold mt-3" style={{ color: NAVY, fontSize: 'clamp(1.8rem, 4.5vw, 2.8rem)', letterSpacing: '-1px', lineHeight: 1.1 }}>
+            <p className="text-xs font-bold uppercase tracking-[0.15em]" style={{ color: 'var(--brand-accent)' }}>Extrato completo</p>
+            <h2 className="font-display font-semibold mt-3 tracking-tight" style={{ color: 'var(--brand)', fontSize: 'var(--text-h1)', lineHeight: 1.1 }}>
               Vendas e despesas organizadas por dia
             </h2>
-            <p className="mt-3 text-sm" style={{ color: MUTED }}>Filtre, busque, edite e exporte. Seu extrato sempre a mao.</p>
+            <p className="mt-3 text-sm" style={{ color: 'var(--text-sub)' }}>Filtre, busque, edite e exporte. Seu extrato sempre a mao.</p>
           </div>
 
-          <div className="preview-card rounded-[20px] overflow-hidden" style={{ background: '#fff', border: '1px solid rgba(10,37,64,0.06)', boxShadow: '0 2px 16px rgba(0,47,89,0.04)' }}>
+          <div className="preview-card rounded-[20px] overflow-hidden" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-md)' }}>
             {/* Search bar */}
-            <div className="px-5 py-4 border-b flex items-center gap-2" style={{ borderColor: 'rgba(10,37,64,0.05)' }}>
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={MUTED} strokeWidth="2" strokeLinecap="round"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-              <span className="text-sm" style={{ color: MUTED }}>Buscar vendas ou despesas...</span>
+            <div className="px-5 py-4 border-b flex items-center gap-2" style={{ borderColor: 'var(--border)' }}>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--text-sub)" strokeWidth="2" strokeLinecap="round"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+              <span className="text-sm" style={{ color: 'var(--text-sub)' }}>Buscar vendas ou despesas...</span>
             </div>
 
             {/* Grupo 03/07 */}
@@ -394,23 +381,23 @@ export default function Landing({ onEnter, onNav }) {
               const gPos = g.items.reduce(function(s, i) { return i.inc ? s + 1 : s - 1; }, 0) >= 0;
               return (
                 <div key={'g-' + gi}>
-                  <div className="flex items-center justify-between px-5 py-2.5" style={{ background: 'rgba(10,37,64,0.03)', borderBottom: '1px solid rgba(10,37,64,0.05)' }}>
-                    <span className="text-xs font-semibold uppercase tracking-wide" style={{ color: MUTED }}>{g.date}</span>
-                    <span className="text-xs font-semibold tabular" style={{ color: gPos ? GREEN : '#ef4444' }}>{g.total}</span>
+                  <div className="flex items-center justify-between px-5 py-2.5" style={{ background: 'var(--brand-soft)', borderBottom: '1px solid var(--border)' }}>
+                    <span className="text-xs font-semibold uppercase tracking-wide" style={{ color: 'var(--text-sub)' }}>{g.date}</span>
+                    <span className="text-xs font-semibold tabular" style={{ color: gPos ? 'var(--green)' : 'var(--danger)' }}>{g.total}</span>
                   </div>
                   {g.items.map(function(t, ti) {
                     return (
-                      <div key={'gi-' + gi + '-' + ti} className="flex items-center justify-between px-5 py-3 hover:bg-[#fafaf8] transition-colors" style={{ borderBottom: '1px solid rgba(10,37,64,0.04)' }}>
+                      <div key={'gi-' + gi + '-' + ti} className="flex items-center justify-between px-5 py-3 hover:bg-[var(--bg-subtle)] transition-colors" style={{ borderBottom: '1px solid var(--border)' }}>
                         <div className="flex items-center gap-3 min-w-0 flex-1">
                           <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: t.inc ? 'rgba(59,191,160,0.1)' : 'rgba(239,68,68,0.07)' }}>
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={t.inc ? GREEN : '#ef4444'} strokeWidth="2.5" strokeLinecap="round"><path d={t.inc ? 'M5 15l7-7 7 7' : 'M19 9l-7 7-7-7'} /></svg>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={t.inc ? 'var(--green)' : 'var(--danger)'} strokeWidth="2.5" strokeLinecap="round"><path d={t.inc ? 'M5 15l7-7 7 7' : 'M19 9l-7 7-7-7'} /></svg>
                           </div>
                           <div className="min-w-0">
-                            <p className="text-sm font-semibold truncate" style={{ color: NAVY }}>{t.desc}</p>
-                            <p className="text-xs truncate" style={{ color: MUTED }}>{t.cat}</p>
+                            <p className="text-sm font-semibold truncate" style={{ color: 'var(--brand)' }}>{t.desc}</p>
+                            <p className="text-xs truncate" style={{ color: 'var(--text-sub)' }}>{t.cat}</p>
                           </div>
                         </div>
-                        <span className="text-sm font-bold tabular" style={{ color: t.inc ? GREEN : '#ef4444' }}>{t.val}</span>
+                        <span className="text-sm font-bold tabular" style={{ color: t.inc ? 'var(--green)' : 'var(--danger)' }}>{t.val}</span>
                       </div>
                     );
                   })}
@@ -424,20 +411,20 @@ export default function Landing({ onEnter, onNav }) {
       {/* ═══════ FEATURES ═══════ */}
       <section ref={featRef} id="beneficios" className="max-w-6xl mx-auto px-5 py-20 scroll-reveal">
         <div className="max-w-lg mb-12">
-          <p className="text-xs font-bold uppercase tracking-[0.15em]" style={{ color: TEAL }}>Por que o Financia</p>
-          <h2 className="font-display font-semibold mt-3" style={{ color: NAVY, fontSize: 'clamp(1.8rem, 4vw, 2.6rem)', letterSpacing: '-1px', lineHeight: 1.1 }}>
+          <p className="text-xs font-bold uppercase tracking-[0.15em]" style={{ color: 'var(--brand-accent)' }}>Por que o Financia</p>
+          <h2 className="font-display font-semibold mt-3 tracking-tight" style={{ color: 'var(--brand)', fontSize: 'var(--text-h1)', lineHeight: 1.1 }}>
             Tudo que seu negocio precisa
           </h2>
         </div>
         <div className="grid sm:grid-cols-2 gap-5">
           {FEATURES.map(function(f, i) {
             return (
-              <div key={f.t} className="group rounded-[20px] p-7 transition-all duration-300 hover:-translate-y-1.5" style={{ background: '#fff', border: '1px solid rgba(10,37,64,0.06)', boxShadow: '0 2px 8px rgba(0,47,89,0.03)' }}>
-                <div className="w-12 h-12 rounded-2xl flex items-center justify-center mb-4 transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg" style={{ background: 'rgba(26,107,92,0.1)' }}>
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={TEAL} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d={f.icon} /></svg>
+              <div key={f.t} className="group rounded-[20px] p-7 transition-all duration-300 hover:-translate-y-1.5" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)' }}>
+                <div className="w-12 h-12 rounded-2xl flex items-center justify-center mb-4 transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg" style={{ background: 'var(--brand-accent-soft)' }}>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--brand-accent)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d={f.icon} /></svg>
                 </div>
-                <p className="font-display font-semibold text-lg mb-2" style={{ color: NAVY }}>{f.t}</p>
-                <p className="text-sm leading-relaxed" style={{ color: MUTED }}>{f.d}</p>
+                <p className="font-display font-semibold text-lg mb-2" style={{ color: 'var(--brand)' }}>{f.t}</p>
+                <p className="text-sm leading-relaxed" style={{ color: 'var(--text-sub)' }}>{f.d}</p>
               </div>
             );
           })}
@@ -445,12 +432,12 @@ export default function Landing({ onEnter, onNav }) {
       </section>
 
       {/* ═══════ PRICING ═══════ */}
-      <section ref={priceRef} id="planos" className="px-5 py-20 scroll-reveal" style={{ background: OFF_WHITE }}>
+      <section ref={priceRef} id="planos" className="px-5 py-20 scroll-reveal" style={{ background: 'var(--bg-subtle)' }}>
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-14">
-            <p className="text-xs font-bold uppercase tracking-[0.15em]" style={{ color: TEAL }}>Planos</p>
-            <h2 className="font-display font-semibold mt-3" style={{ color: NAVY, fontSize: 'clamp(1.8rem, 4.5vw, 2.8rem)', letterSpacing: '-1px' }}>Um preco justo pra cada fase</h2>
-            <p className="mt-3 text-sm" style={{ color: MUTED }}>Comece de graca. Mude quando quiser, sem fidelidade.</p>
+            <p className="text-xs font-bold uppercase tracking-[0.15em]" style={{ color: 'var(--brand-accent)' }}>Planos</p>
+            <h2 className="font-display font-semibold mt-3 tracking-tight" style={{ color: 'var(--brand)', fontSize: 'var(--text-h1)' }}>Um preco justo pra cada fase</h2>
+            <p className="mt-3 text-sm" style={{ color: 'var(--text-sub)' }}>Comece de graca. Mude quando quiser, sem fidelidade.</p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-6 items-stretch max-w-5xl mx-auto">
@@ -461,35 +448,35 @@ export default function Landing({ onEnter, onNav }) {
               return (
                 <div key={p.id} className="group relative rounded-[24px] p-8 flex flex-col gap-6 transition-all duration-300 hover:-translate-y-1"
                   style={Object.assign(
-                    { background: popular ? '#fff' : '#fff', border: popular ? '1.5px solid ' + TEAL : '1px solid rgba(10,37,64,0.08)' },
-                    popular ? { boxShadow: '0 8px 40px rgba(26,107,92,0.12), 0 0 0 1px ' + TEAL + '20' } : { boxShadow: '0 2px 12px rgba(0,47,89,0.04)' }
+                    { background: 'var(--bg-card)', border: popular ? '1.5px solid var(--brand-accent)' : '1px solid var(--border-md)' },
+                    popular ? { boxShadow: 'var(--shadow-xl), 0 0 0 1px rgba(26,107,92,0.125)' } : { boxShadow: 'var(--shadow-sm)' }
                   )}>
 
                   {popular && (
-                    <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap" style={{ background: GRADIENT_TEAL, color: '#fff', boxShadow: '0 4px 16px rgba(59,191,160,0.35)' }}>
+                    <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap" style={{ background: 'var(--brand-grad)', color: '#fff', boxShadow: '0 4px 16px rgba(59,191,160,0.35)' }}>
                       Mais escolhido
                     </div>
                   )}
 
                   <div>
                     <div className="flex items-center gap-2.5">
-                      <p className="font-display font-semibold text-xl" style={{ color: NAVY }}>{p.name}</p>
-                      {isPremium && <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full" style={{ background: 'rgba(59,191,160,0.1)', color: TEAL }}>Premium</span>}
+                      <p className="font-display font-semibold text-xl" style={{ color: 'var(--brand)' }}>{p.name}</p>
+                      {isPremium && <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full" style={{ background: 'rgba(59,191,160,0.1)', color: 'var(--brand-accent)' }}>Premium</span>}
                     </div>
-                    <p className="text-xs mt-2" style={{ color: MUTED }}>{p.tagline}</p>
+                    <p className="text-xs mt-2" style={{ color: 'var(--text-sub)' }}>{p.tagline}</p>
                   </div>
 
                   <div>
                     <div className="flex items-end gap-1">
-                      <span className="font-display font-bold tabular" style={{ color: NAVY, fontSize: '2.8rem', letterSpacing: '-1.5px', lineHeight: 1 }}>{fmt(p.price)}</span>
-                      {p.period && <span className="text-sm mb-1.5" style={{ color: MUTED }}>{p.period}</span>}
+                      <span className="font-display font-bold tabular tracking-tight" style={{ color: 'var(--brand)', fontSize: 'var(--text-h1)', lineHeight: 1 }}>{fmt(p.price)}</span>
+                      {p.period && <span className="text-sm mb-1.5" style={{ color: 'var(--text-sub)' }}>{p.period}</span>}
                     </div>
-                    <p className="text-xs mt-2" style={{ color: MUTED }}>{isFree ? 'gratis para sempre, sem cartao' : 'cobrado mensalmente, cancele quando quiser'}</p>
+                    <p className="text-xs mt-2" style={{ color: 'var(--text-sub)' }}>{isFree ? 'gratis para sempre, sem cartao' : 'cobrado mensalmente, cancele quando quiser'}</p>
                   </div>
 
                   <button onClick={onEnter}
                     className="text-sm font-semibold py-3.5 rounded-2xl transition-all duration-200 min-h-[44px]"
-                    style={popular ? { background: GRADIENT_TEAL, color: '#fff', boxShadow: '0 4px 16px rgba(59,191,160,0.25)' } : isFree ? { background: 'rgba(10,37,64,0.05)', color: NAVY } : { background: NAVY, color: '#fff' }}>
+                    style={popular ? { background: 'var(--brand-grad)', color: '#fff', boxShadow: '0 4px 16px rgba(59,191,160,0.25)' } : isFree ? { background: 'var(--brand-soft)', color: 'var(--brand)' } : { background: 'var(--brand)', color: '#fff' }}>
                     {p.cta}
                   </button>
 
@@ -498,16 +485,16 @@ export default function Landing({ onEnter, onNav }) {
                       const ladder = feat.indexOf('Tudo do') === 0;
                       if (ladder) {
                         return (
-                          <div key={feat} className="flex items-center gap-2 pb-2 mb-1" style={{ borderBottom: '1px dashed rgba(10,37,64,0.1)' }}>
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={GREEN} strokeWidth="2.5" strokeLinecap="round" className="flex-shrink-0"><path d="M12 19V5M5 12l7-7 7 7" /></svg>
-                            <span className="text-sm font-bold" style={{ color: NAVY }}>{feat}</span>
+                          <div key={feat} className="flex items-center gap-2 pb-2 mb-1" style={{ borderBottom: '1px dashed var(--border-md)' }}>
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--green)" strokeWidth="2.5" strokeLinecap="round" className="flex-shrink-0"><path d="M12 19V5M5 12l7-7 7 7" /></svg>
+                            <span className="text-sm font-bold" style={{ color: 'var(--brand)' }}>{feat}</span>
                           </div>
                         );
                       }
                       return (
                         <div key={feat} className="flex items-start gap-2.5">
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={GREEN} strokeWidth="2.5" strokeLinecap="round" className="flex-shrink-0 mt-0.5"><path d="M5 13l4 4L19 7" /></svg>
-                          <span className="text-sm" style={{ color: 'rgba(10,37,64,0.75)' }}>{feat}</span>
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" strokeWidth="2.5" strokeLinecap="round" className="flex-shrink-0 mt-0.5"><path d="M5 13l4 4L19 7" /></svg>
+                          <span className="text-sm" style={{ color: 'var(--text-sub)' }}>{feat}</span>
                         </div>
                       );
                     })}
@@ -518,37 +505,37 @@ export default function Landing({ onEnter, onNav }) {
           </div>
 
           <div className="mt-10 flex flex-col items-center gap-4">
-            <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs" style={{ color: MUTED }}>
+            <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs" style={{ color: 'var(--text-sub)' }}>
               {['Sem fidelidade', 'Troque ou cancele quando quiser', 'Pagamento seguro pela Stripe'].map(function(t) {
                 return (
                   <span key={t} className="flex items-center gap-1.5">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={GREEN} strokeWidth="3" strokeLinecap="round"><path d="M5 13l4 4L19 7" /></svg>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--green)" strokeWidth="3" strokeLinecap="round"><path d="M5 13l4 4L19 7" /></svg>
                     {t}
                   </span>
                 );
               })}
             </div>
-            <a href={waLinkUrl} target="_blank" rel="noreferrer" className="text-xs font-semibold transition hover:opacity-70" style={{ color: TEAL }}>Precisa de algo sob medida? Fale no WhatsApp</a>
+            <a href={waLinkUrl} target="_blank" rel="noreferrer" className="text-xs font-semibold transition hover:opacity-70" style={{ color: 'var(--brand-accent)' }}>Precisa de algo sob medida? Fale no WhatsApp</a>
           </div>
         </div>
       </section>
 
       {/* ═══════ FAQ ═══════ */}
       <section ref={faqRef} id="faq" className="max-w-2xl mx-auto px-5 py-20 scroll-reveal">
-        <h2 className="font-display font-semibold text-center mb-12" style={{ color: NAVY, fontSize: 'clamp(1.6rem, 4vw, 2.25rem)', letterSpacing: '-0.5px' }}>Perguntas frequentes</h2>
+        <h2 className="font-display font-semibold text-center mb-12 tracking-tight" style={{ color: 'var(--brand)', fontSize: 'var(--text-h2)' }}>Perguntas frequentes</h2>
         <div className="flex flex-col gap-3">
           {FAQ.map(function(item, idx) {
             const isOpen = openFaq === idx;
             return (
-              <div key={item.q} className="rounded-2xl overflow-hidden transition-all duration-200 hover:border-[#002f59]/20" style={{ border: '1px solid ' + (isOpen ? 'rgba(0,47,89,0.15)' : 'rgba(10,37,64,0.07)'), background: '#fff' }}>
-                <button onClick={function() { toggleFaq(idx); }} className="w-full flex items-center justify-between px-5 py-4 text-left min-h-[44px]" style={{ color: NAVY }}>
+              <div key={item.q} className="rounded-2xl overflow-hidden transition-all duration-200 hover:border-[var(--brand-soft)]" style={{ border: '1px solid ' + (isOpen ? 'var(--brand-soft)' : 'var(--border)'), background: 'var(--bg-card)' }}>
+                <button onClick={function() { toggleFaq(idx); }} className="w-full flex items-center justify-between px-5 py-4 text-left min-h-[44px]" style={{ color: 'var(--brand)' }}>
                   <span className="text-sm font-semibold">{item.q}</span>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={MUTED} strokeWidth="2" strokeLinecap="round" className="flex-shrink-0 ml-3 transition-transform duration-200" style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-sub)" strokeWidth="2" strokeLinecap="round" className="flex-shrink-0 ml-3 transition-transform duration-200" style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}>
                     <path d="M19 9l-7 7-7-7" />
                   </svg>
                 </button>
                 <div style={{ maxHeight: isOpen ? '400px' : '0', opacity: isOpen ? 1 : 0, overflow: 'hidden', transition: 'max-height .3s ease, opacity .2s ease' }}>
-                  <p className="text-sm px-5 pb-4 leading-relaxed" style={{ color: MUTED }}>{item.a}</p>
+                  <p className="text-sm px-5 pb-4 leading-relaxed" style={{ color: 'var(--text-sub)' }}>{item.a}</p>
                 </div>
               </div>
             );
@@ -557,23 +544,23 @@ export default function Landing({ onEnter, onNav }) {
       </section>
 
       {/* ═══════ CTA FINAL ═══════ */}
-      <section ref={ctaRef} className="px-5 py-16 scroll-reveal" style={{ background: 'linear-gradient(180deg, #f5f5f0, #ffffff)' }}>
-        <div className="max-w-5xl mx-auto rounded-[2rem] px-8 py-16 sm:py-20 text-center relative overflow-hidden" style={{ background: GRADIENT_PRIMARY, boxShadow: '0 24px 64px rgba(0,47,89,0.25), inset 0 1px 0 rgba(255,255,255,0.1)' }}>
+      <section ref={ctaRef} className="px-5 py-16 scroll-reveal" style={{ background: 'linear-gradient(180deg, var(--bg-subtle), var(--bg-card))' }}>
+        <div className="max-w-5xl mx-auto rounded-[2rem] px-8 py-16 sm:py-20 text-center relative overflow-hidden" style={{ background: 'var(--brand-grad)', boxShadow: 'var(--shadow-xl), inset 0 1px 0 rgba(255,255,255,0.1)' }}>
           {/* Glow orb */}
           <div className="absolute -top-20 -right-20 w-[400px] h-[400px] rounded-full" style={{ background: 'radial-gradient(circle, rgba(59,191,160,0.15) 0%, transparent 70%)', filter: 'blur(50px)' }} />
           <div className="absolute -bottom-20 -left-20 w-[300px] h-[300px] rounded-full" style={{ background: 'radial-gradient(circle, rgba(110,198,200,0.1) 0%, transparent 70%)', filter: 'blur(60px)' }} />
 
           <div className="relative">
             <p className="text-xs font-bold uppercase tracking-[0.15em] mb-4" style={{ color: 'rgba(59,191,160,0.8)' }}>Comece agora</p>
-            <h2 className="font-display font-semibold text-white" style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)', letterSpacing: '-1.5px', lineHeight: 1.05 }}>
+            <h2 className="font-display font-semibold text-white tracking-tight" style={{ fontSize: 'var(--text-display)', lineHeight: 1.05 }}>
               Organize seu negocio em<br/>
-              <span style={{ color: GREEN }}>menos de 1 minuto</span>
+              <span style={{ color: 'var(--green)' }}>menos de 1 minuto</span>
             </h2>
             <p className="mt-4 text-sm max-w-md mx-auto" style={{ color: 'rgba(255,255,255,0.65)' }}>
               Conta gratis, sem cartao de credito. Quando crescer, voce escolhe o plano ideal.
             </p>
             <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
-              <button onClick={onEnter} className="group text-sm font-semibold px-8 py-4 rounded-2xl transition-all duration-200 hover:-translate-y-0.5" style={{ background: GRADIENT_TEAL, color: '#fff', boxShadow: '0 6px 24px rgba(59,191,160,0.35)' }}>
+              <button onClick={onEnter} className="group text-sm font-semibold px-8 py-4 rounded-2xl transition-all duration-200 hover:-translate-y-0.5" style={{ background: 'var(--brand-grad)', color: '#fff', boxShadow: '0 6px 24px rgba(59,191,160,0.35)' }}>
                 Criar conta gratis
                 <svg className="inline-block ml-2 w-4 h-4 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 12h14M12 5l7 7-7 7"/></svg>
               </button>
@@ -586,16 +573,16 @@ export default function Landing({ onEnter, onNav }) {
       </section>
 
       {/* ═══════ FOOTER ═══════ */}
-      <footer className="max-w-6xl mx-auto px-5 py-12" style={{ borderTop: '1px solid rgba(10,37,64,0.06)' }}>
+      <footer className="max-w-6xl mx-auto px-5 py-12" style={{ borderTop: '1px solid var(--border)' }}>
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2.5">
             <img src="/icon-192.svg" alt="" loading="lazy" decoding="async" className="w-6 h-6" />
-            <span className="font-display text-sm font-semibold" style={{ color: NAVY }}>Financia</span>
+            <span className="font-display text-sm font-semibold" style={{ color: 'var(--brand)' }}>Financia</span>
           </div>
-          <p className="text-xs" style={{ color: MUTED }}>Gestao financeira para pequenos negocios brasileiros</p>
-          <div className="flex items-center gap-5 text-xs" style={{ color: MUTED }}>
-            <a href="/privacidade" onClick={function(e){e.preventDefault();onNav('privacidade');}} className="hover:text-[#002f59] transition-colors">Privacidade</a>
-            <a href="/termos" onClick={function(e){e.preventDefault();onNav('termos');}} className="hover:text-[#002f59] transition-colors">Termos de Uso</a>
+          <p className="text-xs" style={{ color: 'var(--text-sub)' }}>Gestao financeira para pequenos negocios brasileiros</p>
+          <div className="flex items-center gap-5 text-xs" style={{ color: 'var(--text-sub)' }}>
+            <a href="/privacidade" onClick={function(e){e.preventDefault();onNav('privacidade');}} className="hover:text-[var(--brand)] transition-colors">Privacidade</a>
+            <a href="/termos" onClick={function(e){e.preventDefault();onNav('termos');}} className="hover:text-[var(--brand)] transition-colors">Termos de Uso</a>
           </div>
         </div>
       </footer>

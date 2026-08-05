@@ -134,7 +134,7 @@ function renderField(path, prop, label, value, onChange) {
             Upload
             <input type="file" id={uploadId} accept="image/*" onChange={handleUpload} className="hidden" />
           </label>
-          {value && <button onClick={() => onChange('')} className="text-[10px] px-2 py-1 rounded-lg hover:opacity-70 flex-shrink-0" style={{color:'#ef4444'}}>x</button>}
+          {value && <button onClick={() => onChange('')} className="text-[10px] px-2 py-1 rounded-lg hover:opacity-70 flex-shrink-0" style={{color:'var(--danger)'}}>x</button>}
         </div>
       </div>
     );

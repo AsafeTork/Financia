@@ -21,7 +21,8 @@ var NavLink = React.memo(function NavLink({ href, label, onClick, variant = 'def
 });
 
 export default function Footer({ brand, onNav, isMobile }) {
-  var brandColor = (brand && brand.color) || '#002f59';
+  var brandColor = (brand && brand.color) || 'var(--brand)';
+  var brandColorHex = (brand && brand.color) || '#002f59';
   var currentYear = new Date().getFullYear();
   var appVersion = '2.3.0';
 
@@ -53,7 +54,7 @@ export default function Footer({ brand, onNav, isMobile }) {
               {brand?.logo_url ? (
                 <img src={brand.logo_url} alt="" className="w-8 h-8 rounded-lg object-cover" />
               ) : (
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center text-base" style={{ background: brandAlpha(brandColor, 0.15) }}>
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center text-base" style={{ background: brandAlpha(brandColorHex, 0.15) }}>
                   <span className="font-bold" style={{ color: brandColor }}>{(brand?.logo || 'F')[0]}</span>
                 </div>
               )}
@@ -131,7 +132,8 @@ export default function Footer({ brand, onNav, isMobile }) {
 }
 
 export function MobileFooter({ brand, onNav, currentView }) {
-  var brandColor = (brand && brand.color) || '#002f59';
+  var brandColor = (brand && brand.color) || 'var(--brand)';
+  var brandColorHex = (brand && brand.color) || '#002f59';
   var items = [
     { key: 'dashboard', label: 'Início', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' },
     { key: 'income', label: 'Vendas', icon: 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6' },
@@ -155,12 +157,12 @@ export function MobileFooter({ brand, onNav, currentView }) {
               aria-label={item.label}
               aria-current={active ? 'page' : undefined}
               className="relative flex-1 flex flex-col items-center justify-center gap-0.5 transition-colors min-w-0"
-              style={{ color: active ? brandColor : '#94a3b8' }}
+              style={{ color: active ? brandColor : 'var(--text-muted)' }}
             >
               {active && (
                 <div className="absolute top-0 left-1/2 w-6 h-0.5 rounded-b-full transform -translate-x-1/2" style={{ background: brandColor }} />
               )}
-              <div className="flex items-center justify-center rounded-lg transition-all" style={{ width: 32, height: 24, background: active ? brandAlpha(brandColor, 0.1) : 'transparent' }}>
+              <div className="flex items-center justify-center rounded-lg transition-all" style={{ width: 32, height: 24, background: active ? brandAlpha(brandColorHex, 0.1) : 'transparent' }}>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={active ? 2.2 : 1.6} strokeLinecap="round" strokeLinejoin="round">
                   <path d={item.icon} />
                 </svg>

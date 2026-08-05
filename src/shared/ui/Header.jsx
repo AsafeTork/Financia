@@ -5,7 +5,7 @@ import ThemeToggle from './ThemeToggle.jsx';
 function Header({ brand, onMenuOpen, syncStatus, theme, onToggleTheme }) {
   const dotColor = syncStatus === 'ok' ? '#22c55e' : syncStatus === 'error' ? '#ef4444' : '#94a3b8';
   const lum = luminance(brand.color || '#002f59');
-  const textColor = lum > 0.4 ? '#111827' : '#ffffff';
+  const textColor = lum > 0.4 ? 'var(--text-main)' : '#ffffff';
   const overlayAlpha = lum > 0.4 ? '0.08' : '0.18';
 
   const headerBg = React.useMemo(function() {

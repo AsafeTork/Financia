@@ -10,12 +10,12 @@ export default function ThemeToggle({ theme, onToggle, variant, onBrand }) {
 
   // Cor de destaque OPOSTA ao tema atual: sol ambar no escuro, lua indigo no claro.
   // O botao nao herda o cinza neutro do tema — fica vivo e chama atencao.
-  var accent = isDark ? '#f59e0b' : '#4f46e5';
+  var accent = isDark ? 'var(--warning)' : 'var(--brand)';
   var iconColor = header ? (onBrand || '#ffffff') : accent;
   var base = 'inline-flex items-center justify-center rounded-xl transition min-w-[44px] min-h-[44px] hover:scale-105 active:scale-95';
   var style = header
     ? { background: 'rgba(0,0,0,0.18)' }
-    : { background: 'var(--bg-card)', border: '1.5px solid ' + accent, boxShadow: '0 4px 14px ' + (isDark ? 'rgba(245,158,11,0.30)' : 'rgba(79,70,229,0.22)') };
+    : { background: 'var(--bg-card)', border: '1.5px solid ' + accent, boxShadow: '0 4px 14px ' + (isDark ? 'rgba(245,158,11,0.30)' : 'rgba(15,47,89,0.22)') };
 
   return (
     <button type="button" onClick={onToggle} aria-label={label} title={label} aria-pressed={isDark}

@@ -1,9 +1,5 @@
 
 import { safe as _safe } from '../../lib/utils.js';
-var INK   = '#0a2540';
-var MUTED = '#5b6b7c';
-var WARM  = '#fbfaf7';
-var ACCENT = '#0f9d6c';
 
 var sections = [
   {
@@ -50,18 +46,18 @@ var sections = [
 
 export default function TermsOfService({ onNav }) {
   return (
-    <div style={{ background: WARM, color: INK, minHeight: '100vh' }}>
+    <div style={{ background: 'var(--bg-subtle)', color: 'var(--text-main)', minHeight: '100vh' }}>
 
-      <header className="sticky top-0 z-30" style={{ background: 'rgba(251,250,247,0.92)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', borderBottom: '1px solid rgba(10,37,64,0.08)' }}>
+      <header className="sticky top-0 z-30" style={{ background: 'rgba(251,250,247,0.92)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', borderBottom: '1px solid var(--border-md)' }}>
         <div className="max-w-3xl mx-auto px-5 h-16 flex items-center justify-between">
           <a href="#" className="flex items-center gap-2.5 min-h-[44px]" style={{ textDecoration: 'none' }}>
             <img src="/icon-192.svg" alt="Financia" fetchPriority="high" decoding="sync" className="w-7 h-7" />
-            <span className="font-display text-lg font-semibold" style={{ color: INK }}>Financia</span>
+            <span className="font-display text-lg font-semibold" style={{ color: 'var(--text-main)' }}>Financia</span>
           </a>
           <button
             onClick={function() { onNav(''); }}
             className="flex items-center gap-1.5 text-sm font-medium px-4 min-h-[44px] rounded-xl transition hover:bg-black/5"
-            style={{ color: MUTED }}
+            style={{ color: 'var(--text-sub)' }}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 5l-7 7 7 7" /></svg>
             Voltar
@@ -71,26 +67,26 @@ export default function TermsOfService({ onNav }) {
 
       <main className="max-w-3xl mx-auto px-5 py-12 pb-20">
         <div className="mb-10">
-          <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: ACCENT }}>Legal</p>
-          <h1 className="font-display font-semibold" style={{ color: INK, fontSize: 'clamp(2rem, 5vw, 3rem)', letterSpacing: '-1px', lineHeight: 1.1 }}>
+          <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--brand-accent)' }}>Legal</p>
+          <h1 className="font-display font-semibold tracking-tight" style={{ color: 'var(--text-main)', fontSize: 'var(--text-h1)', lineHeight: 1.1 }}>
             Termos de Uso
           </h1>
-          <p className="mt-3 text-sm" style={{ color: MUTED }}>Última atualização: [DATA]</p>
+          <p className="mt-3 text-sm" style={{ color: 'var(--text-sub)' }}>Última atualização: [DATA]</p>
         </div>
 
-        <div className="rounded-2xl p-5 mb-8" style={{ background: 'rgba(15,157,108,0.08)', border: '1px solid rgba(15,157,108,0.2)' }}>
-          <p className="text-sm leading-relaxed" style={{ color: INK }}>
+        <div className="rounded-2xl p-5 mb-8" style={{ background: 'var(--brand-accent-soft)', border: '1px solid var(--brand-accent)' }}>
+          <p className="text-sm leading-relaxed" style={{ color: 'var(--text-main)' }}>
             Estes Termos de Uso regulam o acesso e o uso do <strong>Financia</strong>. Leia com atenção antes de criar sua conta. Ao se cadastrar, você declara ter lido, compreendido e aceito integralmente estes Termos, bem como nossa{' '}
-            <a href="/privacidade" onClick={function(e){e.preventDefault();onNav('privacidade');}} style={{ color: ACCENT, fontWeight: 600 }}>Política de Privacidade</a>.
+            <a href="/privacidade" onClick={function(e){e.preventDefault();onNav('privacidade');}} style={{ color: 'var(--brand-accent)', fontWeight: 600 }}>Política de Privacidade</a>.
           </p>
         </div>
 
         <div className="flex flex-col gap-8">
           {sections.map(function(s) {
             return (
-              <div key={s.title} className="rounded-2xl p-6" style={{ background: '#fff', border: '1px solid rgba(10,37,64,0.08)' }}>
-                <h2 className="font-display font-semibold text-lg mb-3" style={{ color: INK }}>{s.title}</h2>
-                <div className="text-sm leading-relaxed" style={{ color: MUTED }}>
+              <div key={s.title} className="rounded-2xl p-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-md)' }}>
+                <h2 className="font-display font-semibold text-lg mb-3" style={{ color: 'var(--text-main)' }}>{s.title}</h2>
+                <div className="text-sm leading-relaxed" style={{ color: 'var(--text-sub)' }}>
                   {s.content.split('\n').map(function(line, i) {
                     if (!line.trim()) return <br key={String(i)} />;
                     var isBullet = line.startsWith('• ');
@@ -107,14 +103,14 @@ export default function TermsOfService({ onNav }) {
         </div>
       </main>
 
-      <footer className="max-w-3xl mx-auto px-5 py-8 flex flex-col sm:flex-row items-center justify-between gap-3" style={{ borderTop: '1px solid rgba(10,37,64,0.08)' }}>
+      <footer className="max-w-3xl mx-auto px-5 py-8 flex flex-col sm:flex-row items-center justify-between gap-3" style={{ borderTop: '1px solid var(--border-md)' }}>
         <div className="flex items-center gap-2">
           <img src="/icon-192.svg" alt="" loading="lazy" decoding="async" className="w-5 h-5" />
-          <span className="font-display text-sm font-semibold" style={{ color: INK }}>Financia</span>
+          <span className="font-display text-sm font-semibold" style={{ color: 'var(--text-main)' }}>Financia</span>
         </div>
-        <div className="flex items-center gap-4 text-xs" style={{ color: MUTED }}>
-          <a href="/privacidade" onClick={function(e){e.preventDefault();onNav('privacidade');}} style={{ color: MUTED }}>Privacidade</a>
-          <span style={{ color: INK, fontWeight: 600, cursor: 'default' }}>Termos de Uso</span>
+        <div className="flex items-center gap-4 text-xs" style={{ color: 'var(--text-sub)' }}>
+          <a href="/privacidade" onClick={function(e){e.preventDefault();onNav('privacidade');}} style={{ color: 'var(--text-sub)' }}>Privacidade</a>
+          <span style={{ color: 'var(--text-main)', fontWeight: 600, cursor: 'default' }}>Termos de Uso</span>
         </div>
       </footer>
 

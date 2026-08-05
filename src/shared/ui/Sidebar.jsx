@@ -34,7 +34,7 @@ function Sidebar({ view, onNav, brand, open, onClose, isAdmin }) {
   const settingsItem = navItems.find(function(v) { return v.key === 'settings'; });
 
   const sidebarBg = React.useMemo(function() {
-    return {background: 'var(--sidebar-bg, ' + (brand.color || '#0f1c2e') + ')'};
+    return {background: 'var(--sidebar-bg, ' + (brand.color || '#002f59') + ')'};
   }, [brand.color]);
 
   const onlineStyle = React.useMemo(function() {

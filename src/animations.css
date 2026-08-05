@@ -35,10 +35,10 @@
 
 @keyframes hoverGlow {
   0%, 100% {
-    box-shadow: 0 0 20px rgba(0, 47, 89, 0.1);
+    box-shadow: 0 0 20px rgba(var(--brand-rgb, 0, 47, 89), 0.1);
   }
   50% {
-    box-shadow: 0 0 30px rgba(0, 47, 89, 0.25);
+    box-shadow: 0 0 30px rgba(var(--brand-rgb, 0, 47, 89), 0.25);
   }
 }
 
@@ -106,10 +106,10 @@
 
 @keyframes glow {
   0%, 100% {
-    text-shadow: 0 0 10px rgba(15, 157, 108, 0.5);
+    text-shadow: 0 0 10px rgba(var(--brand-accent-rgb, 15, 157, 108), 0.5);
   }
   50% {
-    text-shadow: 0 0 20px rgba(15, 157, 108, 0.8);
+    text-shadow: 0 0 20px rgba(var(--brand-accent-rgb, 15, 157, 108), 0.8);
   }
 }
 
@@ -154,11 +154,11 @@
 @keyframes cardLift {
   0% {
     transform: translateY(0);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-md);
   }
   100% {
     transform: translateY(-12px);
-    box-shadow: 0 20px 40px rgba(0, 47, 89, 0.15);
+    box-shadow: var(--shadow-xl);
   }
 }
 
@@ -210,56 +210,56 @@
 /* Entrada suave ao aparecer */
 .anim-fade-up {
   will-change: transform, opacity;
-  animation: fadeInUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: fadeInUp var(--dur-slower) var(--ease-spring);
 }
 
 .anim-fade-down {
   will-change: transform, opacity;
-  animation: fadeInDown 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: fadeInDown var(--dur-slower) var(--ease-spring);
 }
 
 /* Float suave ao hover */
 .hover-float:hover {
   will-change: transform;
-  animation: hoverFloat 0.6s ease-in-out infinite;
+  animation: hoverFloat var(--dur-slower) var(--ease-in-out) infinite;
 }
 
 .hover-glow:hover {
   will-change: box-shadow;
-  animation: hoverGlow 0.6s ease-in-out infinite;
+  animation: hoverGlow var(--dur-slower) var(--ease-in-out) infinite;
 }
 
 /* Elevação de card ao hover */
 .card-hover-lift:hover {
   will-change: transform;
-  animation: cardLift 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  animation: cardLift var(--dur-slow) var(--ease-spring) forwards;
 }
 
 /* Flutuação contínua */
 .float-slow {
   will-change: transform;
-  animation: floatSlow 4s ease-in-out infinite;
+  animation: floatSlow 4s var(--ease-in-out) infinite;
 }
 
 .float-medium {
   will-change: transform;
-  animation: float 3s ease-in-out infinite;
+  animation: float 3s var(--ease-in-out) infinite;
 }
 
 /* Pulsação */
 .pulse-glow {
-  animation: pulse 2s ease-in-out infinite;
+  animation: pulse 2s var(--ease-in-out) infinite;
 }
 
 .glow-text {
-  animation: glow 2s ease-in-out infinite;
+  animation: glow 2s var(--ease-in-out) infinite;
 }
 
 /* Scroll reveal (combinado com JS) */
 .scroll-reveal {
   opacity: 0;
   transform: translateY(30px);
-  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+  transition: opacity var(--dur-slower) var(--ease-out), transform var(--dur-slower) var(--ease-out);
 }
 
 .scroll-reveal.visible,
@@ -285,21 +285,21 @@ button:active {
 
 /* Barras do mini-gráfico crescendo a partir da base */
 @keyframes growBar { from { transform: scaleY(0); opacity: 0; } to { transform: scaleY(1); opacity: 1; } }
-.lp-bar { transform-origin: bottom; animation: growBar 0.9s cubic-bezier(0.16, 1, 0.3, 1) both; }
-.lp-bar-hover { transition: transform .18s ease, filter .18s ease; }
+.lp-bar { transform-origin: bottom; animation: growBar var(--dur-slower) var(--ease-out) both; }
+.lp-bar-hover { transition: transform var(--dur-fast) var(--ease-out), filter var(--dur-fast) var(--ease-out); }
 .lp-bar-hover:hover { transform: scaleY(1.08); filter: saturate(1.15); }
 .lp-main-chart:hover .lp-bar-hover { opacity: .62; transform: scaleY(0.98); }
 .lp-main-chart .lp-bar-hover:hover { opacity: 1; transform: scaleY(1.14); filter: saturate(1.2); }
 
 @keyframes metricLift {
-  from { transform: translateY(0); box-shadow: 0 2px 12px rgba(10,37,64,0.04); }
-  to { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(10,37,64,0.10); }
+  from { transform: translateY(0); box-shadow: 0 2px 12px rgba(var(--brand-rgb, 0, 47, 89), 0.04); }
+  to { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(var(--brand-rgb, 0, 47, 89), 0.10); }
 }
-.lp-metric-card { transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
-.lp-metric-card:hover { animation: metricLift .2s ease forwards; border-color: rgba(26,107,92,0.35) !important; }
+.lp-metric-card { transition: transform var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out), border-color var(--dur-base) var(--ease-out); }
+.lp-metric-card:hover { animation: metricLift var(--dur-base) var(--ease-out) forwards; border-color: rgba(var(--brand-accent-rgb, 26, 107, 92), 0.35) !important; }
 
 .lp-line-chart { overflow: visible; }
-.lp-line-point { transition: transform .18s ease, filter .18s ease; transform-origin: center; }
+.lp-line-point { transition: transform var(--dur-fast) var(--ease-out), filter var(--dur-fast) var(--ease-out); transform-origin: center; }
 .lp-metric-card:hover .lp-line-point { filter: saturate(1.15); }
 .lp-metric-card:hover .lp-line-point:hover { transform: scale(1.25); }
 
@@ -308,7 +308,7 @@ button:active {
   height: 62px;
   border-radius: 9999px;
   position: relative;
-  transition: transform .2s ease;
+  transition: transform var(--dur-base) var(--ease-out);
 }
 .lp-donut::after {
   content: '';
@@ -322,7 +322,7 @@ button:active {
 .lp-thermo-col {
   width: 12px;
   border-radius: 999px;
-  transition: transform .2s ease, filter .2s ease;
+  transition: transform var(--dur-base) var(--ease-out), filter var(--dur-base) var(--ease-out);
 }
 .lp-metric-card:hover .lp-thermo-col { filter: saturate(1.15); transform: translateY(-1px); }
 
@@ -331,7 +331,7 @@ button:active {
   50% { filter: saturate(1.25); }
   100% { filter: saturate(1); }
 }
-.lp-progress { animation: fillPulse 2.6s ease-in-out infinite; }
+.lp-progress { animation: fillPulse 2.6s var(--ease-in-out) infinite; }
 
 @keyframes waveMove {
   0% { background-position: 0% 50%; }
@@ -340,8 +340,8 @@ button:active {
 }
 .lp-wave {
   background-size: 220% 220%;
-  animation: waveMove 4.2s ease-in-out infinite;
-  transition: transform .2s ease;
+  animation: waveMove 4.2s var(--ease-in-out) infinite;
+  transition: transform var(--dur-base) var(--ease-out);
 }
 .lp-wave:hover { transform: translateY(-2px) scale(1.01); }
 
@@ -351,7 +351,7 @@ button:active {
   50%  { transform: translate3d(18px, -22px, 0) scale(1.08); }
   100% { transform: translate3d(0, 0, 0) scale(1); }
 }
-.lp-orb { position: absolute; border-radius: 9999px; filter: blur(46px); pointer-events: none; will-change: transform; animation: orbDrift 11s ease-in-out infinite; }
+.lp-orb { position: absolute; border-radius: 9999px; filter: blur(46px); pointer-events: none; will-change: transform; animation: orbDrift 11s var(--ease-in-out) infinite; }
 .lp-orb-2 { animation-duration: 14s; animation-direction: reverse; }
 
 /* Preview app mockup cards */
@@ -360,11 +360,11 @@ button:active {
   50% { transform: translateY(-6px) rotate(0.3deg); }
 }
 .preview-card {
-  transition: transform .25s cubic-bezier(0.34,1.56,0.64,1), box-shadow .25s ease;
+  transition: transform var(--dur-base) var(--ease-spring), box-shadow var(--dur-base) var(--ease-out);
 }
 .preview-card:hover {
   transform: translateY(-8px) scale(1.02);
-  box-shadow: 0 24px 48px -12px rgba(0,47,89,0.18);
+  box-shadow: var(--shadow-xl);
 }
 .preview-card:active {
   transform: scale(0.98);
@@ -376,7 +376,7 @@ button:active {
   to { opacity: 1; transform: translateY(0); }
 }
 .count-animate {
-  animation: countUp 0.6s cubic-bezier(0.16,1,0.3,1) both;
+  animation: countUp var(--dur-slower) var(--ease-out) both;
 }
 
 /* Preview graph bars that update in loop */
@@ -386,7 +386,7 @@ button:active {
 }
 .preview-bar-live {
   transform-origin: bottom;
-  animation: barPulse 2.4s ease-in-out infinite;
+  animation: barPulse 2.4s var(--ease-in-out) infinite;
 }
 
 /* Preview chip pulse */
@@ -394,20 +394,20 @@ button:active {
   0%, 100% { filter: saturate(1); }
   50% { filter: saturate(1.3); }
 }
-.preview-chip { animation: chipPulse 2s ease-in-out infinite; }
+.preview-chip { animation: chipPulse 2s var(--ease-in-out) infinite; }
 
 /* Preview rotating badge */
 @keyframes badgeGlow {
-  0%, 100% { box-shadow: 0 0 8px rgba(0,47,89,0.12); }
-  50% { box-shadow: 0 0 16px rgba(0,47,89,0.25); }
+  0%, 100% { box-shadow: 0 0 8px rgba(var(--brand-rgb, 0, 47, 89), 0.12); }
+  50% { box-shadow: 0 0 16px rgba(var(--brand-rgb, 0, 47, 89), 0.25); }
 }
 .preview-badge {
-  animation: badgeGlow 2.8s ease-in-out infinite;
+  animation: badgeGlow 2.8s var(--ease-in-out) infinite;
 }
 
 /* Anel cônico girando devagar ao redor do mockup */
 @keyframes spinSlow { to { transform: rotate(360deg); } }
-.lp-ring { animation: spinSlow 26s linear infinite; will-change: transform; }
+.lp-ring { animation: spinSlow 26s var(--ease-linear) infinite; will-change: transform; }
 
 /* ==================== MEDIA QUERIES PARA REDUÇÃO DE MOVIMENTO === */
 @media (prefers-reduced-motion: reduce) {

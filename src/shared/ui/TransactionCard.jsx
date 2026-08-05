@@ -20,8 +20,8 @@ export function TransactionCard({
   showActions = true,
 }) {
   var isIncome = type === 'income';
-  var accentColor = isIncome ? brand?.color : '#ef4444';
-  var accentBg = isIncome ? brandAlpha(brand?.color, 0.08) : 'rgba(239,68,68,0.06)';
+  var accentColor = isIncome ? brand?.color : 'var(--danger)';
+  var accentBg = isIncome ? brandAlpha(brand?.color, 0.08) : 'var(--danger-bg, rgba(239,68,68,0.06))';
   var isRecurring = isRecurringId(transaction.id);
   
   var iconPath = isIncome ? 'M5 15l7-7 7 7' : 'M19 9l-7 7-7-7';
@@ -138,7 +138,7 @@ export function TransactionCard({
                 </span>
               )}
               {isRecurring && (
-                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full flex-shrink-0 bg-violet-50 text-violet-600" aria-label="Transação recorrente">
+                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full flex-shrink-0" style={{background:'var(--brand-soft)', color:'var(--brand)'}} aria-label="Transação recorrente">
                   recorrente
                 </span>
               )}
@@ -189,7 +189,7 @@ export function TransactionCard({
 
 export function TransactionGroupHeader({ date, total, type, brand }) {
   var isIncome = type === 'income';
-  var accentColor = isIncome ? brand?.color : '#ef4444';
+  var accentColor = isIncome ? brand?.color : 'var(--danger)';
   var amountPrefix = isIncome ? '+' : '-';
   
   return (
@@ -206,8 +206,8 @@ export function TransactionGroupHeader({ date, total, type, brand }) {
 
 export function EmptyTransactionState({ type, brand, onAdd }) {
   var isIncome = type === 'income';
-  var accentColor = isIncome ? brand?.color : '#ef4444';
-  var accentBg = isIncome ? brandAlpha(brand?.color, 0.08) : 'rgba(239,68,68,0.06)';
+  var accentColor = isIncome ? brand?.color : 'var(--danger)';
+  var accentBg = isIncome ? brandAlpha(brand?.color, 0.08) : 'var(--danger-bg, rgba(239,68,68,0.06))';
   var iconPath = isIncome ? 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6' : 'M13 17h8m0 0V9m0 8l-8-8-4 4-6-6';
   var title = isIncome ? 'Nenhuma venda registrada' : 'Nenhuma despesa registrada';
   var description = isIncome 

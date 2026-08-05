@@ -7,26 +7,26 @@ import { setClientCustomPrice, setClientWhiteLabel } from '../../lib/sync.js';
 import { gerarPaleta } from '../../lib/aiClient.js';
 
 function PreviewPaleta({ primary, secondary, accent }) {
-  var lum = luminance(primary || '#002f59');
+  var lum = luminance(primary || 'var(--brand)');
   var warn = lum > 0.4;
   return (
     <div className="rounded-xl border border-gray-200 overflow-hidden">
-      <div className="px-3 py-2 flex items-center gap-2" style={{background: primary || '#002f59'}}>
+      <div className="px-3 py-2 flex items-center gap-2" style={{background: primary || 'var(--brand)'}}>
         <div className="w-5 h-5 rounded-md flex items-center justify-center text-xs font-bold" style={{background:'rgba(255,255,255,0.2)', color:'white'}}>F</div>
         <span className="text-xs font-semibold text-white truncate">Preview sidebar</span>
       </div>
       <div className="bg-white p-3 flex flex-col gap-2.5">
         <div className="flex items-center gap-2">
-          <button className="px-3 py-1.5 rounded-lg text-xs font-semibold text-white" style={{background: primary || '#002f59'}}>
+          <button className="px-3 py-1.5 rounded-lg text-xs font-semibold text-white" style={{background: primary || 'var(--brand)'}}>
             Salvar
           </button>
-          <button className="px-3 py-1.5 rounded-lg text-xs font-semibold" style={{background: secondary || '#e8f0fe', color: primary || '#002f59'}}>
+          <button className="px-3 py-1.5 rounded-lg text-xs font-semibold" style={{background: secondary || 'var(--brand-soft)', color: primary || 'var(--brand)'}}>
             Cancelar
           </button>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-xs font-semibold px-2 py-0.5 rounded-full text-white" style={{background: primary || '#002f59'}}>PRO</span>
-          <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{background: secondary || '#e8f0fe', color: primary || '#002f59'}}>FREE</span>
+          <span className="text-xs font-semibold px-2 py-0.5 rounded-full text-white" style={{background: primary || 'var(--brand)'}}>PRO</span>
+          <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{background: secondary || 'var(--brand-soft)', color: primary || 'var(--brand)'}}>FREE</span>
         </div>
         <div className="flex flex-col gap-1">
           <div className="flex justify-between">
@@ -34,13 +34,13 @@ function PreviewPaleta({ primary, secondary, accent }) {
             <span className="text-xs text-gray-400">32/50</span>
           </div>
           <div className="h-1.5 rounded-full overflow-hidden bg-gray-100">
-            <div className="h-full rounded-full" style={{width:'64%', background: accent || primary || '#002f59'}}/>
+            <div className="h-full rounded-full" style={{width:'64%', background: accent || primary || 'var(--brand)'}}/>
           </div>
         </div>
       </div>
       {warn && (
-        <div className="px-3 py-2 bg-amber-50 border-t border-amber-100">
-          <p className="text-xs text-amber-700">Cor primária muito clara — texto pode ficar ilegível no sidebar.</p>
+        <div className="px-3 py-2" style={{background:'var(--warning-bg, #fef9c3)', borderTop:'1px solid var(--warning)', color:'var(--warning)'}}>
+          <p className="text-xs">Cor primária muito clara — texto pode ficar ilegível no sidebar.</p>
         </div>
       )}
     </div>
@@ -224,7 +224,7 @@ export default function ClientEditModal({ client, adminEmail, onSave, onClose, t
 
           <div className="grid grid-cols-2 gap-2">
             <button type="button" onClick={function() { if (onImpersonate) onImpersonate(client); }}
-              className="py-2.5 text-sm font-semibold rounded-xl border border-blue-200 text-blue-600 hover:bg-blue-50 min-h-[44px] flex items-center justify-center gap-2">
+              className="py-2.5 text-sm font-semibold rounded-xl border border-blue-200 text-blue-600 hover:bg-blue-50 min-h-[44px] flex items-center justify-center gap-2" style={{borderColor:'var(--info)', color:'var(--info)', background:'var(--info-bg, #eff6ff)'}}>
               <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/></svg>
               Entrar
             </button>
@@ -296,10 +296,10 @@ export default function ClientEditModal({ client, adminEmail, onSave, onClose, t
           {/* Personalizar com IA */}
           <div className="flex flex-col gap-2 rounded-xl p-3" style={{border:'1px solid var(--brand-soft)', background:'var(--brand-soft)'}}>
             <div className="flex items-center gap-2">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--brand)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9L12 3z M19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8L19 16z"/>
               </svg>
-              <p className="text-xs font-semibold text-gray-700">Personalizar com IA</p>
+              <p className="text-xs font-semibold" style={{color:'var(--text-sub)'}}>Personalizar com IA</p>
             </div>
             <p className="text-xs text-gray-500">Diga o ramo da empresa. A IA cria uma paleta harmônica com as 3 cores bem distribuídas (usa a logo/cor atual se houver).</p>
             <input value={aiSegment} onChange={function(e) { setAiSegment(e.target.value); }}
@@ -326,14 +326,14 @@ export default function ClientEditModal({ client, adminEmail, onSave, onClose, t
                   <button key={p.name} type="button"
                     onClick={function() { setColorRaw(p.color); setSecondary(p.secondary); setAccent(p.accent); }}
                     className="rounded-xl p-2.5 min-h-[44px] text-left transition hover:opacity-90"
-                    style={{ border: (active ? '2px solid ' + p.color : '1px solid #e5e7eb') }}>
+                    style={{ border: (active ? '2px solid ' + p.color : '1px solid var(--border)') }}>
                     <div className="flex gap-1 mb-1.5">
                       <span className="w-5 h-5 rounded-md" style={{ background: p.color }} />
                       <span className="w-5 h-5 rounded-md" style={{ background: p.secondary }} />
                       <span className="w-5 h-5 rounded-md" style={{ background: p.accent }} />
                     </div>
-                    <p className="text-xs font-semibold" style={{ color: '#1f2937' }}>{p.name}</p>
-                    <p style={{ fontSize: 10, color: '#9aa5b1' }}>{p.segment}</p>
+                    <p className="text-xs font-semibold" style={{ color: 'var(--text-main)' }}>{p.name}</p>
+                    <p style={{ fontSize: 10, color: 'var(--text-muted)' }}>{p.segment}</p>
                   </button>
                 );
               })}
@@ -384,7 +384,7 @@ export default function ClientEditModal({ client, adminEmail, onSave, onClose, t
           <div className="flex flex-col gap-2">
             <label className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Plano</label>
             <div className="flex gap-2">
-              {[['free', 'Free', '#6b7280'], ['pro', 'Pro', color], ['premium', 'Premium', '#7c3aed']].map(function(opt) {
+              {[['free', 'Free', 'var(--text-muted)'], ['pro', 'Pro', color], ['premium', 'Premium', 'var(--brand)']].map(function(opt) {
                 var active = plan === opt[0];
                 return (
                   <button key={opt[0]} type="button" onClick={function() { setPlan(opt[0]); }}
@@ -407,22 +407,22 @@ export default function ClientEditModal({ client, adminEmail, onSave, onClose, t
               </button>
             </div>
             {whiteLabel && (
-              <div className="rounded-xl p-2.5 mt-1" style={{border:'1px solid #fde68a', background:'#fff7ed'}}>
-                <p className="text-xs mb-1" style={{color:'#92400e'}}>Preço customizado (tabela: <b>{fmt(WHITELABEL.price)}</b> único)</p>
+              <div className="rounded-xl p-2.5 mt-1" style={{border:'1px solid var(--warning)', background:'var(--warning-bg, #fffbeb)'}}>
+                <p className="text-xs mb-1" style={{color:'var(--warning)'}}>Preço customizado (tabela: <b>{fmt(WHITELABEL.price)}</b> único)</p>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-semibold" style={{color:'#92400e'}}>R$</span>
+                  <span className="text-sm font-semibold" style={{color:'var(--warning)'}}>R$</span>
                   <input value={customWlReais}
                     onChange={function(e) { setCustomWlReais(e.target.value.replace(/[^0-9.,]/g, '')); }}
                     placeholder="ex: 499,00" inputMode="decimal"
-                    className="border rounded-xl px-3 py-2 text-sm font-mono flex-1 focus:outline-none" style={{background:'var(--bg-input)', color:'var(--text-main)', borderColor:'#fde68a'}}/>
+                    className="border rounded-xl px-3 py-2 text-sm font-mono flex-1 focus:outline-none" style={{background:'var(--bg-input)', color:'var(--text-main)', borderColor:'var(--warning)'}}/>
                 </div>
                 <div className="flex gap-2 mt-2">
                   <button onClick={function() { clearCustomPrice('white_label'); }} disabled={priceSaving}
-                    className="flex-1 py-2 min-h-[44px] rounded-xl text-sm font-semibold border disabled:opacity-50" style={{borderColor:'#fca5a5', color:'#dc2626', background:'var(--bg-card)'}}>
+                    className="flex-1 py-2 min-h-[44px] rounded-xl text-sm font-semibold border disabled:opacity-50" style={{borderColor:'var(--danger-bg, #fecaca)', color:'var(--danger)', background:'var(--bg-card)'}}>
                     Remover
                   </button>
                   <button onClick={function() { applyCustomPrice('white_label', customWlReais); }} disabled={priceSaving}
-                    className="flex-1 py-2 min-h-[44px] rounded-xl text-sm font-semibold text-white disabled:opacity-50 hover:opacity-90 transition" style={{background:'#d97706'}}>
+                    className="flex-1 py-2 min-h-[44px] rounded-xl text-sm font-semibold text-white disabled:opacity-50 hover:opacity-90 transition" style={{background:'var(--warning)'}}>
                     {priceSaving ? 'Salvando...' : 'Aplicar'}
                   </button>
                 </div>
@@ -431,12 +431,12 @@ export default function ClientEditModal({ client, adminEmail, onSave, onClose, t
           </div>
 
           {/* Preço / desconto customizado */}
-          <div className="flex flex-col gap-3 rounded-xl p-3" style={{border:'1px solid #fde68a', background:'#fffbeb'}}>
+          <div className="flex flex-col gap-3 rounded-xl p-3" style={{border:'1px solid var(--warning)', background:'var(--warning-bg, #fffbeb)'}}>
             <div className="flex items-center gap-2">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#b45309" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 14l6-6M9.5 9h.01M14.5 15h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-              <p className="text-xs font-bold" style={{color:'#92400e'}}>Preço customizado por plano</p>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--warning)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 14l6-6M9.5 9h.01M14.5 15h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              <p className="text-xs font-bold" style={{color:'var(--warning)'}}>Preço customizado por plano</p>
             </div>
-            <p className="text-xs" style={{color:'#92400e'}}>
+            <p className="text-xs" style={{color:'var(--warning)'}}>
               Defina desconto específico para Pro e Premium. O usuário verá o preço especial no card de cada plano.
             </p>
             <div className="flex flex-col gap-2">
@@ -450,23 +450,23 @@ export default function ClientEditModal({ client, adminEmail, onSave, onClose, t
                 var value = row[3];
                 var setValue = row[4];
                 return (
-                  <div key={key} className="rounded-xl p-2.5" style={{border:'1px solid #fde68a', background:'#fff7ed'}}>
-                    <p className="text-xs mb-1" style={{color:'#92400e'}}>Plano {label} (tabela: <b>{fmt(base)}</b>/mês)</p>
+                  <div key={key} className="rounded-xl p-2.5" style={{border:'1px solid var(--warning)', background:'var(--warning-bg, #fffbeb)'}}>
+                    <p className="text-xs mb-1" style={{color:'var(--warning)'}}>Plano {label} (tabela: <b>{fmt(base)}</b>/mês)</p>
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-semibold" style={{color:'#92400e'}}>R$</span>
+                      <span className="text-sm font-semibold" style={{color:'var(--warning)'}}>R$</span>
                       <input value={value}
                         onChange={function(e) { setValue(e.target.value.replace(/[^0-9.,]/g, '')); }}
                         placeholder="ex: 29,90" inputMode="decimal"
-                        className="border rounded-xl px-3 py-2 text-sm font-mono flex-1 focus:outline-none" style={{background:'var(--bg-input)', color:'var(--text-main)', borderColor:'#fde68a'}}/>
-                      <span className="text-xs" style={{color:'#92400e'}}>/mês</span>
+                        className="border rounded-xl px-3 py-2 text-sm font-mono flex-1 focus:outline-none" style={{background:'var(--bg-input)', color:'var(--text-main)', borderColor:'var(--warning)'}}/>
+                      <span className="text-xs" style={{color:'var(--warning)'}}>/mês</span>
                     </div>
                     <div className="flex gap-2 mt-2">
                       <button onClick={function() { clearCustomPrice(key); }} disabled={priceSaving}
-                        className="flex-1 py-2 min-h-[44px] rounded-xl text-sm font-semibold border disabled:opacity-50" style={{borderColor:'#fca5a5', color:'#dc2626', background:'var(--bg-card)'}}>
+                        className="flex-1 py-2 min-h-[44px] rounded-xl text-sm font-semibold border disabled:opacity-50" style={{borderColor:'var(--danger-bg, #fecaca)', color:'var(--danger)', background:'var(--bg-card)'}}>
                         Remover
                       </button>
                       <button onClick={function() { applyCustomPrice(key, value); }} disabled={priceSaving}
-                        className="flex-1 py-2 min-h-[44px] rounded-xl text-sm font-semibold text-white disabled:opacity-50 hover:opacity-90 transition" style={{background:'#d97706'}}>
+                        className="flex-1 py-2 min-h-[44px] rounded-xl text-sm font-semibold text-white disabled:opacity-50 hover:opacity-90 transition" style={{background:'var(--warning)'}}>
                         {priceSaving ? 'Salvando...' : 'Aplicar'}
                       </button>
                     </div>
