@@ -3,32 +3,6 @@ import { now } from './utils.js';
 
 export const ldb = new Dexie('gestao_offline');
 
-ldb.version(1).stores({
-  transactions: 'id, user_id, date, updated_at',
-  products:     'id, user_id, category, updated_at',
-  losses:       'id, user_id, date, updated_at',
-  profiles:     'user_id, updated_at',
-  meta:         'key',
-});
-
-ldb.version(2).stores({
-  transactions: 'id, user_id, date, updated_at, _synced, _deleted',
-  products:     'id, user_id, category, updated_at, _synced, _deleted',
-  losses:       'id, user_id, date, updated_at, _synced, _deleted',
-  profiles:     'user_id, updated_at, _synced',
-  meta:         'key',
-});
-
-ldb.version(3).stores({
-  transactions: 'id, user_id, date, updated_at, _synced, _deleted',
-  products:     'id, user_id, category, updated_at, _synced, _deleted',
-  losses:       'id, user_id, date, updated_at, _synced, _deleted',
-  profiles:     'user_id, updated_at, _synced',
-  meta:         'key',
-  brand_presets: 'id, name, category, favorite, updated_at',
-  brand_logo_schemes: 'id, name, createdAt',
-});
-
 ldb.version(4).stores({
   transactions: 'id, user_id, [user_id+_deleted], date, updated_at, _synced, _deleted',
   products:     'id, user_id, [user_id+_deleted], category, updated_at, _synced, _deleted',
@@ -37,6 +11,14 @@ ldb.version(4).stores({
   meta:         'key',
   brand_presets: 'id, name, category, favorite, updated_at',
   brand_logo_schemes: 'id, name, createdAt',
+}).upgrade(async (tx) => {
+  const tables = ['transactions', 'products', 'losses'];
+  for (const tableName of tables) {
+    await tx.table(tableName).toCollection().modify(row => {
+      if (row._synced === undefined) row._synced = 1;
+      if (row._deleted === undefined) row._deleted = 0;
+    });
+  }
 });
 
 export const toLocal = function(row, extra) {

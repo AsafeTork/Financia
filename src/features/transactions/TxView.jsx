@@ -1,4 +1,4 @@
-﻿import React, { useState, useMemo, useRef } from 'react';
+﻿import React, { useState, useMemo, useRef, useCallback } from 'react';
 import { Card, Inp, NumInp, Sel, Modal, Btn, PageHead } from '../../shared/ui/ui.jsx';
 import { SaleForm } from '../../shared/ui/SaleForm.jsx';
 import ExportButtons from '../../shared/ui/ExportButtons.jsx';
@@ -45,33 +45,46 @@ export default React.memo(function TxView({ type, tx, products, onAdd, onEdit, o
       grouped[t.date].push(t);
     });
     var flatRows = [];
+    var rowIdx = 0;
     groupOrder.forEach(function(date) {
       var dayItems = grouped[date];
       var dayTotal = dayItems.reduce(function(s, t) { return s + t.amount; }, 0);
       flatRows.push({ type: 'header', date: date, total: dayTotal });
       dayItems.forEach(function(t) {
-        flatRows.push({ type: 'row', data: t });
+        rowIdx++;
+        flatRows.push({ type: 'row', data: t, rowIndex: rowIdx });
       });
     });
-    return {filtered: f, total: total, grouped: grouped, groupOrder: groupOrder, flatRows: flatRows};
+    var totalRowCount = rowIdx;
+    return {filtered: f, total: total, grouped: grouped, groupOrder: groupOrder, flatRows: flatRows, totalRowCount: totalRowCount};
   }, [tx, type, debouncedSearch, dateFrom, dateTo]);
 
   var filtered  = memo.filtered;
   var total     = memo.total;
   var flatRows = memo.flatRows;
+  var totalRowCount = memo.totalRowCount;
 
   var scrollRef = useRef(null);
+  var estimateSize = useCallback(function(index) {
+    return flatRows[index].type === 'header' ? 44 : 60;
+  }, [flatRows]);
   var virtualizer = useVirtualizer({
     count: flatRows.length,
     getScrollElement: function() { return scrollRef.current; },
-    estimateSize: function(index) {
-      return flatRows[index].type === 'header' ? 44 : 60;
-    },
+    estimateSize: estimateSize,
   });
 
   var openEdit = function(t) {
     setEditItem({id:t.id, desc:t.desc, amount:String(t.amount), date:t.date, cat:t.category||'Fixo', method:t.method||'PIX'});
   };
+  var handleSaveEdit = function(id, data) {
+    if (data.confirm) {
+      saveEdit();
+    } else {
+      setEditItem(function(prev) { return Object.assign({}, prev, data); });
+    }
+  };
+  var handleCancelEdit = function() { setEditItem(null); };
   var saveEdit = async function() {
     const amount = Number(editItem.amount) || 0;
     if (!editItem.desc || amount <= 0) return;
@@ -234,10 +247,7 @@ export default React.memo(function TxView({ type, tx, products, onAdd, onEdit, o
           <div>
             <div ref={scrollRef} className="max-h-[calc(100vh-280px)] min-h-[200px] overflow-auto" style={{position:'relative'}}>
               <div role="list" data-testid="tx-list" style={{ height: virtualizer.getTotalSize() + 'px', position: 'relative' }}>
-                {function() {
-                  var rowItems = flatRows.filter(function(r) { return r.type === 'row'; });
-                  var totalRowCount = rowItems.length;
-                  return virtualizer.getVirtualItems().map(function(virtualItem) {
+                {virtualizer.getVirtualItems().map(function(virtualItem) {
                     var item = flatRows[virtualItem.index];
                     if (item.type === 'header') {
                       return (
@@ -247,7 +257,7 @@ export default React.memo(function TxView({ type, tx, products, onAdd, onEdit, o
                       );
                     }
                     var t = item.data;
-                    var rowIndex = flatRows.slice(0, virtualItem.index).filter(function(r) { return r.type === 'row'; }).length + 1;
+                    var rowIndex = item.rowIndex;
                     var isEditing = editItem && editItem.id === t.id;
                     return (
                       <div key={t.id} style={{ position: 'absolute', top: 0, left: 0, width: '100%', transform: 'translateY(' + virtualItem.start + 'px)' }}>
@@ -264,19 +274,12 @@ export default React.memo(function TxView({ type, tx, products, onAdd, onEdit, o
                           totalCount={totalRowCount}
                           isEditing={isEditing}
                           editData={isEditing ? editItem : null}
-                          onSaveEdit={function(id, data) {
-                            if (data.confirm) {
-                              saveEdit();
-                            } else {
-                              setEditItem(function(prev) { return Object.assign({}, prev, data); });
-                            }
-                          }}
-                          onCancelEdit={function() { setEditItem(null); }}
+                          onSaveEdit={handleSaveEdit}
+                          onCancelEdit={handleCancelEdit}
                         />
                       </div>
                     );
-                  });
-                }()}
+                  })}
               </div>
             </div>
           </div>

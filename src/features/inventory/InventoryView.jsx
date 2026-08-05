@@ -198,7 +198,7 @@ export default React.memo(function InventoryView({ products, losses, onAddProduc
           var active = tab === t.key;
           return (
             <button key={t.key} onClick={function() { dispatch({type:'SET_TAB', v:t.key}); }}
-              className={'flex items-center gap-2 pb-3 px-1 mr-5 text-sm font-medium border-b-2 ' + (active ? 'text-gray-900' : 'text-gray-400 border-transparent hover:text-gray-600')}
+              className={'flex items-center gap-2 pb-3 px-1 mr-5 text-sm font-medium border-b-2 min-h-[44px] ' + (active ? 'text-gray-900' : 'text-gray-400 border-transparent hover:text-gray-600')}
               style={active ? {borderColor: brand.color, color: brand.color} : {}}>
               {t.label}
               <span className={'text-xs font-semibold px-1.5 py-0.5 rounded-md ' + (active ? 'text-white' : 'text-gray-400 bg-gray-100')}

@@ -200,7 +200,7 @@ export const Modal = function({ title, onClose, onSave, color, saving, children,
       <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby={titleId} className={'rounded-xl flex flex-col w-full anim-scale ' + (wide ? 'max-w-lg' : 'max-w-sm')} style={{background:'var(--bg-card)', boxShadow:'var(--shadow-lg)', maxHeight:'90vh', border:'1px solid var(--border)'}}>
         <div className="flex items-center justify-between px-6 py-4 border-b border-border flex-shrink-0">
           <span id={titleId} className="font-semibold text-foreground">{title}</span>
-          <button onClick={onClose} aria-label="Fechar" className="text-muted-foreground hover:text-foreground p-1 rounded-lg hover:bg-muted">
+          <button onClick={onClose} aria-label="Fechar" className="text-muted-foreground hover:text-foreground p-2 rounded-lg hover:bg-muted min-w-[44px] min-h-[44px] flex items-center justify-center">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"/></svg>
           </button>
         </div>

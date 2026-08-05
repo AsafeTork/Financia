@@ -3,6 +3,38 @@ import { brandAlpha, deriveCores } from '../../lib/utils.js';
 import { planVisualDefaults, WHITE_LABEL_VISUAL_DEFAULT } from '../../lib/constants.js';
 import { PALETTE_DEFAULTS } from '../../features/branding/defaults.js';
 
+function getLuminance(hex) {
+  const r = parseInt(hex.slice(1, 3), 16) / 255;
+  const g = parseInt(hex.slice(3, 5), 16) / 255;
+  const b = parseInt(hex.slice(5, 7), 16) / 255;
+  const toLinear = c => c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+  return 0.2126 * toLinear(r) + 0.7152 * toLinear(g) + 0.0722 * toLinear(b);
+}
+
+function getContrastRatio(hex1, hex2) {
+  const l1 = getLuminance(hex1);
+  const l2 = getLuminance(hex2);
+  const lighter = Math.max(l1, l2);
+  const darker = Math.min(l1, l2);
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
+function adjustForContrast(fg, bg, minRatio) {
+  const fgRgb = [parseInt(fg.slice(1, 3), 16), parseInt(fg.slice(3, 5), 16), parseInt(fg.slice(5, 7), 16)];
+  const bgLum = getLuminance(bg);
+  for (let factor = 0.9; factor >= 0.1; factor -= 0.1) {
+    const adjusted = fgRgb.map(c => Math.round(c * factor));
+    const hex = '#' + adjusted.map(c => c.toString(16).padStart(2, '0')).join('');
+    if (getContrastRatio(hex, bg) >= minRatio) return hex;
+  }
+  for (let factor = 1.1; factor <= 2.0; factor += 0.1) {
+    const adjusted = fgRgb.map(c => Math.min(255, Math.round(c * factor)));
+    const hex = '#' + adjusted.map(c => c.toString(16).padStart(2, '0')).join('');
+    if (getContrastRatio(hex, bg) >= minRatio) return hex;
+  }
+  return fg;
+}
+
 function loadThemePref() {
   try { return localStorage.getItem('financia_theme'); } catch { return null; }
 }
@@ -74,6 +106,12 @@ function collectTokensFromBrand(b) {
     '--brand-accent-soft': brandAlpha(accent, 0.12),
     '--brand-grad': `linear-gradient(135deg, ${primary} 0%, ${accent} 100%)`,
   };
+
+  const whiteContrast = getContrastRatio(primary, '#ffffff');
+  const safePrimary = whiteContrast >= 4.5 ? primary : adjustForContrast(primary, '#ffffff', 4.5);
+  if (safePrimary !== primary) {
+    tokens['--brand-safe'] = safePrimary;
+  }
 
   if (!b || !b.brand_config) return tokens;
   let cfg;

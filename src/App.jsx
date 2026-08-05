@@ -72,6 +72,8 @@ export default function App() {
   const handleDeductStock = useCallback(function(id, qty) { adjustStock(id, -qty); }, [adjustStock]);
   const handleNav = useCallback(function(v) { navTo(v); }, [navTo]);
 
+  var confirmFn = useCallback(function(msg, onOk) { setConfirmData({msg:msg, onOk:onOk}); }, [setConfirmData]);
+
   const stableCtx = useMemo(function() {
     return {
       session: s.session, setSession: s.setSession,
@@ -91,10 +93,10 @@ export default function App() {
       sidebarOpen, setSidebarOpen,
       appBrand, effectiveTheme, toggleTheme,
       toast: t.toast, dismissToast: t.dismissToast,
-      confirm: function(msg, onOk) { setConfirmData({msg:msg, onOk:onOk}); },
+      confirm: confirmFn,
       handleConfirmOk, handleCancel, handleCloseUpgrade, handleNav, handleCloseSidebar, handleOpenSidebar, handleDeductStock,
       saveBrand, savePhone, loadData, enforceLimit,
-      navTo, path: n.path, isLegal: n.isLegal, isLanding: n.isLanding,
+      navTo,
     };
   }, [
     s.session, s.setSession,
@@ -114,9 +116,10 @@ export default function App() {
     sidebarOpen, setSidebarOpen,
     appBrand, effectiveTheme, toggleTheme,
     t.toast, t.dismissToast,
+    confirmFn,
     handleConfirmOk, handleCancel, handleCloseUpgrade, handleNav, handleCloseSidebar, handleOpenSidebar, handleDeductStock,
     saveBrand, savePhone, loadData, enforceLimit,
-    navTo, n.path, n.isLegal, n.isLanding,
+    navTo,
   ]);
 
   const dataCtx = useMemo(function() {
