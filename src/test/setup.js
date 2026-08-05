@@ -5,8 +5,13 @@ import { setupServer } from 'msw/node';
 import { handlers } from './msw-handlers.js';
 import * as matchers from 'vitest-dom/matchers';
 
-// eslint-disable-next-line no-undef
-/* global process */
+// Polyfills for MSW on Node 24+
+import { TextEncoder, TextDecoder } from 'util';
+globalThis.TextEncoder = TextEncoder;
+globalThis.TextDecoder = TextDecoder;
+globalThis.TransformStream = require('stream/web').TransformStream;
+globalThis.ReadableStream = require('stream/web').ReadableStream;
+globalThis.WritableStream = require('stream/web').WritableStream;
 
 expect.extend(matchers);
 

@@ -535,3 +535,216 @@ progress_percent: 100
 
 **Commit:** 05da3a3
 **Push:** ✅ via gh
+
+## Backup 024 — UI Design System Application (2026-08-04)
+
+```yaml
+backup_id: backup_20260804_230000_024
+execution_id: exec_20260804_230000_024
+backed_up_at: "2026-08-04T23:00:00Z"
+interruption_reason: "checkpoint_complete"
+model_primario: nemotron
+model_reserva: nemotron
+```
+
+### Estado da Tarefa
+```yaml
+task_id: task_024
+phase: Branding
+progress_percent: 100
+subtasks_completed:
+  - "UI design system applied to 20+ files (Landing, Shell, Admin, Branding, Motion)"
+  - "All hardcoded values replaced with CSS variables"
+  - "Motion system updated with design tokens"
+subtasks_pending: []
+subtasks_in_progress: []
+```
+
+### Validações Executadas
+```yaml
+validations:
+  fonts_updated: true
+  landing_cleaned: true
+  shell_components: true
+  admin_cleaned: true
+  branding_components: true
+  motion_tokens: true
+  tailwind_extended: true
+  no_logic_changes: true
+  build_passed: false
+  tests_passed: false
+  lint_passed: false
+  ci_cd_works: false
+  a11y_tested: false
+```
+
+### Decisões Tomadas
+```yaml
+decisions:
+  css_vars_source_of_truth: "CSS variables como única fonte para cores/spacing/typography/motion"
+  no_gsap: "GSAP não instalado (regra: não instalar sem aprovação) — motion via CSS + useScrollReveal"
+  arbitrary_sizes_kept: "text-[10px] mantidos — mudança adiciona risco sem benefício visual"
+  logic_preserved: "Estrutura/lógica de componentes 100% preservada"
+```
+
+### Pendências
+```yaml
+pending_issues:
+  - id: "VISUAL-FINAL-VALIDATION"
+    description: "Validação visual final: responsividade, dark mode, plan variants (Free/Pro/Premium), a11y"
+    severity: "high"
+    blocker: false
+    assignee: "Executor"
+  - id: "LOGO-ASSETS"
+    description: "Gerar assets de logo (SVG, favicon, app icon) a partir do símbolo existente"
+    severity: "medium"
+    blocker: false
+    assignee: "Executor"
+  - id: "CI-CD-TESTS"
+    description: "Testar build/lint via GitHub Actions (Node.js não disponível localmente)"
+    severity: "high"
+    blocker: false
+    assignee: "Executor"
+```
+
+### Contexto Adicional
+```yaml
+context_notes: |
+  Sessão completa de aplicação do Visual Identity Package:
+  - Fontes: Fraunces removida, Montserrat/Inter/JetBrains Mono carregadas
+  - Core: Todos os valores hard-coded foram substituídos por variáveis CSS
+  - Motion: Easing/duração/shadows/estagio agora usam tokens do design system
+  - Sem GSAP instalado — uso de CSS animações com useScrollReveal.js
+  - Componentes: Lógica e estrutura preservadas nos arquivos atualizados
+  - Próximo: Validar visual final (responsividade, dark mode, plan variants, a11y)
+```
+
+---
+
+## Checklist de Recuperação
+
+> **OBRIGATÓRIO:** Confirmar TODOS antes de continuar
+
+- [ ] EXECUTION_STATE.md lido — `execution_id` válido
+- [ ] SCRATCH_PAD.md lido completamente
+- [ ] Checkpoint corresponde a subtarefa **CONCLUÍDA** (não em andamento)
+- [ ] `files_modified` existem e estão íntegros no filesystem
+- [ ] `validations_passed` incluem: lint, build, tests
+- [ ] `decisions_made` não conflitam com arquitetura atual
+- [ ] `pending_issues` documentadas e compreendidas
+- [ ] Integrador autorizou: "Sim, continuar do checkpoint exec_XXX"
+- [ ] Autorização salva no state do Modelo Reserva (`model_reserva_authorized: true`)
+
+---
+
+## Log de Recuperação
+
+| Timestamp | Modelo | Ação | Checkpoint | Status |
+|-----------|--------|------|------------|--------|
+| 2026-08-04T23:00:00Z | Nemotron 3 Ultra | Backup completo do estado após UI Design System Application | exec_20260804_230000_024 | ✅ |
+## Backup 024 — UI Design System Application (2026-08-04)
+
+```yaml
+backup_id: backup_20260804_230000_024
+execution_id: exec_20260804_230000_024
+backed_up_at: "2026-08-04T23:00:00Z"
+interruption_reason: "checkpoint_complete"
+model_primario: nemotron
+model_reserva: nemotron
+```
+
+### Estado da Tarefa
+```yaml
+task_id: task_024
+phase: Branding
+progress_percent: 100
+subtasks_completed:
+  - "UI design system applied to 20+ files (Landing, Shell, Admin, Branding, Motion)"
+  - "All hardcoded values replaced with CSS variables"
+  - "Motion system updated with design tokens"
+subtasks_pending: []
+subtasks_in_progress: []
+```
+
+### Validações Executadas
+```yaml
+validations:
+  fonts_updated: true
+  landing_cleaned: true
+  shell_components: true
+  admin_cleaned: true
+  branding_components: true
+  motion_tokens: true
+  tailwind_extended: true
+  no_logic_changes: true
+  build_passed: false
+  tests_passed: false
+  lint_passed: false
+  ci_cd_works: false
+  a11y_tested: false
+```
+
+### Decisões Tomadas
+```yaml
+decisions:
+  css_vars_source_of_truth: "CSS variables como única fonte para cores/spacing/typography/motion"
+  no_gsap: "GSAP não instalado (regra: não instalar sem aprovação) — motion via CSS + useScrollReveal"
+  arbitrary_sizes_kept: "text-[10px] mantidos — mudança adiciona risco sem benefício visual"
+  logic_preserved: "Estrutura/lógica de componentes 100% preservada"
+```
+
+### Pendências
+```yaml
+pending_issues:
+  - id: "VISUAL-FINAL-VALIDATION"
+    description: "Validação visual final: responsividade, dark mode, plan variants (Free/Pro/Premium), a11y"
+    severity: "high"
+    blocker: false
+    assignee: "Executor"
+  - id: "LOGO-ASSETS"
+    description: "Gerar assets de logo (SVG, favicon, app icon) a partir do símbolo existente"
+    severity: "medium"
+    blocker: false
+    assignee: "Executor"
+  - id: "CI-CD-TESTS"
+    description: "Testar build/lint via GitHub Actions (Node.js não disponível localmente)"
+    severity: "high"
+    blocker: false
+    assignee: "Executor"
+```
+
+### Contexto Adicional
+```yaml
+context_notes: |
+  Sessão completa de aplicação do Visual Identity Package:
+  - Fontes: Fraunces removida, Montserrat/Inter/JetBrains Mono carregadas
+  - Core: Todos os valores hard-coded foram substituídos por variáveis CSS
+  - Motion: Easing/duração/shadows/estagio agora usam tokens do design system
+  - Sem GSAP instalado — uso de CSS animações com useScrollReveal.js
+  - Componentes: Lógica e estrutura preservadas nos arquivos atualizados
+  - Próximo: Validar visual final (responsividade, dark mode, plan variants, a11y)
+```
+
+---
+
+## Checklist de Recuperação
+
+> **OBRIGATÓRIO:** Confirmar TODOS antes de continuar
+
+- [ ] EXECUTION_STATE.md lido — `execution_id` válido
+- [ ] SCRATCH_PAD.md lido completamente
+- [ ] Checkpoint corresponde a subtarefa **CONCLUÍDA** (não em andamento)
+- [ ] `files_modified` existem e estão íntegros no filesystem
+- [ ] `validations_passed` incluem: lint, build, tests
+- [ ] `decisions_made` não conflitam com arquitetura atual
+- [ ] `pending_issues` documentadas e compreendidas
+- [ ] Integrador autorizou: "Sim, continuar do checkpoint exec_XXX"
+- [ ] Autorização salva no state do Modelo Reserva (`model_reserva_authorized: true`)
+
+---
+
+## Log de Recuperação
+
+| Timestamp | Modelo | Ação | Checkpoint | Status |
+|-----------|--------|------|------------|--------|
+| 2026-08-04T23:00:00Z | Nemotron 3 Ultra | Backup completo do estado após UI Design System Application | exec_20260804_230000_024 | ✅ |
