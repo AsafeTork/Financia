@@ -4,9 +4,9 @@ import { now } from './utils.js';
 export const ldb = new Dexie('gestao_offline');
 
 ldb.version(4).stores({
-  transactions: 'id, user_id, [user_id+_deleted], date, updated_at, _synced, _deleted',
-  products:     'id, user_id, [user_id+_deleted], category, updated_at, _synced, _deleted',
-  losses:       'id, user_id, [user_id+_deleted], date, updated_at, _synced, _deleted',
+  transactions: 'id, user_id, [user_id+_deleted], [user_id+updated_at], date, updated_at, _synced, _deleted',
+  products:     'id, user_id, [user_id+_deleted], [user_id+updated_at], created_at, category, updated_at, _synced, _deleted',
+  losses:       'id, user_id, [user_id+_deleted], [user_id+updated_at], date, updated_at, _synced, _deleted',
   profiles:     'user_id, updated_at, _synced',
   meta:         'key',
   brand_presets: 'id, name, category, favorite, updated_at',

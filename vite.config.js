@@ -90,7 +90,7 @@ export default defineConfig(async function() {
     esbuild: {
       jsx: 'automatic',
       jsxImportSource: 'react',
-      target: 'baseline-widely-available',
+      target: 'es2020',
     },
     optimizeDeps: {
       include: ['react', 'react-dom'],
