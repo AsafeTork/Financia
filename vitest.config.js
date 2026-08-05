@@ -6,14 +6,9 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.js'],
-    globalTeardown: ['./src/test/global-teardown.js'],
+    globalTeardown: './src/test/global-teardown.js',
     globals: true,
-    pool: 'vmThreads',
-    poolOptions: {
-      threads: {
-        singleThread: true,
-      },
-    },
+    pool: 'forks',
     forceExit: true,
     teardownTimeout: 5000,
     reporter: ['verbose'],

@@ -2,12 +2,17 @@
 
 // Polyfills for MSW on Node 24+ - MUST be before msw import
 import { TextEncoder, TextDecoder } from 'util';
-import { TransformStream, ReadableStream, WritableStream } from 'stream/web';
 globalThis.TextEncoder = TextEncoder;
 globalThis.TextDecoder = TextDecoder;
-globalThis.TransformStream = TransformStream;
-globalThis.ReadableStream = ReadableStream;
-globalThis.WritableStream = WritableStream;
+
+try {
+  var _streamWeb = await import('stream/web');
+  globalThis.TransformStream = _streamWeb.TransformStream;
+  globalThis.ReadableStream = _streamWeb.ReadableStream;
+  globalThis.WritableStream = _streamWeb.WritableStream;
+} catch (_) {
+  // stream/web not available — streams may already be global in Node 24+
+}
 
 import '@testing-library/jest-dom';
 import { IDBFactory } from 'fake-indexeddb';
