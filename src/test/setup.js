@@ -5,6 +5,9 @@ import { setupServer } from 'msw/node';
 import { handlers } from './msw-handlers.js';
 import * as matchers from 'vitest-dom/matchers';
 
+// eslint-disable-next-line no-undef
+/* global process */
+
 expect.extend(matchers);
 
 globalThis.indexedDB = new IDBFactory();

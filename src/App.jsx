@@ -107,7 +107,7 @@ export default function App() {
     s.toasts, s.setToasts,
     confirmData, setConfirmData,
     s.showLogin, s.setShowLogin,
-    s.showUpgrade, s.setShowUpgrade,
+    s.showUpgrade, setShowUpgrade, s.setShowUpgrade,
     s.onboardingNeeded, s.setOnboardingNeeded,
     s.announceMsg, s.setAnnounceMsg,
     sidebarOpen, setSidebarOpen,
