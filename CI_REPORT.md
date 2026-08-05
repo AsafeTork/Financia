@@ -1,7 +1,7 @@
 # CI Report
 
-**Gerado:** 2026-08-05 15:27 UTC
-**Commit:** `9bf3597d24eac596bf14cc130879c2ed6f70c4bd`
+**Gerado:** 2026-08-05 15:33 UTC
+**Commit:** `661a8f0aff7c404096a7f45c96451587247b9adf`
 **Branch:** `main`
 
 ---
@@ -38,84 +38,74 @@
 ## Test Results (ultimas 40 linhas)
 
 ```
-2:57:38 PM [vite] warning: `esbuild` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `oxc` instead.
-2:57:38 PM [vite] warning: `optimizeDeps.esbuildOptions` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `optimizeDeps.rolldownOptions` instead.
+3:33:37 PM [vite] warning: `esbuild` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `oxc` instead.
+3:33:37 PM [vite] warning: `optimizeDeps.esbuildOptions` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `optimizeDeps.rolldownOptions` instead.
 Both esbuild and oxc options were set. oxc options will be used and esbuild options will be ignored. The following esbuild options were set: `{ jsx: 'automatic', jsxImportSource: undefined }`
 
  RUN  v4.1.10 /home/runner/work/Financia/Financia
 
- ✓ src/test/utils.test.js > fmt > formata zero 18ms
- ✓ src/test/utils.test.js > fmt > formata zero (inclui R$) 1ms
- ✓ src/test/utils.test.js > fmt > formata inteiro positivo 1ms
- ✓ src/test/utils.test.js > fmt > usa vírgula como separador decimal 1ms
- ✓ src/test/utils.test.js > fmt > formata null como zero 1ms
- ✓ src/test/utils.test.js > fmt > formata undefined como zero 0ms
- ✓ src/test/utils.test.js > fmt > formata valor com centavos 1ms
- ✓ src/test/utils.test.js > fmt > formata 1000 com separador de milhar 0ms
- ✓ src/test/utils.test.js > fmt > retorna sempre string 1ms
- ✓ src/test/utils.test.js > fmt > formata negativo 0ms
- ✓ src/test/utils.test.js > fmt > formata 50.50 corretamente 1ms
- ✓ src/test/utils.test.js > fmt > formata 1234.56 preserva centavos 0ms
- ✓ src/test/utils.test.js > formatBytes > zero 0ms
- ✓ src/test/utils.test.js > formatBytes > null vira 0 B 0ms
- ✓ src/test/utils.test.js > formatBytes > bytes puros 0ms
- ✓ src/test/utils.test.js > formatBytes > kilobytes 0ms
- ✓ src/test/utils.test.js > formatBytes > megabytes com 1 decimal 0ms
- ✓ src/test/utils.test.js > formatBytes > gigabytes 0ms
- ✓ src/test/utils.test.js > formatBytes > arredonda 1 casa 0ms
- ✓ src/test/utils.test.js > formatBytes > sempre string 0ms
- ✓ src/test/utils.test.js > dbUsage > percentual correto 0ms
- ✓ src/test/utils.test.js > dbUsage > verde abaixo de 70% 0ms
- ✓ src/test/utils.test.js > dbUsage > ambar entre 70 e 90% 1ms
- ✓ src/test/utils.test.js > dbUsage > vermelho acima de 90% 0ms
- ✓ src/test/utils.test.js > dbUsage > clampa em 100% 0ms
- ✓ src/test/utils.test.js > dbUsage > limite zero nao quebra 0ms
- ✓ src/test/utils.test.js > dbUsage > nivel ok abaixo de 70 0ms
- ✓ src/test/utils.test.js > dbUsage > nivel critico acima de 90 0ms
- ✓ src/test/utils.test.js > hexToRgb > #002f59 → r=0 0ms
- ✓ src/test/utils.test.js > hexToRgb > #002f59 → g=47 0ms
- ✓ src/test/utils.test.js > hexToRgb > #002f59 → b=89 0ms
- ✓ src/test/utils.test.js > hexToRgb > #ffffff → 255,255,255 1ms
- ✓ src/test/utils.test.js > hexToRgb > #000000 → 0,0,0 0ms
- ✓ src/test/utils.test.js > hexToRgb > #ff0000 → r=255 0ms
- ✓ src/test/utils.test.js > hexToRgb > #ff0000 → g=0 0ms
- ✓ src/test/utils.test.js > hexToRgb > #0f9d6c → r=15, g=157, b=108 0ms
- ✓ src/test/utils.test.js > hexToRgb > string vazia usa default #002f59 0ms
- ✓ src/test/utils.test.js > hexToRgb > retorna objeto com r/g/b 0ms
- ✓ src/test/utils.test.js > brandAlpha > gera rgba com alpha correto 0ms
- ✓ src/test/utils.test.js > brandAlpha > alpha 1 → opaco 0ms
- ✓ src/test/utils.test.js > brandAlpha > alpha 0 → transparente 0ms
- ✓ src/test/utils.test.js > brandAlpha > #002f59 0.08 → rgba(0,47,89,0.08) 0ms
- ✓ src/test/utils.test.js > brandAlpha > sempre começa com rgba( 0ms
- ✓ src/test/utils.test.js > safe > string normal passa sem alteração 0ms
- ✓ src/test/utils.test.js > safe > remove < 0ms
- ✓ src/test/utils.test.js > safe > remove > 0ms
- ✓ src/test/utils.test.js > safe > remove " 0ms
- ✓ src/test/utils.test.js > safe > remove javascript: 0ms
- ✓ src/test/utils.test.js > safe > null retorna string vazia 0ms
- ✓ src/test/utils.test.js > safe > undefined retorna string vazia 0ms
- ✓ src/test/utils.test.js > safe > trunca em 200 chars 2ms
- ✓ src/test/utils.test.js > safe > faz trim 0ms
- ✓ src/test/utils.test.js > safe > retorna string 0ms
- ✓ src/test/utils.test.js > isUrl > https é URL 0ms
- ✓ src/test/utils.test.js > isUrl > http é URL 0ms
- ✓ src/test/utils.test.js > isUrl > / é URL (caminho relativo) 0ms
- ✓ src/test/utils.test.js > isUrl > data: é URL 0ms
- ✓ src/test/utils.test.js > isUrl > texto sem protocolo não é URL 0ms
- ✓ src/test/utils.test.js > isUrl > string vazia não é URL 0ms
- ✓ src/test/utils.test.js > isUrl > null não é URL 2ms
- ✓ src/test/utils.test.js > isUrl > undefined não é URL 0ms
- ✓ src/test/utils.test.js > today > retorna string 0ms
- ✓ src/test/utils.test.js > today > tem 10 caracteres (YYYY-MM-DD) 0ms
- ✓ src/test/utils.test.js > today > formato YYYY-MM-DD 0ms
- ✓ src/test/utils.test.js > prevDays > prevDays(0) igual a today() 0ms
- ✓ src/test/utils.test.js > prevDays > prevDays(1) anterior a today 0ms
- ✓ src/test/utils.test.js > prevDays > prevDays(7) é 7 dias atrás 0ms
- ✓ src/test/utils.test.js > prevDays > formato YYYY-MM-DD 0ms
- ✓ src/test/utils.test.js > fmtDate > retorna string 7ms
- ✓ src/test/utils.test.js > fmtDate > formato pt-BR contém / 0ms
- ✓ src/test/utils.test.js > fmtDate > data de final de ano é válida 0ms
- ✓ src/
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 50 ⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/core/boot.test.js [ src/core/boot.test.js ]
+ FAIL  src/hooks/useAppState.test.js [ src/hooks/useAppState.test.js ]
+ FAIL  src/hooks/useNavigation.test.js [ src/hooks/useNavigation.test.js ]
+ FAIL  src/hooks/useOnboarding.test.js [ src/hooks/useOnboarding.test.js ]
+ FAIL  src/hooks/usePlanEffects.test.js [ src/hooks/usePlanEffects.test.js ]
+ FAIL  src/hooks/useToasts.test.js [ src/hooks/useToasts.test.js ]
+ FAIL  src/lib/auth.test.js [ src/lib/auth.test.js ]
+ FAIL  src/lib/cleanNumeric.test.js [ src/lib/cleanNumeric.test.js ]
+ FAIL  src/lib/constants.test.js [ src/lib/constants.test.js ]
+ FAIL  src/lib/crud.test.js [ src/lib/crud.test.js ]
+ FAIL  src/lib/dexie.test.js [ src/lib/dexie.test.js ]
+ FAIL  src/lib/impersonation.integration.test.js [ src/lib/impersonation.integration.test.js ]
+ FAIL  src/lib/plans.test.js [ src/lib/plans.test.js ]
+ FAIL  src/lib/quickIntent.test.js [ src/lib/quickIntent.test.js ]
+ FAIL  src/lib/recurring.test.js [ src/lib/recurring.test.js ]
+ FAIL  src/lib/revenue.test.js [ src/lib/revenue.test.js ]
+ FAIL  src/lib/stripe-subscription-cycle.integration.test.js [ src/lib/stripe-subscription-cycle.integration.test.js ]
+ FAIL  src/lib/stripe-webhook.integration.test.js [ src/lib/stripe-webhook.integration.test.js ]
+ FAIL  src/lib/stripe.test.js [ src/lib/stripe.test.js ]
+ FAIL  src/lib/sync-extra.test.js [ src/lib/sync-extra.test.js ]
+ FAIL  src/lib/sync.test.js [ src/lib/sync.test.js ]
+ FAIL  src/lib/utils.test.js [ src/lib/utils.test.js ]
+ FAIL  src/routes/routes.test.jsx [ src/routes/routes.test.jsx ]
+ FAIL  src/test/components.test.js [ src/test/components.test.js ]
+ FAIL  src/test/constants.test.js [ src/test/constants.test.js ]
+ FAIL  src/test/utils.test.js [ src/test/utils.test.js ]
+ FAIL  src/workers/color-extract.worker.test.js [ src/workers/color-extract.worker.test.js ]
+ FAIL  src/features/auth/useSession.test.js [ src/features/auth/useSession.test.js ]
+ FAIL  src/features/branding/LogoSchemes.test.js [ src/features/branding/LogoSchemes.test.js ]
+ FAIL  src/features/branding/LogoSchemes.test.jsx [ src/features/branding/LogoSchemes.test.jsx ]
+ FAIL  src/features/branding/accessibility.test.jsx [ src/features/branding/accessibility.test.jsx ]
+ FAIL  src/features/branding/components.test.jsx [ src/features/branding/components.test.jsx ]
+ FAIL  src/features/branding/logoUtils.test.js [ src/features/branding/logoUtils.test.js ]
+ FAIL  src/features/branding/presets.test.js [ src/features/branding/presets.test.js ]
+ FAIL  src/features/branding/responseProcessor.test.js [ src/features/branding/responseProcessor.test.js ]
+ FAIL  src/features/inventory/useLosses.test.js [ src/features/inventory/useLosses.test.js ]
+ FAIL  src/features/inventory/useProducts.test.js [ src/features/inventory/useProducts.test.js ]
+ FAIL  src/features/transactions/useTx.extra.test.js [ src/features/transactions/useTx.extra.test.js ]
+ FAIL  src/features/transactions/useTx.test.js [ src/features/transactions/useTx.test.js ]
+ FAIL  src/shared/hooks/useBrandAppearance.extra.test.js [ src/shared/hooks/useBrandAppearance.extra.test.js ]
+ FAIL  src/shared/hooks/useBrandAppearance.test.js [ src/shared/hooks/useBrandAppearance.test.js ]
+ FAIL  src/shared/hooks/useBrandManager.test.js [ src/shared/hooks/useBrandManager.test.js ]
+ FAIL  src/shared/hooks/useDataLoader.test.js [ src/shared/hooks/useDataLoader.test.js ]
+ FAIL  src/shared/hooks/useRealtime.test.js [ src/shared/hooks/useRealtime.test.js ]
+ FAIL  src/shared/hooks/useSyncLoop.test.js [ src/shared/hooks/useSyncLoop.test.js ]
+ FAIL  src/shared/ui/ColorField.test.jsx [ src/shared/ui/ColorField.test.jsx ]
+ FAIL  src/shared/ui/Feedback.test.jsx [ src/shared/ui/Feedback.test.jsx ]
+ FAIL  src/shared/ui/Onboarding.test.jsx [ src/shared/ui/Onboarding.test.jsx ]
+ FAIL  src/shared/ui/PhoneInput.test.jsx [ src/shared/ui/PhoneInput.test.jsx ]
+ FAIL  src/shared/ui/QuickActions.test.jsx [ src/shared/ui/QuickActions.test.jsx ]
+ReferenceError: TransformStream is not defined
+ ❯ node_modules/@mswjs/interceptors/src/interceptors/fetch/utils/brotli-decompress.ts:3:0
+ ❯ src/test/setup.js:20:1
+     18| import { IDBFactory } from 'fake-indexeddb';
+     19| import { beforeAll, afterAll, afterEach, vi, expect } from 'vitest';
+     20| import { setupServer } from 'msw/node';
+       | ^
+     21| import { handlers } from './msw-handlers.js';
+     22| import * as matchers from 'vitest
 ```
 
 ---
@@ -178,4 +168,4 @@ Nenhum relatorio admin gerado.
 
 | Data | Correcao | Commit |
 |------|----------|--------|
-| 2026-08-05 15:27 UTC | CI report gerado automaticamente | `9bf3597d24eac596bf14cc130879c2ed6f70c4bd` |
+| 2026-08-05 15:33 UTC | CI report gerado automaticamente | `661a8f0aff7c404096a7f45c96451587247b9adf` |
