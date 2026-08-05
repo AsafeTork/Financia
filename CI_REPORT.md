@@ -1,7 +1,7 @@
 # CI Report
 
-**Gerado:** 2026-08-05 00:45 UTC
-**Commit:** `eb1595fdb85bcfdfb3b3b1277675f587add1031b`
+**Gerado:** 2026-08-05 02:53 UTC
+**Commit:** `1b8fff1694f095b4a26e3665b5a095b6eb59edbf`
 **Branch:** `main`
 
 ---
@@ -38,8 +38,8 @@
 ## Test Results (ultimas 40 linhas)
 
 ```
-12:44:38 AM [vite] warning: `esbuild` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `oxc` instead.
-12:44:38 AM [vite] warning: `optimizeDeps.esbuildOptions` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `optimizeDeps.rolldownOptions` instead.
+2:53:33 AM [vite] warning: `esbuild` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `oxc` instead.
+2:53:33 AM [vite] warning: `optimizeDeps.esbuildOptions` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `optimizeDeps.rolldownOptions` instead.
 Both esbuild and oxc options were set. oxc options will be used and esbuild options will be ignored. The following esbuild options were set: `{ jsx: 'automatic', jsxImportSource: undefined }`
  DEPRECATED  `test.poolOptions` was removed in Vitest 4. All previous `poolOptions` are now top-level options. Please, refer to the migration guide: https://vitest.dev/guide/migration#pool-rework
 
@@ -71,10 +71,10 @@ Both esbuild and oxc options were set. oxc options will be used and esbuild opti
  FAIL  src/lib/sync-extra.test.js [ src/lib/sync-extra.test.js ]
  FAIL  src/lib/sync.test.js [ src/lib/sync.test.js ]
  FAIL  src/lib/utils.test.js [ src/lib/utils.test.js ]
- FAIL  src/workers/color-extract.worker.test.js [ src/workers/color-extract.worker.test.js ]
  FAIL  src/test/components.test.js [ src/test/components.test.js ]
  FAIL  src/test/constants.test.js [ src/test/constants.test.js ]
  FAIL  src/test/utils.test.js [ src/test/utils.test.js ]
+ FAIL  src/workers/color-extract.worker.test.js [ src/workers/color-extract.worker.test.js ]
  FAIL  src/features/auth/useSession.test.js [ src/features/auth/useSession.test.js ]
  FAIL  src/features/branding/LogoSchemes.test.js [ src/features/branding/LogoSchemes.test.js ]
  FAIL  src/features/branding/LogoSchemes.test.jsx [ src/features/branding/LogoSchemes.test.jsx ]
@@ -102,7 +102,7 @@ ReferenceError: TransformStream is not defined
  ❯ node_modules/@mswjs/interceptors/src/interceptors/fetch/utils/brotli-decompress.ts:3:0
  ❯ src/test/setup.js:4:1
       2| import { IDBFactory } from 'fake-indexeddb';
-      3| import { beforeAll, afterAll,
+      3| import { beforeAll, afterAll, a
 ```
 
 ---
@@ -165,4 +165,4 @@ Nenhum relatorio admin gerado.
 
 | Data | Correcao | Commit |
 |------|----------|--------|
-| 2026-08-05 00:45 UTC | CI report gerado automaticamente | `eb1595fdb85bcfdfb3b3b1277675f587add1031b` |
+| 2026-08-05 02:53 UTC | CI report gerado automaticamente | `1b8fff1694f095b4a26e3665b5a095b6eb59edbf` |
