@@ -1,7 +1,7 @@
 # CI Report
 
-**Gerado:** 2026-08-04 23:28 UTC
-**Commit:** `3b4698ca096b33480e3fbd53fe8676f7be4803ea`
+**Gerado:** 2026-08-05 00:01 UTC
+**Commit:** `4b59197c3ad9192d8b46043ae603966580bf74be`
 **Branch:** `main`
 
 ---
@@ -24,10 +24,13 @@
 
 ```
 
-/home/runner/work/Financia/Financia/src/test/global-teardown.js
-  3:3  error  'process' is not defined  no-undef
+/home/runner/work/Financia/Financia/src/App.jsx
+  98:6  warning  React Hook useMemo has a missing dependency: 'setShowUpgrade'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
 
-✖ 1 problem (1 error, 0 warnings)
+/home/runner/work/Financia/Financia/src/test/setup.js
+  19:20  error  'process' is not defined  no-undef
+
+✖ 2 problems (1 error, 1 warning)
 
 
 ```
@@ -100,4 +103,4 @@ Nenhum relatorio admin gerado.
 
 | Data | Correcao | Commit |
 |------|----------|--------|
-| 2026-08-04 23:28 UTC | CI report gerado automaticamente | `3b4698ca096b33480e3fbd53fe8676f7be4803ea` |
+| 2026-08-05 00:01 UTC | CI report gerado automaticamente | `4b59197c3ad9192d8b46043ae603966580bf74be` |
