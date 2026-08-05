@@ -1,18 +1,6 @@
+// Node 24 dropped globals for web streams — polyfill before MSW import
+import 'stream/web';
 // Setup MSW for Node 24+ compatibility
-import { TextEncoder, TextDecoder } from 'util';
-globalThis.TextEncoder = TextEncoder;
-globalThis.TextDecoder = TextDecoder;
-
-// Stream polyfill for Node 24+ compatibility - MSW needs TransformStream
-try {
-  const _streamWeb = import('stream/web');
-  globalThis.TransformStream = _streamWeb.TransformStream;
-  globalThis.ReadableStream = _streamWeb.ReadableStream;
-  globalThis.WritableStream = _streamWeb.WritableStream;
-} catch (_) {
-  // stream/web not available - Node 24+ may have these as globals already
-}
-
 import '@testing-library/jest-dom';
 import { IDBFactory } from 'fake-indexeddb';
 import { beforeAll, afterAll, afterEach, vi, expect } from 'vitest';
@@ -30,7 +18,6 @@ beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
 afterAll(async () => {
   try { await server.close(); } catch (_) { /* ignore close error */ }
   globalThis.indexedDB = new IDBFactory();
-  setTimeout(() => process.exit(0), 100);
 });
 afterEach(() => {
   server.resetHandlers();
