@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { useSyncLeader } from '../../hooks/useSyncLeader.js';
 
 var SYNC_COOLDOWN_MS = 5000;
@@ -10,9 +10,14 @@ export function useSyncLoop(props, ctx) {
   var workerRef = useRef(null);
   var isLeaderRef = useRef(true);
 
-  var isLeaderResult = useSyncLeader(uidRef.current, function() {
-    if (uidRef.current) loadFromLocal(uidRef.current);
-  });
+  var loadFromLocalRef = useRef(loadFromLocal);
+  loadFromLocalRef.current = loadFromLocal;
+
+  var onSyncNeeded = useCallback(function() {
+    if (uidRef.current) loadFromLocalRef.current(uidRef.current);
+  }, [uidRef]);
+
+  var isLeaderResult = useSyncLeader(uidRef.current, onSyncNeeded);
   isLeaderRef.current = isLeaderResult.isLeader;
 
   var updateStatus = function(next) {

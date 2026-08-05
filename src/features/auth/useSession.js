@@ -76,10 +76,12 @@ export function useSession(p) {
     setIsAdminDB(false); sessionStorage.removeItem('is_admin');
   }, [setDataLoading, setTx, setProducts, setLosses, setBrand, setPlanInfo, setIsAdminDB]);
 
+  var loadDataStable = useCallback(function(userId) { loadData(userId); }, [loadData]);
+
   var authProps = {
     setSession: p.setSession, setAppLoading: p.setAppLoading, toast: p.toast,
     uidRef, loadingRef, channelRef, debounceRef, retryRef,
-    loadData: function(userId) { loadData(userId); },
+    loadData: loadDataStable,
     loadFromLocal: loadFromLocal,
     onSessionEnd: onSessionEnd,
   };

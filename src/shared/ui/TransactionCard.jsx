@@ -2,7 +2,7 @@ import React from 'react';
 import { fmt, fmtDate, brandAlpha, safe } from '../../lib/utils.js';
 import { isRecurringId } from '../../lib/recurring.js';
 
-export function TransactionCard({ 
+export var TransactionCard = React.memo(function TransactionCard({ 
   transaction, 
   type, 
   brand, 
@@ -187,7 +187,7 @@ export function TransactionCard({
   );
 }
 
-export function TransactionGroupHeader({ date, total, type, brand }) {
+export var TransactionGroupHeader = React.memo(function TransactionGroupHeader({ date, total, type, brand }) {
   var isIncome = type === 'income';
   var accentColor = isIncome ? brand?.color : 'var(--danger)';
   var amountPrefix = isIncome ? '+' : '-';
@@ -202,7 +202,7 @@ export function TransactionGroupHeader({ date, total, type, brand }) {
       </div>
     </div>
   );
-}
+});
 
 export function EmptyTransactionState({ type, brand, onAdd }) {
   var isIncome = type === 'income';
