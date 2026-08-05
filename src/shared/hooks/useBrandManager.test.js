@@ -182,7 +182,7 @@ describe('useBrandManager — savePhone', function() {
     navigator.onLine = true;
     const { hook, toast } = makeHook();
     await act(async function() { await hook.result.current.savePhone('91999991234'); });
-    expect(updateEqMock).toHaveBeenCalledWith('u1');
+    expect(updateEqMock).toHaveBeenCalledWith('user_id', 'u1');
     expect(profilesUpdateMock).toHaveBeenCalledWith('u1', expect.objectContaining({ _synced: 1 }));
     expect(toast).toHaveBeenCalledWith('Telefone atualizado', 'success');
   });

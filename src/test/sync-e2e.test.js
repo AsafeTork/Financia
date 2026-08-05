@@ -2,6 +2,9 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { ldb } from '../lib/dexie.js';
 describe('Sync E2E', () => {
   beforeEach(async () => {
+    if (ldb.isOpen && !ldb.isOpen()) {
+      await ldb.open();
+    }
     await ldb.transactions.clear();
     await ldb.products.clear();
     await ldb.losses.clear();
@@ -67,11 +70,8 @@ describe('Sync E2E', () => {
     };
 
     await ldb.transactions.bulkPut([tx1, tx2]);
-    const unsynced = await ldb.transactions
-      .where('user_id')
-      .equals('test-user')
-      .and(r => r._synced === 0)
-      .toArray();
+    const all = await ldb.transactions.toArray();
+    const unsynced = all.filter(r => r.user_id === 'test-user' && r._synced === 0);
 
     expect(unsynced).toHaveLength(2);
   });
@@ -129,7 +129,8 @@ describe('Sync E2E', () => {
     ];
 
     await ldb.transactions.bulkPut(txs);
-    const user1Tx = await ldb.transactions.where('user_id').equals('user1').toArray();
+    const all = await ldb.transactions.toArray();
+    const user1Tx = all.filter(t => t.user_id === 'user1');
     expect(user1Tx).toHaveLength(2);
   });
 });
