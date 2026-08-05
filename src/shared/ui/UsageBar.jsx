@@ -28,7 +28,7 @@ export const UsageBar = memo(function UsageBar({ label, used, limit, color, acce
   );
 });
 
-export const KpiCard = memo(function KpiCard({ label, value, variation, sub, color, accentBar, onClick, invert }) {
+export const KpiCard = memo(function KpiCard({ label, value, variation, sub, color, accentBar, onClick, invert, headline }) {
   var hasClick = typeof onClick === 'function';
   var barColor = accentBar || color;
   var hasVar = variation !== null && variation !== undefined;
@@ -41,7 +41,7 @@ export const KpiCard = memo(function KpiCard({ label, value, variation, sub, col
   }, [label, value, hasVar, up, variation, hasClick]);
 
   return (
-    <Card className={'p-4 overflow-hidden' + (hasClick ? ' cursor-pointer card-hover transition-transform duration-150 active:scale-[0.98]' : '')}
+    <Card className={(headline ? 'p-5 sm:p-6' : 'p-4') + ' overflow-hidden' + (hasClick ? ' cursor-pointer card-hover transition-transform duration-150 active:scale-[0.98]' : '')}
       onClick={hasClick ? onClick : undefined}
       tabIndex={hasClick ? 0 : undefined}
       role={hasClick ? 'button' : undefined}
@@ -53,7 +53,7 @@ export const KpiCard = memo(function KpiCard({ label, value, variation, sub, col
       aria-label={ariaLabel}
       id={hasClick ? kpiId : undefined}>
       <p className="text-xs font-semibold uppercase tracking-wider mt-2" style={{color:'var(--text-muted)'}}>{label}</p>
-      <p className="font-extrabold mt-2 text-gray-900 truncate tabular" style={{fontSize:22, letterSpacing:'-0.5px'}}>{value}</p>
+      <p className="font-extrabold mt-2 text-gray-900 truncate tabular" style={{fontSize: headline ? 28 : 22, letterSpacing:'-0.5px'}}>{value}</p>
       {variation !== null && variation !== undefined && (
         <div className="flex items-center gap-1 mt-1.5">
           <span className={'text-xs font-semibold flex items-center gap-0.5 px-1.5 py-0.5 rounded-md ' + (good ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-500')}>

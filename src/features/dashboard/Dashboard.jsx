@@ -186,13 +186,16 @@ export default React.memo(function Dashboard({ tx, products, brand, onNav, planI
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-3">
-          <KpiCard label="Entradas do mes"
-            value={fmt(ti)}
-            color="var(--success)"
-            accentBar="var(--success)"
-            variation={inVar}
-            onClick={function() { onNav('income'); }}
-            sub={inVar === null ? 'Sem dados anteriores' : undefined}/>
+          <div className="col-span-2">
+            <KpiCard label="Entradas do mes"
+              value={fmt(ti)}
+              color="var(--success)"
+              accentBar="var(--success)"
+              variation={inVar}
+              onClick={function() { onNav('income'); }}
+              sub={inVar === null ? 'Sem dados anteriores' : undefined}
+              headline={true}/>
+          </div>
           <KpiCard label="Saidas do mes"
             value={fmt(to)}
             color="var(--danger)"

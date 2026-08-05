@@ -1,0 +1,75 @@
+/* design-tokens.css — Unified design system tokens */
+:root {
+  /* Focus ring — consistent 3px across all interactive elements */
+  --focus-ring: 0 0 0 3px rgba(0, 47, 89, 0.3);
+  --focus-ring-offset: 0 0 0 2px var(--bg-page);
+
+  /* Typography scale */
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+
+  /* Spacing */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+
+  /* Border radius */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+/* Global focus style — consistent across all interactive elements */
+*:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+/* Utility classes for consistent spacing */
+.focus-ring {
+  transition: box-shadow 150ms ease;
+}
+
+.focus-ring:focus-visible {
+  box-shadow: var(--focus-ring);
+}
+
+/* Button base styles */
+.btn {
+  min-height: 44px;
+  min-width: 44px;
+  border-radius: var(--radius-lg);
+  font-weight: 500;
+  transition: all 150ms ease;
+}
+
+.btn:focus-visible {
+  box-shadow: var(--focus-ring);
+}
+
+/* Input base styles */
+.input {
+  min-height: 44px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.input:focus-visible {
+  border-color: var(--brand);
+  box-shadow: var(--focus-ring);
+}

@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { useSyncLeader } from '../../hooks/useSyncLeader.js';
 
 var SYNC_COOLDOWN_MS = 5000;
 
@@ -7,6 +8,12 @@ export function useSyncLoop(props, ctx) {
   var { uidRef, syncingRef, loadFromLocal, reconnectRef, lastSyncEndRef } = ctx;
   var syncStatusRef = useRef('idle');
   var workerRef = useRef(null);
+  var isLeaderRef = useRef(true);
+
+  var isLeaderResult = useSyncLeader(uidRef.current, function() {
+    if (uidRef.current) loadFromLocal(uidRef.current);
+  });
+  isLeaderRef.current = isLeaderResult.isLeader;
 
   var updateStatus = function(next) {
     if (syncStatusRef.current === next) return;
@@ -36,6 +43,7 @@ export function useSyncLoop(props, ctx) {
     if (!userId || !navigator.onLine) return;
     if (syncingRef.current) return;
     if (Date.now() - lastSyncEndRef.current < SYNC_COOLDOWN_MS) return;
+    if (!isLeaderRef.current && navigator.serviceWorker?.controller) return;
     syncingRef.current = true;
     if (showStatus) updateStatus('syncing');
 

@@ -5,7 +5,7 @@ import '@testing-library/jest-dom';
 import { IDBFactory } from 'fake-indexeddb';
 import { beforeAll, afterAll, afterEach, vi, expect } from 'vitest';
 import { setupServer } from 'msw/node';
-import { handlers } from './test/msw-handlers.js';
+import { handlers } from './msw-handlers.js';
 import * as matchers from 'vitest-dom/matchers';
 
 expect.extend(matchers);

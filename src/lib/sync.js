@@ -44,8 +44,17 @@ const syncTable = async function(uid, table, ldbTable, mapLocal, signal) {
           Object.assign({}, row, { description: row.description || row.desc, category: row.category || row.cat }),
           fields
         );
+        sbRow.client_mutation_id = row.id + '_' + (row._updated_at || '');
+        sbRow.base_version = row._version || 0;
         const { error } = await sb.from(table).upsert(sbRow, { onConflict: 'id' });
-        if (!error) toMarkSynced.push(row.id);
+        if (error) {
+          if (error.code === '23505' || (error.message && error.message.includes('duplicate'))) {
+            await ldbTable.update(row.id, { _synced: 0, _conflict: 1 });
+            return;
+          }
+          return;
+        }
+        toMarkSynced.push(row.id);
       }
     } catch (_) { void _; }
   });
