@@ -31,7 +31,7 @@ export function adjustForContrast(fg, bg, targetRatio) {
   var bgLum = luminance(bg);
   var isFgDarker = fgLum < bgLum;
 
-  var targetLum = isFgDarker
+  var _targetLum = isFgDarker
     ? (bgLum + 0.05) / targetRatio - 0.05
     : (bgLum + 0.05) * targetRatio - 0.05;
 

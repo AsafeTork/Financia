@@ -51,7 +51,7 @@ describe('Conflict Resolution', () => {
       _updated_at: '2026-08-05T09:00:00Z',
     };
 
-    const { merged, conflicts } = mergeRecord(local, remote, ['name']);
+    const { merged: _merged, conflicts } = mergeRecord(local, remote, ['name']);
     expect(conflicts).toHaveLength(1);
     expect(conflicts[0].field).toBe('name');
   });

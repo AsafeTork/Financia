@@ -19,11 +19,11 @@ class MockBroadcastChannel {
 
 describe('Leader Election', () => {
   beforeEach(() => {
-    global.BroadcastChannel = MockBroadcastChannel;
+    globalThis.BroadcastChannel = MockBroadcastChannel;
   });
 
   afterEach(() => {
-    delete global.BroadcastChannel;
+    delete globalThis.BroadcastChannel;
   });
 
   it('should create broadcast channel', () => {

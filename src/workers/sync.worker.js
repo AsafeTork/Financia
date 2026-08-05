@@ -143,7 +143,7 @@ var syncAll = async function(uid) {
 };
 
 self.onmessage = async function(e) {
-  const { type, uid, action } = e.data;
+  const { type, uid } = e.data;
   
   if (type === 'sync') {
     self.postMessage({ type: 'sync-start', uid });

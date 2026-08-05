@@ -1,7 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { ldb } from '../lib/dexie.js';
-import { syncAll } from '../lib/sync.js';
-
 describe('Sync E2E', () => {
   beforeEach(async () => {
     await ldb.transactions.clear();

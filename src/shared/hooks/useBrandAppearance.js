@@ -21,7 +21,7 @@ function getContrastRatio(hex1, hex2) {
 
 function adjustForContrast(fg, bg, minRatio) {
   const fgRgb = [parseInt(fg.slice(1, 3), 16), parseInt(fg.slice(3, 5), 16), parseInt(fg.slice(5, 7), 16)];
-  const bgLum = getLuminance(bg);
+  const _bgLum = getLuminance(bg);
   for (let factor = 0.9; factor >= 0.1; factor -= 0.1) {
     const adjusted = fgRgb.map(c => Math.round(c * factor));
     const hex = '#' + adjusted.map(c => c.toString(16).padStart(2, '0')).join('');
