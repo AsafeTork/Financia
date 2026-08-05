@@ -107,8 +107,6 @@ function checkVersionAndReload() {
   var cachedVersion = sessionStorage.getItem('app-version');
   
   if (cachedVersion && cachedVersion !== currentVersion) {
-    // Version changed - force reload to get new assets
-    console.log('App version changed from ' + cachedVersion + ' to ' + currentVersion + ', reloading...');
     sessionStorage.setItem('app-version', currentVersion);
     window.location.reload();
   } else if (!cachedVersion) {

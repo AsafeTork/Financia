@@ -1,4 +1,3 @@
-import { isUrl as _isUrl } from '../../lib/utils.js';
 // Marca visual (logo simplificado) do cartao por bandeira. Sem imagens externas:
 // desenha o mark da bandeira para o cliente reconhecer o cartao de relance.
 var BRAND_STYLE = {

@@ -1,4 +1,4 @@
-import { useEffect as _useEffect, useRef, useCallback } from 'react';
+import { useRef, useCallback } from 'react';
 import { sb } from '../../lib/supabase.js';
 import { ldb, toLocal, setLastSync } from '../../lib/dexie.js';
 import { syncAll } from '../../lib/sync.js';

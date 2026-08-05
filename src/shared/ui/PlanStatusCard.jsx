@@ -1,6 +1,7 @@
+import React from 'react';
 import { UsageBar } from './UsageBar.jsx';
 
-export default function PlanStatusCard({ plan, brand, onUpgrade, usage, anyReached, reachedCats }) {
+export default React.memo(function PlanStatusCard({ plan, brand, onUpgrade, usage, anyReached, reachedCats }) {
   if (plan === 'free') {
     return (
       <div className="rounded-2xl overflow-hidden" style={{background:'var(--bg-card)', border:'1px solid var(--border)', boxShadow:'var(--shadow-md)'}}>
@@ -98,4 +99,4 @@ export default function PlanStatusCard({ plan, brand, onUpgrade, usage, anyReach
       </div>
     </div>
   );
-}
+});

@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import { sb } from '../../lib/supabase.js';
-import { INIT_BRAND as _INIT_BRAND, INIT_PLAN as _INIT_PLAN } from '../../lib/constants.js';
 
 export function useAuthBootstrap(props) {
   var { setSession, setAppLoading, toast: _toast, uidRef, loadingRef: _loadingRef, channelRef: _channelRef, debounceRef: _debounceRef, retryRef: _retryRef, loadData, loadFromLocal, onSessionEnd } = props;

@@ -94,7 +94,7 @@ export function buildPhone(iso, digits) {
   return { e164: e164, national: digits, dialCode: c.dial, country: iso, valid: valid };
 }
 
-export default function PhoneInput(props) {
+export default React.memo(function PhoneInput(props) {
   var label = props.label;
   var hint = props.hint;
   var error = props.error;
@@ -231,4 +231,4 @@ export default function PhoneInput(props) {
       )}
     </div>
   );
-}
+});

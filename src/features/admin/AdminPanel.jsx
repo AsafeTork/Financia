@@ -56,12 +56,6 @@ export default function AdminPanel({ toast, confirm, session, brand }) {
       const next = !prev;
       try { localStorage.setItem('financia_debug_mode', next ? '1' : '0'); } catch (e) { console.warn('AdminPanel: failed to persist debug mode:', e); }
       window.dispatchEvent(new CustomEvent('financia-debug-change', { detail: { debug: next } }));
-      if (next) {
-        console.log('%c[DEBUG] Modo debug ativado', 'color:#6b21a8;font-weight:bold');
-        console.log('[DEBUG] Admin:', true);
-      } else {
-        console.log('%c[DEBUG] Modo debug desativado', 'color:#6b21a8;font-weight:bold');
-      }
       return next;
     });
   }, []);

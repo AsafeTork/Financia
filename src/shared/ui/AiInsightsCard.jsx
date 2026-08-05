@@ -1,6 +1,6 @@
 import React, { useState, startTransition } from 'react';
 import { Card } from './ui.jsx';
-import { fmt as _fmt, brandAlpha } from '../../lib/utils.js';
+import { brandAlpha } from '../../lib/utils.js';
 import { askAI } from '../../lib/aiClient.js';
 
 function _yieldToMain() {
@@ -12,7 +12,7 @@ function _yieldToMain() {
   });
 }
 
-export default function AiInsightsCard({ mtx, ti, to, profitCurr, profVar, lowStock, products, brand, plan, onUpgrade }) {
+export default React.memo(function AiInsightsCard({ mtx, ti, to, profitCurr, profVar, lowStock, products, brand, plan, onUpgrade }) {
   var canUseAI = plan !== 'free';
   var [aiText, setAiText] = useState('');
   var [aiLoading, setAiLoading] = useState(false);
@@ -97,4 +97,4 @@ export default function AiInsightsCard({ mtx, ti, to, profitCurr, profVar, lowSt
       )}
     </Card>
   );
-}
+});

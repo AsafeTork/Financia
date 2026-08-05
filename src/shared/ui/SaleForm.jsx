@@ -2,7 +2,7 @@
 import { Inp, NumInp, Sel, Spin } from './ui.jsx';
 import { fmt, today, safe, uid } from '../../lib/utils.js';
 
-export function PSearch({ products, value, onSelect, onChange, placeholder, id }) {
+export var PSearch = React.memo(function PSearch({ products, value, onSelect, onChange, placeholder, id }) {
   const [open, setOpen] = useState(false);
   const filtered = value.length > 0
     ? products.filter(function(p) { return p.name.toLowerCase().includes(value.toLowerCase()); })
@@ -38,9 +38,9 @@ export function PSearch({ products, value, onSelect, onChange, placeholder, id }
       )}
     </div>
   );
-}
+});
 
-export function CartRow({ item, idx, products, onChange, onSelect, onRemove, showError }) {
+export var CartRow = React.memo(function CartRow({ item, idx, products, onChange, onSelect, onRemove, showError }) {
   const lt = (Number(item.qty) || 0) * (Number(item.up) || 0);
   return (
     <div className="rounded-xl border border-gray-100 bg-gray-50 p-3 flex flex-col gap-2">
@@ -62,9 +62,9 @@ export function CartRow({ item, idx, products, onChange, onSelect, onRemove, sho
       </div>
     </div>
   );
-}
+});
 
-export function SaleForm({ products, brand, onSave, onClose }) {
+export var SaleForm = React.memo(function SaleForm({ products, brand, onSave, onClose }) {
   const [items, setItems] = useState([{rid:uid(), desc:'', qty:'1', up:''}]);
   const [date, setDate] = useState(today());
   const [method, setMethod] = useState('PIX');
@@ -150,4 +150,4 @@ export function SaleForm({ products, brand, onSave, onClose }) {
       </div>
     </div>
   );
-}
+});

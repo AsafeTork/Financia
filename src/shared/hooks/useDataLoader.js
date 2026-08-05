@@ -1,8 +1,7 @@
 import { useCallback } from 'react';
-import { ldb, toLocal as _toLocal, setLastSync as _setLastSync } from '../../lib/dexie.js';
+import { ldb } from '../../lib/dexie.js';
 import { getRecurring, periodOf, pendingRecurring } from '../../lib/recurring.js';
 import { sb } from '../../lib/supabase.js';
-import { now as _now } from '../../lib/utils.js';
 
 function serializeBrandConfig(bc) {
   if (!bc) return '';

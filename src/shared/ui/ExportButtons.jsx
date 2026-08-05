@@ -1,9 +1,9 @@
-
+import React from 'react';
 
 // Exportacao padronizada em todo o app: um unico botao duplo, simetrico e
 // minimalista. Lado esquerdo vermelho [PDF], lado direito verde [Excel], com
 // micro-animacao no hover. Liberado no plano pago; Free vê um botao bloqueado.
-export default function ExportButtons({ paid, onPDF, onXLS, onLocked }) {
+export default React.memo(function ExportButtons({ paid, onPDF, onXLS, onLocked }) {
   if (!paid) {
     return (
       <button type="button" onClick={onLocked} title="Exportar disponível no Pro" aria-label="Exportar disponível no Pro"
@@ -28,4 +28,4 @@ export default function ExportButtons({ paid, onPDF, onXLS, onLocked }) {
       </button>
     </div>
   );
-}
+});
