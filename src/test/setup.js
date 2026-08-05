@@ -1,4 +1,4 @@
-/* eslint-env node */
+/* global process */
 import '@testing-library/jest-dom';
 import { IDBFactory } from 'fake-indexeddb';
 import { beforeAll, afterAll, afterEach, vi, expect } from 'vitest';
