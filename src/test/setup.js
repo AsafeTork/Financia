@@ -1,24 +1,23 @@
-/* global process */
-
-// Polyfills for MSW on Node 24+ - MUST be before msw import
+// Setup MSW for Node 24+ compatibility
 import { TextEncoder, TextDecoder } from 'util';
 globalThis.TextEncoder = TextEncoder;
 globalThis.TextDecoder = TextDecoder;
 
+// Stream polyfill for Node 24+ compatibility - MSW needs TransformStream
 try {
   const _streamWeb = import('stream/web');
   globalThis.TransformStream = _streamWeb.TransformStream;
   globalThis.ReadableStream = _streamWeb.ReadableStream;
   globalThis.WritableStream = _streamWeb.WritableStream;
 } catch (_) {
-  // stream/web not available — streams may already be global in Node 24+
+  // stream/web not available - Node 24+ may have these as globals already
 }
 
 import '@testing-library/jest-dom';
 import { IDBFactory } from 'fake-indexeddb';
 import { beforeAll, afterAll, afterEach, vi, expect } from 'vitest';
 import { setupServer } from 'msw/node';
-import { handlers } from './msw-handlers.js';
+import { handlers } from './test/msw-handlers.js';
 import * as matchers from 'vitest-dom/matchers';
 
 expect.extend(matchers);
