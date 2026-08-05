@@ -1,3 +1,4 @@
+/* eslint-env node */
 import '@testing-library/jest-dom';
 import { IDBFactory } from 'fake-indexeddb';
 import { beforeAll, afterAll, afterEach, vi, expect } from 'vitest';
@@ -7,11 +8,12 @@ import * as matchers from 'vitest-dom/matchers';
 
 // Polyfills for MSW on Node 24+
 import { TextEncoder, TextDecoder } from 'util';
+import { TransformStream, ReadableStream, WritableStream } from 'stream/web';
 globalThis.TextEncoder = TextEncoder;
 globalThis.TextDecoder = TextDecoder;
-globalThis.TransformStream = require('stream/web').TransformStream;
-globalThis.ReadableStream = require('stream/web').ReadableStream;
-globalThis.WritableStream = require('stream/web').WritableStream;
+globalThis.TransformStream = TransformStream;
+globalThis.ReadableStream = ReadableStream;
+globalThis.WritableStream = WritableStream;
 
 expect.extend(matchers);
 
