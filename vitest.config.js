@@ -8,7 +8,15 @@ export default defineConfig({
     setupFiles: ['./src/test/polyfills.js', './src/test/setup.js'],
     globalTeardown: './src/test/global-teardown.js',
     globals: true,
-    pool: 'vmThreads',
+    pool: 'threads',
+    poolOptions: {
+      threads: {
+        maxThreads: 4,
+        minThreads: 2,
+        execArgv: ['--max-old-space-size=2048'],
+      },
+    },
+    fileParallelism: true,
     forceExit: true,
     teardownTimeout: 5000,
     reporter: ['verbose'],
