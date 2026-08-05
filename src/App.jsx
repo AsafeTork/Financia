@@ -156,7 +156,7 @@ export default function App() {
         <div className="hidden lg:block fixed top-4 right-4 z-30"><ThemeToggle theme={effectiveTheme} onToggle={toggleTheme} variant="floating"/></div>
         <div className="flex-1 lg:ml-64 flex flex-col min-h-screen min-w-0 w-full">
           <WidgetErrorBoundary><Header brand={appBrand} syncStatus={s.syncStatus} theme={effectiveTheme} onToggleTheme={toggleTheme} onMenuOpen={handleOpenSidebar}/></WidgetErrorBoundary>
-          <main id="main-content" tabIndex="-1" className="flex-1 p-4 lg:p-8 max-w-5xl w-full mx-auto pb-24 lg:pb-8 min-w-0 overflow-x-hidden">
+          <main id="main-content" tabIndex="-1" className="flex-1 p-4 lg:p-8 max-w-5xl w-full mx-auto pb-8 lg:pb-8 min-w-0 overflow-x-hidden">
             <div key={n.currentView} className="anim-page-view">
               <FeatureErrorBoundary featureName={n.currentView}><AppRoutes/></FeatureErrorBoundary>
             </div>

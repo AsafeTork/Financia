@@ -13,7 +13,7 @@ export default function Offline() {
     };
   }, []);
   return off ? (
-    <div className="fixed top-0 left-0 right-0 z-50 bg-amber-500 text-white text-xs font-semibold text-center py-2 px-3">
+    <div className="fixed top-0 left-0 right-0 z-40 bg-amber-500 text-white text-xs font-semibold text-center py-2 px-3">
       Offline — alterações ficam salvas no aparelho e sincronizam ao reconectar
     </div>
   ) : null;

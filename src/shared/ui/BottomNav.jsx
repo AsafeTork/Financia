@@ -30,7 +30,7 @@ function BottomNav({ view, onNav, brand, isAdmin }) {
           var active = view === item.key;
           return (
             <button key={item.key} onClick={function() { onNav(item.key); }}
-              aria-label={item.label} aria-current={active ? 'page' : undefined}
+              aria-label={item.label} {...(active && { 'aria-current': 'page' })}
               className="relative flex-1 flex flex-col items-center justify-center gap-1 transition-colors min-w-0 pt-1"
               style={{color: active ? brand.color : 'var(--text-muted)'}}>
               {active && (
@@ -42,7 +42,7 @@ function BottomNav({ view, onNav, brand, isAdmin }) {
                   <path d={item.d}/>
                 </svg>
               </div>
-              <span className="truncate max-w-full px-0.5" style={{fontSize: 10, fontWeight: active ? 600 : 400, lineHeight: '12px'}}>{item.label}</span>
+              <span className="truncate max-w-full px-0.5" style={{fontSize: 11, fontWeight: active ? 600 : 400, lineHeight: '14px'}}>{item.label}</span>
             </button>
           );
         })}

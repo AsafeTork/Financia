@@ -78,14 +78,27 @@ export function useParallax(speed = 0.5) {
     const element = ref.current;
     if (!element) return;
 
-    const handleScroll = () => {
-      const scrollPosition = window.scrollY;
-      const offset = scrollPosition * speed;
-      element.style.transform = `translateY(${offset}px)`;
+    const viewportHeight = window.innerHeight;
+
+    const handleIntersection = (entries) => {
+      entries.forEach((entry) => {
+        const rect = entry.boundingClientRect;
+        const elementHeight = rect.height;
+        const progress = Math.max(0, Math.min(1,
+          (viewportHeight - rect.top) / (viewportHeight + elementHeight)
+        ));
+        const offset = progress * speed * viewportHeight;
+        element.style.transform = `translateY(${offset}px)`;
+      });
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    const observer = new IntersectionObserver(handleIntersection, {
+      threshold: 0,
+      rootMargin: `${viewportHeight}px 0px ${viewportHeight}px 0px`,
+    });
+
+    observer.observe(element);
+    return () => observer.disconnect();
   }, [speed]);
 
   return ref;

@@ -44,7 +44,7 @@ function QuickActions({ view, onNav, brand }) {
 
   return (
     <div ref={wrapRef} data-testid="quick-actions"
-      className="fixed z-40 right-4 bottom-24 lg:right-8 lg:bottom-8 flex flex-col items-end gap-3">
+      className="fixed z-40 right-4 bottom-32 lg:right-8 lg:bottom-8 flex flex-col items-end gap-3">
       {open && (
         <div role="menu" aria-label="Ações rápidas" data-testid="quick-actions-menu"
           className="flex flex-col items-end gap-2">

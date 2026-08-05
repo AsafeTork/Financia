@@ -144,7 +144,7 @@ export function MobileFooter({ brand, onNav, currentView }) {
   return (
     <footer
       role="contentinfo"
-      className="lg:hidden fixed bottom-0 left-0 right-0 z-20 bg-white border-t border-gray-200"
+      className="lg:hidden fixed bottom-0 left-0 right-0 z-20 bg-[var(--bg-card)] border-t border-gray-200"
       style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
     >
       <nav aria-label="Navegação principal mobile" className="flex h-14">

@@ -68,7 +68,7 @@ export default React.memo(function Dashboard({ tx, products, brand, onNav, planI
     return [
       { key: 'transactions', label: 'Transacoes', used: tx.length,        limit: PLAN_LIMITS.free.transactions, color: brand.color },
       { key: 'products',     label: 'Produtos',   used: products.length,  limit: PLAN_LIMITS.free.products,     color: '#0f9d6c' },
-      { key: 'losses',       label: 'Perdas',     used: lossesCount || 0, limit: PLAN_LIMITS.free.losses,       color: '#8b5cf6' },
+      { key: 'losses',       label: 'Perdas',     used: lossesCount || 0, limit: PLAN_LIMITS.free.losses,       color: 'var(--danger)' },
     ];
   }, [tx.length, products.length, lossesCount, brand.color]);
   var reachedCats = useMemo(function() { return usage.filter(function(u) { return u.used >= u.limit; }); }, [usage]);

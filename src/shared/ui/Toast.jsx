@@ -39,7 +39,7 @@ export default function Toast({ toasts, onDismiss }) {
   }
 
   return (
-    <div role="status" aria-live="polite" aria-atomic="true" className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2 w-full max-w-sm px-4 pointer-events-none">
+    <div role="status" aria-live="polite" aria-atomic="true" className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 flex flex-col items-center gap-2 w-full max-w-sm px-4 pointer-events-none">
       {visible.map(function(t) {
         var bgClass = BG[t.type] || 'bg-gray-800';
         var isExiting = exiting && exiting[t.id];

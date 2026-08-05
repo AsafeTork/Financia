@@ -86,7 +86,6 @@ export default function Landing({ onEnter, onNav }) {
   const priceRef = useScrollReveal();
   const faqRef = useScrollReveal();
   const ctaRef = useScrollReveal();
-  const _trustRef = useScrollReveal();
 
   const [users] = useCountUp(2800, 1200);
   const [rating] = useCountUp(95, 1000);
@@ -106,7 +105,7 @@ export default function Landing({ onEnter, onNav }) {
       </div>
 
       {/* ─── NAVBAR ─── */}
-      <header className="sticky top-0 z-50" style={{ background: 'var(--navbar-text-color)', backdropFilter: 'blur(16px) saturate(1.8)', WebkitBackdropFilter: 'blur(16px) saturate(1.8)', borderBottom: '1px solid var(--border)' }}>
+      <header className="sticky top-0 z-30" style={{ background: 'var(--navbar-text-color)', backdropFilter: 'blur(16px) saturate(1.8)', WebkitBackdropFilter: 'blur(16px) saturate(1.8)', borderBottom: '1px solid var(--border)' }}>
         <div className="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <img src="/icon-192.svg" alt="Financia" fetchPriority="high" decoding="sync" className="w-7 h-7" />
