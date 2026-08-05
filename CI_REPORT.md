@@ -1,7 +1,7 @@
 # CI Report
 
-**Gerado:** 2026-08-05 22:46 UTC
-**Commit:** `3975958802bb6c311e32f08ecc38da744c87525a`
+**Gerado:** 2026-08-05 23:05 UTC
+**Commit:** `aeb669dfc6a28cf3680e2a0c66efe66f46be9932`
 **Branch:** `main`
 
 ---
@@ -31,50 +31,67 @@
 ## Test Results (ultimas 40 linhas)
 
 ```
-10:46:36 PM [vite] warning: `esbuild` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `oxc` instead.
-10:46:36 PM [vite] warning: `optimizeDeps.esbuildOptions` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `optimizeDeps.rolldownOptions` instead.
+10:55:28 PM [vite] warning: `esbuild` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `oxc` instead.
+10:55:28 PM [vite] warning: `optimizeDeps.esbuildOptions` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `optimizeDeps.rolldownOptions` instead.
 Both esbuild and oxc options were set. oxc options will be used and esbuild options will be ignored. The following esbuild options were set: `{ jsx: 'automatic', jsxImportSource: undefined }`
- DEPRECATED  `test.poolOptions` was removed in Vitest 4. All previous `poolOptions` are now top-level options. Please, refer to the migration guide: https://vitest.dev/guide/migration#pool-rework
 
-⎯⎯⎯⎯⎯⎯⎯ Startup Error ⎯⎯⎯⎯⎯⎯⎯⎯
-Error: Failed to load custom Reporter from basic
-    at loadCustomReporterModule (file:///home/runner/work/Financia/Financia/node_modules/vitest/dist/chunks/cli-api.BK8pd4xc.js:11362:9)
-    at file:///home/runner/work/Financia/Financia/node_modules/vitest/dist/chunks/cli-api.BK8pd4xc.js:11378:23
-    ... 3 lines matching cause stack trace ...
-    at _createServer (file:///home/runner/work/Financia/Financia/node_modules/vitest/node_modules/vite/dist/node/chunks/node.js:25975:84)
-    at createViteServer (file:///home/runner/work/Financia/Financia/node_modules/vitest/dist/chunks/cli-api.BK8pd4xc.js:8835:17)
-    at createVitest (file:///home/runner/work/Financia/Financia/node_modules/vitest/dist/chunks/cli-api.BK8pd4xc.js:14221:18)
-    at prepareVitest (file:///home/runner/work/Financia/Financia/node_modules/vitest/dist/chunks/cli-api.BK8pd4xc.js:14588:14)
-    at startVitest (file:///home/runner/work/Financia/Financia/node_modules/vitest/dist/chunks/cli-api.BK8pd4xc.js:14531:14) {
-  [cause]: Error: Failed to load url basic (resolved id: basic). Does the file exist?
-      at reviveInvokeError (file:///home/runner/work/Financia/Financia/node_modules/vitest/node_modules/vite/dist/node/module-runner.js:546:14)
-      at Object.invoke (file:///home/runner/work/Financia/Financia/node_modules/vitest/node_modules/vite/dist/node/module-runner.js:562:33)
-      at ServerModuleRunner.getModuleInformation (file:///home/runner/work/Financia/Financia/node_modules/vitest/node_modules/vite/dist/node/module-runner.js:1199:7)
-      at ServerModuleRunner.import (file:///home/runner/work/Financia/Financia/node_modules/vitest/node_modules/vite/dist/node/module-runner.js:1119:23)
-      at loadCustomReporterModule (file:///home/runner/work/Financia/Financia/node_modules/vitest/dist/chunks/cli-api.BK8pd4xc.js:11360:26)
-      at file:///home/runner/work/Financia/Financia/node_modules/vitest/dist/chunks/cli-api.BK8pd4xc.js:11378:23
-      at async Promise.all (index 0)
-      at Vitest._setServer (file:///home/runner/work/Financia/Financia/node_modules/vitest/dist/chunks/cli-api.BK8pd4xc.js:13177:138)
-      at BasicMinimalPluginContext.handler (file:///home/runner/work/Financia/Financia/node_modules/vitest/dist/chunks/cli-api.BK8pd4xc.js:14191:5)
-      at _createServer (file:///home/runner/work/Financia/Financia/node_modules/vitest/node_modules/vite/dist/node/chunks/node.js:25975:84) {
-    code: 'ERR_LOAD_URL',
-    runnerError: Error: RunnerError
-        at reviveInvokeError (file:///home/runner/work/Financia/Financia/node_modules/vitest/node_modules/vite/dist/node/module-runner.js:547:64)
-        at Object.invoke (file:///home/runner/work/Financia/Financia/node_modules/vitest/node_modules/vite/dist/node/module-runner.js:562:33)
-        at ServerModuleRunner.getModuleInformation (file:///home/runner/work/Financia/Financia/node_modules/vitest/node_modules/vite/dist/node/module-runner.js:1199:7)
-        at ServerModuleRunner.import (file:///home/runner/work/Financia/Financia/node_modules/vitest/node_modules/vite/dist/node/module-runner.js:1119:23)
-        at loadCustomReporterModule (file:///home/runner/work/Financia/Financia/node_modules/vitest/dist/chunks/cli-api.BK8pd4xc.js:11360:26)
-        at file:///home/runner/work/Financia/Financia/node_modules/vitest/dist/chunks/cli-api.BK8pd4xc.js:11378:23
-        at async Promise.all (index 0)
-        at Vitest._setServer (file:///home/runner/work/Financia/Financia/node_modules/vitest/dist/chunks/cli-api.BK8pd4xc.js:13177:138)
-        at BasicMinimalPluginContext.handler (file:///home/runner/work/Financia/Financia/node_modules/vitest/dist/chunks/cli-api.BK8pd4xc.js:14191:5)
-        at _createServer (file:///home/runner/work/Financia/Financia/node_modules/vitest/node_modules/vite/dist/node/chunks/node.js:25975:84)
-  }
-}
+ RUN  v4.1.10 /home/runner/work/Financia/Financia
 
+ ✓ src/lib/stripe-webhook.integration.test.js (11 tests) 16ms
+ ✓ src/lib/stripe-subscription-cycle.integration.test.js (13 tests) 32ms
+ ✓ src/test/utils.test.js (141 tests) 27ms
+ ❯ src/lib/sync-extra.test.js (0 test)
+stderr | src/lib/sync.test.js > fetchClients > retorna array vazio no erro
+[sync] fetchClients failed: Error: x
+    at Object.order [90m(/home/runner/work/Financia/Financia/[39msrc/lib/sync.test.js:127:63[90m)[39m
+    at Module.fetchClients [90m(/home/runner/work/Financia/Financia/[39msrc/lib/sync.js:165:84[90m)[39m
+    at [90m/home/runner/work/Financia/Financia/[39msrc/lib/sync.test.js:129:27
+    at [90mfile:///home/runner/work/Financia/Financia/[39mnode_modules/[4m@vitest/runner[24m/dist/chunk-artifact.js:302:11
+    at [90mfile:///home/runner/work/Financia/Financia/[39mnode_modules/[4m@vitest/runner[24m/dist/chunk-artifact.js:1903:26
+    at [90mfile:///home/runner/work/Financia/Financia/[39mnode_modules/[4m@vitest/runner[24m/dist/chunk-artifact.js:2326:20
+    at new Promise (<anonymous>)
+    at runWithCancel [90m(file:///home/runner/work/Financia/Financia/[39mnode_modules/[4m@vitest/runner[24m/dist/chunk-artifact.js:2323:10[90m)[39m
+    at [90mfile:///home/runner/work/Financia/Financia/[39mnode_modules/[4m@vitest/runner[24m/dist/chunk-artifact.js:2305:20
+    at new Promise (<anonymous>)
 
+stderr | src/lib/sync.test.js > fetchClientUsage > retorna {} na exception
+[sync] fetchClientUsage: Error: crash
+    at [90m/home/runner/work/Financia/Financia/[39msrc/lib/sync.test.js:146:30
+    at [90mfile:///home/runner/work/Financia/Financia/[39mnode_modules/[4m@vitest/runner[24m/dist/chunk-artifact.js:302:11
+    at [90mfile:///home/runner/work/Financia/Financia/[39mnode_modules/[4m@vitest/runner[24m/dist/chunk-artifact.js:1903:26
+    at [90mfile:///home/runner/work/Financia/Financia/[39mnode_modules/[4m@vitest/runner[24m/dist/chunk-artifact.js:2326:20
+    at new Promise (<anonymous>)
+    at runWithCancel [90m(file:///home/runner/work/Financia/Financia/[39mnode_modules/[4m@vitest/runner[24m/dist/chunk-artifact.js:2323:10[90m)[39m
+    at [90mfile:///home/runner/work/Financia/Financia/[39mnode_modules/[4m@vitest/runner[24m/dist/chunk-artifact.js:2305:20
+    at new Promise (<anonymous>)
+    at runWithTimeout [90m(file:///home/runner/work/Financia/Financia/[39mnode_modules/[4m@vitest/runner[24m/dist/chunk-artifact.js:2272:10[90m)[39m
+    at [90mfile:///home/runner/work/Financia/Financia/[39mnode_modules/[4m@vitest/runner[24m/dist/chunk-artifact.js:2955:64
 
+stderr | src/lib/sync.test.js > fetchStripeOverview > retorna null na exception
+[sync] fetchStripeOverview: Error: x
+    at [90m/home/runner/work/Financia/Financia/[39msrc/lib/sync.test.js:182:43
+    at [90mfile:///home/runner/work/Financia/Financia/[39mnode_modules/[4m@vitest/runner[24m/dist/chunk-artifact.js:302:11
+    at [90mfile:///home/runner/work/Financia/Financia/[39mnode_modules/[4m@vitest/runner[24m/dist/chunk-artifact.js:1903:26
+    at [90mfile:///home/runner/work/Financia/Financia/[39mnode_modules/[4m@vitest/runner[24m/dist/chunk-artifact.js:2326:20
+    at new Promise (<anonymous>)
+    at runWithCancel [90m(file:///home/runner/work/Financia/Financia/[39mnode_modules/[4m@vitest/runner[24m/dist/chunk-artifact.js:2323:10[90m)[39m
+    at [90mfile:///home/runner/work/Financia/Financia/[39mnode_modules/[4m@vitest/runner[24m/dist/chunk-artifact.js:2305:20
+    at new Promise (<anonymous>)
+    at runWithTimeout [90m(file:///home/runner/work/Financia/Financia/[39mnode_modules/[4m@vitest/runner[24m/dist/chunk-artifact.js:2272:10[90m)[39m
+    at [90mfile:///home/runner/work/Financia/Financia/[39mnode_modules/[4m@vitest/runner[24m/dist/chunk-artifact.js:2955:64
 
+stdout | src/lib/sync.test.js > benchmarks > QA-04: syncAll 10k rows < 5s (benchmark)
+QA-04 benchmark: syncAll took 0.13ms
+
+stdout | src/lib/sync.test.js > benchmarks > QA-05: admin-stripe-overview p95 < 2s (100 subs with cursor pagination)
+QA-05 benchmark: fetchStripeOverview p95=0.01ms avg=0.00ms over 100 iterations
+
+ ✓ src/lib/sync.test.js (33 tests) 22ms
+ ✓ src/test/constants.test.js (95 tests) 12ms
+ ✓ src/shared/hooks/useBrandAppearance.extra.test.js (18 tests) 32ms
+ ✓ src/features/auth/useSession.test.js (11 tests) 37ms
+ ✓ src/shared/hooks/useDataLoader.test.js (10 tests) 14ms
+ ❯ src/shared/hooks/useBrandAppearance.test.js (19 tests | 
 ```
 
 ---
@@ -137,4 +154,4 @@ Nenhum relatorio admin gerado.
 
 | Data | Correcao | Commit |
 |------|----------|--------|
-| 2026-08-05 22:46 UTC | CI report gerado automaticamente | `3975958802bb6c311e32f08ecc38da744c87525a` |
+| 2026-08-05 23:05 UTC | CI report gerado automaticamente | `aeb669dfc6a28cf3680e2a0c66efe66f46be9932` |
