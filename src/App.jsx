@@ -23,6 +23,7 @@ import { WidgetErrorBoundary } from './shared/WidgetErrorBoundary.jsx';
 import Login from './features/auth/Login.jsx';
 import AppRoutes from './routes/routes.jsx';
 import Loader from './App/components/Loader.jsx';
+import LazyPage from './App/components/LazyPage.jsx';
 import { AppProvider } from './App/contexts/AppContext.jsx';
 import { useAppState } from './hooks/useAppState.js';
 import { useToasts } from './hooks/useToasts.js';
@@ -131,11 +132,11 @@ export default function App() {
   }, [stableCtx, dataCtx]);
 
   if (s.appLoading) return <Loader/>;
-  if (n.isLegal) return <FeatureErrorBoundary featureName="Legal"><Suspense fallback={<Loader/>}>{n.path === 'privacidade' ? <PrivacyPolicy onNav={n.navTo}/> : <TermsOfService onNav={n.navTo}/>}</Suspense></FeatureErrorBoundary>;
-  if (n.isLanding) return <FeatureErrorBoundary featureName="Landing"><Suspense fallback={<Loader/>}><Landing brand={s.brand} onEnter={function() { n.navTo(''); s.setShowLogin(true); }} onNav={n.navTo}/></Suspense></FeatureErrorBoundary>;
+  if (n.isLegal) return <FeatureErrorBoundary featureName="Legal"><LazyPage fallback={<Loader/>}>{n.path === 'privacidade' ? <PrivacyPolicy onNav={n.navTo}/> : <TermsOfService onNav={n.navTo}/>}</LazyPage></FeatureErrorBoundary>;
+  if (n.isLanding) return <FeatureErrorBoundary featureName="Landing"><LazyPage fallback={<Loader/>}><Landing brand={s.brand} onEnter={function() { n.navTo(''); s.setShowLogin(true); }} onNav={n.navTo}/></LazyPage></FeatureErrorBoundary>;
   if (!s.session) {
     const seen = !!localStorage.getItem('financia_seen');
-    if (!seen && !s.showLogin) return <FeatureErrorBoundary featureName="Landing"><Suspense fallback={<Loader/>}><Landing brand={s.brand} onEnter={function() { s.setShowLogin(true); }} onNav={n.navTo}/></Suspense></FeatureErrorBoundary>;
+    if (!seen && !s.showLogin) return <FeatureErrorBoundary featureName="Landing"><LazyPage fallback={<Loader/>}><Landing brand={s.brand} onEnter={function() { s.setShowLogin(true); }} onNav={n.navTo}/></LazyPage></FeatureErrorBoundary>;
     return <Login brand={s.brand} onNav={n.navTo}/>;
   }
   if (s.dataLoading) return <Loader text="Carregando seus dados..."/>;
@@ -151,7 +152,7 @@ export default function App() {
     <AppProvider value={ctx}>
       <div className="min-h-screen flex overflow-x-hidden" style={{background:'var(--bg-page)'}}>
         <a href="#main-content" onClick={function(e){e.preventDefault();var el=document.getElementById('main-content');if(el){el.setAttribute('tabindex','-1');el.focus();el.scrollIntoView();}}} className="skip-link">Pular para conteúdo</a>
-        <Offline/><WidgetErrorBoundary><UpdateBanner brand={appBrand}/></WidgetErrorBoundary><Suspense fallback={null}><DebugBadge/></Suspense><SyncBadge status={s.syncStatus}/>
+        <Offline/><WidgetErrorBoundary><UpdateBanner brand={appBrand}/></WidgetErrorBoundary><LazyPage fallback={null}><DebugBadge/></LazyPage><SyncBadge status={s.syncStatus}/>
         <WidgetErrorBoundary><Sidebar view={n.currentView} onNav={n.navTo} brand={appBrand} open={s.sidebarOpen} isAdmin={s.isAdminDB} onClose={handleCloseSidebar}/></WidgetErrorBoundary>
         <div className="hidden lg:block fixed top-4 right-4 z-30"><ThemeToggle theme={effectiveTheme} onToggle={toggleTheme} variant="floating"/></div>
         <div className="flex-1 lg:ml-64 flex flex-col min-h-screen min-w-0 w-full">

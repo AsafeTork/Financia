@@ -1,7 +1,8 @@
-import React, { lazy, Suspense, useMemo } from 'react';
+import React, { lazy, useMemo } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { PageSkeleton } from '../shared/ui/ui.jsx';
 import { useAppContext } from '../App/contexts/AppContext.jsx';
+import LazyPage from '../App/components/LazyPage.jsx';
 
 const Dashboard     = lazy(function() { return import('../features/dashboard/Dashboard.jsx'); });
 const TxView        = lazy(function() { return import('../features/transactions/TxView.jsx'); });
@@ -64,7 +65,7 @@ var AppRoutes = React.memo(function AppRoutes() {
   }, [tx, brand, toast, onNav, planInfo]);
 
   return (
-    <Suspense fallback={<PageSkeleton/>}>
+    <LazyPage fallback={<PageSkeleton/>}>
       <Routes>
         <Route path="/" element={dashboardElement} />
         <Route path="/dashboard" element={dashboardElement} />
@@ -77,7 +78,7 @@ var AppRoutes = React.memo(function AppRoutes() {
         <Route path="/planos" element={planosElement} />
         <Route path="/brandstudio" element={brandstudioElement} />
       </Routes>
-    </Suspense>
+    </LazyPage>
   );
 });
 
