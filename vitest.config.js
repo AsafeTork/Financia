@@ -5,7 +5,7 @@ export default defineConfig({
   plugins: [react()],
   test: {
     environment: 'jsdom',
-    setupFiles: ['./src/test/setup.js'],
+    setupFiles: ['./src/test/polyfills.js', './src/test/setup.js'],
     globalTeardown: './src/test/global-teardown.js',
     globals: true,
     pool: 'vmThreads',

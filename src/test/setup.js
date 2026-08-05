@@ -1,6 +1,5 @@
-// Node 24 dropped globals for web streams — polyfill before MSW import
-import 'stream/web';
 // Setup MSW for Node 24+ compatibility
+// Polyfills loaded via vitest setupFiles before this file
 import '@testing-library/jest-dom';
 import { IDBFactory } from 'fake-indexeddb';
 import { beforeAll, afterAll, afterEach, vi, expect } from 'vitest';
