@@ -8,10 +8,10 @@ export default defineConfig({
     setupFiles: ['./src/test/setup.js'],
     globalTeardown: ['./src/test/global-teardown.js'],
     globals: true,
-    pool: 'forks',
+    pool: 'vmThreads',
     poolOptions: {
-      forks: {
-        singleFork: true,
+      threads: {
+        singleThread: true,
       },
     },
     forceExit: true,

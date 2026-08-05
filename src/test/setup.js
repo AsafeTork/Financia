@@ -16,7 +16,7 @@ const server = setupServer(...handlers);
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
 afterAll(async () => {
-  await server.close();
+  try { await server.close(); } catch (_) {}
   globalThis.indexedDB = new IDBFactory();
   // Force exit if anything is still hanging
   setTimeout(() => process.exit(0), 100);
@@ -25,17 +25,10 @@ afterEach(() => {
   server.resetHandlers();
   vi.clearAllMocks();
   vi.clearAllTimers();
+  vi.useRealTimers();
   globalThis.indexedDB = new IDBFactory();
-  try {
-    localStorage.clear();
-  } catch (_) {
-    // ignore
-  }
-  try {
-    sessionStorage.clear();
-  } catch (_) {
-    // ignore
-  }
+  try { localStorage.clear(); } catch (_) {}
+  try { sessionStorage.clear(); } catch (_) {}
 });
 
 globalThis.cleanupMocks = () => {
