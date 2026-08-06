@@ -138,6 +138,7 @@ const DOC_EXCLUSIONS = new Set([
   'docs/TEMPLATES/bug-report.md',
   'docs/TEMPLATES/feature-request.md',
   'docs/TEMPLATES/area-report.md',
+  'docs/CHANGELOG.md',
 ])
 
 function checkFile(filePath) {

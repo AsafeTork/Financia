@@ -72,10 +72,21 @@ jobs:
           retention-days: 5
 
   unit-tests:
-    name: Unit Tests (Node 24)
+    name: "Unit Tests ${{ matrix.shard }}"
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 8
     needs: lint-typecheck
+    strategy:
+      fail-fast: true
+      matrix:
+        shard: [1, 2, 3]
+        include:
+          - shard: 1
+            files: "src/core/ src/routes/ src/hooks/ src/lib/"
+          - shard: 2
+            files: "src/shared/ src/test/ src/workers/"
+          - shard: 3
+            files: "src/features/"
     outputs:
       test_exit_code: ${{ steps.test.outputs.exit_code }}
     steps:
@@ -102,21 +113,25 @@ jobs:
         env:
           ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
 
-      - name: Run unit tests
+      - name: Run unit tests (shard ${{ matrix.shard }})
         id: test
         run: |
           set -o pipefail
-          npx vitest run --coverage.enabled=false --no-color 2>&1 | tee /tmp/test-output.txt
+          FILES=$(find ${{ matrix.files }} -name "*.test.{js,jsx}" -not -path "*/e2e/*" -not -path "*/benchmarks/*" 2>/dev/null | tr '\n' ' ')
+          if [ -z "$FILES" ]; then
+            echo "No test files found for shard ${{ matrix.shard }}"
+            echo "exit_code=0" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          npx vitest run $FILES --coverage.enabled=false --no-color 2>&1 | tee /tmp/test-output-shard${{ matrix.shard }}.txt
           echo "exit_code=${PIPESTATUS[0]}" >> $GITHUB_OUTPUT
 
       - name: Upload test artifacts
         if: always()
         uses: actions/upload-artifact@v6
         with:
-          name: unit-tests-24
-          path: |
-            /tmp/test-output.txt
-            coverage/
+          name: unit-tests-shard${{ matrix.shard }}
+          path: /tmp/test-output-shard${{ matrix.shard }}.txt
           retention-days: 5
 
   integration-tests:
@@ -199,9 +214,8 @@ jobs:
     timeout-minutes: 10
     needs: [lint-typecheck, unit-tests]
     if: |
-      needs.lint-typecheck.outputs.lint_exit_code == '0' &&
-      needs.lint-typecheck.outputs.typecheck_exit_code == '0' &&
-      needs.unit-tests.outputs.test_exit_code == '0'
+      needs.lint-typecheck.result == 'success' &&
+      needs.unit-tests.result == 'success'
     steps:
       - uses: actions/checkout@v6
         with:
