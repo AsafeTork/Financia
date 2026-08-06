@@ -1,7 +1,7 @@
 # CI Report
 
-**Gerado:** 2026-08-06 01:17 UTC
-**Commit:** `cb8b757f3df655d800b1745ba34d4ec4ec918213`
+**Gerado:** 2026-08-06 01:43 UTC
+**Commit:** `888fb2947255911742b352a8fec429daba19bf72`
 **Branch:** `main`
 
 ---
@@ -11,10 +11,10 @@
 | Verificacao | Status |
 |---|---|
 | Lint + Typecheck | ok |
-| Testes Unitarios | com falhas |
-| Testes Integracao | nao executado |
-| Build | nao executado |
-| E2E Tests | nao executado |
+| Testes Unitarios | nao executado |
+| Testes Integracao | com falhas |
+| Build | ok |
+| E2E Tests | com falhas |
 | Auditoria de Producao | ver resultado abaixo |
 | Admin Audit | ver resultado abaixo |
 
@@ -31,67 +31,7 @@
 ## Test Results (ultimas 40 linhas)
 
 ```
-1:14:19 AM [vite] warning: `esbuild` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `oxc` instead.
-1:14:19 AM [vite] warning: `optimizeDeps.esbuildOptions` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `optimizeDeps.rolldownOptions` instead.
-Both esbuild and oxc options were set. oxc options will be used and esbuild options will be ignored. The following esbuild options were set: `{ jsx: 'automatic', jsxImportSource: undefined }`
 
- RUN  v4.1.10 /home/runner/work/Financia/Financia
-
- ✓ src/lib/stripe-subscription-cycle.integration.test.js (13 tests) 33ms
- ✓ src/lib/stripe-webhook.integration.test.js (11 tests) 30ms
- ✓ src/test/utils.test.js (141 tests) 62ms
- ❯ src/lib/sync-extra.test.js (0 test)
-stderr | src/lib/sync.test.js > fetchClients > retorna array vazio no erro
-[sync] fetchClients failed: Error: x
-    at Object.order [90m(/home/runner/work/Financia/Financia/[39msrc/lib/sync.test.js:127:63[90m)[39m
-    at Module.fetchClients [90m(/home/runner/work/Financia/Financia/[39msrc/lib/sync.js:165:84[90m)[39m
-    at [90m/home/runner/work/Financia/Financia/[39msrc/lib/sync.test.js:129:27
-    at [90mfile:///home/runner/work/Financia/Financia/[39mnode_modules/[4m@vitest/runner[24m/dist/chunk-artifact.js:302:11
-    at [90mfile:///home/runner/work/Financia/Financia/[39mnode_modules/[4m@vitest/runner[24m/dist/chunk-artifact.js:1903:26
-    at [90mfile:///home/runner/work/Financia/Financia/[39mnode_modules/[4m@vitest/runner[24m/dist/chunk-artifact.js:2326:20
-    at new Promise (<anonymous>)
-    at runWithCancel [90m(file:///home/runner/work/Financia/Financia/[39mnode_modules/[4m@vitest/runner[24m/dist/chunk-artifact.js:2323:10[90m)[39m
-    at [90mfile:///home/runner/work/Financia/Financia/[39mnode_modules/[4m@vitest/runner[24m/dist/chunk-artifact.js:2305:20
-    at new Promise (<anonymous>)
-
-stderr | src/lib/sync.test.js > fetchClientUsage > retorna {} na exception
-[sync] fetchClientUsage: Error: crash
-    at [90m/home/runner/work/Financia/Financia/[39msrc/lib/sync.test.js:146:30
-    at [90mfile:///home/runner/work/Financia/Financia/[39mnode_modules/[4m@vitest/runner[24m/dist/chunk-artifact.js:302:11
-    at [90mfile:///home/runner/work/Financia/Financia/[39mnode_modules/[4m@vitest/runner[24m/dist/chunk-artifact.js:1903:26
-    at [90mfile:///home/runner/work/Financia/Financia/[39mnode_modules/[4m@vitest/runner[24m/dist/chunk-artifact.js:2326:20
-    at new Promise (<anonymous>)
-    at runWithCancel [90m(file:///home/runner/work/Financia/Financia/[39mnode_modules/[4m@vitest/runner[24m/dist/chunk-artifact.js:2323:10[90m)[39m
-    at [90mfile:///home/runner/work/Financia/Financia/[39mnode_modules/[4m@vitest/runner[24m/dist/chunk-artifact.js:2305:20
-    at new Promise (<anonymous>)
-    at runWithTimeout [90m(file:///home/runner/work/Financia/Financia/[39mnode_modules/[4m@vitest/runner[24m/dist/chunk-artifact.js:2272:10[90m)[39m
-    at [90mfile:///home/runner/work/Financia/Financia/[39mnode_modules/[4m@vitest/runner[24m/dist/chunk-artifact.js:2955:64
-
-stderr | src/lib/sync.test.js > fetchStripeOverview > retorna null na exception
-[sync] fetchStripeOverview: Error: x
-    at [90m/home/runner/work/Financia/Financia/[39msrc/lib/sync.test.js:182:43
-    at [90mfile:///home/runner/work/Financia/Financia/[39mnode_modules/[4m@vitest/runner[24m/dist/chunk-artifact.js:302:11
-    at [90mfile:///home/runner/work/Financia/Financia/[39mnode_modules/[4m@vitest/runner[24m/dist/chunk-artifact.js:1903:26
-    at [90mfile:///home/runner/work/Financia/Financia/[39mnode_modules/[4m@vitest/runner[24m/dist/chunk-artifact.js:2326:20
-    at new Promise (<anonymous>)
-    at runWithCancel [90m(file:///home/runner/work/Financia/Financia/[39mnode_modules/[4m@vitest/runner[24m/dist/chunk-artifact.js:2323:10[90m)[39m
-    at [90mfile:///home/runner/work/Financia/Financia/[39mnode_modules/[4m@vitest/runner[24m/dist/chunk-artifact.js:2305:20
-    at new Promise (<anonymous>)
-    at runWithTimeout [90m(file:///home/runner/work/Financia/Financia/[39mnode_modules/[4m@vitest/runner[24m/dist/chunk-artifact.js:2272:10[90m)[39m
-    at [90mfile:///home/runner/work/Financia/Financia/[39mnode_modules/[4m@vitest/runner[24m/dist/chunk-artifact.js:2955:64
-
-stdout | src/lib/sync.test.js > benchmarks > QA-04: syncAll 10k rows < 5s (benchmark)
-QA-04 benchmark: syncAll took 0.21ms
-
-stdout | src/lib/sync.test.js > benchmarks > QA-05: admin-stripe-overview p95 < 2s (100 subs with cursor pagination)
-QA-05 benchmark: fetchStripeOverview p95=0.00ms avg=0.00ms over 100 iterations
-
- ✓ src/lib/sync.test.js (33 tests) 44ms
- ✓ src/test/constants.test.js (95 tests) 37ms
- ✓ src/shared/hooks/useBrandAppearance.extra.test.js (18 tests) 54ms
- ✓ src/features/auth/useSession.test.js (11 tests) 100ms
- ✓ src/shared/hooks/useBrandAppearance.test.js (19 tests) 95ms
- ✓ src/shared/hooks/useDataLoader.test.js (10 tests) 57
 ```
 
 ---
@@ -100,6 +40,35 @@ QA-05 benchmark: fetchStripeOverview p95=0.00ms avg=0.00ms over 100 iterations
 
 ```
 
+> gestao-financeira@5.1.1 build
+> vite build
+
+[36mvite v5.4.21 [32mbuilding for production...[36m[39m
+transforming...
+[32m✓[39m 254 modules transformed.
+Circular chunk: vendor-radix-slot -> vendor-radix -> vendor-radix-slot. Please adjust the manual chunk logic for these chunks.
+Generated an empty chunk: "vendor-supabase".
+rendering chunks...
+[1m[33m[plugin:vite:reporter][39m[22m [33m[plugin vite:reporter] 
+(!) /home/runner/work/Financia/Financia/src/lib/sync.js is dynamically imported by /home/runner/work/Financia/Financia/src/shared/hooks/useSyncLoop.js but also statically imported by /home/runner/work/Financia/Financia/src/features/admin/AdminPanel.jsx, /home/runner/work/Financia/Financia/src/features/admin/ClientEditModal.jsx, /home/runner/work/Financia/Financia/src/features/auth/useSession.js, /home/runner/work/Financia/Financia/src/features/settings/SettingsView.jsx, dynamic import will not move module into another chunk.
+[39m
+computing gzip size...
+[2mdist/[22m[32mindex.html                                [39m[1m[2m  3.20 kB[22m[1m[22m[2m │ gzip:  1.00 kB[22m
+[2mdist/[22m[2massets/[22m[32msync.worker-DnggedcM.js            [39m[1m[2m 81.62 kB[22m[1m[22m
+[2mdist/[22m[2massets/[22m[35mindex-B1W57wpT.css                 [39m[1m[2m 58.25 kB[22m[1m[22m[2m │ gzip: 12.09 kB[22m
+[2mdist/[22m[2massets/[22m[36mvendor-supabase-vwDjcXxQ.js        [39m[1m[2m  0.00 kB[22m[1m[22m[2m │ gzip:  0.02 kB[22m
+[2mdist/[22m[2massets/[22m[36museDebouncedValue-DhXJ-2MC.js      [39m[1m[2m  0.21 kB[22m[1m[22m[2m │ gzip:  0.17 kB[22m
+[2mdist/[22m[2massets/[22m[36mDebugBadge-CuG2Hgqz.js             [39m[1m[2m  0.83 kB[22m[1m[22m[2m │ gzip:  0.47 kB[22m
+[2mdist/[22m[2massets/[22m[36mlogoUtils-CW8SHBpH.js              [39m[1m[2m  0.88 kB[22m[1m[22m[2m │ gzip:  0.46 kB[22m
+[2mdist/[22m[2massets/[22m[36mvendor-radix-0j1Bgcl0.js           [39m[1m[2m  1.05 kB[22m[1m[22m[2m │ gzip:  0.62 kB[22m
+[2mdist/[22m[2massets/[22m[36mvendor-class-utils-BGivqV-2.js     [39m[1m[2m  1.12 kB[22m[1m[22m[2m │ gzip:  0.56 kB[22m
+[2mdist/[22m[2massets/[22m[36mvendor-virtual-BFXXfAAg.js         [39m[1m[2m  1.82 kB[22m[1m[22m[2m │ gzip:  0.91 kB[22m
+[2mdist/[22m[2massets/[22m[36mvendor-radix-slot-CD8tn4BR.js      [39m[1m[2m  2.03 kB[22m[1m[22m[2m │ gzip:  0.98 kB[22m
+[2mdist/[22m[2massets/[22m[36mvendor-stripe-core-CUtUkgyj.js     [39m[1m[2m  2.25 kB[22m[1m[22m[2m │ gzip:  1.00 kB[22m
+[2mdist/[22m[2massets/[22m[36maiClient-C_PibYBG.js               [39m[1m[2m  2.81 kB[22m[1m[22m[2m │ gzip:  1.48 kB[22m
+[2mdist/[22m[2massets/[22m[36mexporters-BRcQ71Kn.js              [39m[1m[2m  4.25 kB[22m[1m[22m[2m │ gzip:  1.79 kB[22m
+[2mdist/[22m[2massets/[22m[36mEmailView-B5Z-6z9p.js              [39m[1m[2m  5.22 kB[22m[1m[22m[2m │ gzip:  2.09 kB[22m
+[2mdist/[22m[2massets/[22m[36mCardPreview-D2osAlCL.j
 ```
 
 ---
@@ -108,9 +77,42 @@ QA-05 benchmark: fetchStripeOverview p95=0.00ms avg=0.00ms over 100 iterations
 
 | Status |
 |---|
-| nao executado |
+| com falhas |
 
 ```
+
+Running 26 tests using 4 workers
+°°·°°°°°°°°····°·°°°··°F··
+
+  1) [chromium] › e2e/auth-flow.spec.ts:45:3 › Auth Flow › login form shows validation errors on empty submit 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('text=obrigatório').first()
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 10000ms
+      - waiting for locator('text=obrigatório').first()
+
+
+      63 |
+      64 |     const emailError = page.locator('text=obrigatório').first();
+    > 65 |     await expect(emailError).toBeVisible({ timeout: 10000 });
+         |                              ^
+      66 |   });
+      67 |
+      68 |   test('authenticated user sees dashboard via storageState', async ({ page, browser }) => {
+        at /home/runner/work/Financia/Financia/e2e/auth-flow.spec.ts:65:30
+
+    Error Context: test-results/auth-flow-Auth-Flow-login--49015-tion-errors-on-empty-submit-chromium/error-context.md
+
+  1 failed
+    [chromium] › e2e/auth-flow.spec.ts:45:3 › Auth Flow › login form shows validation errors on empty submit 
+  15 skipped
+  10 passed (17.2s)
 
 ```
 
@@ -120,10 +122,59 @@ QA-05 benchmark: fetchStripeOverview p95=0.00ms avg=0.00ms over 100 iterations
 
 | Status |
 |---|
-| nao executado |
+| com falhas |
 
 ```
 
+Running 42 tests using 4 workers
+
+[1/42] [chromium] › e2e/deep-sync-conflict.spec.ts:10:3 › Deep Sync Conflict Scenarios › BroadcastChannel ping/pong survives rapid tab switching
+[2/42] [chromium] › e2e/deep-sync-conflict.spec.ts:120:3 › Deep Sync Conflict Scenarios › memory leak check after sync broadcast storm
+[3/42] [chromium] › e2e/deep-sync-conflict.spec.ts:94:3 › Deep Sync Conflict Scenarios › sync worker survives unhandled rejection
+[4/42] [chromium] › e2e/deep-sync-conflict.spec.ts:59:3 › Deep Sync Conflict Scenarios › BroadcastChannel handles duplicate messages without errors
+[5/42] [chromium] › e2e/indexeddb-corruption.spec.ts:12:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should recover from corrupted IndexedDB data
+[6/42] [chromium] › e2e/indexeddb-corruption.spec.ts:65:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should handle invalid schema gracefully
+[7/42] [chromium] › e2e/indexeddb-eviction.spec.ts:12:5 › IndexedDB Recovery - Eviction › Eviction Test › should handle storage pressure and persist()
+[8/42] [chromium] › e2e/indexeddb-eviction.spec.ts:89:5 › IndexedDB Recovery - Eviction › Eviction Test › should estimate storage quota
+[9/42] [chromium] › e2e/indexeddb-migration.spec.ts:12:5 › IndexedDB Recovery - Migration › Migration Test › should migrate from old schema to new schema
+[10/42] [chromium] › e2e/indexeddb-migration.spec.ts:92:5 › IndexedDB Recovery - Migration › Migration Test › should preserve data integrity during migration
+[11/42] [chromium] › e2e/memory-leak.spec.ts:6:3 › Memory Leak Detection › cyclic navigation - no detached DOM nodes
+  1) [chromium] › e2e/indexeddb-migration.spec.ts:12:5 › IndexedDB Recovery - Migration › Migration Test › should migrate from old schema to new schema 
+
+    Error: page.evaluate: AbortError: Version change transaction was aborted in upgradeneeded event handler.
+
+      39 |       await page.waitForLoadState('networkidle');
+      40 |
+    > 41 |       const migratedData = await page.evaluate(async () => {
+         |                                       ^
+      42 |         const dbName = 'gestao_offline';
+      43 |         
+      44 |         return new Promise<any[]>((resolve, reject) => {
+        at /home/runner/work/Financia/Financia/e2e/indexeddb-migration.spec.ts:41:39
+
+    Error Context: test-results/indexeddb-migration-Indexe-ccb35-om-old-schema-to-new-schema-chromium/error-context.md
+
+
+[12/42] [chromium] › e2e/memory-leak.spec.ts:57:3 › Memory Leak Detection › event listeners cleaned up on unmount
+[13/42] [chromium] › e2e/memory-leak.spec.ts:110:3 › Memory Leak Detection › IndexedDB connections closed properly
+[14/42] [chromium] › e2e/memory-leak.spec.ts:84:3 › Memory Leak Detection › timers and intervals cleared on unmount
+[15/42] [chromium] › e2e/memory-leak.spec.ts:135:3 › Memory Leak Detection › BroadcastChannel closed on unmount
+[16/42] [chromium] › e2e/memory-leak.spec.ts:164:3 › Memory Leak Detection › memory usage stable under load
+[17/42] [chromium] › e2e/memory-leak.spec.ts:207:3 › Offline Storage Persistence › navigator.storage.persist() prevents eviction
+[18/42] [chromium] › e2e/memory-leak.spec.ts:222:3 › Offline Storage Persistence › storage estimate available
+[19/42] [chromium] › e2e/network-error-handling.spec.ts:10:3 › Network Error Handling Scenarios › app loads successfully with slow network (3G)
+[20/42] [chromium] › e2e/network-error-handling.spec.ts:34:3 › Network Error Handling Scenarios › app handles complete network disconnection gracefully
+[21/42] [chromium] › e2e/network-error-handling.spec.ts:48:3 › Network Error Handling Scenarios › app handles intermittent network failures
+[22/42] [chromium] › e2e/network-error-handling.spec.ts:64:3 › Network Error Handling Scenarios › fetch to missing endpoint returns handled error
+[23/42] [chromium] › e2e/network-error-handling.spec.ts:82:3 › Network Error Handling Scenarios › WebSocket connection failure is handled gracefully
+[24/42] [chromium] › e2e/network-perf.spec.ts:157:3 › Network Performance & Sync Loop Detection › detect sync loops, icon loops, and excessive network activity
+[25/42] [chromium] › e2e/offline-state-corruption.spec.ts:10:3 › Deep Edge Cases — Offline State Corruption & Recovery › IndexedDB corruption is handled gracefully — app does not crash on load
+[26/42] [chromium] › e2e/offline-state-corruption.spec.ts:47:3 › Deep Edge Cases — Offline State Corruption & Recovery › app survives localStorage quota exceeded gracefully
+[27/42] [chromium] › e2e/offline-state-corruption.spec.ts:65:3 › Deep Edge Cases — Offline State Corruption & Recovery › sessionStorage does not survive new tab
+[chromium] › e2e/network-perf.spec.ts:157:3 › Network Performance & Sync Loop Detection › detect sync loops, icon loops, and excessive network activity
+[MONITOR] Waiting 15s to capture baseline network activity...
+
+[28/42] [chromium] › e2e/offline-state-corruption.spec.ts:86:3 › Deep Edge Cases — Offline State Corruption & Recovery › multip
 ```
 
 ---
@@ -132,7 +183,8 @@ QA-05 benchmark: fetchStripeOverview p95=0.00ms avg=0.00ms over 100 iterations
 
 | Metric | Valor |
 |---|---|
-
+| Passou | 1 |
+| Falhou | 0 |
 
 ---
 
@@ -154,4 +206,4 @@ Nenhum relatorio admin gerado.
 
 | Data | Correcao | Commit |
 |------|----------|--------|
-| 2026-08-06 01:17 UTC | CI report gerado automaticamente | `cb8b757f3df655d800b1745ba34d4ec4ec918213` |
+| 2026-08-06 01:43 UTC | CI report gerado automaticamente | `888fb2947255911742b352a8fec429daba19bf72` |
