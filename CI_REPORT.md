@@ -1,7 +1,7 @@
 # CI Report
 
-**Gerado:** 2026-08-06 00:47 UTC
-**Commit:** `ee4e5aab968e4873f2f1548f902f79ed64e1bd0d`
+**Gerado:** 2026-08-06 01:17 UTC
+**Commit:** `cb8b757f3df655d800b1745ba34d4ec4ec918213`
 **Branch:** `main`
 
 ---
@@ -31,15 +31,15 @@
 ## Test Results (ultimas 40 linhas)
 
 ```
-12:36:59 AM [vite] warning: `esbuild` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `oxc` instead.
-12:36:59 AM [vite] warning: `optimizeDeps.esbuildOptions` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `optimizeDeps.rolldownOptions` instead.
+1:14:19 AM [vite] warning: `esbuild` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `oxc` instead.
+1:14:19 AM [vite] warning: `optimizeDeps.esbuildOptions` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `optimizeDeps.rolldownOptions` instead.
 Both esbuild and oxc options were set. oxc options will be used and esbuild options will be ignored. The following esbuild options were set: `{ jsx: 'automatic', jsxImportSource: undefined }`
 
  RUN  v4.1.10 /home/runner/work/Financia/Financia
 
- ✓ src/lib/stripe-webhook.integration.test.js (11 tests) 33ms
- ✓ src/test/utils.test.js (141 tests) 68ms
- ✓ src/lib/stripe-subscription-cycle.integration.test.js (13 tests) 31ms
+ ✓ src/lib/stripe-subscription-cycle.integration.test.js (13 tests) 33ms
+ ✓ src/lib/stripe-webhook.integration.test.js (11 tests) 30ms
+ ✓ src/test/utils.test.js (141 tests) 62ms
  ❯ src/lib/sync-extra.test.js (0 test)
 stderr | src/lib/sync.test.js > fetchClients > retorna array vazio no erro
 [sync] fetchClients failed: Error: x
@@ -81,17 +81,17 @@ stderr | src/lib/sync.test.js > fetchStripeOverview > retorna null na exception
     at [90mfile:///home/runner/work/Financia/Financia/[39mnode_modules/[4m@vitest/runner[24m/dist/chunk-artifact.js:2955:64
 
 stdout | src/lib/sync.test.js > benchmarks > QA-04: syncAll 10k rows < 5s (benchmark)
-QA-04 benchmark: syncAll took 0.24ms
+QA-04 benchmark: syncAll took 0.21ms
 
 stdout | src/lib/sync.test.js > benchmarks > QA-05: admin-stripe-overview p95 < 2s (100 subs with cursor pagination)
-QA-05 benchmark: fetchStripeOverview p95=0.01ms avg=0.00ms over 100 iterations
+QA-05 benchmark: fetchStripeOverview p95=0.00ms avg=0.00ms over 100 iterations
 
- ✓ src/lib/sync.test.js (33 tests) 59ms
- ✓ src/test/constants.test.js (95 tests) 42ms
- ✓ src/shared/hooks/useBrandAppearance.extra.test.js (18 tests) 66ms
- ✓ src/features/auth/useSession.test.js (11 tests) 70ms
- ✓ src/shared/hooks/useDataLoader.test.js (10 tests) 55ms
- ❯ src/shared/hooks/useBrandAppearance.test.js (19 tests | 
+ ✓ src/lib/sync.test.js (33 tests) 44ms
+ ✓ src/test/constants.test.js (95 tests) 37ms
+ ✓ src/shared/hooks/useBrandAppearance.extra.test.js (18 tests) 54ms
+ ✓ src/features/auth/useSession.test.js (11 tests) 100ms
+ ✓ src/shared/hooks/useBrandAppearance.test.js (19 tests) 95ms
+ ✓ src/shared/hooks/useDataLoader.test.js (10 tests) 57
 ```
 
 ---
@@ -154,4 +154,4 @@ Nenhum relatorio admin gerado.
 
 | Data | Correcao | Commit |
 |------|----------|--------|
-| 2026-08-06 00:47 UTC | CI report gerado automaticamente | `ee4e5aab968e4873f2f1548f902f79ed64e1bd0d` |
+| 2026-08-06 01:17 UTC | CI report gerado automaticamente | `cb8b757f3df655d800b1745ba34d4ec4ec918213` |
