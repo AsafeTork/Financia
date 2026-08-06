@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import React from 'react';
-import { renderToString } from 'react-dom/server';
+import { render, screen, waitFor } from '@testing-library/react';
 
 vi.mock('react-router-dom', () => ({
   Routes: function({ children }) { return React.createElement('div', { 'data-testid': 'routes' }, children); },
@@ -31,7 +31,9 @@ vi.mock('../App/contexts/AppContext.jsx', () => ({
 }));
 
 vi.mock('../App/components/LazyPage.jsx', () => ({
-  default: function LazyPage({ children }) { return React.createElement('div', null, children); }
+  default: function LazyPage({ children }) {
+    return React.createElement(React.Suspense, { fallback: null }, children);
+  }
 }));
 
 vi.mock('../features/dashboard/Dashboard.jsx', () => ({
@@ -59,17 +61,6 @@ vi.mock('../features/branding/BrandStudioView.jsx', () => ({
   default: function BrandStudioView() { return React.createElement('div', { 'data-testid': 'brandstudio' }); }
 }));
 
-vi.mock('react', async () => {
-  const actual = await vi.importActual('react');
-  return {
-    ...actual,
-    lazy: (factory) => {
-      const mod = factory();
-      return mod.default || mod;
-    },
-  };
-});
-
 async function loadAppRoutes() {
   const mod = await import('./routes.jsx');
   return mod.default;
@@ -78,20 +69,32 @@ async function loadAppRoutes() {
 describe('AppRoutes', () => {
   it('renders dashboard on default route (/)', async () => {
     const AppRoutes = await loadAppRoutes();
-    const tree = renderToString(React.createElement(AppRoutes));
-    expect(tree).toContain('data-testid="dashboard"');
+    render(React.createElement(AppRoutes));
+    await waitFor(() => {
+      expect(screen.getByTestId('dashboard')).toBeTruthy();
+    });
   });
 
-  it('renders inside LazyPage wrapper', async () => {
+  it('wraps content in LazyPage', async () => {
     const AppRoutes = await loadAppRoutes();
-    const tree = renderToString(React.createElement(AppRoutes));
-    expect(tree).toContain('dashboard');
+    const { container } = render(React.createElement(AppRoutes));
+    await waitFor(() => {
+      expect(container.querySelector('[data-testid="dashboard"]')).toBeTruthy();
+    });
   });
 
   it('rendering is deterministic for identical context values', async () => {
     const AppRoutes = await loadAppRoutes();
-    const tree1 = renderToString(React.createElement(AppRoutes));
-    const tree2 = renderToString(React.createElement(AppRoutes));
-    expect(tree1).toBe(tree2);
+    const { container: c1 } = render(React.createElement(AppRoutes));
+    await waitFor(() => {
+      expect(c1.querySelector('[data-testid="dashboard"]')).toBeTruthy();
+    });
+    const t1 = c1.innerHTML;
+    const { container: c2 } = render(React.createElement(AppRoutes));
+    await waitFor(() => {
+      expect(c2.querySelector('[data-testid="dashboard"]')).toBeTruthy();
+    });
+    const t2 = c2.innerHTML;
+    expect(t1).toBe(t2);
   });
 });

@@ -92,7 +92,8 @@ describe('Sync E2E', () => {
     };
 
     await ldb.transactions.put(tx);
-    await ldb.transactions.update('sync-test-1', { _synced: 1 });
+    const record = await ldb.transactions.get('sync-test-1');
+    await ldb.transactions.put({ ...record, _synced: 1 });
 
     const updated = await ldb.transactions.get('sync-test-1');
     expect(updated._synced).toBe(1);
@@ -114,7 +115,8 @@ describe('Sync E2E', () => {
     };
 
     await ldb.transactions.put(tx);
-    await ldb.transactions.update('delete-test-1', { _deleted: 1, _synced: 0 });
+    const record = await ldb.transactions.get('delete-test-1');
+    await ldb.transactions.put({ ...record, _deleted: 1, _synced: 0 });
 
     const deleted = await ldb.transactions.get('delete-test-1');
     expect(deleted._deleted).toBe(1);

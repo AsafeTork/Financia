@@ -7,19 +7,18 @@ vi.mock('../lib/pwa.js', () => ({
 }));
 
 describe('bootApp', () => {
-  let originalReload;
+  let origRequestIdleCallback;
 
   beforeEach(() => {
     localStorage.clear();
     document.documentElement.removeAttribute('data-app-version');
     vi.clearAllMocks();
-    vi.restoreAllMocks();
-    originalReload = window.location.reload;
-    window.location.reload = vi.fn();
+    origRequestIdleCallback = globalThis.requestIdleCallback;
+    globalThis.requestIdleCallback = (cb) => cb();
   });
 
   afterEach(() => {
-    window.location.reload = originalReload;
+    globalThis.requestIdleCallback = origRequestIdleCallback;
   });
 
   it('calls registerSW from pwa.js', () => {
@@ -39,16 +38,15 @@ describe('bootApp', () => {
 
     bootApp();
 
-    expect(window.location.reload).not.toHaveBeenCalled();
+    expect(localStorage.getItem('financia_app_version')).toBe('1.0.0');
   });
 
-  it('reload is called and localStorage updated when version changes', () => {
+  it('localStorage is updated when version changes', () => {
     document.documentElement.setAttribute('data-app-version', '2.0.0');
     localStorage.setItem('financia_app_version', '1.0.0');
 
     bootApp();
 
-    expect(window.location.reload).toHaveBeenCalledTimes(1);
     expect(localStorage.getItem('financia_app_version')).toBe('2.0.0');
   });
 

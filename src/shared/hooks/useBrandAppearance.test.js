@@ -23,6 +23,8 @@ beforeEach(function() {
   mockBrandAlpha.mockClear();
   mockDeriveCores.mockClear();
   mockSetProperty.mockClear();
+  document.documentElement.removeAttribute('data-theme');
+  document.documentElement.style.cssText = '';
   vi.stubGlobal('localStorage', {
     getItem: vi.fn(function(k) { return lsData[k] || null; }),
     setItem: vi.fn(function(k, v) { lsData[k] = v; }),
@@ -37,6 +39,7 @@ beforeEach(function() {
 
 afterEach(function() {
   vi.useRealTimers();
+  vi.unstubAllGlobals();
 });
 
 function makeBrand(overrides) {
@@ -147,26 +150,26 @@ describe('useBrandAppearance', function() {
     expect(result.current.effectiveTheme).toBe('dark');
   });
 
-  it('toggleTheme switches from light to dark and saves', function() {
+  it('toggleTheme switches from light to dark and saves', async function() {
     vi.useFakeTimers();
     const brand = makeBrand({ white_label: true, custom_palette: true, theme: 'light' });
     const { result } = renderHook(function() { return useBrandAppearance(brand, makePlanInfo()); });
-    act(function() { result.current.toggleTheme(); vi.runAllTimers(); });
+    await act(async function() { result.current.toggleTheme(); vi.advanceTimersByTime(1); });
     expect(result.current.themePref).toBe('dark');
     expect(result.current.effectiveTheme).toBe('dark');
     expect(lsData['financia_theme']).toBe('dark');
-    act(function() { result.current.toggleTheme(); vi.runAllTimers(); });
+    await act(async function() { result.current.toggleTheme(); vi.advanceTimersByTime(1); });
     expect(result.current.themePref).toBe('light');
     vi.useRealTimers();
   });
 
-  it('toggleTheme returns previous themePref for null start', function() {
+  it('toggleTheme returns previous themePref for null start', async function() {
     vi.useFakeTimers();
     const brand = makeBrand({ white_label: true, custom_palette: true, theme: 'light' });
     const { result } = renderHook(function() { return useBrandAppearance(brand, makePlanInfo()); });
-    act(function() { result.current.toggleTheme(); vi.runAllTimers(); });
-    act(function() { result.current.toggleTheme(); vi.runAllTimers(); });
-    act(function() { result.current.toggleTheme(); vi.runAllTimers(); });
+    await act(async function() { result.current.toggleTheme(); vi.advanceTimersByTime(1); });
+    await act(async function() { result.current.toggleTheme(); vi.advanceTimersByTime(1); });
+    await act(async function() { result.current.toggleTheme(); vi.advanceTimersByTime(1); });
     expect(result.current.themePref).toBe('dark');
     vi.useRealTimers();
   });
