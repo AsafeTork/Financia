@@ -1,165 +1,72 @@
----
-type: REFERENCE
----
-
 # Índice da Documentação — Financia
 
 > Navegação única para toda a documentação do projeto.
-> Atualizado em: 2026-07-20
+> Reorganizado em: **2026-08-05**
 
----
+──────────────────────────────────────
 
-## Documentos de Governança (WORKING — Fonte Oficial)
-
-| Documento | Descrição | Status |
-|-----------|-----------|--------|
-| `../CLAUDE.md` | Protocolo global de agentes. Regra suprema do workspace. | ✅ Vigente |
-| `WORKSPACE.md` | Orquestração viva: fases, stack, estrutura, estado atual | ✅ APPROVED |
-| `EXECUTOR_PROMPT.md` | Prompt universal do Executor (v2.1) | ✅ APPROVED |
-| `EXECUTION_STATE.md` | Checkpoint tracking de todas as execuções | ✅ APPROVED |
-| `IMPLEMENTATION_ORDER.md` | Ordem de implementação por fase | ✅ APPROVED |
-| `SCRATCH_PAD.md` | Backup de estado para recuperação entre modelos | ✅ APPROVED |
-| `CHANGELOG_AI.md` | Registro imutável de mudanças dos agentes | 📝 DRAFT |
-| `ARCHITECTURE/MASTER_REFACTOR_PLAN.md` | Plano mestre de refatoração | 📝 DRAFT |
-| `VALIDATION_MODULE.md` | Regras de validação de checkpoint | 📝 DRAFT |
-| `CHECKPOINT_AUDITOR.md` | Auditoria de checkpoints | 📝 DRAFT |
-| `BRANDING_DIAGNOSTICO.md` | Diagnóstico da área de Branding | ✅ APPROVED |
-| `Banco/ESPECIALISTA_BANCO.md` | Diagnóstico do banco de dados | ✅ APPROVED |
-| `QA/QA_ANALYSIS.md` | Análise de QA | ✅ APPROVED |
-
-## Arquitetura e Referência Técnica (REFERENCE)
+## Governança (leia primeiro)
 
 | Documento | Descrição |
 |-----------|-----------|
-| `ARCHITECTURE.md` | Manual técnico completo do sistema |
-| `ai/AI_BRAND_SCHEMA.md` | Schema de branding para AI (formato modular) |
-| `ai/AI_BEST_PRACTICES.md` | Boas práticas para agentes AI |
+| `../AGENTS.md` | **Protocolo canônico v3.1** (padrão agents.md) — regras supremas |
+| `../CLAUDE.md` | Ponteiro para AGENTS.md (compatibilidade Claude Code) |
+| `../supabase/AGENTS.md` | Regras aninhadas de Edge Functions/migrations/RLS |
+| `WORKSPACE.md` | **Estado vivo** — o que está feito, backlog priorizado |
+| `AGENT_GUIDE.md` | Manual operacional: verificação-first, subagentes, evidências |
+| `DECISIONS.md` | Registro de decisões arquiteturais (ADR-lite, append-only) |
+
+## Referência Técnica
+
+| Documento | Descrição |
+|-----------|-----------|
+| `../README.md` | Visão humana do projeto, arquitetura, screenshots |
+| `ARCHITECTURE.md` | Manual técnico do sistema |
+| `CI_CD.md` | Pipeline GitHub Actions + deploy Render |
+| `DEPLOY_SECRETS.md` | Segredos e variáveis de ambiente |
+| `CHANGELOG.md` | Changelog humano por release |
+| `../VISUAL_IDENTITY.md` | Fonte oficial da identidade visual |
+| `../CANVA_AI_PROMPT.md` | Prompt Canva AI para assets de marca |
+| `../CI_REPORT.md` | Relatório de CI (gerado automaticamente — não editar) |
 | `UX-AUDIT-REFERENCE.md` | Padrões e referências de UX |
 | `testing-strategy-research.md` | Pesquisa de estratégia de testes |
+| `ai/AI_BRAND_SCHEMA.md` | Schema JSON do Brand Studio para AI |
+| `ai/AI_BEST_PRACTICES.md` | Boas práticas para agentes AI |
 
-## Relatórios por Área (REPORT)
+## Relatórios por Área
 
-### Banco de Dados
+| Área | Documentos |
+|------|-----------|
+| **Backend** | `Backend/REPORT_FINANCIA_BACKEND.md` |
+| **Banco** | `Banco/ESPECIALISTA_BANCO.md`, `SCHEMA_REPORT.md`, `PERFORMANCE_REPORT.md`, `I1_DB_PULL_INSTRUCTIONS.md` |
+| **Frontend** | `Frontend/FRONTEND_SPECIALIST_AUDIT.md`, `FASE4_FRONTEND_REPORT.md` |
+| **QA** | `QA/QA_ANALYSIS.md`, `FUNCTIONAL_AUDIT.md`, `STRESS_AUDIT.md` |
+| **Segurança** | `Seguranca/SECURITY_AUDIT_REPORT.md`, `SECURITY_MASTER_AUDIT.md` |
+| **Performance** | `Performance/PERFORMANCE_AUDIT_REPORT.md` ⭐ backlog atual, `PERFORMANCE_ANALYSIS.md`, `PERF_TEST_REPORT.md`, `VALIDATION_OPTIMIZATION_REPORT.md`, `PLANO_OTIMIZACAO_VALIDACAO.md` |
+| **UX** | `UX/UX_UI_AUDIT_REPORT.md` ⭐ backlog atual |
+| **Infraestrutura** | `Infrastructure/CODESPACES_MIGRATION_PLAN.md`, `CODESPACES_RUNBOOK.md` |
 
-| Documento | Descrição |
-|-----------|-----------|
-| `Banco/SCHEMA_REPORT.md` | Schema do banco |
-| `Banco/PERFORMANCE_REPORT.md` | Performance de queries |
-| `Banco/I1_DB_PULL_INSTRUCTIONS.md` | Instruções para db pull |
+⭐ = audits de 2026-08-05 que alimentam o backlog em `WORKSPACE.md`.
 
-### Frontend
+## Arquivo Morto (`archive/`)
 
-| Documento | Descrição |
-|-----------|-----------|
-| `Frontend/FASE4_FRONTEND_REPORT.md` | Relatório da Fase 4 (Frontend) |
-| `Frontend/FRONTEND_SPECIALIST_AUDIT.md` | Auditoria especialista Frontend |
+> Histórico preservado. **Nunca usar para decisões atuais.**
 
-### QA e Performance
+| Subpasta | Conteúdo |
+|----------|----------|
+| `archive/governance/` | Governança v2: EXECUTION_STATE, SCRATCH_PAD, VALIDATION_MODULE, CHECKPOINT_AUDITOR, CHANGELOG_AI, EXECUTOR_PROMPT(s), IMPLEMENTATION_ORDER, ROADMAP/BACKLOG_ATUALIZADO, STATUS, MASTER_REFACTOR_PLAN |
+| `archive/ci-debug/` | Depuração pontual de CI: validator_*, ci_*, lockfile_validator, CI_CD_DIAGNOSTIC_REPORT, render_build_audit, CI_ERRORS |
+| `archive/audits/` | Auditorias superadas: AUDITORIA_GERAL, DOCUMENTATION_*, BRANDING_DIAGNOSTICO, AI_BRAND_SCHEMA (raiz) |
+| `archive/releases/` | Releases passadas: PRODUCTION_REPORT/STATUS, INCIDENT_REPORT, FIX_REPORT, RELEASE_CHECKLIST, TEST_COVERAGE_DELIVERY, BRANDING_FIX_REPORT |
+| `archive/etapas/` | IMPLEMENTACAO_ETAPA_1/2/3/5 |
+| `archive/ARCHITECTURE/`, `archive/ai/`, raiz de `archive/` | Documentos do refactor/v2 e visão inicial |
 
-| Documento | Descrição |
-|-----------|-----------|
-| `QA/FUNCTIONAL_AUDIT.md` | Auditoria funcional |
-| `QA/STRESS_AUDIT.md` | Auditoria de stress |
-| `Performance/VALIDATION_OPTIMIZATION_REPORT.md` | Otimização de validação |
-| `Performance/PLANO_OTIMIZACAO_VALIDACAO.md` | Plano de otimização de validação (português) |
+──────────────────────────────────────
 
-### Segurança
+## Regras de Higiene (resumo do AGENTS.md §6)
 
-| Documento | Descrição |
-|-----------|-----------|
-| `Seguranca/SECURITY_MASTER_AUDIT.md` | Auditoria de segurança |
-
-### Operações
-
-| Documento | Descrição |
-|-----------|-----------|
-| `Infrastructure/CODESPACES_MIGRATION_PLAN.md` | Plano de migração Codespaces |
-| `Infrastructure/CODESPACES_RUNBOOK.md` | Runbook Codespaces |
-
-## Relatórios Gerais (REPORT — raiz de docs/)
-
-| Documento | Descrição |
-|-----------|-----------|
-| `PRODUCTION_REPORT.md` | Relatório de produção v5.2.0 |
-| `FIX_REPORT.md` | Correção arquitetural (RLS + grants) |
-| `INCIDENT_REPORT.md` | Incidente de produção (salvamento bloqueado) |
-| `RELEASE_CHECKLIST.md` | Checklist de release v5.1.0 |
-| `DOCUMENTATION_CONSISTENCY_AUDIT.md` | Auditoria de consistência documental |
-| `DOCUMENTATION_RECONCILIATION_REPORT.md` | Relatório de reconciliação documental |
-| `BACKLOG_ATUALIZADO.md` | Backlog atual do projeto |
-| `ROADMAP_ATUALIZADO.md` | Roadmap atual |
-| `CHANGELOG.md` | Changelog do projeto (humano) |
-| `AUDITORIA_GERAL.md` | **Esta auditoria** |
-| `IMPLEMENTACAO_ETAPA_1.md` | Relatório da Etapa 1 (limpeza da raiz) |
-| `IMPLEMENTACAO_ETAPA_2.md` | Relatório da Etapa 2 (eliminar duplicatas) |
-| `IMPLEMENTACAO_ETAPA_3.md` | Relatório da Etapa 3 (arquivar deprecados) |
-| `IMPLEMENTACAO_ETAPA_5.md` | Relatório da Etapa 5 (atualizar referências) |
-
-## Skills de Agente (.agents/skills/)
-
-| Skill | Descrição |
-|-------|-----------|
-| `brandkit` | Geração de brand kit premium |
-| `code-simplifier` | Simplificação de código |
-| `design-taste-frontend` | Frontend com bom gosto visual |
-| `full-output-enforcement` | Geração completa sem truncamento |
-| `gpt-taste` | UX/UI + GSAP Motion |
-| `high-end-visual-design` | Design visual de alto nível |
-| `image-to-code` | Imagem para código |
-| `imagegen-frontend-web` | Geração de imagens web |
-| `imagegen-frontend-mobile` | Geração de imagens mobile |
-| `industrial-brutalist-ui` | UI industrial brutalista |
-| `minimalist-ui` | UI minimalista |
-| `redesign-existing-projects` | Redesign de projetos existentes |
-| `stitch-design-taste` | Semantic Design System para Google Stitch |
-
-## Arquivo Morto (docs/archive/)
-
-> Documentos históricos mantidos para referência. Não utilizar para decisões atuais.
-
-- `ARCHITECTURE/` — 8 documentos de arquitetura da fase refactor/v2
-- `ai/` — 4 documentos de especificação AI antigos
-- `01_PRODUCT_VISION.md` — visão inicial do refactor/v2 (obsoleto)
-- `BRANDING_MASTER_AUDIT.md` — auditoria antiga, substituída por BRANDING_DIAGNOSTICO.md
-- `DATABASE_MASTER_AUDIT.md` — auditoria antiga, substituída por docs/Banco/
-- `DESIGN_SYSTEM_AUDIT.md` — auditoria antiga do design system
-- `FRONTEND_MASTER_AUDIT.md` — auditoria antiga, substituída por docs/Frontend/
-- `IMPLEMENTATION_BACKLOG.md` — backlog PHASE 0-10 antigo
-- `MASTER_REFACTOR_PLAN.md` — plano antigo da raiz, substituído por docs/ARCHITECTURE/MASTER_REFACTOR_PLAN.md
-- `MATRIZ_CONSOLIDACAO.md` — matriz de consolidação do refactor/v2
-- `QA_MASTER_AUDIT.md` — auditoria antiga, substituída por docs/QA/
-- `ROADMAP.md` — roadmap PHASE 0-10 antigo
-- `UX_MASTER_AUDIT.md` — auditoria antiga, substituída por UX-AUDIT-REFERENCE.md
-- `PROMPT_UNIVERSAL.md` — deprecado, substituído por EXECUTOR_PROMPT.md
-- `AI_CONTEXT.md` — deprecado, conteúdo incorporado ao CLAUDE.md
-
----
-
-## Mapa de Dependências
-
-```
-CLAUDE.md (supremo)
-  └── WORKSPACE.md (orquestração)
-        ├── EXECUTOR_PROMPT.md (execução)
-        ├── IMPLEMENTATION_ORDER.md (fases)
-        ├── EXECUTION_STATE.md (checkpoints)
-        ├── SCRATCH_PAD.md (backup)
-        ├── VALIDATION_MODULE.md (validação)
-        ├── CHECKPOINT_AUDITOR.md (auditoria)
-        ├── CHANGELOG_AI.md (histórico)
-        ├── BRANDING_DIAGNOSTICO.md (branding)
-        ├── Banco/ESPECIALISTA_BANCO.md (banco)
-        └── QA/QA_ANALYSIS.md (qualidade)
-              └── Documentos REPORT (relatórios por área)
-```
-
----
-
-## Legenda de Status
-
-| Status | Significado |
-|--------|-------------|
-| ✅ APPROVED | Aprovado, pronto para integração |
-| 📝 DRAFT | Em elaboração, não usar como fonte oficial |
-| 🔄 REVIEW | Em revisão |
-| 📜 ARCHIVE | Histórico, não usar |
+1. Report novo → subpasta da área, nunca na raiz
+2. Trabalho concluído sem valor decisório → `archive/`
+3. Um assunto, um documento — sem duplicatas
+4. Moveu/arquivou doc → atualize este índice na mesma entrega
+5. Estado do projeto → só `WORKSPACE.md`; histórico → só `git log`

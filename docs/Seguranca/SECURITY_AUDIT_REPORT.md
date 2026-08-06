@@ -6,7 +6,7 @@ version: 1.0
 reviewed_by: subagente-seguranca
 ready_for_integration: true
 last_review: 2026-07-31
-dependencies: [CLAUDE.md, REPORT_FINANCIA_BACKEND.md, Banco/ESPECIALISTA_BANCO.md, render.yaml, src/lib/supabase.js]
+dependencies: [CLAUDE.md, Backend/REPORT_FINANCIA_BACKEND.md, Banco/ESPECIALISTA_BANCO.md, render.yaml, src/lib/supabase.js]
 next_review: 2026-08-31
 ---
 
