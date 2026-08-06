@@ -631,11 +631,39 @@ jobs:
           )
           curl -s -H "Content-Type: application/json" -d "$PAYLOAD" "${SLACK_WEBHOOK_URL}" || true
 
+  docs-health-check:
+    name: Docs Health Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Run docs health check
+        run: node scripts/docs-health-check.cjs
+
+  docs-drift-check:
+    name: Docs Drift Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Run docs drift check
+        run: node scripts/docs-drift-check.js
+
   deploy-render:
     name: Deploy to Render
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    needs: [lint-typecheck, unit-tests, build, security-audit, production-audit, admin-audit, e2e, integration-tests]
+    needs: [lint-typecheck, unit-tests, build, security-audit, production-audit, admin-audit, e2e, integration-tests, docs-health-check, docs-drift-check]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
       - name: Trigger Render Deploy
