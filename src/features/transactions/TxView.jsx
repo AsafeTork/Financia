@@ -267,7 +267,7 @@ export default React.memo(function TxView({ type, tx, products, onAdd, onEdit, o
                     var item = flatRows[virtualItem.index];
                     if (item.type === 'header') {
                       return (
-                        <div key={item.date} style={{ position: 'absolute', top: 0, left: 0, width: '100%', transform: 'translateY(' + virtualItem.start + 'px)' }}>
+                        <div role="listitem" key={item.date} style={{ position: 'absolute', top: 0, left: 0, width: '100%', transform: 'translateY(' + virtualItem.start + 'px)' }}>
                           <TransactionGroupHeader date={item.date} total={item.total} type={type} brand={brand}/>
                         </div>
                       );
@@ -276,7 +276,7 @@ export default React.memo(function TxView({ type, tx, products, onAdd, onEdit, o
                     var rowIndex = item.rowIndex;
                     var isEditing = editItem && editItem.id === t.id;
                     return (
-                      <div key={t.id} style={{ position: 'absolute', top: 0, left: 0, width: '100%', transform: 'translateY(' + virtualItem.start + 'px)' }}>
+                      <div role="listitem" key={t.id} style={{ position: 'absolute', top: 0, left: 0, width: '100%', transform: 'translateY(' + virtualItem.start + 'px)' }}>
                         <TransactionCard
                           transaction={t}
                           type={type}
