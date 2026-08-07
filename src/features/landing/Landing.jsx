@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useScrollReveal } from '../../shared/hooks/useScrollReveal.js';
 import { fmt } from '../../lib/utils.js';
 import { waLink, PRICING_PLANS } from '../../lib/constants.js';
 
@@ -79,13 +78,21 @@ const FAQ = [
 
 export default function Landing({ onEnter, onNav }) {
   const waLinkUrl = waLink('Quero conhecer o Financia para o meu negocio.');
-  const statsRef = useScrollReveal();
-  const dashRef = useScrollReveal();
-  const txRef = useScrollReveal();
-  const featRef = useScrollReveal();
-  const priceRef = useScrollReveal();
-  const faqRef = useScrollReveal();
-  const ctaRef = useScrollReveal();
+  // TEMP: Disable useScrollReveal to isolate error
+  // const statsRef = useScrollReveal();
+  // const dashRef = useScrollReveal();
+  // const txRef = useScrollReveal();
+  // const featRef = useScrollReveal();
+  // const priceRef = useScrollReveal();
+  // const faqRef = useScrollReveal();
+  // const ctaRef = useScrollReveal();
+  const statsRef = useRef(null);
+  const dashRef = useRef(null);
+  const txRef = useRef(null);
+  const featRef = useRef(null);
+  const priceRef = useRef(null);
+  const faqRef = useRef(null);
+  const ctaRef = useRef(null);
 
   const [users] = useCountUp(2800, 1200);
   const [rating] = useCountUp(95, 1000);
