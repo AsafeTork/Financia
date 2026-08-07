@@ -1,7 +1,7 @@
 # CI Report
 
-**Gerado:** 2026-08-07 19:48 UTC
-**Commit:** `b542d8a13cc7f205f9fdf9e2139727faddc2159f`
+**Gerado:** 2026-08-07 19:56 UTC
+**Commit:** `a3fe79d49918e9b06321e04d74424a06383e0ee7`
 **Branch:** `main`
 
 ---
@@ -37,6 +37,9 @@
 /home/runner/work/Financia/Financia/src/routes/routes.jsx
   52:19  error  'useCallback' is not defined  no-undef
 
+/home/runner/work/Financia/Financia/src/shared/GlobalErrorBoundary.jsx
+  22:17  error  Empty block statement  no-empty
+
 /home/runner/work/Financia/Financia/src/shared/hooks/usePullToRefresh.js
   102:55  warning  The ref value 'rafRef.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'rafRef.current' to a variable inside the effect, and use that variable in the cleanup function  react-hooks/exhaustive-deps
 
@@ -59,7 +62,7 @@
 /home/runner/work/Financia/Financia/src/shared/ui/CommandPalette.jsx
   1:55  warning  'useCallback' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
 
-✖ 15 problems (1 error, 14 warnings)
+✖ 16 problems (2 errors, 14 warnings)
 
 
 ```
@@ -132,4 +135,4 @@ Nenhum relatorio admin gerado.
 
 | Data | Correcao | Commit |
 |------|----------|--------|
-| 2026-08-07 19:48 UTC | CI report gerado automaticamente | `b542d8a13cc7f205f9fdf9e2139727faddc2159f` |
+| 2026-08-07 19:56 UTC | CI report gerado automaticamente | `a3fe79d49918e9b06321e04d74424a06383e0ee7` |
