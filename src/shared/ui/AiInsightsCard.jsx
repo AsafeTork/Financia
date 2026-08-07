@@ -69,8 +69,8 @@ export default React.memo(function AiInsightsCard({ mtx, ti, to, profitCurr, pro
           {!canUseAI ? (
             <div className="flex flex-col gap-3 relative">
               <div className="rounded-xl p-4 overflow-hidden" style={{background: 'var(--bg-subtle)', filter: 'blur(2px)', opacity: 0.5, pointerEvents: 'none'}}>
-                <p className="text-xs leading-relaxed" style={{color:'var(--text-muted)'}}>"Suas despesas com estoque subiram 15%. Considere renegociar com fornecedores para melhorar sua margem."</p>
-                <p className="text-xs leading-relaxed mt-1" style={{color:'var(--text-muted)'}}>"Seu ticket medio e de R$ 195 — aumentar para R$ 220 geraria +R$ 1.200/mes."</p>
+                <p className="text-xs leading-relaxed" style={{color:'var(--text-muted)'}}>&ldquo;Suas despesas com estoque subiram 15%. Considere renegociar com fornecedores para melhorar sua margem.&rdquo;</p>
+                <p className="text-xs leading-relaxed mt-1" style={{color:'var(--text-muted)'}}>&ldquo;Seu ticket medio e de R$ 195 — aumentar para R$ 220 geraria +R$ 1.200/mes.&rdquo;</p>
               </div>
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <span className="text-xs font-bold px-3 py-1 rounded-full" style={{background: brandAlpha(brand.color, 0.90), color: '#fff'}}>Disponivel no plano Pro</span>

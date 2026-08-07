@@ -144,13 +144,13 @@ export default function AdminPanel({ toast, confirm, session, brand }) {
       a.mrr += realPriceOf(c, ep);
       if (ep === 'premium') a.premium += 1;
     }
-    if (!!c.white_label) a.addon += 1;
+    if (c.white_label) a.addon += 1;
     if (c.created_at && String(c.created_at).slice(0, 7) === nowMonth) a.novos += 1;
     return a;
   }, { total: 0, pagantes: 0, premium: 0, free: 0, addon: 0, novos: 0, mrr: 0 });
   var mrr = stats.mrr;
   var centsBR = function(c) { return fmt((Number(c) || 0) / 100); };
-  const wlClients = clients.filter(function(c) { return !!c.white_label; });
+  const wlClients = clients.filter(function(c) { return c.white_label; });
 
   // Derivados do painel financeiro/infra.
   var dbBytes = dbStats && dbStats.db_bytes ? dbStats.db_bytes : 0;

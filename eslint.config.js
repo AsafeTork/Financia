@@ -7,7 +7,7 @@ import tseslint from 'typescript-eslint';
 var SRC = { files: ['src/**/*.{js,jsx,ts,tsx}'] };
 
 export default tseslint.config(
-  { ignores: ['dist/', 'node_modules/', 'src/test/gen/', 'supabase/', '*.config.*', 'src/features/branding/LogoSchemes.jsx'] },
+  { ignores: ['dist/', 'node_modules/', 'src/test/gen/', 'supabase/', '*.config.*'] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
@@ -26,12 +26,12 @@ export default tseslint.config(
       'no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': ['warn', { args: 'none', varsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' }],
       '@typescript-eslint/no-require-imports': 'off',
-      '@typescript-eslint/no-explicit-any': 'off',
-      '@typescript-eslint/no-unused-expressions': 'off',
+      '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/no-unused-expressions': 'error',
       'react/react-in-jsx-scope': 'off',
       'react/prop-types': 'off',
-      'no-extra-boolean-cast': 'off',
-      'react/no-unescaped-entities': 'off',
+      'no-extra-boolean-cast': 'error',
+      'react/no-unescaped-entities': 'error',
     },
   },
 );

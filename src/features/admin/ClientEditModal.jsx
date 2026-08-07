@@ -310,7 +310,7 @@ export default function ClientEditModal({ client, adminEmail, onSave, onClose, t
               style={{background: color}}>
               {aiLoading ? 'Gerando paleta...' : 'Gerar paleta com IA'}
             </button>
-            {aiRationale && <p className="text-xs italic text-gray-500">"{aiRationale}"</p>}
+            {aiRationale && <p className="text-xs italic text-gray-500">&ldquo;{aiRationale}&rdquo;</p>}
           </div>
 
           {/* Temas prontos por segmento */}

@@ -33,7 +33,7 @@ function reducer(state, action) {
     case 'SET_SEARCH':   return Object.assign({}, state, {search: action.v});
     case 'TOGGLE_COLLAPSE': {
       var n = new Set(state.collapsed);
-      n.has(action.v) ? n.delete(action.v) : n.add(action.v);
+      if (n.has(action.v)) { n.delete(action.v); } else { n.add(action.v); }
       return Object.assign({}, state, {collapsed: n});
     }
     case 'OPEN_PM':       return Object.assign({}, state, {pm: true, pf: INIT_PF});
