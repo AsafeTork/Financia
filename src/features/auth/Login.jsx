@@ -36,6 +36,8 @@ export default function Login({ brand, onNav }) {
   var [resetMode, setResetMode] = useState(false);
   var [resetEmail, setResetEmail] = useState('');
   var [resetSent, setResetSent] = useState(false);
+  var [emailError, setEmailError] = useState('');
+  var [passError, setPassError] = useState('');
 
   var emailRef = useRef(null);
   var suNameRef = useRef(null);
@@ -75,7 +77,10 @@ export default function Login({ brand, onNav }) {
   };
 
   var login = async function() {
-    if (!email || !pass) return;
+    var hasError = false;
+    if (!email) { setEmailError('Campo obrigatório'); hasError = true; } else setEmailError('');
+    if (!pass) { setPassError('Campo obrigatório'); hasError = true; } else setPassError('');
+    if (hasError) return;
     setLoading(true); setErr('');
     try {
       var res = await signIn(email, pass);
@@ -85,11 +90,13 @@ export default function Login({ brand, onNav }) {
   };
 
   var doSignup = async function() {
-    if (!suName.trim()) { setErr('Informe o nome da empresa ou o seu nome.'); return; }
-    if (!suEmail.trim()) { setErr('Informe o e-mail.'); return; }
-    if (!suPhone.valid) { setErr('Informe um telefone válido com DDD e código do país.'); return; }
-    if (pwSt.score < 2) { setErr('Escolha uma senha mais forte (8+ caracteres, com números e letras).'); return; }
-    if (!accept) { setErr('Você precisa aceitar as Políticas e os Termos de Uso para criar a conta.'); return; }
+    var hasError = false;
+    if (!suName.trim()) { setErr('Informe o nome da empresa ou o seu nome.'); hasError = true; }
+    if (!suEmail.trim()) { setEmailError('Campo obrigatório'); hasError = true; } else setEmailError('');
+    if (!suPhone.valid) { setErr('Informe um telefone válido com DDD e código do país.'); hasError = true; }
+    if (pwSt.score < 2) { setPassError('Senha muito fraca'); hasError = true; } else setPassError('');
+    if (!accept) { setErr('Você precisa aceitar as Políticas e os Termos de Uso para criar a conta.'); hasError = true; }
+    if (hasError) return;
     setLoading(true); setErr('');
     try {
       var res = await signUp(suEmail.trim(), suPass, { name: safe(suName), phone: (suPhone.e164 || '').replace(/\D/g, '') });
@@ -255,13 +262,17 @@ export default function Login({ brand, onNav }) {
               </div>
 
               {mode === 'signup' && (
-                <Inp ref={suNameRef} label="Nome da empresa ou seu nome" value={suName} onChange={function(e) { setSuName(e.target.value); }} placeholder="Ex: Padaria do João" />
+                <Inp ref={suNameRef} label="Nome da empresa ou seu nome" value={suName} onChange={function(e) { setSuName(e.target.value); setErr(''); }} placeholder="Ex: Padaria do João" />
               )}
 
               <Inp ref={emailRef} label="E-mail" type="email"
                 value={mode === 'login' ? email : suEmail}
-                onChange={function(e) { (mode === 'login' ? setEmail : setSuEmail)(e.target.value); }}
-                placeholder="seu@email.com" />
+                onChange={function(e) { 
+                  (mode === 'login' ? setEmail : setSuEmail)(e.target.value); 
+                  setEmailError('');
+                }}
+                placeholder="seu@email.com"
+                error={emailError} />
 
               {mode === 'signup' && (
                 <PhoneInput label="Telefone (com código do país)" value={suPhone.e164 || ''} onChange={setSuPhone} />
@@ -270,8 +281,12 @@ export default function Login({ brand, onNav }) {
               <div>
                 <Inp label="Senha" type="password"
                   value={mode === 'login' ? pass : suPass}
-                  onChange={function(e) { (mode === 'login' ? setPass : setSuPass)(e.target.value); }}
-                  placeholder={mode === 'login' ? 'Sua senha' : 'Crie uma senha forte'} />
+                  onChange={function(e) { 
+                    (mode === 'login' ? setPass : setSuPass)(e.target.value); 
+                    setPassError('');
+                  }}
+                  placeholder={mode === 'login' ? 'Sua senha' : 'Crie uma senha forte'}
+                  error={passError} />
                 {mode === 'signup' && suPass.length > 0 && (
                   <div className="mt-2">
                     <div className="h-1.5 rounded-full overflow-hidden" style={{ background: '#eceae3' }}>
