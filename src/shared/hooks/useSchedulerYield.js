@@ -20,7 +20,7 @@ export function useSchedulerYield() {
 }
 
 export function useChunkedMemo(factory, deps, chunkSize = 1000) {
-  const yieldToMain = useSchedulerYield();
+  useSchedulerYield();
   const cacheRef = useRef({ value: undefined, deps: null });
 
   const result = factory();
@@ -34,7 +34,7 @@ export function useChunkedMemo(factory, deps, chunkSize = 1000) {
 }
 
 export async function chunkedMap(items, mapper, options = {}) {
-  const { chunkSize = 100, yieldEvery = chunkSize, onProgress } = options;
+  const { chunkSize = 100, onProgress } = options;
   const results = new Array(items.length);
   let processed = 0;
 

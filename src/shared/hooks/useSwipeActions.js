@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback, useEffect } from 'react';
+import { useRef, useState, useCallback, useEffect, useMemo } from 'react';
 
 var THRESHOLD_PX = 80;
 var MAX_SWIPE_PX = 120;
@@ -6,7 +6,7 @@ var DRAG_DEADZONE = 3;
 
 export function useSwipeActions(options) {
   var opts = options || {};
-  var actions = opts.actions || [];
+  var actions = useMemo(function() { return opts.actions || []; }, [opts.actions]);
   var threshold = opts.threshold != null ? opts.threshold : THRESHOLD_PX;
   var maxSwipe = opts.maxSwipe != null ? opts.maxSwipe : MAX_SWIPE_PX;
 

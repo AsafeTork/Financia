@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useSwipeActions } from './useSwipeActions.js';
 
@@ -92,7 +92,7 @@ describe('useSwipeActions', function() {
   it('nao dispara onAction quando arrasto menor que threshold', function() {
     var onAction = vi.fn();
     var actions = [{ label: 'Delete', onAction: onAction, dir: 'left' }];
-    var { result, el } = setupHook(actions, { threshold: 80 });
+    var { result: _result, el } = setupHook(actions, { threshold: 80 });
     act(function() { el.dispatchEvent(touchStart(200)); });
     act(function() { el.dispatchEvent(touchMove(150)); });
     act(function() { el.dispatchEvent(touchEnd()); });
@@ -137,7 +137,7 @@ describe('useSwipeActions', function() {
   it('dispara acao direita para actions com dir right', function() {
     var onAction = vi.fn();
     var actions = [{ label: 'Archive', onAction: onAction, dir: 'right' }];
-    var { result, el } = setupHook(actions, { threshold: 30 });
+    var { result: _result, el } = setupHook(actions, { threshold: 30 });
     act(function() { el.dispatchEvent(touchStart(100)); });
     act(function() { el.dispatchEvent(touchMove(300)); });
     act(function() { el.dispatchEvent(touchEnd()); });
@@ -152,7 +152,7 @@ describe('useSwipeActions', function() {
       { label: 'Delete', onAction: leftAction, dir: 'left' },
       { label: 'Archive', onAction: rightAction, dir: 'right' },
     ];
-    var { result, el } = setupHook(actions, { threshold: 30 });
+    var { result: _result, el } = setupHook(actions, { threshold: 30 });
     act(function() { el.dispatchEvent(touchStart(200)); });
     act(function() { el.dispatchEvent(touchMove(50)); });
     act(function() { el.dispatchEvent(touchEnd()); });

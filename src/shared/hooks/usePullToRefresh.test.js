@@ -89,7 +89,7 @@ describe('usePullToRefresh', function() {
 
   it('nao dispara onRefresh quando solto antes do threshold', function() {
     var container = makeContainer();
-    var { result } = makeHook(container, onRefresh);
+    var { result: _result } = makeHook(container, onRefresh);
     act(function() { container.dispatchEvent(touchEvent('touchstart', 100)); });
     act(function() { container.dispatchEvent(touchEvent('touchmove', 140)); });
     act(function() { container.dispatchEvent(new Event('touchend', { bubbles: true })); });

@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useScrollReveal } from '../../shared/hooks/useScrollReveal.js';
 import { fmt } from '../../lib/utils.js';
 import { waLink, PRICING_PLANS } from '../../lib/constants.js';
 
@@ -95,8 +94,8 @@ export default function Landing({ onEnter, onNav }) {
   const faqRef = useRef(null);
   const ctaRef = useRef(null);
 
-  const [users] = useCountUp(2800, 1200);
-  const [rating] = useCountUp(95, 1000);
+  const [_users] = useCountUp(2800, 1200);
+  const [_rating] = useCountUp(95, 1000);
 
   // TEMP: Static values to test if useCountUp causes error
   // const [users] = [2800, null];

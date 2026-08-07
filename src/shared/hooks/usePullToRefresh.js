@@ -99,7 +99,9 @@ export function usePullToRefresh(onRefresh) {
     container.addEventListener('mouseleave', onPointerCancel);
 
     return function() {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      var rafId = rafRef.current;
+      if (rafId) cancelAnimationFrame(rafId);
       container.removeEventListener('touchstart', onPointerDown);
       container.removeEventListener('touchmove', onPointerMove);
       container.removeEventListener('touchend', onPointerUp);

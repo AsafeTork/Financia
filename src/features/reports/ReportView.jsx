@@ -1,4 +1,4 @@
-﻿import React, { useState, useMemo, useRef } from 'react';
+﻿import React, { useState, useMemo } from 'react';
 import { Card, PageHead } from '../../shared/ui/ui.jsx';
 import ExportButtons from '../../shared/ui/ExportButtons.jsx';
 import { fmt, fmtDate, monthLabel, today, brandAlpha } from '../../lib/utils.js';
@@ -12,7 +12,6 @@ export default React.memo(function ReportView({ tx, brand, toast, onNav, planInf
   var paid = effectivePlan(planInfo) !== 'free';
 
   var pr = usePullToRefresh(onRefresh);
-  var listRef = useRef(null);
 
   var curRealMonth = today().slice(0, 7);
   var allMonths = useMemo(function() {

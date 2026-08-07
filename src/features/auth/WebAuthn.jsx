@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Spin } from '../../shared/ui/ui.jsx';
 import { registerPasskey, signInWithPasskey, listPasskeys, deletePasskey, isWebAuthnSupported } from '../../lib/auth.js';
 
@@ -45,7 +45,6 @@ export default React.memo(function WebAuthn({ mode, brand, session, onSuccess, o
   var [status, setStatus] = useState('');
   var [error, setError] = useState('');
   var [passkeys, setPasskeys] = useState(null);
-  var [actionLabel, setActionLabel] = useState('');
 
   var brandColor = (brand && brand.color) || '#002f59';
 

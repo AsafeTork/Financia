@@ -10,16 +10,15 @@ export class GlobalErrorBoundary extends React.Component {
     return { hasError: true, error };
   }
 
-  componentDidCatch(error, errorInfo) {
-    console.error('[GlobalErrorBoundary]', error, errorInfo);
+componentDidCatch(error, _errorInfo) {
+    console.error('[GlobalErrorBoundary]', error);
     try {
       localStorage.setItem('financia_last_error', JSON.stringify({
         message: error?.message,
         stack: error?.stack,
-        componentStack: errorInfo?.componentStack,
         timestamp: new Date().toISOString()
       }));
-    } catch (e) {
+    } catch (_e) {
       // ignore localStorage errors
     }
   }
