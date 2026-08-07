@@ -86,7 +86,12 @@ REVOKE EXECUTE ON FUNCTION public.prevent_plan_change() FROM PUBLIC, anon, authe
 
 Proteção contra senhas vazadas (HaveIBeenPwned) está desligada. Usuários podem definir senhas que já vazaram.
 
-**Recomendação:** Ativar em Authentication → Settings → Bot Protection → Enable leaked password protection.
+**Status (2026-08-07):** Projeto no plano **Free** — funcionalidade **indisponível** (requer Pro Plan ou superior). Toggle "Prevent use of leaked passwords" fica desabilitado no Dashboard.
+
+**Recomendação:** 
+- **Curto prazo (Free plan):** Implementar validação de senha forte no client-side (mín. 12 chars, bloquear comuns como "password123") + rate limit login rigoroso
+- **Médio prazo:** Upgrade para Pro Plan → Ativar em Dashboard → Authentication → Password Security → "Prevent use of leaked passwords"
+- **Long term:** Adicionar MFA obrigatório para contas sensíveis (admin, billing)
 
 ---
 

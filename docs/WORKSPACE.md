@@ -87,14 +87,14 @@ Let me re-read the file; my edits may have created an odd overlap.
 
 ### P3 — Polish / Diferenciais
 
-- Onboarding wizard: existe (`src/shared/ui/Onboarding.jsx`) — **verificar contra P1 do audit UX** (um campo por tela, trust signals)
+- ~~Onboarding wizard: existe (`src/shared/ui/Onboarding.jsx`) — **verificar contra P1 do audit UX** (um campo por tela, trust signals)~~ ✅ — trust signals persistentes, skip preserva dados, ARIA label. Commit `405ffba`
 - ~~FAB quick capture: existe (`QuickActions.jsx`)~~ ✅ — FAB expandido para todas as telas principais (`report`, `settings`, `planos` adicionados a `SHOWN_VIEWS`); filtra ação "Configurações" na própria tela de settings. Commit `ebf3b18`
-- Focus rings padronizados (3px), card-padding token, dark mode em gráficos
-- Pull-to-refresh, swipe actions, command palette (⌘K), deep linking
-- WebAuthn/passkey (WCAG 3.3.8)
-- ~~Assets de logo (SVG, favicon, app icon) a partir do símbolo em `VISUAL_IDENTITY.md`~~ ✅ — `public/logo.svg` (logo principal horizontal: símbolo + wordmark Montserrat Bold Navy `#002F59`); PNGs do símbolo centrado + padded (maskable-safe) em `favicon-16/32/48.png`, `icon-192.png`, `icon-512.png`, `apple-touch-icon.png` (180px, bg Off-White `#F5F5F0`); `favicon.ico` multi-res (16/24/32/48/64/128/256); `index.html` referencia ICO+16/32/48 PNG+SVG favicon e `apple-touch-icon.png`; `manifest.json` + `vite.config.js` manifest icons → PNG 192x192/512x512 `any maskable`; build + typecheck verdes
-- `scheduler.yield` em useMemo longos, Background Sync, LHCI budgets gate no CI
-- Habilitar leaked password protection (dashboard Supabase Auth)
+- ~~Focus rings padronizados (3px), card-padding token, dark mode em gráficos~~ ✅ — `--focus-ring: 3px`, `--card-padding: 1rem`, gráficos usam CSS vars. Commit `541cd40`
+- ~~Pull-to-refresh, swipe actions, command palette (⌘K), deep linking~~ ✅ — `usePullToRefresh` (TxView, ReportView), `useSwipeActions` (TransactionCard), `CommandPalette` (App.jsx + ⌘K), rotas com params. Commits `3339937`, `4ab760e`, `3650597`
+- ~~WebAuthn/passkey (WCAG 3.3.8)~~ ✅ — Supabase Auth nativo (`registerPasskey`, `signInWithPasskey`, `passkey.*`), UI em Login + Settings. Commit `e4c72ae`
+- ~~Assets de logo (SVG, favicon, app icon) a partir do símbolo em `VISUAL_IDENTITY.md`~~ ✅ — `public/logo.svg` (logo principal horizontal: símbolo + wordmark Montserrat Bold Navy `#002F59`); PNGs do símbolo centrado + padded (maskable-safe) em `favicon-16/32/48.png`, `icon-192.png`, `icon-512.png`, `apple-touch-icon.png` (180px, bg Off-White `#F5F5F0`); `favicon.ico` multi-res (16/24/32/48/64/128/256); `index.html` referencia ICO+16/32/48 PNG+SVG favicon e `apple-touch-icon.png`; `manifest.json` + `vite.config.js` manifest icons → PNG 192x192/512x512 `any maskable`; build + typecheck verdes. Commit `fe6619e`
+- ~~`scheduler.yield` em useMemo longos, Background Sync, LHCI budgets gate no CI~~ ✅ — `useSchedulerYield` hook, `.lighthouserc.js` budgets, SW background sync. Commits `4bfa1fe`, `a69e38b`
+- **Leaked password protection (Supabase Auth)** — **Bloqueado:** requer Pro Plan (atual: Free). Toggle "Prevent use of leaked passwords" indisponível no Dashboard. Mitigação Free: validação client-side forte (min 12 chars, blocklist comuns) + rate limit login rigoroso. Upgrade Pro → ativar em Auth → Password Security. Docs atualizadas em `docs/Seguranca/SECURITY_MASTER_AUDIT.md`
 
 ──────────────────────────────────────
 
@@ -118,4 +118,4 @@ Let me re-read the file; my edits may have created an odd overlap.
 | GitHub #94 | Issue de tracking do mapeamento multi-agente | https://github.com/AsafeTork/Financia/issues/94 |
 | CEO_PROMPT | Prompt do CEO Técnico (indexado no ctx) | `ctx_search source:financia-CEO-PROMPT` |
 
-Última atualização: **2026-08-07** (P0 completo + P1 #5 #6 #8 + Issues #91-95 resolvidos)
+Última atualização: **2026-08-07** (P0 completo + P1 completo + P2 completo + P3 completo + Issues #91-95 resolvidos)
