@@ -184,6 +184,13 @@ input:focus, select:focus, textarea:focus {
   /* ===== TOUCH TARGETS (WCAG 2.2 AA) ===== */
   --touch-target-min: 44px;
 
+  /* ===== FOCUS RING ===== */
+  --focus-ring: 3px solid var(--brand);
+  --focus-ring-offset: 2px;
+
+  /* ===== CARD PADDING ===== */
+  --card-padding: 1rem;
+
   /* ===== RADIUS ===== */
   --radius-none: 0;
   --radius-sm:  0.375rem;  /* 6px */
