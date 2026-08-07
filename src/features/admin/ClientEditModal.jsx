@@ -208,7 +208,7 @@ export default function ClientEditModal({ client, adminEmail, onSave, onClose, t
 
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 flex-shrink-0">
           <p id="client-edit-title" className="font-bold" style={{color:'var(--text-main)'}}>Editar cliente</p>
-          <button onClick={onClose} aria-label="Fechar" className="text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-1 rounded-lg transition flex items-center justify-center w-9 h-9 flex-shrink-0">
+          <button onClick={onClose} aria-label="Fechar" className="text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-1 rounded-lg transition flex items-center justify-center min-w-[var(--touch-target-min)] min-h-[var(--touch-target-min)] flex-shrink-0">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"/></svg>
           </button>
         </div>

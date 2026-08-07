@@ -99,7 +99,7 @@ export default React.memo(function EmailView({ brand, toast }) {
           <div className="flex gap-2 flex-wrap">
             {TEMPLATES.map(function(t) {
               return (
-                <button key={t.id} onClick={function() { applyTpl(t.id); }} className={'text-xs font-medium px-3 py-1.5 rounded-xl border transition ' + (tpl === t.id ? 'border-transparent text-white' : 'border-gray-200 text-gray-600 hover:bg-gray-50')} style={tpl === t.id ? {background:brand.color} : {}}>
+                <button key={t.id} onClick={function() { applyTpl(t.id); }} className={'text-xs font-medium px-3 py-1.5 rounded-xl border transition min-h-[var(--touch-target-min)] ' + (tpl === t.id ? 'border-transparent text-white' : 'border-gray-200 text-gray-600 hover:bg-gray-50')} style={tpl === t.id ? {background:brand.color} : {}}>
                   {t.name}
                 </button>
               );

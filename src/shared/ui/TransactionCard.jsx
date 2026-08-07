@@ -49,7 +49,7 @@ export var TransactionCard = React.memo(function TransactionCard({
                 type="text"
                 value={editData.desc}
                 onChange={function(e) { onSaveEdit(transaction.id, { desc: e.target.value }); }}
-                className="text-sm font-semibold text-gray-800 w-full px-2 py-1 border border-blue-300 rounded-lg"
+                className="text-sm font-semibold text-gray-800 w-full px-2 py-1 border border-blue-300 rounded-lg min-h-[var(--touch-target-min)]"
                 placeholder="Descrição"
                 autoFocus
               />

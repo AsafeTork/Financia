@@ -52,7 +52,7 @@ function QuickActions({ view, onNav, brand }) {
             return (
               <button key={a.key} type="button" role="menuitem"
                 onClick={function() { run(a); }}
-                className="pressable anim-up flex items-center gap-2.5 pl-2.5 pr-4 py-2 rounded-full shadow-lg"
+                className="pressable anim-up flex items-center gap-2.5 pl-2.5 pr-4 py-2 rounded-full shadow-lg min-h-[var(--touch-target-min)]"
                 style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', animationDelay: (i * 0.035) + 's' }}
                 data-testid={'quick-action-' + a.key}>
                 <span className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"

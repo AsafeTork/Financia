@@ -82,7 +82,7 @@ function renderField(path, prop, label, value, onChange) {
       <div key={path} className="flex items-center gap-2">
         <label htmlFor={fieldId} className="text-[11px] font-medium min-w-[80px]" style={{color:'var(--text-sub, #475569)'}}>{labelFromKey(label)}</label>
         <input type="color" id={fieldId} value={value || '#000000'} onChange={e => onChange(e.target.value)}
-          className="w-8 h-8 rounded-lg cursor-pointer border-0 p-0.5 flex-shrink-0" />
+          className="min-w-[var(--touch-target-min)] min-h-[var(--touch-target-min)] w-8 h-8 rounded-lg cursor-pointer border-0 p-0.5 flex-shrink-0" />
         <input type="text" value={value || ''} onChange={e => onChange(e.target.value)}
           placeholder={'#' + '000000'}
           className="flex-1 rounded-lg px-2.5 py-1.5 text-[11px] font-mono focus:outline-none"
@@ -130,7 +130,7 @@ function renderField(path, prop, label, value, onChange) {
             placeholder="URL ou upload"
             className="flex-1 min-w-0 rounded-lg px-2.5 py-1.5 text-[11px] font-mono focus:outline-none"
             style={{background:'var(--bg-input, #f1f5f9)', color:'var(--text-main, #0f172a)', border:'1px solid var(--border, #e2e8f0)'}} />
-          <label htmlFor={uploadId} className="text-[10px] font-medium px-2.5 py-1.5 rounded-lg cursor-pointer whitespace-nowrap hover:opacity-80 transition" style={{background:'var(--brand-soft, #ccfbf1)', color:'var(--brand, #0f3d3e)'}}>
+          <label htmlFor={uploadId} className="text-[10px] font-medium px-2.5 py-1.5 rounded-lg cursor-pointer whitespace-nowrap hover:opacity-80 transition min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] flex items-center justify-center" style={{background:'var(--brand-soft, #ccfbf1)', color:'var(--brand, #0f3d3e)'}}>
             Upload
             <input type="file" id={uploadId} accept="image/*" onChange={handleUpload} className="hidden" />
           </label>

@@ -407,8 +407,8 @@ export default React.memo(function SettingsView({ brand, session, planInfo, onSa
             </div>
             <div className="p-3 flex flex-col gap-2" style={{background:'var(--bg-card)'}}>
               <div className="flex items-center gap-2">
-                <button className="px-3 py-1.5 rounded-lg text-xs font-semibold text-white" style={{background: appForm.color || '#002f59'}}>Salvar</button>
-                <button className="px-3 py-1.5 rounded-lg text-xs font-semibold" style={{background: appForm.color_secondary || '#e8f0f7', color: appForm.color || '#002f59'}}>Cancelar</button>
+                <button className="px-3 py-1.5 rounded-lg text-xs font-semibold text-white min-h-[var(--touch-target-min)]" style={{background: appForm.color || '#002f59'}}>Salvar</button>
+                <button className="px-3 py-1.5 rounded-lg text-xs font-semibold min-h-[var(--touch-target-min)]" style={{background: appForm.color_secondary || '#e8f0f7', color: appForm.color || '#002f59'}}>Cancelar</button>
               </div>
               <div className="h-1.5 rounded-full overflow-hidden" style={{background:'var(--bg-subtle)'}}>
                 <div className="h-full rounded-full" style={{width:'64%', background: appForm.color_accent || appForm.color || '#002f59'}}/>

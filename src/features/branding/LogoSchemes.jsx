@@ -118,7 +118,7 @@ export default function LogoSchemes({ brandColor, toast, onApply }) {
               <div className="w-3 h-3 rounded flex-shrink-0" style={{background: colors[el.id]}} />
               <label htmlFor={`logo-color-${el.id}`} className="text-xs font-medium min-w-[64px]" style={{color:'var(--text-sub, #475569)'}}>{el.label}</label>
               <input type="color" id={`logo-color-${el.id}`} value={colors[el.id]} onChange={e => setColor(el.id, e.target.value)}
-                className="w-9 h-9 rounded-lg cursor-pointer border-0 p-0.5 flex-shrink-0" aria-label={el.label} />
+                className="min-w-[var(--touch-target-min)] min-h-[var(--touch-target-min)] w-9 h-9 rounded-lg cursor-pointer border-0 p-0.5 flex-shrink-0" aria-label={el.label} />
               <input type="text" value={colors[el.id]} onChange={e => setColor(el.id, e.target.value)}
                 className="flex-1 rounded-xl px-2.5 py-1.5 text-xs font-mono focus:outline-none"
                 style={{background:'var(--bg-input, #f1f5f9)', color:'var(--text-main, #0f172a)', border:'1px solid var(--border, #e2e8f0)'}} />

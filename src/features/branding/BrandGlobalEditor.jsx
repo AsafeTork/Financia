@@ -23,11 +23,11 @@ export default function BrandGlobalEditor({ brandGlobal, setField, onSave, brand
         <div className="min-w-0 flex-1">
           <p className="text-xs font-semibold mb-0.5" style={{color:'var(--text-main, #0f172a)'}}>{label}</p>
           <p className="text-[10px] mb-1" style={{color:'var(--text-muted, #94a3b8)'}}>{desc}</p>
-          <label className="text-[10px] font-semibold px-2.5 py-1.5 rounded-lg cursor-pointer inline-block transition hover:opacity-80" style={{background:'var(--brand-soft, #ccfbf1)', color: brandColor}}>
+          <label className="text-[10px] font-semibold px-2.5 py-1.5 rounded-lg cursor-pointer inline-block transition hover:opacity-80 min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] flex items-center justify-center" style={{background:'var(--brand-soft, #ccfbf1)', color: brandColor}}>
             Upload imagem
             <input type="file" accept="image/*" onChange={handleFile(key)} className="hidden" />
           </label>
-          {value && <button onClick={() => setField(key, '')} className="text-[10px] ml-2 font-medium hover:opacity-70" style={{color:'var(--text-muted, #94a3b8)'}}>Remover</button>}
+          {value && <button onClick={() => setField(key, '')} className="text-[10px] ml-2 font-medium hover:opacity-70 min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)]" style={{color:'var(--text-muted, #94a3b8)'}}>Remover</button>}
         </div>
       </div>
     );

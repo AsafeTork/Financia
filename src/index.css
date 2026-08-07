@@ -139,7 +139,7 @@ input:focus, select:focus, textarea:focus {
   --surface:    #ffffff;
   --text-main:  #0f172a;
   --text-sub:   #5b6b7c;
-  --text-muted: #94a3b8;
+  --text-muted: #5f7086;
   --border:     #edeae3;
   --border-md:  #e2ddd4;
 
@@ -152,7 +152,7 @@ input:focus, select:focus, textarea:focus {
   --brand-grad: linear-gradient(135deg, var(--navy) 0%, var(--teal) 100%);
 
   /* ===== SEMANTIC STATUS ===== */
-  --success:    #3bbfa0;
+  --success:    #15803d;
   --warning:    #f59e0b;
   --danger:     #ef4444;
   --info:       #3b82f6;
@@ -184,6 +184,9 @@ input:focus, select:focus, textarea:focus {
   --space-10: 2.5rem;   /* 40px */
   --space-12: 3rem;     /* 48px */
   --space-16: 4rem;     /* 64px */
+
+  /* ===== TOUCH TARGETS (WCAG 2.2 AA) ===== */
+  --touch-target-min: 44px;
 
   /* ===== RADIUS ===== */
   --radius-none: 0;

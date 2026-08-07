@@ -13,7 +13,7 @@ export default function ColorField({ label, desc, value, onChange }) {
       </div>
       <div className="flex items-center gap-2">
         <input type="color" aria-label={label + ' (seletor)'} value={isValidHex(value) ? value : '#002f59'} onChange={function(e) { onChange(e.target.value); }}
-          className="w-9 h-9 rounded-xl cursor-pointer p-0.5 flex-shrink-0" style={{border:'1px solid var(--border)'}}
+          className="min-w-[var(--touch-target-min)] min-h-[var(--touch-target-min)] w-9 h-9 rounded-xl cursor-pointer p-0.5 flex-shrink-0" style={{border:'1px solid var(--border)'}}
           data-testid="color-field-picker"/>
         <input aria-label={label + ' (hex)'} value={value} onChange={function(e) {
           var raw = e.target.value;

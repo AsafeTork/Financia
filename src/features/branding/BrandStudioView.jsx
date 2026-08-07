@@ -231,12 +231,12 @@ export default React.memo(function BrandStudioView({ brand, planInfo, onSave, to
         <PreviewGeral brandConfig={bs.brandConfig} brandColor={brandColor} />
         <div className="flex gap-2 mt-2">
           <button onClick={bs.undo} disabled={bs.historyIndex <= 0}
-            className="text-xs px-2.5 py-1.5 rounded-lg disabled:opacity-30 transition"
+            className="text-xs px-2.5 py-1.5 rounded-lg disabled:opacity-30 transition min-h-[var(--touch-target-min)]"
             style={{background:'var(--bg-input, #f1f5f9)', color:'var(--text-sub, #475569)'}}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 10h13a4 4 0 010 8H7" /><path d="M7 6l-4 4 4 4" /></svg> Desfazer
           </button>
           <button onClick={bs.redo} disabled={bs.historyIndex >= bs.history.length - 1}
-            className="text-xs px-2.5 py-1.5 rounded-lg disabled:opacity-30 transition"
+            className="text-xs px-2.5 py-1.5 rounded-lg disabled:opacity-30 transition min-h-[var(--touch-target-min)]"
             style={{background:'var(--bg-input, #f1f5f9)', color:'var(--text-sub, #475569)'}}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 10H8a4 4 0 000 8h10" /><path d="M17 6l4 4-4 4" /></svg> Refazer
           </button>
