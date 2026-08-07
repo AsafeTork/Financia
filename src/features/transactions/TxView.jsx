@@ -50,23 +50,31 @@ export default React.memo(function TxView({ type, tx, products, onAdd, onEdit, o
       grouped[t.date].push(t);
     });
     var flatRows = [];
+    var headerTops = [];
     var rowIdx = 0;
+    var pixelOffset = 0;
+    var headerSize = 44;
+    var rowSize = 60;
     groupOrder.forEach(function(date) {
       var dayItems = grouped[date];
       var dayTotal = dayItems.reduce(function(s, t) { return s + t.amount; }, 0);
+      headerTops.push({ date: date, total: dayTotal, top: pixelOffset });
       flatRows.push({ type: 'header', date: date, total: dayTotal });
+      pixelOffset += headerSize;
       dayItems.forEach(function(t) {
         rowIdx++;
         flatRows.push({ type: 'row', data: t, rowIndex: rowIdx });
+        pixelOffset += rowSize;
       });
     });
     var totalRowCount = rowIdx;
-    return {filtered: f, total: total, grouped: grouped, groupOrder: groupOrder, flatRows: flatRows, totalRowCount: totalRowCount};
+    return {filtered: f, total: total, grouped: grouped, groupOrder: groupOrder, flatRows: flatRows, headerTops: headerTops, totalRowCount: totalRowCount};
   }, [tx, type, debouncedSearch, dateFrom, dateTo]);
 
   var filtered  = memo.filtered;
   var total     = memo.total;
   var flatRows = memo.flatRows;
+  var headerTops = memo.headerTops;
   var totalRowCount = memo.totalRowCount;
 
   var scrollRef = useRef(null);
@@ -78,6 +86,18 @@ export default React.memo(function TxView({ type, tx, products, onAdd, onEdit, o
     getScrollElement: function() { return scrollRef.current; },
     estimateSize: estimateSize,
   });
+
+  var [stickyTop, setStickyTop] = useState(0);
+  var stickyHeader = null;
+  var stickyIndex = headerTops.length - 1;
+  while (stickyIndex >= 0 && headerTops[stickyIndex].top > stickyTop + 1) stickyIndex--;
+  if (stickyIndex >= 0) stickyHeader = headerTops[stickyIndex];
+
+  var onListScroll = useCallback(function() {
+    if (!scrollRef.current) return;
+    var st = scrollRef.current.scrollTop;
+    setStickyTop(function(prev) { return Math.abs(prev - st) > 2 ? st : prev; });
+  }, []);
 
   var openEdit = function(t) {
     setEditItem({id:t.id, desc:t.desc, amount:String(t.amount), date:t.date, cat:t.category||'Fixo', method:t.method||'PIX'});
@@ -261,7 +281,21 @@ export default React.memo(function TxView({ type, tx, products, onAdd, onEdit, o
                   </span>
                 </div>
               )}
-              <div ref={scrollRef} className="max-h-[calc(100vh-280px)] min-h-[200px] overflow-auto" style={{position:'relative'}}>
+              <div ref={scrollRef} onScroll={onListScroll} className="max-h-[calc(100vh-280px)] min-h-[200px] overflow-auto" style={{position:'relative'}}>
+              {stickyHeader && (
+                <div className="sticky top-0 z-10 h-0 overflow-visible">
+                  <div role="heading" aria-level="2" data-testid="sticky-date-header"
+                    className={'flex items-center justify-between border-b px-4 py-2.5 ' + (stickyTop > 8 ? '' : 'invisible')}
+                    style={{background:'var(--bg-primary)', borderColor:'var(--border)'}}>
+                    <span className="text-xs font-semibold uppercase tracking-wide" style={{color:'var(--text-sub)'}}>
+                      <span className="sr-only">Data agrupada: </span>{fmtDate(stickyHeader.date)}
+                    </span>
+                    <span className="text-xs font-semibold tabular" style={{color: accentColor}}>
+                      {(isIncome ? '+' : '-') + fmt(stickyHeader.total)}
+                    </span>
+                  </div>
+                </div>
+              )}
               <div role="list" data-testid="tx-list" style={{ height: virtualizer.getTotalSize() + 'px', position: 'relative' }}>
                 {virtualizer.getVirtualItems().map(function(virtualItem) {
                     var item = flatRows[virtualItem.index];
