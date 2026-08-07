@@ -1,7 +1,7 @@
 # CI Report
 
-**Gerado:** 2026-08-07 17:04 UTC
-**Commit:** `4bfa1febfa8942a64289a922bebcf38de8e6ff86`
+**Gerado:** 2026-08-07 17:34 UTC
+**Commit:** `fd8b2fff836a38b0835763b37eea56e6fde2d824`
 **Branch:** `main`
 
 ---
@@ -13,7 +13,7 @@
 | Lint + Typecheck | ok |
 | Testes Unitarios | nao executado |
 | Testes Integracao | com falhas |
-| Build | ok |
+| Build | com erros |
 | E2E Tests | com falhas |
 | Auditoria de Producao | ver resultado abaixo |
 | Admin Audit | ver resultado abaixo |
@@ -51,25 +51,27 @@ rendering chunks...
 [1m[33m[plugin:vite:reporter][39m[22m [33m[plugin vite:reporter] 
 (!) /home/runner/work/Financia/Financia/src/lib/sync.js is dynamically imported by /home/runner/work/Financia/Financia/src/shared/hooks/useSyncLoop.js but also statically imported by /home/runner/work/Financia/Financia/src/features/admin/AdminPanel.jsx, /home/runner/work/Financia/Financia/src/features/admin/ClientEditModal.jsx, /home/runner/work/Financia/Financia/src/features/auth/useSession.js, /home/runner/work/Financia/Financia/src/features/settings/SettingsView.jsx, dynamic import will not move module into another chunk.
 [39m
+4 rules skipped due to selector errors:
+  ::view-transition-old(root) -> Pseudo-elements are not supported by css-select
+  ::view-transition-new(root) -> Pseudo-elements are not supported by css-select
+  ::view-transition-old(root) -> Pseudo-elements are not supported by css-select
+  ::view-transition-new(root) -> Pseudo-elements are not supported by css-select
 computing gzip size...
 [2mdist/[22m[32mmanifest.webmanifest                  [39m[1m[2m  0.59 kB[22m[1m[22m
-[2mdist/[22m[32mindex.html                            [39m[1m[2m  2.98 kB[22m[1m[22m[2m │ gzip:  0.97 kB[22m
+[2mdist/[22m[32mindex.html                            [39m[1m[2m  8.59 kB[22m[1m[22m[2m │ gzip:  2.94 kB[22m
 [2mdist/[22m[2massets/[22m[32msync.worker-IZvltoFp.js        [39m[1m[2m103.31 kB[22m[1m[22m
 [2mdist/[22m[2massets/[22m[35mindex-B3S8XtFS.css             [39m[1m[2m 58.90 kB[22m[1m[22m[2m │ gzip: 12.24 kB[22m
 [2mdist/[22m[2massets/[22m[36msupabase-vendor-vwDjcXxQ.js    [39m[1m[2m  0.00 kB[22m[1m[22m[2m │ gzip:  0.02 kB[22m
 [2mdist/[22m[2massets/[22m[36museDebouncedValue-2VSGL6HB.js  [39m[1m[2m  0.21 kB[22m[1m[22m[2m │ gzip:  0.17 kB[22m
 [2mdist/[22m[2massets/[22m[36mDebugBadge-C9B5q9cL.js         [39m[1m[2m  0.83 kB[22m[1m[22m[2m │ gzip:  0.47 kB[22m
-[2mdist/[22m[2massets/[22m[36mlogoUtils-MfeTYmyk.js          [39m[1m[2m  0.88 kB[22m[1m[22m[2m │ gzip:  0.46 kB[22m
+[2mdist/[22m[2massets/[22m[36mlogoUtils-BvjaDpNP.js          [39m[1m[2m  0.88 kB[22m[1m[22m[2m │ gzip:  0.46 kB[22m
 [2mdist/[22m[2massets/[22m[36mvirtual-vendor-DNVO4DF9.js     [39m[1m[2m  1.82 kB[22m[1m[22m[2m │ gzip:  0.92 kB[22m
-[2mdist/[22m[2massets/[22m[36maiClient-DBUWwWeR.js           [39m[1m[2m  2.81 kB[22m[1m[22m[2m │ gzip:  1.48 kB[22m
+[2mdist/[22m[2massets/[22m[36maiClient-DQFmY9U-.js           [39m[1m[2m  2.81 kB[22m[1m[22m[2m │ gzip:  1.48 kB[22m
 [2mdist/[22m[2massets/[22m[36mexporters-B-p9KxkL.js          [39m[1m[2m  4.25 kB[22m[1m[22m[2m │ gzip:  1.79 kB[22m
-[2mdist/[22m[2massets/[22m[36mEmailView-C2b18x3N.js          [39m[1m[2m  5.13 kB[22m[1m[22m[2m │ gzip:  2.07 kB[22m
-[2mdist/[22m[2massets/[22m[36mCardPreview-acFM_Z_2.js        [39m[1m[2m  6.26 kB[22m[1m[22m[2m │ gzip:  2.76 kB[22m
-[2mdist/[22m[2massets/[22m[36mSaleForm-CgUz2qB1.js           [39m[1m[2m  7.44 kB[22m[1m[22m[2m │ gzip:  2.51 kB[22m
-[2mdist/[22m[2massets/[22m[36mPrivacyPolicy-CH0ZArG1.js      [39m[1m[2m  8.15 kB[22m[1m[22m[2m │ gzip:  3.38 kB[22m
-[2mdist/[22m[2massets/[22m[36mTermsOfService-Bi1ncqZq.js     [39m[1m[2m  8.91 kB[22m[1m[22m[2m │ gzip:  3.61 kB[22m
-[2mdist/[22m[2massets/[22m[36mReportView-DsjUKUBD.js         [39m[1m[2m 10.28 kB[22m[1m[22m[2m │ gzip:  3.09 kB[22m
-[2mdist/[22m[2mass
+[2mdist/[22m[2massets/[22m[36mEmailView-D-kZTJys.js          [39m[1m[2m  5.13 kB[22m[1m[22m[2m │ gzip:  2.07 kB[22m
+[2mdist/[22m[2massets/[22m[36mCardPreview-DyrZ1NRU.js        [39m[1m[2m  6.26 kB[22m[1m[22m[2m │ gzip:  2.76 kB[22m
+[2mdist/[22m[2massets/[22m[36mSaleForm-CKqj1OaN.js           [39m[1m[2m  7.44 kB[22m[1m[22m[2m │ gzip:  2.51 kB[22m
+[2mdist/[22m[2massets/[22m[36mPrivacyPo
 ```
 
 ---
@@ -83,9 +85,27 @@ computing gzip size...
 ```
 
 Running 26 tests using 4 workers
-°°··°°°°°°°°····°°°°··°···
-  15 skipped
-  11 passed (16.5s)
+°°·°°°°°°°°°·F·°°°°···°···
+
+  1) [chromium] › e2e/error-boundary-recovery.spec.ts:40:3 › Deep Error Boundary Recovery › window.onerror captures unhandled JS errors gracefully 
+
+    Error: page.evaluate: Execution context was destroyed, most likely because of a navigation.
+
+      42 |     await page.waitForLoadState('networkidle');
+      43 |
+    > 44 |     const errorCaptured = await page.evaluate(() => {
+         |                                      ^
+      45 |       return new Promise<boolean>((resolve) => {
+      46 |         const handler = function(msg: string, source: string, lineno: number, colno: number, error: Error) {
+      47 |           window.onerror = null;
+        at /home/runner/work/Financia/Financia/e2e/error-boundary-recovery.spec.ts:44:38
+
+    Error Context: test-results/error-boundary-recovery-De-5f324-andled-JS-errors-gracefully-chromium/error-context.md
+
+  1 failed
+    [chromium] › e2e/error-boundary-recovery.spec.ts:40:3 › Deep Error Boundary Recovery › window.onerror captures unhandled JS errors gracefully 
+  16 skipped
+  9 passed (12.8s)
 
 ```
 
@@ -101,10 +121,10 @@ Running 26 tests using 4 workers
 
 Running 42 tests using 4 workers
 
-[1/42] [chromium] › e2e/deep-sync-conflict.spec.ts:10:3 › Deep Sync Conflict Scenarios › BroadcastChannel ping/pong survives rapid tab switching
-[2/42] [chromium] › e2e/deep-sync-conflict.spec.ts:59:3 › Deep Sync Conflict Scenarios › BroadcastChannel handles duplicate messages without errors
-[3/42] [chromium] › e2e/deep-sync-conflict.spec.ts:120:3 › Deep Sync Conflict Scenarios › memory leak check after sync broadcast storm
-[4/42] [chromium] › e2e/deep-sync-conflict.spec.ts:94:3 › Deep Sync Conflict Scenarios › sync worker survives unhandled rejection
+[1/42] [chromium] › e2e/deep-sync-conflict.spec.ts:59:3 › Deep Sync Conflict Scenarios › BroadcastChannel handles duplicate messages without errors
+[2/42] [chromium] › e2e/deep-sync-conflict.spec.ts:10:3 › Deep Sync Conflict Scenarios › BroadcastChannel ping/pong survives rapid tab switching
+[3/42] [chromium] › e2e/deep-sync-conflict.spec.ts:94:3 › Deep Sync Conflict Scenarios › sync worker survives unhandled rejection
+[4/42] [chromium] › e2e/deep-sync-conflict.spec.ts:120:3 › Deep Sync Conflict Scenarios › memory leak check after sync broadcast storm
 [5/42] [chromium] › e2e/indexeddb-corruption.spec.ts:12:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should recover from corrupted IndexedDB data
 [6/42] [chromium] › e2e/indexeddb-corruption.spec.ts:65:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should handle invalid schema gracefully
 [7/42] [chromium] › e2e/indexeddb-eviction.spec.ts:12:5 › IndexedDB Recovery - Eviction › Eviction Test › should handle storage pressure and persist()
@@ -112,8 +132,6 @@ Running 42 tests using 4 workers
 [9/42] [chromium] › e2e/indexeddb-migration.spec.ts:12:5 › IndexedDB Recovery - Migration › Migration Test › should migrate from old schema to new schema
 [10/42] [chromium] › e2e/indexeddb-migration.spec.ts:92:5 › IndexedDB Recovery - Migration › Migration Test › should preserve data integrity during migration
 [11/42] [chromium] › e2e/memory-leak.spec.ts:6:3 › Memory Leak Detection › cyclic navigation - no detached DOM nodes
-[12/42] [chromium] › e2e/memory-leak.spec.ts:57:3 › Memory Leak Detection › event listeners cleaned up on unmount
-[13/42] [chromium] › e2e/memory-leak.spec.ts:84:3 › Memory Leak Detection › timers and intervals cleared on unmount
   1) [chromium] › e2e/indexeddb-migration.spec.ts:12:5 › IndexedDB Recovery - Migration › Migration Test › should migrate from old schema to new schema 
 
     Error: page.evaluate: AbortError: Version change transaction was aborted in upgradeneeded event handler.
@@ -130,10 +148,12 @@ Running 42 tests using 4 workers
     Error Context: test-results/indexeddb-migration-Indexe-ccb35-om-old-schema-to-new-schema-chromium/error-context.md
 
 
-[14/42] [chromium] › e2e/memory-leak.spec.ts:135:3 › Memory Leak Detection › BroadcastChannel closed on unmount
-[15/42] [chromium] › e2e/memory-leak.spec.ts:164:3 › Memory Leak Detection › memory usage stable under load
-[16/42] [chromium] › e2e/memory-leak.spec.ts:207:3 › Offline Storage Persistence › navigator.storage.persist() prevents eviction
-[17/42] [chromium] › e2e/memory-leak.spec.ts:110:3 › Memory Leak Detection › IndexedDB connections closed properly
+[12/42] [chromium] › e2e/memory-leak.spec.ts:84:3 › Memory Leak Detection › timers and intervals cleared on unmount
+[13/42] [chromium] › e2e/memory-leak.spec.ts:110:3 › Memory Leak Detection › IndexedDB connections closed properly
+[14/42] [chromium] › e2e/memory-leak.spec.ts:57:3 › Memory Leak Detection › event listeners cleaned up on unmount
+[15/42] [chromium] › e2e/memory-leak.spec.ts:135:3 › Memory Leak Detection › BroadcastChannel closed on unmount
+[16/42] [chromium] › e2e/memory-leak.spec.ts:164:3 › Memory Leak Detection › memory usage stable under load
+[17/42] [chromium] › e2e/memory-leak.spec.ts:207:3 › Offline Storage Persistence › navigator.storage.persist() prevents eviction
 [18/42] [chromium] › e2e/memory-leak.spec.ts:222:3 › Offline Storage Persistence › storage estimate available
 [19/42] [chromium] › e2e/network-error-handling.spec.ts:10:3 › Network Error Handling Scenarios › app loads successfully with slow network (3G)
 [20/42] [chromium] › e2e/network-error-handling.spec.ts:34:3 › Network Error Handling Scenarios › app handles complete network disconnection gracefully
@@ -179,4 +199,4 @@ Nenhum relatorio admin gerado.
 
 | Data | Correcao | Commit |
 |------|----------|--------|
-| 2026-08-07 17:04 UTC | CI report gerado automaticamente | `4bfa1febfa8942a64289a922bebcf38de8e6ff86` |
+| 2026-08-07 17:34 UTC | CI report gerado automaticamente | `fd8b2fff836a38b0835763b37eea56e6fde2d824` |
