@@ -1,7 +1,7 @@
 # CI Report
 
-**Gerado:** 2026-08-07 14:46 UTC
-**Commit:** `17745b6264aef294b1ceded2b031c943961b73eb`
+**Gerado:** 2026-08-07 15:27 UTC
+**Commit:** `07dd3606ef0a93c5bbaac5954d08553b59f5d7fd`
 **Branch:** `main`
 
 ---
@@ -59,16 +59,16 @@ computing gzip size...
 [2mdist/[22m[2massets/[22m[36mvendor-supabase-vwDjcXxQ.js        [39m[1m[2m  0.00 kB[22m[1m[22m[2m │ gzip:  0.02 kB[22m
 [2mdist/[22m[2massets/[22m[36museDebouncedValue-DhXJ-2MC.js      [39m[1m[2m  0.21 kB[22m[1m[22m[2m │ gzip:  0.17 kB[22m
 [2mdist/[22m[2massets/[22m[36mDebugBadge-CuG2Hgqz.js             [39m[1m[2m  0.83 kB[22m[1m[22m[2m │ gzip:  0.47 kB[22m
-[2mdist/[22m[2massets/[22m[36mlogoUtils-CUqU8TUW.js              [39m[1m[2m  0.88 kB[22m[1m[22m[2m │ gzip:  0.46 kB[22m
+[2mdist/[22m[2massets/[22m[36mlogoUtils-C0-qQZ8w.js              [39m[1m[2m  0.88 kB[22m[1m[22m[2m │ gzip:  0.46 kB[22m
 [2mdist/[22m[2massets/[22m[36mvendor-radix-0j1Bgcl0.js           [39m[1m[2m  1.05 kB[22m[1m[22m[2m │ gzip:  0.62 kB[22m
 [2mdist/[22m[2massets/[22m[36mvendor-class-utils-BGivqV-2.js     [39m[1m[2m  1.12 kB[22m[1m[22m[2m │ gzip:  0.56 kB[22m
 [2mdist/[22m[2massets/[22m[36mvendor-virtual-BFXXfAAg.js         [39m[1m[2m  1.82 kB[22m[1m[22m[2m │ gzip:  0.91 kB[22m
 [2mdist/[22m[2massets/[22m[36mvendor-radix-slot-CD8tn4BR.js      [39m[1m[2m  2.03 kB[22m[1m[22m[2m │ gzip:  0.98 kB[22m
 [2mdist/[22m[2massets/[22m[36mvendor-stripe-core-CUtUkgyj.js     [39m[1m[2m  2.25 kB[22m[1m[22m[2m │ gzip:  1.00 kB[22m
-[2mdist/[22m[2massets/[22m[36maiClient-Chl6X_9a.js               [39m[1m[2m  2.81 kB[22m[1m[22m[2m │ gzip:  1.48 kB[22m
+[2mdist/[22m[2massets/[22m[36maiClient-DBh2GSmP.js               [39m[1m[2m  2.81 kB[22m[1m[22m[2m │ gzip:  1.48 kB[22m
 [2mdist/[22m[2massets/[22m[36mexporters-BRcQ71Kn.js              [39m[1m[2m  4.25 kB[22m[1m[22m[2m │ gzip:  1.79 kB[22m
-[2mdist/[22m[2massets/[22m[36mEmailView-wjX4-Xye.js              [39m[1m[2m  5.22 kB[22m[1m[22m[2m │ gzip:  2.09 kB[22m
-[2mdist/[22m[2massets/[22m[36mCardPreview-wpabWaRi.j
+[2mdist/[22m[2massets/[22m[36mEmailView-DFTn73oW.js              [39m[1m[2m  5.22 kB[22m[1m[22m[2m │ gzip:  2.09 kB[22m
+[2mdist/[22m[2massets/[22m[36mCardPreview-DC_H4Jes.j
 ```
 
 ---
@@ -82,9 +82,9 @@ computing gzip size...
 ```
 
 Running 26 tests using 4 workers
-°°°·°°°°°°°°···°°·°°··°···
+°°°·°°°°°°°°····°°·°°·°···
   16 skipped
-  10 passed (15.6s)
+  10 passed (14.8s)
 
 ```
 
@@ -111,6 +111,9 @@ Running 42 tests using 4 workers
 [9/42] [chromium] › e2e/indexeddb-migration.spec.ts:12:5 › IndexedDB Recovery - Migration › Migration Test › should migrate from old schema to new schema
 [10/42] [chromium] › e2e/indexeddb-migration.spec.ts:92:5 › IndexedDB Recovery - Migration › Migration Test › should preserve data integrity during migration
 [11/42] [chromium] › e2e/memory-leak.spec.ts:6:3 › Memory Leak Detection › cyclic navigation - no detached DOM nodes
+[12/42] [chromium] › e2e/memory-leak.spec.ts:57:3 › Memory Leak Detection › event listeners cleaned up on unmount
+[13/42] [chromium] › e2e/memory-leak.spec.ts:84:3 › Memory Leak Detection › timers and intervals cleared on unmount
+[14/42] [chromium] › e2e/memory-leak.spec.ts:110:3 › Memory Leak Detection › IndexedDB connections closed properly
   1) [chromium] › e2e/indexeddb-migration.spec.ts:12:5 › IndexedDB Recovery - Migration › Migration Test › should migrate from old schema to new schema 
 
     Error: page.evaluate: AbortError: Version change transaction was aborted in upgradeneeded event handler.
@@ -127,9 +130,6 @@ Running 42 tests using 4 workers
     Error Context: test-results/indexeddb-migration-Indexe-ccb35-om-old-schema-to-new-schema-chromium/error-context.md
 
 
-[12/42] [chromium] › e2e/memory-leak.spec.ts:84:3 › Memory Leak Detection › timers and intervals cleared on unmount
-[13/42] [chromium] › e2e/memory-leak.spec.ts:110:3 › Memory Leak Detection › IndexedDB connections closed properly
-[14/42] [chromium] › e2e/memory-leak.spec.ts:57:3 › Memory Leak Detection › event listeners cleaned up on unmount
 [15/42] [chromium] › e2e/memory-leak.spec.ts:135:3 › Memory Leak Detection › BroadcastChannel closed on unmount
 [16/42] [chromium] › e2e/memory-leak.spec.ts:164:3 › Memory Leak Detection › memory usage stable under load
 [17/42] [chromium] › e2e/memory-leak.spec.ts:207:3 › Offline Storage Persistence › navigator.storage.persist() prevents eviction
@@ -178,4 +178,4 @@ Nenhum relatorio admin gerado.
 
 | Data | Correcao | Commit |
 |------|----------|--------|
-| 2026-08-07 14:46 UTC | CI report gerado automaticamente | `17745b6264aef294b1ceded2b031c943961b73eb` |
+| 2026-08-07 15:27 UTC | CI report gerado automaticamente | `07dd3606ef0a93c5bbaac5954d08553b59f5d7fd` |
