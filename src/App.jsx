@@ -27,6 +27,7 @@ import LazyPage from './App/components/LazyPage.jsx';
 import { AppProvider, DataProvider } from './App/contexts/AppContext.jsx';
 import { useAppState } from './hooks/useAppState.js';
 import { useToasts } from './hooks/useToasts.js';
+import { useNavigation } from './hooks/useNavigation.js';
 import { useOnboarding } from './hooks/useOnboarding.js';
 import { usePlanEffects } from './hooks/usePlanEffects.js';
 
@@ -39,18 +40,9 @@ export default function App() {
   const s = useAppState();
   const { planInfo, setPlanInfo, setShowUpgrade, setConfirmData, confirmData, setSidebarOpen, sidebarOpen } = s;
   const t = useToasts({ toasts: s.toasts, setToasts: s.setToasts, toastId: s.toastId, toastTimeoutsRef: s.toastTimeoutsRef });
-  // TEMP: Mock navigation to isolate useNavigation error
-  const n = {
-    navTo: (v) => {},
-    path: '',
-    isLegal: false,
-    isLanding: true,
-    currentView: 'dashboard',
-    navigationHistory: { push: () => {}, go: () => {}, back: () => {}, forward: () => {}, canGoBack: () => false, canGoForward: () => false }
-  };
+  const n = useNavigation({ modalRef: s.modalRef, setConfirmData: s.setConfirmData, setShowUpgrade: s.setShowUpgrade, setSidebarOpen: s.setSidebarOpen, setShowLogin: s.setShowLogin });
   const { navTo } = n;
-  // TEMP: Disable usePlanEffects to isolate error
-  // usePlanEffects({ dataLoading: s.dataLoading, setDataLoading: s.setDataLoading, setSyncStatus: s.setSyncStatus, planInfo, session: s.session, toast: t.toast, path: n.path, setAnnounceMsg: s.setAnnounceMsg, firstRender: s.firstRender, toastTimeoutsRef: s.toastTimeoutsRef });
+  usePlanEffects({ dataLoading: s.dataLoading, setDataLoading: s.setDataLoading, setSyncStatus: s.setSyncStatus, planInfo, session: s.session, toast: t.toast, path: n.path, setAnnounceMsg: s.setAnnounceMsg, firstRender: s.firstRender, toastTimeoutsRef: s.toastTimeoutsRef });
   const { appBrand, effectiveTheme, toggleTheme } = useBrandAppearance(s.brand, planInfo);
   const enforceLimit = useCallback(function(kind, currentCount) {
     if (atLimit(planInfo, kind, currentCount)) { setShowUpgrade({ kind: kind, limit: limitFor(planInfo, kind) }); return false; } return true;
