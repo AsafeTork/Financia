@@ -45,7 +45,7 @@
 | ~~1~~ | ✅ ~~Mover `syncAll` para Web Worker~~ | `src/workers/sync.worker.js` + `useSyncLoop.js` (2026-08-07) |
 | ~~2~~ | ✅ ~~Índices compostos no schema Dexie~~ | `src/lib/dexie.js` (2026-08-07) |
 | ~~3~~ | ✅ ~~Intervalo de sync adaptativo + backoff~~ | `src/shared/hooks/useSyncLoop.js` (2026-08-07) |
-| 4 | `useTransition` no filtro de TxView | `src/features/transactions/TxView.jsx` |
+| ~~4~~ | ✅ ~~`useTransition` no filtro de TxView~~ | `src/features/transactions/TxView.jsx` (2026-08-07) |
 
 ### P1 — UX: Acessibilidade WCAG 2.2 AA (hoje ~45%) (relatório: `UX/UX_UI_AUDIT_REPORT.md`)
 
