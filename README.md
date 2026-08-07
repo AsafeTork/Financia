@@ -478,8 +478,8 @@ npm run check         # lint + typecheck + test
 
 ## PWA
 
-- **Service Worker:** custom (`public/sw.js`), network-first HTML, cache-first assets
-- **Manifest:** `standalone`, theme `#002f59`, locale `pt-BR`
+- **Service Worker:** Workbox via `vite-plugin-pwa` (injectManifest), fonte `src/sw.ts` → `dist/sw.js`; precache, cache-first assets, network-first API/Supabase, background sync p/ mutations offline
+- **Manifest:** gerado pelo plugin (`manifest.webmanifest`), `standalone`, theme `#002f59`, locale `pt-BR`
 - **Offline:** Dexie IndexedDB armazena tudo localmente
 - **Install:** captura `beforeinstallprompt`
 

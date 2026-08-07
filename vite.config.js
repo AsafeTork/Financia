@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { VitePWA } from 'vite-plugin-pwa';
 import fs from 'fs';
 
 export default defineConfig(async function() {
@@ -17,6 +18,39 @@ export default defineConfig(async function() {
       return html.replace(/%APP_VERSION%/g, version);
     }
   });
+
+  plugins.push(VitePWA({
+    strategies: 'injectManifest',
+    srcDir: 'src',
+    filename: 'sw.ts',
+    injectRegister: null,
+    registerType: 'prompt',
+    includeAssets: ['icon-192.svg', 'icon-512.svg'],
+    manifest: {
+      name: 'Financia — Gestão financeira',
+      short_name: 'Financia',
+      description: 'Controle vendas, despesas e estoque do seu negócio em um só lugar. Online e offline.',
+      lang: 'pt-BR',
+      dir: 'ltr',
+      start_url: '/',
+      scope: '/',
+      display: 'standalone',
+      orientation: 'portrait',
+      prefer_related_applications: false,
+      background_color: '#002f59',
+      theme_color: '#002f59',
+      categories: ['business', 'finance', 'productivity'],
+      icons: [
+        { src: '/icon-192.svg', sizes: '192x192', type: 'image/svg+xml', purpose: 'any' },
+        { src: '/icon-512.svg', sizes: '512x512', type: 'image/svg+xml', purpose: 'any maskable' },
+      ],
+    },
+    injectManifest: {
+      globPatterns: ['**/*.{js,css,html}'],
+      globIgnores: ['**/manifest.json', '**/sw.js'],
+      maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
+    },
+  }));
 
   return {
     plugins: plugins,

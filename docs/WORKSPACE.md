@@ -76,7 +76,7 @@
 | # | Tarefa | Arquivo(s) |
 |---|--------|-----------|
 | ~~11~~ | ✅ ~~Otimizar `manualChunks` + Terser~~ | `vite.config.js` (2026-08-07, `991d312`) |
-| 12 | `vite-plugin-pwa` com injectManifest | `vite.config.js`, `src/sw.ts` |
+| ~~12~~ | ✅ ~~`vite-plugin-pwa` com injectManifest~~ | `vite.config.js` + `src/sw.ts` (2026-08-07): `VitePWA` injectManifest, SW Workbox custom (precache, cache-first assets, network-first API/Supabase, background sync p/ mutations offline, cleanupOutdatedCaches), manifest gerado; `public/sw.js` removido (substituído pelo gerado `dist/sw.js`). build → 36 entries precache; typecheck/lint verdes; suite hooks flaky pré-existente (Issue #96) sem relação |
 | 13 | Preload LCP image + critical CSS | `index.html` |
 | 14 | Upgrade Dexie 3.x → 4.x | `package.json`, `dexie.js` |
 
