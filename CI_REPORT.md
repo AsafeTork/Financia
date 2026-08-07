@@ -1,7 +1,7 @@
 # CI Report
 
-**Gerado:** 2026-08-07 16:20 UTC
-**Commit:** `8c5cb766f31e854c1966601f9517ef8a474e0347`
+**Gerado:** 2026-08-07 16:41 UTC
+**Commit:** `773398e0e024122fdc9d37441814153a769c82ec`
 **Branch:** `main`
 
 ---
@@ -46,29 +46,29 @@
 [36mvite v5.4.21 [32mbuilding for production...[36m[39m
 transforming...
 [32m✓[39m 254 modules transformed.
-Circular chunk: vendor-radix-slot -> vendor-radix -> vendor-radix-slot. Please adjust the manual chunk logic for these chunks.
-Generated an empty chunk: "vendor-supabase".
+Generated an empty chunk: "supabase-vendor".
 rendering chunks...
 [1m[33m[plugin:vite:reporter][39m[22m [33m[plugin vite:reporter] 
 (!) /home/runner/work/Financia/Financia/src/lib/sync.js is dynamically imported by /home/runner/work/Financia/Financia/src/shared/hooks/useSyncLoop.js but also statically imported by /home/runner/work/Financia/Financia/src/features/admin/AdminPanel.jsx, /home/runner/work/Financia/Financia/src/features/admin/ClientEditModal.jsx, /home/runner/work/Financia/Financia/src/features/auth/useSession.js, /home/runner/work/Financia/Financia/src/features/settings/SettingsView.jsx, dynamic import will not move module into another chunk.
 [39m
 computing gzip size...
-[2mdist/[22m[32mindex.html                                [39m[1m[2m  3.20 kB[22m[1m[22m[2m │ gzip:  1.00 kB[22m
-[2mdist/[22m[2massets/[22m[32msync.worker-C2sOlgyF.js            [39m[1m[2m 81.74 kB[22m[1m[22m
-[2mdist/[22m[2massets/[22m[35mindex-B3S8XtFS.css                 [39m[1m[2m 58.90 kB[22m[1m[22m[2m │ gzip: 12.24 kB[22m
-[2mdist/[22m[2massets/[22m[36mvendor-supabase-vwDjcXxQ.js        [39m[1m[2m  0.00 kB[22m[1m[22m[2m │ gzip:  0.02 kB[22m
-[2mdist/[22m[2massets/[22m[36museDebouncedValue-DhXJ-2MC.js      [39m[1m[2m  0.21 kB[22m[1m[22m[2m │ gzip:  0.17 kB[22m
-[2mdist/[22m[2massets/[22m[36mDebugBadge-CuG2Hgqz.js             [39m[1m[2m  0.83 kB[22m[1m[22m[2m │ gzip:  0.47 kB[22m
-[2mdist/[22m[2massets/[22m[36mlogoUtils-IttB1AXR.js              [39m[1m[2m  0.88 kB[22m[1m[22m[2m │ gzip:  0.46 kB[22m
-[2mdist/[22m[2massets/[22m[36mvendor-radix-0j1Bgcl0.js           [39m[1m[2m  1.05 kB[22m[1m[22m[2m │ gzip:  0.62 kB[22m
-[2mdist/[22m[2massets/[22m[36mvendor-class-utils-BGivqV-2.js     [39m[1m[2m  1.12 kB[22m[1m[22m[2m │ gzip:  0.56 kB[22m
-[2mdist/[22m[2massets/[22m[36mvendor-virtual-BFXXfAAg.js         [39m[1m[2m  1.82 kB[22m[1m[22m[2m │ gzip:  0.91 kB[22m
-[2mdist/[22m[2massets/[22m[36mvendor-radix-slot-CD8tn4BR.js      [39m[1m[2m  2.03 kB[22m[1m[22m[2m │ gzip:  0.98 kB[22m
-[2mdist/[22m[2massets/[22m[36mvendor-stripe-core-CUtUkgyj.js     [39m[1m[2m  2.25 kB[22m[1m[22m[2m │ gzip:  1.00 kB[22m
-[2mdist/[22m[2massets/[22m[36maiClient-GZzTB7fG.js               [39m[1m[2m  2.81 kB[22m[1m[22m[2m │ gzip:  1.48 kB[22m
-[2mdist/[22m[2massets/[22m[36mexporters-BRcQ71Kn.js              [39m[1m[2m  4.25 kB[22m[1m[22m[2m │ gzip:  1.79 kB[22m
-[2mdist/[22m[2massets/[22m[36mEmailView-CAzx8l0R.js              [39m[1m[2m  5.26 kB[22m[1m[22m[2m │ gzip:  2.11 kB[22m
-[2mdist/[22m[2massets/[22m[36mCardPreview-CtU-XCs1.j
+[2mdist/[22m[32mindex.html                            [39m[1m[2m  2.93 kB[22m[1m[22m[2m │ gzip:  0.95 kB[22m
+[2mdist/[22m[2massets/[22m[32msync.worker-C2sOlgyF.js        [39m[1m[2m 81.74 kB[22m[1m[22m
+[2mdist/[22m[2massets/[22m[35mindex-B3S8XtFS.css             [39m[1m[2m 58.90 kB[22m[1m[22m[2m │ gzip: 12.24 kB[22m
+[2mdist/[22m[2massets/[22m[36msupabase-vendor-vwDjcXxQ.js    [39m[1m[2m  0.00 kB[22m[1m[22m[2m │ gzip:  0.02 kB[22m
+[2mdist/[22m[2massets/[22m[36museDebouncedValue-Cp9IqjJm.js  [39m[1m[2m  0.21 kB[22m[1m[22m[2m │ gzip:  0.17 kB[22m
+[2mdist/[22m[2massets/[22m[36mDebugBadge-D4BASGlw.js         [39m[1m[2m  0.83 kB[22m[1m[22m[2m │ gzip:  0.47 kB[22m
+[2mdist/[22m[2massets/[22m[36mlogoUtils-DUxV2x-4.js          [39m[1m[2m  0.88 kB[22m[1m[22m[2m │ gzip:  0.46 kB[22m
+[2mdist/[22m[2massets/[22m[36mvirtual-vendor-7CxHUxpg.js     [39m[1m[2m  1.82 kB[22m[1m[22m[2m │ gzip:  0.91 kB[22m
+[2mdist/[22m[2massets/[22m[36maiClient-B3Fibsjd.js           [39m[1m[2m  2.81 kB[22m[1m[22m[2m │ gzip:  1.48 kB[22m
+[2mdist/[22m[2massets/[22m[36mexporters-7fbU8CwG.js          [39m[1m[2m  4.25 kB[22m[1m[22m[2m │ gzip:  1.79 kB[22m
+[2mdist/[22m[2massets/[22m[36mEmailView-B9R3KGhj.js          [39m[1m[2m  5.13 kB[22m[1m[22m[2m │ gzip:  2.06 kB[22m
+[2mdist/[22m[2massets/[22m[36mCardPreview-_hY5Ad7_.js        [39m[1m[2m  6.26 kB[22m[1m[22m[2m │ gzip:  2.76 kB[22m
+[2mdist/[22m[2massets/[22m[36mSaleForm-Cmiw60bN.js           [39m[1m[2m  7.44 kB[22m[1m[22m[2m │ gzip:  2.51 kB[22m
+[2mdist/[22m[2massets/[22m[36mPrivacyPolicy-k8rODj0Q.js      [39m[1m[2m  8.15 kB[22m[1m[22m[2m │ gzip:  3.38 kB[22m
+[2mdist/[22m[2massets/[22m[36mTermsOfService-CQiQI32O.js     [39m[1m[2m  8.91 kB[22m[1m[22m[2m │ gzip:  3.61 kB[22m
+[2mdist/[22m[2massets/[22m[36mReportView-D7PxS6oX.js         [39m[1m[2m 10.28 kB[22m[1m[22m[2m │ gzip:  3.09 kB[22m
+[2mdist/[22m[2massets/[22m[36mstripe-vendor-zQqjX4dC.js      [39m[1m[2m 12.07 kB[22m[1m[22m[2m │ gzip: 
 ```
 
 ---
@@ -82,9 +82,9 @@ computing gzip size...
 ```
 
 Running 26 tests using 4 workers
-°°°·°°°°°°°°····°°°°··°···
+°°°·°°°°°°°°···°°°°···°···
   16 skipped
-  10 passed (14.3s)
+  10 passed (12.3s)
 
 ```
 
@@ -100,12 +100,12 @@ Running 26 tests using 4 workers
 
 Running 42 tests using 4 workers
 
-[1/42] [chromium] › e2e/deep-sync-conflict.spec.ts:120:3 › Deep Sync Conflict Scenarios › memory leak check after sync broadcast storm
-[2/42] [chromium] › e2e/deep-sync-conflict.spec.ts:94:3 › Deep Sync Conflict Scenarios › sync worker survives unhandled rejection
-[3/42] [chromium] › e2e/deep-sync-conflict.spec.ts:10:3 › Deep Sync Conflict Scenarios › BroadcastChannel ping/pong survives rapid tab switching
-[4/42] [chromium] › e2e/deep-sync-conflict.spec.ts:59:3 › Deep Sync Conflict Scenarios › BroadcastChannel handles duplicate messages without errors
-[5/42] [chromium] › e2e/indexeddb-corruption.spec.ts:12:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should recover from corrupted IndexedDB data
-[6/42] [chromium] › e2e/indexeddb-corruption.spec.ts:65:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should handle invalid schema gracefully
+[1/42] [chromium] › e2e/deep-sync-conflict.spec.ts:94:3 › Deep Sync Conflict Scenarios › sync worker survives unhandled rejection
+[2/42] [chromium] › e2e/deep-sync-conflict.spec.ts:10:3 › Deep Sync Conflict Scenarios › BroadcastChannel ping/pong survives rapid tab switching
+[3/42] [chromium] › e2e/deep-sync-conflict.spec.ts:59:3 › Deep Sync Conflict Scenarios › BroadcastChannel handles duplicate messages without errors
+[4/42] [chromium] › e2e/deep-sync-conflict.spec.ts:120:3 › Deep Sync Conflict Scenarios › memory leak check after sync broadcast storm
+[5/42] [chromium] › e2e/indexeddb-corruption.spec.ts:65:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should handle invalid schema gracefully
+[6/42] [chromium] › e2e/indexeddb-corruption.spec.ts:12:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should recover from corrupted IndexedDB data
 [7/42] [chromium] › e2e/indexeddb-eviction.spec.ts:12:5 › IndexedDB Recovery - Eviction › Eviction Test › should handle storage pressure and persist()
 [8/42] [chromium] › e2e/indexeddb-eviction.spec.ts:89:5 › IndexedDB Recovery - Eviction › Eviction Test › should estimate storage quota
 [9/42] [chromium] › e2e/indexeddb-migration.spec.ts:12:5 › IndexedDB Recovery - Migration › Migration Test › should migrate from old schema to new schema
@@ -127,9 +127,9 @@ Running 42 tests using 4 workers
     Error Context: test-results/indexeddb-migration-Indexe-ccb35-om-old-schema-to-new-schema-chromium/error-context.md
 
 
-[12/42] [chromium] › e2e/memory-leak.spec.ts:57:3 › Memory Leak Detection › event listeners cleaned up on unmount
-[13/42] [chromium] › e2e/memory-leak.spec.ts:84:3 › Memory Leak Detection › timers and intervals cleared on unmount
-[14/42] [chromium] › e2e/memory-leak.spec.ts:110:3 › Memory Leak Detection › IndexedDB connections closed properly
+[12/42] [chromium] › e2e/memory-leak.spec.ts:84:3 › Memory Leak Detection › timers and intervals cleared on unmount
+[13/42] [chromium] › e2e/memory-leak.spec.ts:110:3 › Memory Leak Detection › IndexedDB connections closed properly
+[14/42] [chromium] › e2e/memory-leak.spec.ts:57:3 › Memory Leak Detection › event listeners cleaned up on unmount
 [15/42] [chromium] › e2e/memory-leak.spec.ts:135:3 › Memory Leak Detection › BroadcastChannel closed on unmount
 [16/42] [chromium] › e2e/memory-leak.spec.ts:164:3 › Memory Leak Detection › memory usage stable under load
 [17/42] [chromium] › e2e/memory-leak.spec.ts:207:3 › Offline Storage Persistence › navigator.storage.persist() prevents eviction
@@ -142,10 +142,10 @@ Running 42 tests using 4 workers
 [24/42] [chromium] › e2e/network-perf.spec.ts:157:3 › Network Performance & Sync Loop Detection › detect sync loops, icon loops, and excessive network activity
 [25/42] [chromium] › e2e/offline-state-corruption.spec.ts:10:3 › Deep Edge Cases — Offline State Corruption & Recovery › IndexedDB corruption is handled gracefully — app does not crash on load
 [26/42] [chromium] › e2e/offline-state-corruption.spec.ts:47:3 › Deep Edge Cases — Offline State Corruption & Recovery › app survives localStorage quota exceeded gracefully
+[27/42] [chromium] › e2e/offline-state-corruption.spec.ts:65:3 › Deep Edge Cases — Offline State Corruption & Recovery › sessionStorage does not survive new tab
 [chromium] › e2e/network-perf.spec.ts:157:3 › Network Performance & Sync Loop Detection › detect sync loops, icon loops, and excessive network activity
 [MONITOR] Waiting 15s to capture baseline network activity...
 
-[27/42] [chromium] › e2e/offline-state-corruption.spec.ts:65:3 › Deep Edge Cases — Offline State Corruption & Recovery › sessionStorage does not survive new tab
 [28/42] [chromium] › e2e/offline-state-corruption.spec.ts:86:3 › Deep Edge Cases — Offline State Corruption & Recovery › multip
 ```
 
@@ -178,4 +178,4 @@ Nenhum relatorio admin gerado.
 
 | Data | Correcao | Commit |
 |------|----------|--------|
-| 2026-08-07 16:20 UTC | CI report gerado automaticamente | `8c5cb766f31e854c1966601f9517ef8a474e0347` |
+| 2026-08-07 16:41 UTC | CI report gerado automaticamente | `773398e0e024122fdc9d37441814153a769c82ec` |
