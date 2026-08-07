@@ -61,7 +61,7 @@ test.describe('Auth Flow', () => {
     await submitBtn.click();
     await page.waitForLoadState('domcontentloaded');
 
-    const emailError = page.locator('text=obrigatório').first();
+    const emailError = page.locator('text=Campo obrigatório').first();
     await expect(emailError).toBeVisible({ timeout: 10000 });
   });
 

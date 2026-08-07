@@ -97,23 +97,24 @@ test.describe('Deep Sync Conflict Scenarios', () => {
 
     let unhandledRejectionCaught = false;
     page.on('pageerror', (err) => {
-      if (err.message.includes('unhandledrejection')) {
+      if (err.message.includes('unhandledrejection') || err.message.includes('rejection')) {
         unhandledRejectionCaught = true;
       }
     });
 
     // Dispatch an unhandled rejection - the app should not crash
     await page.evaluate(() => {
+      const rejection = new Error('test rejection');
       window.dispatchEvent(new PromiseRejectionEvent('unhandledrejection', {
-        promise: Promise.reject(new Error('test rejection')),
-        reason: new Error('test rejection')
+        promise: Promise.reject(rejection),
+        reason: rejection
       }));
     });
 
     await page.waitForTimeout(2000);
 
-    // App should survive (page still responsive)
-    const stillResponsive = await page.evaluate(() => true);
+    // App should survive (page still responsive) - check via DOM
+    const stillResponsive = await page.evaluate(() => document.body !== null);
     expect(stillResponsive).toBe(true);
   });
 
