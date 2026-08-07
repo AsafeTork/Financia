@@ -18,6 +18,7 @@ import SyncBadge from './shared/ui/SyncBadge.jsx';
 import UpgradeModal from './shared/ui/UpgradeModal.jsx';
 import UpdateBanner from './shared/ui/UpdateBanner.jsx';
 import Onboarding from './shared/ui/Onboarding.jsx';
+import CommandPalette from './shared/ui/CommandPalette.jsx';
 import { FeatureErrorBoundary } from './shared/FeatureErrorBoundary.jsx';
 import { WidgetErrorBoundary } from './shared/WidgetErrorBoundary.jsx';
 import Login from './features/auth/Login.jsx';
@@ -56,7 +57,31 @@ export default function App() {
       setBrand: s.setBrandStable, setPlanInfo: setPlanInfo, setSyncStatus: s.setSyncStatus,
       setTx: setTx, setProducts: setProducts, setLosses: setLosses };
   }, [t.toast, s.session, s.setSession, s.isAdminDB, s.setIsAdminDB, s.setAppLoading, s.setDataLoading, s.setDataError, s.setBrandStable, setPlanInfo, s.setSyncStatus, setTx, setProducts, setLosses]);
-  const { saveBrand, savePhone, loadData } = useSession(sessionProps);
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+
+  const commandActions = useMemo(() => [
+    { id: 'nav-dashboard', label: 'Dashboard', description: 'Ir para o dashboard principal', shortcut: '⌘1', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>, onAction: () => navTo('') },
+    { id: 'nav-income', label: 'Nova Venda', description: 'Registrar nova venda/ganho', shortcut: '⌘N', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 4v16m8-8H4"/></svg>, onAction: () => { navTo('income'); setIsCommandPaletteOpen(false); } },
+    { id: 'nav-expense', label: 'Nova Despesa', description: 'Registrar nova despesa', shortcut: '⌘E', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 20V4m-8 8l8 8 8-8"/></svg>, onAction: () => { navTo('expense'); setIsCommandPaletteOpen(false); } },
+    { id: 'nav-inventory', label: 'Estoque', description: 'Gerenciar produtos e estoque', shortcut: '⌘2', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>, onAction: () => { navTo('inventory'); setIsCommandPaletteOpen(false); } },
+    { id: 'nav-plans', label: 'Planos', description: 'Ver planos e assinatura', shortcut: '⌘3', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>, onAction: () => { navTo('planos'); setIsCommandPaletteOpen(false); } },
+    { id: 'nav-settings', label: 'Configurações', description: 'Ajustar preferências', shortcut: '⌘,', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 21.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 014.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1 1.51"/></svg>, onAction: () => { navTo('settings'); setIsCommandPaletteOpen(false); } },
+    { id: 'nav-reports', label: 'Relatórios', description: 'Ver relatórios financeiros', shortcut: '⌘4', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>, onAction: () => { navTo('report'); setIsCommandPaletteOpen(false); } },
+    { id: 'toggle-theme', label: 'Alternar Tema', description: 'Mudar entre claro/escuro', shortcut: '⌘D', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>, onAction: toggleTheme },
+    { id: 'sync-now', label: 'Sincronizar Agora', description: 'Forçar sync com servidor', shortcut: '⌘S', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>, onAction: () => { /* trigger sync */ } },
+  ], [navTo, toggleTheme]);
+
+  const handleGlobalKeyDown = useCallback((e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      e.preventDefault();
+      setIsCommandPaletteOpen(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    document.addEventListener('keydown', handleGlobalKeyDown);
+    return () => document.removeEventListener('keydown', handleGlobalKeyDown);
+  }, [handleGlobalKeyDown]);
   const loadDataRef = useRef(loadData); loadDataRef.current = loadData;
   useEffect(function() {
     if (typeof window === 'undefined') return;
@@ -170,6 +195,7 @@ export default function App() {
           {s.confirmData && <Confirm msg={s.confirmData.msg} onOk={handleConfirmOk} onCancel={handleCancel}/>}
           {s.showUpgrade && <UpgradeModal reason={typeof s.showUpgrade === 'object' ? s.showUpgrade : null} brand={appBrand} onClose={handleCloseUpgrade} onNav={handleNav}/>}
           <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">{s.announceMsg}</div>
+          <CommandPalette isOpen={isCommandPaletteOpen} onClose={() => setIsCommandPaletteOpen(false)} actions={commandActions} />
         </div>
       </DataProvider>
     </AppProvider>
