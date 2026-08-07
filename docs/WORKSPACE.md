@@ -25,6 +25,7 @@
 
 ## 2. Concluído Recentemente
 
+- **Vitest hang após os testes (Issue #91)** (2026-08-07): suite agora **sai em ~18-20s** (antes: timeout/exit 124). Causa-raiz: `Onboarding.jsx` passava `onName`/`onPhone` sem memoização → efeito de mount do `PhoneInput` (`[iso,digits,onChange]`) re-disparava infinitamente, busy-loop sincronizando o worker vmThreads. Fix: `React.useCallback` (commit `3b63b93`). `setup.js` agora faz `cleanup()` + reset duro de DOM/`<head>` por teste para impedir acúmulo cross-file. Expôs flakiness pré-existente → Issue #96.
 - **Índices compostos Dexie (P0 #2)** (2026-08-07): 3 índices `[user_id+_synced]`, `[user_id+_deleted+date]`, `[user_id+_deleted+created_at]` — scan unsynced otimizado (sync.js/worker), carga ordenada por data (useDataLoader), zero breaking changes (v4→v5)
 - **Testes de integração sync verdes (Issue #92)** (2026-08-07): `sync.test.js`/`sync-extra.test.js`/`dexie.test.js` — mocks atualizados p/ índice composto `[user_id+_synced]`, hoisting `vi.mock` corrigido com `vi.hoisted`, re-import fresco de `sync.js` via `vi.resetModules()` (elimina interferência de cache de módulo no pool vmThreads), paginação do mock reutiliza qb; fix de produção: `syncProfiles` agora retorna `{ok, changed}` (antes boolean, falha de perfil era engolida)
 - **Sync em Web Worker (P0 #1)** (2026-08-07): worker consolida drift — agora importa a pipeline compartilhada de `src/lib/sync.js` em vez de duplicá-la (upsert mantém `client_mutation_id`/`base_version` e marca `_conflict` em 23505); fallback main-thread intacto no hook
