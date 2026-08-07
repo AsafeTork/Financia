@@ -1,4 +1,4 @@
-﻿import React, { useState, useMemo, useRef, useCallback } from 'react';
+﻿import React, { useState, useMemo, useRef, useCallback, useTransition } from 'react';
 import { Card, Inp, NumInp, Sel, Modal, Btn, PageHead } from '../../shared/ui/ui.jsx';
 import { SaleForm } from '../../shared/ui/SaleForm.jsx';
 import ExportButtons from '../../shared/ui/ExportButtons.jsx';
@@ -24,6 +24,11 @@ export default React.memo(function TxView({ type, tx, products, onAdd, onEdit, o
   var debouncedSearch = useDebouncedValue(search, 250);
   var [dateFrom, setDateFrom] = useState('');
   var [dateTo, setDateTo]     = useState('');
+  var [isPending, startTransition] = useTransition();
+
+  var pendingFilters = useCallback(function(update) {
+    startTransition(update);
+  }, []);
   var [form, setForm] = useState({desc:'', amount:'', date:today(), cat:'Fixo', method:'PIX', fixo:false, day:'5'});
 
   useQuickIntent(isIncome ? 'income' : 'expense', function() { setModal(true); });
@@ -184,20 +189,20 @@ export default React.memo(function TxView({ type, tx, products, onAdd, onEdit, o
           <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
           </svg>
-          <input aria-label="Buscar transacoes" value={search} onChange={function(e) { setSearch(e.target.value); }}
+          <input aria-label="Buscar transacoes" value={search} onChange={function(e) { pendingFilters(function() { setSearch(e.target.value); }); }}
             placeholder={'Buscar ' + (isIncome ? 'vendas' : 'despesas') + '...'}
             className="w-full pl-9 pr-3 py-2.5 text-sm border border-gray-200 rounded-xl transition"
             style={{background:'var(--bg-input)', color:'var(--text-main)'}}/>
         </div>
         <div className="grid grid-cols-2 gap-2">
-          <Inp label="De" type="date" value={dateFrom} onChange={function(e) { setDateFrom(e.target.value); }} placeholder="De"/>
-          <Inp label="Ate" type="date" value={dateTo}   onChange={function(e) { setDateTo(e.target.value); }}   placeholder="Ate"/>
+          <Inp label="De" type="date" value={dateFrom} onChange={function(e) { pendingFilters(function() { setDateFrom(e.target.value); }); }} placeholder="De"/>
+          <Inp label="Ate" type="date" value={dateTo}   onChange={function(e) { pendingFilters(function() { setDateTo(e.target.value); }); }}   placeholder="Ate"/>
         </div>
         {dateFrom && dateTo && dateFrom > dateTo && (
           <p className="text-xs text-red-500 mt-1">Data inicial deve ser anterior ou igual a data final.</p>
         )}
         {(search || dateFrom || dateTo) && (
-          <button onClick={function() { setSearch(''); setDateFrom(''); setDateTo(''); }}
+          <button onClick={function() { pendingFilters(function() { setSearch(''); setDateFrom(''); setDateTo(''); }); }}
             className="mt-2 text-xs font-medium text-gray-400 hover:text-gray-600 inline-flex items-center gap-1 min-h-[44px] -my-2.5 rounded-lg">
             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"/></svg>
             Limpar filtros
@@ -245,7 +250,18 @@ export default React.memo(function TxView({ type, tx, products, onAdd, onEdit, o
           </div>
           ) : (
           <div>
-            <div ref={scrollRef} className="max-h-[calc(100vh-280px)] min-h-[200px] overflow-auto" style={{position:'relative'}}>
+            <div className="relative">
+              {isPending && (
+                <div data-testid="tx-filter-pending" className="absolute inset-0 z-10 flex items-center justify-center bg-white/40 backdrop-blur-[1px]" style={{background:'color-mix(in srgb, var(--bg-card) 55%, transparent)'}}>
+                  <span className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-full" style={{background:'var(--bg-card)', color:'var(--text-sub)', boxShadow:'0 1px 4px rgba(0,0,0,.08)'}}>
+                    <svg className="w-3.5 h-3.5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeWidth={2.5} d="M12 3a9 9 0 108 12"/>
+                    </svg>
+                    Filtrando...
+                  </span>
+                </div>
+              )}
+              <div ref={scrollRef} className="max-h-[calc(100vh-280px)] min-h-[200px] overflow-auto" style={{position:'relative'}}>
               <div role="list" data-testid="tx-list" style={{ height: virtualizer.getTotalSize() + 'px', position: 'relative' }}>
                 {virtualizer.getVirtualItems().map(function(virtualItem) {
                     var item = flatRows[virtualItem.index];
@@ -281,6 +297,7 @@ export default React.memo(function TxView({ type, tx, products, onAdd, onEdit, o
                     );
                   })}
               </div>
+            </div>
             </div>
           </div>
         )}
