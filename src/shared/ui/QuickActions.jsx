@@ -7,7 +7,7 @@ import { brandAlpha } from '../../lib/utils.js';
 // perda e acesso rápido às configurações. A view alvo consome a intenção e abre
 // o próprio modal de criação (via quickIntent).
 
-var SHOWN_VIEWS = ['dashboard', 'income', 'expense', 'inventory'];
+var SHOWN_VIEWS = ['dashboard', 'income', 'expense', 'inventory', 'report', 'settings', 'planos'];
 
 var ACTIONS = [
   { key: 'income',   label: 'Nova Venda',    view: 'income',    type: 'income',   color: '#16a34a', d: 'M12 4v16m8-8l-8-8-8 8' },
@@ -48,7 +48,7 @@ function QuickActions({ view, onNav, brand }) {
       {open && (
         <div role="menu" aria-label="Ações rápidas" data-testid="quick-actions-menu"
           className="flex flex-col items-end gap-2">
-          {ACTIONS.map(function(a, i) {
+           {ACTIONS.filter(function(a) { return !(view === 'settings' && a.key === 'settings'); }).map(function(a, i) {
             return (
               <button key={a.key} type="button" role="menuitem"
                 onClick={function() { run(a); }}

@@ -16,16 +16,20 @@ describe('QuickActions', function() {
   afterEach(function() { cleanup(); clearQuickIntent(); });
 
   it('nao renderiza em telas fora da lista', function() {
-    var { container } = renderQA('report');
+    var { container } = renderQA('email');
     expect(container.innerHTML).toBe('');
-    var { container: c2 } = renderQA('settings');
+    var { container: c2 } = renderQA('brandstudio');
     expect(c2.innerHTML).toBe('');
   });
 
   it('renderiza FAB nas telas principais', function() {
-    var { container } = renderQA('dashboard');
-    expect(screen.getByTestId('quick-actions-fab')).toBeTruthy();
-    expect(container.querySelector('[role="menu"]')).toBeNull();
+    var views = ['dashboard', 'income', 'expense', 'inventory', 'report', 'settings', 'planos'];
+    views.forEach(function(v) {
+      cleanup();
+      var { container } = renderQA(v);
+      expect(screen.getByTestId('quick-actions-fab')).toBeTruthy();
+      expect(container.querySelector('[role="menu"]')).toBeNull();
+    });
   });
 
   it('abre o menu ao clicar no FAB', async function() {
@@ -84,6 +88,14 @@ describe('QuickActions', function() {
     await user.click(screen.getByTestId('quick-action-product'));
     expect(navs).toEqual(['inventory']);
     expect(consumeQuickIntent('product')).not.toBeNull();
+  });
+
+  it('esconde acao de configuracoes quando ja na tela de settings', async function() {
+    var user = userEvent.setup();
+    renderQA('settings');
+    await user.click(screen.getByTestId('quick-actions-fab'));
+    expect(screen.getByTestId('quick-action-income')).toBeTruthy();
+    expect(screen.queryByTestId('quick-action-settings')).toBeNull();
   });
 
   it('Configuracoes navega para settings sem emitir intencao', async function() {
