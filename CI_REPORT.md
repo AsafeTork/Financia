@@ -1,7 +1,7 @@
 # CI Report
 
-**Gerado:** 2026-08-07 20:52 UTC
-**Commit:** `1b65a3ed3e54ab82495d86e702405b8720f14b0f`
+**Gerado:** 2026-08-07 21:00 UTC
+**Commit:** `4aa74c443a078fa65028bebb736a857d7905d2c1`
 **Branch:** `main`
 
 ---
@@ -122,27 +122,27 @@ computing gzip size...
 ```
 
 Running 26 tests using 4 workers
-°··°°°°°°°°°F··°°°°···°···
+°··°°°°°°°°°°··°··°°°·°F··
 
-  1) [chromium] › e2e/error-boundary-recovery.spec.ts:40:3 › Deep Error Boundary Recovery › window.onerror captures unhandled JS errors gracefully 
+  1) [chromium] › e2e/offline-state-corruption.spec.ts:10:3 › Deep Edge Cases — Offline State Corruption & Recovery › IndexedDB corruption is handled gracefully — app does not crash on load 
 
-    Error: page.evaluate: Execution context was destroyed, most likely because of a navigation.
+    Error: page.evaluate: Execution context was destroyed, most likely because of a navigation
 
-      42 |     await page.waitForLoadState('networkidle');
-      43 |
-    > 44 |     const errorCaptured = await page.evaluate(() => {
-         |                                      ^
-      45 |       return new Promise<boolean>((resolve) => {
-      46 |         const handler = function(msg: string, source: string, lineno: number, colno: number, error: Error) {
-      47 |           window.onerror = null;
-        at /home/runner/work/Financia/Financia/e2e/error-boundary-recovery.spec.ts:44:38
+      12 |     await page.waitForLoadState('networkidle');
+      13 |
+    > 14 |     const corruptIDB = await page.evaluate(async () => {
+         |                                   ^
+      15 |       try {
+      16 |         const db = await new Promise((resolve, reject) => {
+      17 |           const request = indexedDB.open('financia-corrupt-test', 1);
+        at /home/runner/work/Financia/Financia/e2e/offline-state-corruption.spec.ts:14:35
 
-    Error Context: test-results/error-boundary-recovery-De-5f324-andled-JS-errors-gracefully-chromium/error-context.md
+    Error Context: test-results/offline-state-corruption-D-025d2--app-does-not-crash-on-load-chromium/error-context.md
 
   1 failed
-    [chromium] › e2e/error-boundary-recovery.spec.ts:40:3 › Deep Error Boundary Recovery › window.onerror captures unhandled JS errors gracefully 
-  15 skipped
-  10 passed (14.5s)
+    [chromium] › e2e/offline-state-corruption.spec.ts:10:3 › Deep Edge Cases — Offline State Corruption & Recovery › IndexedDB corruption is handled gracefully — app does not crash on load 
+  16 skipped
+  9 passed (13.9s)
 
 ```
 
@@ -158,12 +158,12 @@ Running 26 tests using 4 workers
 
 Running 42 tests using 4 workers
 
-[1/42] [chromium] › e2e/deep-sync-conflict.spec.ts:120:3 › Deep Sync Conflict Scenarios › memory leak check after sync broadcast storm
-[2/42] [chromium] › e2e/deep-sync-conflict.spec.ts:59:3 › Deep Sync Conflict Scenarios › BroadcastChannel handles duplicate messages without errors
-[3/42] [chromium] › e2e/deep-sync-conflict.spec.ts:10:3 › Deep Sync Conflict Scenarios › BroadcastChannel ping/pong survives rapid tab switching
-[4/42] [chromium] › e2e/deep-sync-conflict.spec.ts:94:3 › Deep Sync Conflict Scenarios › sync worker survives unhandled rejection
-[5/42] [chromium] › e2e/indexeddb-corruption.spec.ts:65:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should handle invalid schema gracefully
-[6/42] [chromium] › e2e/indexeddb-corruption.spec.ts:12:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should recover from corrupted IndexedDB data
+[1/42] [chromium] › e2e/deep-sync-conflict.spec.ts:94:3 › Deep Sync Conflict Scenarios › sync worker survives unhandled rejection
+[2/42] [chromium] › e2e/deep-sync-conflict.spec.ts:10:3 › Deep Sync Conflict Scenarios › BroadcastChannel ping/pong survives rapid tab switching
+[3/42] [chromium] › e2e/deep-sync-conflict.spec.ts:59:3 › Deep Sync Conflict Scenarios › BroadcastChannel handles duplicate messages without errors
+[4/42] [chromium] › e2e/deep-sync-conflict.spec.ts:120:3 › Deep Sync Conflict Scenarios › memory leak check after sync broadcast storm
+[5/42] [chromium] › e2e/indexeddb-corruption.spec.ts:12:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should recover from corrupted IndexedDB data
+[6/42] [chromium] › e2e/indexeddb-corruption.spec.ts:65:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should handle invalid schema gracefully
 [7/42] [chromium] › e2e/indexeddb-eviction.spec.ts:12:5 › IndexedDB Recovery - Eviction › Eviction Test › should handle storage pressure and persist()
 [8/42] [chromium] › e2e/indexeddb-eviction.spec.ts:89:5 › IndexedDB Recovery - Eviction › Eviction Test › should estimate storage quota
 [9/42] [chromium] › e2e/indexeddb-migration.spec.ts:12:5 › IndexedDB Recovery - Migration › Migration Test › should migrate from old schema to new schema
@@ -192,19 +192,29 @@ Running 42 tests using 4 workers
 [16/42] [chromium] › e2e/memory-leak.spec.ts:164:3 › Memory Leak Detection › memory usage stable under load
 [17/42] [chromium] › e2e/memory-leak.spec.ts:207:3 › Offline Storage Persistence › navigator.storage.persist() prevents eviction
 [18/42] [chromium] › e2e/memory-leak.spec.ts:222:3 › Offline Storage Persistence › storage estimate available
+  2) [chromium] › e2e/memory-leak.spec.ts:207:3 › Offline Storage Persistence › navigator.storage.persist() prevents eviction 
+
+    Error: page.evaluate: Execution context was destroyed, most likely because of a navigation
+
+      209 |     await page.waitForLoadState('networkidle');
+      210 |     
+    > 211 |     const persisted = await page.evaluate(async () => {
+          |                                  ^
+      212 |       if ('storage' in navigator && 'persist' in navigator.storage) {
+      213 |         return await navigator.storage.persist();
+      214 |       }
+        at /home/runner/work/Financia/Financia/e2e/memory-leak.spec.ts:211:34
+
+    Error Context: test-results/memory-leak-Offline-Storag-ee824-e-persist-prevents-eviction-chromium/error-context.md
+
+
 [19/42] [chromium] › e2e/network-error-handling.spec.ts:10:3 › Network Error Handling Scenarios › app loads successfully with slow network (3G)
 [20/42] [chromium] › e2e/network-error-handling.spec.ts:34:3 › Network Error Handling Scenarios › app handles complete network disconnection gracefully
 [21/42] [chromium] › e2e/network-error-handling.spec.ts:48:3 › Network Error Handling Scenarios › app handles intermittent network failures
 [22/42] [chromium] › e2e/network-error-handling.spec.ts:64:3 › Network Error Handling Scenarios › fetch to missing endpoint returns handled error
 [23/42] [chromium] › e2e/network-error-handling.spec.ts:82:3 › Network Error Handling Scenarios › WebSocket connection failure is handled gracefully
 [24/42] [chromium] › e2e/network-perf.spec.ts:157:3 › Network Performance & Sync Loop Detection › detect sync loops, icon loops, and excessive network activity
-[25/42] [chromium] › e2e/offline-state-corruption.spec.ts:10:3 › Deep Edge Cases — Offline State Corruption & Recovery › IndexedDB corruption is handled gracefully — app does not crash on load
-[26/42] [chromium] › e2e/offline-state-corruption.spec.ts:47:3 › Deep Edge Cases — Offline State Corruption & Recovery › app survives localStorage quota exceeded gracefully
-[chromium] › e2e/network-perf.spec.ts:157:3 › Network Performance & Sync Loop Detection › detect sync loops, icon loops, and excessive network activity
-[MONITOR] Waiting 15s to capture baseline network activity...
-
-[27/42] [chromium] › e2e/offline-state-corruption.spec.ts:65:3 › Deep Edge Cases — Offline State Corruption & Recovery › sessionStorage does not survive new tab
-[28/42] [chromium] › e2e/offline-state-corruption.spec.ts:86:3 › Deep Edge Cases — Offline State Corruption & Recovery › multip
+[25/42] [chromium] › e2e/offline-state-corruption.spec.ts:10:3 › Deep Edge Cases — Offlin
 ```
 
 ---
@@ -236,4 +246,4 @@ Nenhum relatorio admin gerado.
 
 | Data | Correcao | Commit |
 |------|----------|--------|
-| 2026-08-07 20:52 UTC | CI report gerado automaticamente | `1b65a3ed3e54ab82495d86e702405b8720f14b0f` |
+| 2026-08-07 21:00 UTC | CI report gerado automaticamente | `4aa74c443a078fa65028bebb736a857d7905d2c1` |
