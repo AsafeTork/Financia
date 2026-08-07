@@ -1,7 +1,7 @@
 # CI Report
 
-**Gerado:** 2026-08-07 22:24 UTC
-**Commit:** `ed3f88d895264b609efd2eb5e4b8c32097af5557`
+**Gerado:** 2026-08-07 22:39 UTC
+**Commit:** `f897bdc65feeff7754d26cce7ad95c4e91749225`
 **Branch:** `main`
 
 ---
@@ -84,37 +84,27 @@ computing gzip size...
 ```
 
 Running 26 tests using 4 workers
-°°·°°°°°°°°·····°°°°··°F··
+°°°·°°°°°°°°F··°·°°°··°···
 
-  1) [chromium] › e2e/auth-flow.spec.ts:45:3 › Auth Flow › login form shows validation errors on empty submit 
+  1) [chromium] › e2e/error-boundary-recovery.spec.ts:10:3 › Deep Error Boundary Recovery › app recovers from component render error without white screen 
 
-    Error: expect(locator).toBeVisible() failed
+    Error: page.evaluate: Execution context was destroyed, most likely because of a navigation
 
-    Locator: locator('text=Campo obrigatório').first()
-    Expected: visible
-    Timeout: 10000ms
-    Error: element(s) not found
+      17 |     });
+      18 |
+    > 19 |     const renderError = await page.evaluate(() => {
+         |                                    ^
+      20 |       try {
+      21 |         const root = document.getElementById('root');
+      22 |         if (!root) return 'no-root';
+        at /home/runner/work/Financia/Financia/e2e/error-boundary-recovery.spec.ts:19:36
 
-    Call log:
-      - Expect "toBeVisible" with timeout 10000ms
-      - waiting for locator('text=Campo obrigatório').first()
-
-
-      63 |
-      64 |     const emailError = page.locator('text=Campo obrigatório').first();
-    > 65 |     await expect(emailError).toBeVisible({ timeout: 10000 });
-         |                              ^
-      66 |   });
-      67 |
-      68 |   test('authenticated user sees dashboard via storageState', async ({ page, browser }) => {
-        at /home/runner/work/Financia/Financia/e2e/auth-flow.spec.ts:65:30
-
-    Error Context: test-results/auth-flow-Auth-Flow-login--49015-tion-errors-on-empty-submit-chromium/error-context.md
+    Error Context: test-results/error-boundary-recovery-De-dcb0c--error-without-white-screen-chromium/error-context.md
 
   1 failed
-    [chromium] › e2e/auth-flow.spec.ts:45:3 › Auth Flow › login form shows validation errors on empty submit 
-  15 skipped
-  10 passed (18.4s)
+    [chromium] › e2e/error-boundary-recovery.spec.ts:10:3 › Deep Error Boundary Recovery › app recovers from component render error without white screen 
+  16 skipped
+  9 passed (15.4s)
 
 ```
 
@@ -130,18 +120,34 @@ Running 26 tests using 4 workers
 
 Running 42 tests using 4 workers
 
-[1/42] [chromium] › e2e/deep-sync-conflict.spec.ts:121:3 › Deep Sync Conflict Scenarios › memory leak check after sync broadcast storm
+[1/42] [chromium] › e2e/deep-sync-conflict.spec.ts:10:3 › Deep Sync Conflict Scenarios › BroadcastChannel ping/pong survives rapid tab switching
 [2/42] [chromium] › e2e/deep-sync-conflict.spec.ts:94:3 › Deep Sync Conflict Scenarios › sync worker survives unhandled rejection
-[3/42] [chromium] › e2e/deep-sync-conflict.spec.ts:10:3 › Deep Sync Conflict Scenarios › BroadcastChannel ping/pong survives rapid tab switching
+[3/42] [chromium] › e2e/deep-sync-conflict.spec.ts:121:3 › Deep Sync Conflict Scenarios › memory leak check after sync broadcast storm
 [4/42] [chromium] › e2e/deep-sync-conflict.spec.ts:59:3 › Deep Sync Conflict Scenarios › BroadcastChannel handles duplicate messages without errors
 [5/42] [chromium] › e2e/indexeddb-corruption.spec.ts:12:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should recover from corrupted IndexedDB data
 [6/42] [chromium] › e2e/indexeddb-corruption.spec.ts:65:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should handle invalid schema gracefully
-[7/42] [chromium] › e2e/indexeddb-eviction.spec.ts:12:5 › IndexedDB Recovery - Eviction › Eviction Test › should handle storage pressure and persist()
-[8/42] [chromium] › e2e/indexeddb-eviction.spec.ts:89:5 › IndexedDB Recovery - Eviction › Eviction Test › should estimate storage quota
+  1) [chromium] › e2e/deep-sync-conflict.spec.ts:94:3 › Deep Sync Conflict Scenarios › sync worker survives unhandled rejection 
+
+    Error: page.evaluate: Execution context was destroyed, most likely because of a navigation
+
+      104 |
+      105 |     // Dispatch an unhandled rejection - the app should not crash
+    > 106 |     await page.evaluate(() => {
+          |                ^
+      107 |       const rejection = new Error('test rejection');
+      108 |       window.dispatchEvent(new PromiseRejectionEvent('unhandledrejection', {
+      109 |         promise: Promise.reject(rejection),
+        at /home/runner/work/Financia/Financia/e2e/deep-sync-conflict.spec.ts:106:16
+
+    Error Context: test-results/deep-sync-conflict-Deep-Sy-7a968-urvives-unhandled-rejection-chromium/error-context.md
+
+
+[7/42] [chromium] › e2e/indexeddb-eviction.spec.ts:89:5 › IndexedDB Recovery - Eviction › Eviction Test › should estimate storage quota
+[8/42] [chromium] › e2e/indexeddb-eviction.spec.ts:12:5 › IndexedDB Recovery - Eviction › Eviction Test › should handle storage pressure and persist()
 [9/42] [chromium] › e2e/indexeddb-migration.spec.ts:12:5 › IndexedDB Recovery - Migration › Migration Test › should migrate from old schema to new schema
 [10/42] [chromium] › e2e/indexeddb-migration.spec.ts:92:5 › IndexedDB Recovery - Migration › Migration Test › should preserve data integrity during migration
 [11/42] [chromium] › e2e/memory-leak.spec.ts:6:3 › Memory Leak Detection › cyclic navigation - no detached DOM nodes
-  1) [chromium] › e2e/indexeddb-migration.spec.ts:12:5 › IndexedDB Recovery - Migration › Migration Test › should migrate from old schema to new schema 
+  2) [chromium] › e2e/indexeddb-migration.spec.ts:12:5 › IndexedDB Recovery - Migration › Migration Test › should migrate from old schema to new schema 
 
     Error: page.evaluate: AbortError: Version change transaction was aborted in upgradeneeded event handler.
 
@@ -165,18 +171,23 @@ Running 42 tests using 4 workers
 [17/42] [chromium] › e2e/memory-leak.spec.ts:207:3 › Offline Storage Persistence › navigator.storage.persist() prevents eviction
 [18/42] [chromium] › e2e/memory-leak.spec.ts:222:3 › Offline Storage Persistence › storage estimate available
 [19/42] [chromium] › e2e/network-error-handling.spec.ts:10:3 › Network Error Handling Scenarios › app loads successfully with slow network (3G)
-[20/42] [chromium] › e2e/network-error-handling.spec.ts:34:3 › Network Error Handling Scenarios › app handles complete network disconnection gracefully
-[21/42] [chromium] › e2e/network-error-handling.spec.ts:48:3 › Network Error Handling Scenarios › app handles intermittent network failures
-[22/42] [chromium] › e2e/network-error-handling.spec.ts:64:3 › Network Error Handling Scenarios › fetch to missing endpoint returns handled error
-[23/42] [chromium] › e2e/network-error-handling.spec.ts:82:3 › Network Error Handling Scenarios › WebSocket connection failure is handled gracefully
-[24/42] [chromium] › e2e/network-perf.spec.ts:157:3 › Network Performance & Sync Loop Detection › detect sync loops, icon loops, and excessive network activity
-[25/42] [chromium] › e2e/offline-state-corruption.spec.ts:10:3 › Deep Edge Cases — Offline State Corruption & Recovery › IndexedDB corruption is handled gracefully — app does not crash on load
-[26/42] [chromium] › e2e/offline-state-corruption.spec.ts:47:3 › Deep Edge Cases — Offline State Corruption & Recovery › app survives localStorage quota exceeded gracefully
-[27/42] [chromium] › e2e/offline-state-corruption.spec.ts:65:3 › Deep Edge Cases — Offline State Corruption & Recovery › sessionStorage does not survive new tab
-[chromium] › e2e/network-perf.spec.ts:157:3 › Network Performance & Sync Loop Detection › detect sync loops, icon loops, and excessive network activity
-[MONITOR] Waiting 15s to capture baseline network activity...
+  3) [chromium] › e2e/memory-leak.spec.ts:222:3 › Offline Storage Persistence › storage estimate available 
 
-[28/42] [chromium] › e2e/offline-state-corruption.spec.ts:86:3 › Deep Edge Cases — Offline State Corruption & Recovery › multip
+    Error: page.evaluate: Execution context was destroyed, most likely because of a navigation
+
+      224 |     await page.waitForLoadState('networkidle');
+      225 |     
+    > 226 |     const estimate = await page.evaluate(async () => {
+          |                                 ^
+      227 |       if ('storage' in navigator && 'estimate' in navigator.storage) {
+      228 |         return await navigator.storage.estimate();
+      229 |       }
+        at /home/runner/work/Financia/Financia/e2e/memory-leak.spec.ts:226:33
+
+    Error Context: test-results/memory-leak-Offline-Storag-f7ca6--storage-estimate-available-chromium/error-context.md
+
+
+[20/42] [chromium] › e2e/network-error-handling.s
 ```
 
 ---
@@ -208,4 +219,4 @@ Nenhum relatorio admin gerado.
 
 | Data | Correcao | Commit |
 |------|----------|--------|
-| 2026-08-07 22:24 UTC | CI report gerado automaticamente | `ed3f88d895264b609efd2eb5e4b8c32097af5557` |
+| 2026-08-07 22:39 UTC | CI report gerado automaticamente | `f897bdc65feeff7754d26cce7ad95c4e91749225` |
