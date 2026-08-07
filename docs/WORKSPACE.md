@@ -25,6 +25,10 @@
 
 ## 2. Concluído Recentemente
 
+- **Touch targets ≥ 44px (P1 #5)** (2026-08-07): token `--touch-target-min: 44px` no design system (`index.css`); `min-h/min-w: var(--touch-target-min)` aplicado em Button (todas as sizes), Input, Select (`Sel`), abas (SettingsView, BrandStudioView, PlanTabsEditor), selects avulsos (TransactionCard, BrandGlobalEditor), botões compactos `px-3 py-1.5`/`px-2.5 py-1.5` (EmailView, BrandStudioView undo/redo, PlanTabsEditor copy, ClientEditModal, SettingsView, AdminPanel), upload labels (BrandGlobalEditor, ModuleEditor), color inputs (ColorField, ModuleEditor, PlanTabsEditor, LogoSchemes) e ícones de ação (AdminPanel, ClientEditModal close). BottomNav/Header/ThemeToggle/Dashboard/TxView/PlansView/Confirm já estavam ≥44px. Commit `bc07e88`.
+
+- **Contraste 4.5:1 brand colors (P1 #6)** (2026-08-07): `--text-muted` claro `#94a3b8`→`#5f7086` (2.56→5.06:1 no branco; 4.63 na página off-white); `--success` desacoplado de `--green` (mint decorativo) e escurecido para `#15803d` (5.02:1 nas duas direções — texto verde no claro e texto branco sobre botão verde). Call sites de texto/ícone de verde agora usam `var(--success)` (Landing incomes/checkmarks, Login ACCENT, Dashboard step circle, PlanStatusCard stroke). Verde claro `--green` permanece só em fills decorativos (exigência WCAG não se aplica). Falhas de contraste estavam todas no light mode; dark mode já passava.
+
 - **ARIA roles em lista virtualizada (P1 #8)** (2026-08-07): itens do `VirtualList` do `TxView.jsx` ganharam `role="listitem"` (container já tinha `role="list"`), expondo cada transação/grupo ao screen reader
 - **Vitest hang após os testes (Issue #91)** (2026-08-07): suite agora **sai em ~18-20s** (antes: timeout/exit 124). Causa-raiz: `Onboarding.jsx` passava `onName`/`onPhone` sem memoização → efeito de mount do `PhoneInput` (`[iso,digits,onChange]`) re-disparava infinitamente, busy-loop sincronizando o worker vmThreads. Fix: `React.useCallback` (commit `3b63b93`). `setup.js` agora faz `cleanup()` + reset duro de DOM/`<head>` por teste para impedir acúmulo cross-file. Expôs flakiness pré-existente → Issue #96.
 - **Índices compostos Dexie (P0 #2)** (2026-08-07): 3 índices `[user_id+_synced]`, `[user_id+_deleted+date]`, `[user_id+_deleted+created_at]` — scan unsynced otimizado (sync.js/worker), carga ordenada por data (useDataLoader), zero breaking changes (v4→v5)
@@ -54,9 +58,9 @@
 
 | # | Tarefa | Notas |
 |---|--------|-------|
-| 5 | Touch targets ≥ 44×44px | BottomNav, tabs Inventory, Selects |
-| 6 | Contraste 4.5:1 em combinações de brand colors | check runtime ou paleta restrita |
+| ~~5~~ | ✅ ~~Touch targets ≥ 44×44px~~ | `index.css` + 16 componentes (2026-08-07, `bc07e88`) |
 | 7 | Alternativa `<table>` para gráficos (screen reader) | `BarChartSVG` |
+| ~~6~~ | ✅ ~~Contraste 4.5:1 em combinações de brand colors~~ | `index.css` (2026-08-07) |
 | ~~8~~ | ✅ ~~`role="listitem"` em lista virtualizada~~ | `TxView.jsx` (2026-08-07) |
 | 9 | Headline metric no dashboard | 1 KPI "Resultado Líquido" + 3 apoio |
 | 10 | Sticky headers de data na lista de transações | CSS `position: sticky` |
