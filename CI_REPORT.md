@@ -1,7 +1,7 @@
 # CI Report
 
-**Gerado:** 2026-08-07 15:51 UTC
-**Commit:** `2ff48227ab8d8563d32866c14bbaecbcfd0dac82`
+**Gerado:** 2026-08-07 16:10 UTC
+**Commit:** `c393f06698331a3382ab71e7d10424d86f34c717`
 **Branch:** `main`
 
 ---
@@ -14,7 +14,7 @@
 | Testes Unitarios | nao executado |
 | Testes Integracao | com falhas |
 | Build | ok |
-| E2E Tests | com falhas |
+| E2E Tests | ok |
 | Auditoria de Producao | ver resultado abaixo |
 | Admin Audit | ver resultado abaixo |
 
@@ -55,20 +55,20 @@ rendering chunks...
 computing gzip size...
 [2mdist/[22m[32mindex.html                                [39m[1m[2m  3.20 kB[22m[1m[22m[2m │ gzip:  1.00 kB[22m
 [2mdist/[22m[2massets/[22m[32msync.worker-C2sOlgyF.js            [39m[1m[2m 81.74 kB[22m[1m[22m
-[2mdist/[22m[2massets/[22m[35mindex-BcGXpyoo.css                 [39m[1m[2m 58.77 kB[22m[1m[22m[2m │ gzip: 12.21 kB[22m
+[2mdist/[22m[2massets/[22m[35mindex-B3S8XtFS.css                 [39m[1m[2m 58.90 kB[22m[1m[22m[2m │ gzip: 12.24 kB[22m
 [2mdist/[22m[2massets/[22m[36mvendor-supabase-vwDjcXxQ.js        [39m[1m[2m  0.00 kB[22m[1m[22m[2m │ gzip:  0.02 kB[22m
 [2mdist/[22m[2massets/[22m[36museDebouncedValue-DhXJ-2MC.js      [39m[1m[2m  0.21 kB[22m[1m[22m[2m │ gzip:  0.17 kB[22m
 [2mdist/[22m[2massets/[22m[36mDebugBadge-CuG2Hgqz.js             [39m[1m[2m  0.83 kB[22m[1m[22m[2m │ gzip:  0.47 kB[22m
-[2mdist/[22m[2massets/[22m[36mlogoUtils-BDrQQI9e.js              [39m[1m[2m  0.88 kB[22m[1m[22m[2m │ gzip:  0.46 kB[22m
+[2mdist/[22m[2massets/[22m[36mlogoUtils-IttB1AXR.js              [39m[1m[2m  0.88 kB[22m[1m[22m[2m │ gzip:  0.46 kB[22m
 [2mdist/[22m[2massets/[22m[36mvendor-radix-0j1Bgcl0.js           [39m[1m[2m  1.05 kB[22m[1m[22m[2m │ gzip:  0.62 kB[22m
 [2mdist/[22m[2massets/[22m[36mvendor-class-utils-BGivqV-2.js     [39m[1m[2m  1.12 kB[22m[1m[22m[2m │ gzip:  0.56 kB[22m
 [2mdist/[22m[2massets/[22m[36mvendor-virtual-BFXXfAAg.js         [39m[1m[2m  1.82 kB[22m[1m[22m[2m │ gzip:  0.91 kB[22m
 [2mdist/[22m[2massets/[22m[36mvendor-radix-slot-CD8tn4BR.js      [39m[1m[2m  2.03 kB[22m[1m[22m[2m │ gzip:  0.98 kB[22m
 [2mdist/[22m[2massets/[22m[36mvendor-stripe-core-CUtUkgyj.js     [39m[1m[2m  2.25 kB[22m[1m[22m[2m │ gzip:  1.00 kB[22m
-[2mdist/[22m[2massets/[22m[36maiClient-CzPpSICd.js               [39m[1m[2m  2.81 kB[22m[1m[22m[2m │ gzip:  1.48 kB[22m
+[2mdist/[22m[2massets/[22m[36maiClient-GZzTB7fG.js               [39m[1m[2m  2.81 kB[22m[1m[22m[2m │ gzip:  1.48 kB[22m
 [2mdist/[22m[2massets/[22m[36mexporters-BRcQ71Kn.js              [39m[1m[2m  4.25 kB[22m[1m[22m[2m │ gzip:  1.79 kB[22m
-[2mdist/[22m[2massets/[22m[36mEmailView-qNcd31sE.js              [39m[1m[2m  5.26 kB[22m[1m[22m[2m │ gzip:  2.11 kB[22m
-[2mdist/[22m[2massets/[22m[36mCardPreview-BZE1_wwq.j
+[2mdist/[22m[2massets/[22m[36mEmailView-CAzx8l0R.js              [39m[1m[2m  5.26 kB[22m[1m[22m[2m │ gzip:  2.11 kB[22m
+[2mdist/[22m[2massets/[22m[36mCardPreview-CtU-XCs1.j
 ```
 
 ---
@@ -77,42 +77,14 @@ computing gzip size...
 
 | Status |
 |---|
-| com falhas |
+| ok |
 
 ```
 
 Running 26 tests using 4 workers
-°°·°°°°°°°°·····°°°°··°··F
-
-  1) [chromium] › e2e/auth-flow.spec.ts:45:3 › Auth Flow › login form shows validation errors on empty submit 
-
-    Error: expect(locator).toBeVisible() failed
-
-    Locator: locator('text=obrigatório').first()
-    Expected: visible
-    Timeout: 10000ms
-    Error: element(s) not found
-
-    Call log:
-      - Expect "toBeVisible" with timeout 10000ms
-      - waiting for locator('text=obrigatório').first()
-
-
-      63 |
-      64 |     const emailError = page.locator('text=obrigatório').first();
-    > 65 |     await expect(emailError).toBeVisible({ timeout: 10000 });
-         |                              ^
-      66 |   });
-      67 |
-      68 |   test('authenticated user sees dashboard via storageState', async ({ page, browser }) => {
-        at /home/runner/work/Financia/Financia/e2e/auth-flow.spec.ts:65:30
-
-    Error Context: test-results/auth-flow-Auth-Flow-login--49015-tion-errors-on-empty-submit-chromium/error-context.md
-
-  1 failed
-    [chromium] › e2e/auth-flow.spec.ts:45:3 › Auth Flow › login form shows validation errors on empty submit 
+°°··°°°°°°°°···°°·°°··°···
   15 skipped
-  10 passed (16.4s)
+  11 passed (15.0s)
 
 ```
 
@@ -129,8 +101,8 @@ Running 26 tests using 4 workers
 Running 42 tests using 4 workers
 
 [1/42] [chromium] › e2e/deep-sync-conflict.spec.ts:10:3 › Deep Sync Conflict Scenarios › BroadcastChannel ping/pong survives rapid tab switching
-[2/42] [chromium] › e2e/deep-sync-conflict.spec.ts:94:3 › Deep Sync Conflict Scenarios › sync worker survives unhandled rejection
-[3/42] [chromium] › e2e/deep-sync-conflict.spec.ts:59:3 › Deep Sync Conflict Scenarios › BroadcastChannel handles duplicate messages without errors
+[2/42] [chromium] › e2e/deep-sync-conflict.spec.ts:59:3 › Deep Sync Conflict Scenarios › BroadcastChannel handles duplicate messages without errors
+[3/42] [chromium] › e2e/deep-sync-conflict.spec.ts:94:3 › Deep Sync Conflict Scenarios › sync worker survives unhandled rejection
 [4/42] [chromium] › e2e/deep-sync-conflict.spec.ts:120:3 › Deep Sync Conflict Scenarios › memory leak check after sync broadcast storm
 [5/42] [chromium] › e2e/indexeddb-corruption.spec.ts:12:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should recover from corrupted IndexedDB data
 [6/42] [chromium] › e2e/indexeddb-corruption.spec.ts:65:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should handle invalid schema gracefully
@@ -139,7 +111,6 @@ Running 42 tests using 4 workers
 [9/42] [chromium] › e2e/indexeddb-migration.spec.ts:12:5 › IndexedDB Recovery - Migration › Migration Test › should migrate from old schema to new schema
 [10/42] [chromium] › e2e/indexeddb-migration.spec.ts:92:5 › IndexedDB Recovery - Migration › Migration Test › should preserve data integrity during migration
 [11/42] [chromium] › e2e/memory-leak.spec.ts:6:3 › Memory Leak Detection › cyclic navigation - no detached DOM nodes
-[12/42] [chromium] › e2e/memory-leak.spec.ts:57:3 › Memory Leak Detection › event listeners cleaned up on unmount
   1) [chromium] › e2e/indexeddb-migration.spec.ts:12:5 › IndexedDB Recovery - Migration › Migration Test › should migrate from old schema to new schema 
 
     Error: page.evaluate: AbortError: Version change transaction was aborted in upgradeneeded event handler.
@@ -156,8 +127,9 @@ Running 42 tests using 4 workers
     Error Context: test-results/indexeddb-migration-Indexe-ccb35-om-old-schema-to-new-schema-chromium/error-context.md
 
 
+[12/42] [chromium] › e2e/memory-leak.spec.ts:84:3 › Memory Leak Detection › timers and intervals cleared on unmount
 [13/42] [chromium] › e2e/memory-leak.spec.ts:110:3 › Memory Leak Detection › IndexedDB connections closed properly
-[14/42] [chromium] › e2e/memory-leak.spec.ts:84:3 › Memory Leak Detection › timers and intervals cleared on unmount
+[14/42] [chromium] › e2e/memory-leak.spec.ts:57:3 › Memory Leak Detection › event listeners cleaned up on unmount
 [15/42] [chromium] › e2e/memory-leak.spec.ts:135:3 › Memory Leak Detection › BroadcastChannel closed on unmount
 [16/42] [chromium] › e2e/memory-leak.spec.ts:164:3 › Memory Leak Detection › memory usage stable under load
 [17/42] [chromium] › e2e/memory-leak.spec.ts:207:3 › Offline Storage Persistence › navigator.storage.persist() prevents eviction
@@ -206,4 +178,4 @@ Nenhum relatorio admin gerado.
 
 | Data | Correcao | Commit |
 |------|----------|--------|
-| 2026-08-07 15:51 UTC | CI report gerado automaticamente | `2ff48227ab8d8563d32866c14bbaecbcfd0dac82` |
+| 2026-08-07 16:10 UTC | CI report gerado automaticamente | `c393f06698331a3382ab71e7d10424d86f34c717` |
