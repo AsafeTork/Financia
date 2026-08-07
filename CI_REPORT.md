@@ -1,7 +1,7 @@
 # CI Report
 
-**Gerado:** 2026-08-07 20:38 UTC
-**Commit:** `7de9454542c27affd6c098904a17bc98fdb09a24`
+**Gerado:** 2026-08-07 20:44 UTC
+**Commit:** `8384227182ba621ff0c236dda1dc10baa1dea5b3`
 **Branch:** `main`
 
 ---
@@ -25,7 +25,8 @@
 ```
 
 /home/runner/work/Financia/Financia/src/App.jsx
-  1:64  warning  'useState' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+   1:64  warning  'useState' is defined but never used. Allowed unused vars must match /^_/u        @typescript-eslint/no-unused-vars
+  31:10  warning  'usePlanEffects' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
 
 /home/runner/work/Financia/Financia/src/features/auth/WebAuthn.jsx
   48:8   warning  'actionLabel' is assigned a value but never used. Allowed unused vars must match /^_/u     @typescript-eslint/no-unused-vars
@@ -59,7 +60,7 @@
 /home/runner/work/Financia/Financia/src/shared/ui/CommandPalette.jsx
   1:55  warning  'useCallback' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
 
-✖ 15 problems (0 errors, 15 warnings)
+✖ 16 problems (0 errors, 16 warnings)
 
 
 ```
@@ -97,7 +98,7 @@ rendering chunks...
   ::view-transition-new(root) -> Pseudo-elements are not supported by css-select
 computing gzip size...
 [2mdist/[22m[32mmanifest.webmanifest                [39m[1m[2m  0.59 kB[22m[1m[22m
-[2mdist/[22m[32mindex.html                          [39m[1m[2m  9.57 kB[22m[1m[22m[2m │ gzip:  3.31 kB[22m
+[2mdist/[22m[32mindex.html                          [39m[1m[2m  9.57 kB[22m[1m[22m[2m │ gzip:  3.32 kB[22m
 [2mdist/[22m[2massets/[22m[32msync.worker-DU9L2bZD.js      [39m[1m[2m103.98 kB[22m[1m[22m
 [2mdist/[22m[2massets/[22m[35mindex-C4_RKV2H.css           [39m[1m[2m 60.79 kB[22m[1m[22m[2m │ gzip: 12.50 kB[22m
 [2mdist/[22m[2massets/[22m[36mvendor-misc-vwDjcXxQ.js      [39m[1m[2m  0.00 kB[22m[1m[22m[2m │ gzip:  0.02 kB[22m
@@ -109,7 +110,7 @@ computing gzip size...
 [2mdist/[22m[2massets/[22m[36mPrivacyPolicy-C9lpXPta.js    [39m[1m[2m  8.15 kB[22m[1m[22m[2m │ gzip:  3.38 kB[22m
 [2mdist/[22m[2massets/[22m[36mTermsOfService-DxvD-PXm.js   [39m[1m[2m  8.91 kB[22m[1m[22m[2m │ gzip:  3.61 kB[22m
 [2mdist/[22m[2massets/[22m[36mquery-vendor-BNR-f0BS.js     [39m[1m[2m 26.67 kB[22m[1m[22m[2m │ gzip:  7.95 kB[22m
-[2mdist/[22m[2massets/[22m[36mLanding-BEjhvePy.js          [39m[1m[2m 33.00 kB[22m[1m[22m[2m │ gzip:  7.32 kB[22m
+[2mdist/[22m[2massets/[22m[36mLanding--KAunNxy.js          [39m[1m[2m 33.00 kB[22m[1m[22m[2m │ gzip:  7.32 kB[22m
 [2mdist/[22m[2massets/[22m
 ```
 
@@ -124,7 +125,7 @@ computing gzip size...
 ```
 
 Running 26 tests using 4 workers
-°·°°°°°°°°···F·°F°°··°°···
+°·°°°°°°°°···FF·°°°·°·°···
 
   1) [chromium] › e2e/auth-flow.spec.ts:30:3 › Auth Flow › login form opens from landing page ──────
 
@@ -180,7 +181,7 @@ Running 26 tests using 4 workers
     [chromium] › e2e/auth-flow.spec.ts:30:3 › Auth Flow › login form opens from landing page ───────
     [chromium] › e2e/auth-flow.spec.ts:45:3 › Auth Flow › login form shows validation errors on empty submit 
   14 skipped
-  10 passed (21.7s)
+  10 passed (22.3s)
 
 ```
 
@@ -198,15 +199,16 @@ Running 42 tests using 4 workers
 
 [1/42] [chromium] › e2e/deep-sync-conflict.spec.ts:10:3 › Deep Sync Conflict Scenarios › BroadcastChannel ping/pong survives rapid tab switching
 [2/42] [chromium] › e2e/deep-sync-conflict.spec.ts:120:3 › Deep Sync Conflict Scenarios › memory leak check after sync broadcast storm
-[3/42] [chromium] › e2e/deep-sync-conflict.spec.ts:94:3 › Deep Sync Conflict Scenarios › sync worker survives unhandled rejection
-[4/42] [chromium] › e2e/deep-sync-conflict.spec.ts:59:3 › Deep Sync Conflict Scenarios › BroadcastChannel handles duplicate messages without errors
-[5/42] [chromium] › e2e/indexeddb-corruption.spec.ts:12:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should recover from corrupted IndexedDB data
-[6/42] [chromium] › e2e/indexeddb-corruption.spec.ts:65:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should handle invalid schema gracefully
+[3/42] [chromium] › e2e/deep-sync-conflict.spec.ts:59:3 › Deep Sync Conflict Scenarios › BroadcastChannel handles duplicate messages without errors
+[4/42] [chromium] › e2e/deep-sync-conflict.spec.ts:94:3 › Deep Sync Conflict Scenarios › sync worker survives unhandled rejection
+[5/42] [chromium] › e2e/indexeddb-corruption.spec.ts:65:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should handle invalid schema gracefully
+[6/42] [chromium] › e2e/indexeddb-corruption.spec.ts:12:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should recover from corrupted IndexedDB data
 [7/42] [chromium] › e2e/indexeddb-eviction.spec.ts:12:5 › IndexedDB Recovery - Eviction › Eviction Test › should handle storage pressure and persist()
 [8/42] [chromium] › e2e/indexeddb-eviction.spec.ts:89:5 › IndexedDB Recovery - Eviction › Eviction Test › should estimate storage quota
-[9/42] [chromium] › e2e/indexeddb-migration.spec.ts:12:5 › IndexedDB Recovery - Migration › Migration Test › should migrate from old schema to new schema
-[10/42] [chromium] › e2e/indexeddb-migration.spec.ts:92:5 › IndexedDB Recovery - Migration › Migration Test › should preserve data integrity during migration
+[9/42] [chromium] › e2e/indexeddb-migration.spec.ts:92:5 › IndexedDB Recovery - Migration › Migration Test › should preserve data integrity during migration
+[10/42] [chromium] › e2e/indexeddb-migration.spec.ts:12:5 › IndexedDB Recovery - Migration › Migration Test › should migrate from old schema to new schema
 [11/42] [chromium] › e2e/memory-leak.spec.ts:6:3 › Memory Leak Detection › cyclic navigation - no detached DOM nodes
+[12/42] [chromium] › e2e/memory-leak.spec.ts:57:3 › Memory Leak Detection › event listeners cleaned up on unmount
   1) [chromium] › e2e/indexeddb-migration.spec.ts:12:5 › IndexedDB Recovery - Migration › Migration Test › should migrate from old schema to new schema 
 
     Error: page.evaluate: AbortError: Version change transaction was aborted in upgradeneeded event handler.
@@ -223,9 +225,8 @@ Running 42 tests using 4 workers
     Error Context: test-results/indexeddb-migration-Indexe-ccb35-om-old-schema-to-new-schema-chromium/error-context.md
 
 
-[12/42] [chromium] › e2e/memory-leak.spec.ts:84:3 › Memory Leak Detection › timers and intervals cleared on unmount
 [13/42] [chromium] › e2e/memory-leak.spec.ts:110:3 › Memory Leak Detection › IndexedDB connections closed properly
-[14/42] [chromium] › e2e/memory-leak.spec.ts:57:3 › Memory Leak Detection › event listeners cleaned up on unmount
+[14/42] [chromium] › e2e/memory-leak.spec.ts:84:3 › Memory Leak Detection › timers and intervals cleared on unmount
 [15/42] [chromium] › e2e/memory-leak.spec.ts:135:3 › Memory Leak Detection › BroadcastChannel closed on unmount
 [16/42] [chromium] › e2e/memory-leak.spec.ts:164:3 › Memory Leak Detection › memory usage stable under load
 [17/42] [chromium] › e2e/memory-leak.spec.ts:207:3 › Offline Storage Persistence › navigator.storage.persist() prevents eviction
@@ -238,10 +239,10 @@ Running 42 tests using 4 workers
 [24/42] [chromium] › e2e/network-perf.spec.ts:157:3 › Network Performance & Sync Loop Detection › detect sync loops, icon loops, and excessive network activity
 [25/42] [chromium] › e2e/offline-state-corruption.spec.ts:10:3 › Deep Edge Cases — Offline State Corruption & Recovery › IndexedDB corruption is handled gracefully — app does not crash on load
 [26/42] [chromium] › e2e/offline-state-corruption.spec.ts:47:3 › Deep Edge Cases — Offline State Corruption & Recovery › app survives localStorage quota exceeded gracefully
+[27/42] [chromium] › e2e/offline-state-corruption.spec.ts:65:3 › Deep Edge Cases — Offline State Corruption & Recovery › sessionStorage does not survive new tab
 [chromium] › e2e/network-perf.spec.ts:157:3 › Network Performance & Sync Loop Detection › detect sync loops, icon loops, and excessive network activity
 [MONITOR] Waiting 15s to capture baseline network activity...
 
-[27/42] [chromium] › e2e/offline-state-corruption.spec.ts:65:3 › Deep Edge Cases — Offline State Corruption & Recovery › sessionStorage does not survive new tab
 [28/42] [chromium] › e2e/offline-state-corruption.spec.ts:86:3 › Deep Edge Cases — Offline State Corruption & Recovery › multip
 ```
 
@@ -274,4 +275,4 @@ Nenhum relatorio admin gerado.
 
 | Data | Correcao | Commit |
 |------|----------|--------|
-| 2026-08-07 20:38 UTC | CI report gerado automaticamente | `7de9454542c27affd6c098904a17bc98fdb09a24` |
+| 2026-08-07 20:44 UTC | CI report gerado automaticamente | `8384227182ba621ff0c236dda1dc10baa1dea5b3` |
