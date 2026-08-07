@@ -22,3 +22,4 @@
 | D013 | 2026-08-05 | **`docs/WORKSPACE.md` é a única fonte de estado** | múltiplos docs de estado (STATUS, ROADMAP, BACKLOG) contradiziam-se | ✅ ativa |
 | D014 | 2026-07-10 | Arquitetura de 2 chats (Integrador/Executor) + troca de modelos | — | ⛔ superada por D011/D013 (fluxo single-agent + subagentes efêmeros) |
 | D015 | 2026-07-10 | Checkpoint YAML obrigatório após cada subagente | — | ⛔ superada por D011 (git log + commits pequenos) |
+| D016 | 2026-08-07 | Web Worker de sync importa a pipeline compartilhada de `src/lib/sync.js` (não duplica lógica) | worker por cópia perdeu conflito 23505/`client_mutation_id` → drift de dados entre caminhos worker e main-thread | ✅ ativa |

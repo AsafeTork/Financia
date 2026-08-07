@@ -3,7 +3,7 @@
 > **Fonte única de estado.** Leia antes de começar qualquer tarefa; atualize ao concluir.
 > Regras de trabalho: `../AGENTS.md` · Manual operacional: `AGENT_GUIDE.md` ·
 > Decisões arquiteturais: `DECISIONS.md`
-> Última reconciliação com a realidade: **2026-08-05**
+> Última reconciliação com a realidade: **2026-08-07**
 
 ──────────────────────────────────────
 
@@ -25,6 +25,8 @@
 
 ## 2. Concluído Recentemente
 
+- **Índices compostos Dexie (P0 #2)** (2026-08-07): 3 índices `[user_id+_synced]`, `[user_id+_deleted+date]`, `[user_id+_deleted+created_at]` — scan unsynced otimizado (sync.js/worker), carga ordenada por data (useDataLoader), zero breaking changes (v4→v5)
+- **Sync em Web Worker (P0 #1)** (2026-08-07): worker consolida drift — agora importa a pipeline compartilhada de `src/lib/sync.js` em vez de duplicá-la (upsert mantém `client_mutation_id`/`base_version` e marca `_conflict` em 23505); fallback main-thread intacto no hook
 - **Performance crítica** (2026-08-05): context split, render só da rota ativa, callbacks memoizados, React.memo em 8 componentes — commits `feb2be2`, `3975958`
 - **Testes** (2026-08-05): 14 falhas resolvidas, Vitest 4 config corrigida, pool threads 3-5x mais rápido — `de9c7d2`, `aeb669d`, `f26e828`
 - **CI** (2026-08-05): Playwright fora dos testes unitários, setup otimizado — `e6a8870`
@@ -39,8 +41,8 @@
 
 | # | Tarefa | Arquivo(s) |
 |---|--------|-----------|
-| 1 | Mover `syncAll` para Web Worker | `src/lib/sync.worker.js` (novo), `useSyncLoop.js` |
-| 2 | Índices compostos no schema Dexie | `src/lib/dexie.js` |
+| ~~1~~ | ✅ ~~Mover `syncAll` para Web Worker~~ | `src/workers/sync.worker.js` + `useSyncLoop.js` (2026-08-07) |
+| ~~2~~ | ✅ ~~Índices compostos no schema Dexie~~ | `src/lib/dexie.js` (2026-08-07) |
 | 3 | Intervalo de sync adaptativo + backoff | `src/shared/hooks/useSyncLoop.js` |
 | 4 | `useTransition` no filtro de TxView | `src/features/transactions/TxView.jsx` |
 
@@ -86,3 +88,15 @@
 5. Decisão arquitetural nova → registre em `DECISIONS.md`
 
 **Não crie novos documentos de estado.** Este arquivo + `git log` são suficientes.
+
+──────────────────────────────────────
+
+## 5. Documentos de Referência (AI/Orquestração)
+
+| Doc | Descrição | Localização |
+|-----|-----------|-------------|
+| AGENT_TASKS.md | Mapeamento backlog → agentes especialistas + padrões 2026 | `docs/ai/AGENT_TASKS.md` |
+| GitHub #94 | Issue de tracking do mapeamento multi-agente | https://github.com/AsafeTork/Financia/issues/94 |
+| CEO_PROMPT | Prompt do CEO Técnico (indexado no ctx) | `ctx_search source:financia-CEO-PROMPT` |
+
+Última atualização: **2026-08-07** (P0 #1 + #2 concluídos via subagentes paralelos)

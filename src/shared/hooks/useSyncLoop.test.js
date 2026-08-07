@@ -1,4 +1,3 @@
-// @vitest-environment jsdom
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useSyncLoop } from './useSyncLoop.js';
@@ -24,7 +23,6 @@ function makeHook() {
 
 describe('useSyncLoop — runSync', function() {
   beforeEach(function() {
-    syncAllMock.mockReset();
     syncAllMock.mockResolvedValue({ ok: true, changed: true });
     Object.defineProperty(navigator, 'onLine', { value: true, configurable: true, writable: true });
   });
@@ -104,7 +102,6 @@ describe('useSyncLoop — runSync', function() {
 
 describe('useSyncLoop — listeners', function() {
   beforeEach(function() {
-    syncAllMock.mockReset();
     syncAllMock.mockResolvedValue({ ok: true, changed: false });
     Object.defineProperty(navigator, 'onLine', { value: true, configurable: true, writable: true });
   });

@@ -30,7 +30,7 @@ const syncTable = async function(uid, table, ldbTable, mapLocal, signal) {
   const lastSync = await getLastSync(uid);
   const fields = FIELD_MAP[table] || [];
 
-  const unsynced = await ldbTable.where('user_id').equals(uid).and(r => r._synced === 0).toArray();
+  const unsynced = await ldbTable.where('[user_id+_synced]').equals([uid, 0]).toArray();
   const toDeleteIds = [];
   const toMarkSynced = [];
 
@@ -96,7 +96,7 @@ const syncTable = async function(uid, table, ldbTable, mapLocal, signal) {
 
 const syncProfiles = async function(uid) {
   if (!navigator.onLine) return true;
-  const unsynced = await ldb.profiles.where('user_id').equals(uid).and(r => r._synced === 0).toArray();
+  const unsynced = await ldb.profiles.where('[user_id+_synced]').equals([uid, 0]).toArray();
   var results = await Promise.allSettled(unsynced.map(async function(row) {
     const clean = {};
     PROFILE_WRITE_FIELDS.forEach(function(k) { if (row[k] !== undefined) clean[k] = row[k]; });

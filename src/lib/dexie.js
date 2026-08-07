@@ -3,11 +3,19 @@ import { now } from './utils.js';
 
 export const ldb = new Dexie('gestao_offline');
 
-ldb.version(4).stores({
-  transactions: 'id, user_id, [user_id+_deleted], [user_id+updated_at], date, updated_at, _synced, _deleted',
-  products:     'id, user_id, [user_id+_deleted], [user_id+updated_at], created_at, category, updated_at, _synced, _deleted',
-  losses:       'id, user_id, [user_id+_deleted], [user_id+updated_at], date, updated_at, _synced, _deleted',
-  profiles:     'user_id, updated_at, _synced',
+ldb.version(5).stores({
+  // Índices compostos (P0 #2): cada um otimiza uma query específica.
+  // [user_id+_synced]           -> sync.js/sync.worker.js: scan de linhas não sincronizadas
+  //                                (where('[user_id+_synced]').equals([uid,0])) em vez de
+  //                                varrer todas as linhas do usuário + filtro JS em _synced.
+  // [user_id+_deleted+date]     -> useDataLoader.js: carregar transações/losses ativos ordenados
+  //                                por data sem re-sort em memória (sortBy('date')).
+  // [user_id+_deleted+created_at]-> useDataLoader.js: carregar produtos ativos ordenados por
+  //                                created_at sem re-sort em memória (sortBy('created_at')).
+  transactions: 'id, user_id, [user_id+_deleted], [user_id+updated_at], date, updated_at, _synced, _deleted, [user_id+_synced], [user_id+_deleted+date]',
+  products:     'id, user_id, [user_id+_deleted], [user_id+updated_at], created_at, category, updated_at, _synced, _deleted, [user_id+_synced], [user_id+_deleted+created_at]',
+  losses:       'id, user_id, [user_id+_deleted], [user_id+updated_at], date, updated_at, _synced, _deleted, [user_id+_synced], [user_id+_deleted+date]',
+  profiles:     'user_id, updated_at, _synced, [user_id+_synced]',
   meta:         'key',
   brand_presets: 'id, name, category, favorite, updated_at',
   brand_logo_schemes: 'id, name, createdAt',

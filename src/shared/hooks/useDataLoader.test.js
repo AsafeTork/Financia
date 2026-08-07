@@ -1,4 +1,3 @@
-// @vitest-environment jsdom
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useDataLoader } from './useDataLoader.js';
@@ -56,6 +55,9 @@ function chainWhere(result) {
         reverse: function() { return { sortBy: vi.fn(async function() { return result; }) }; },
       };
     },
+    between: function() {
+      return { toArray: vi.fn(async function() { return result; }) };
+    },
   };
 }
 
@@ -89,23 +91,14 @@ function makeHook() {
 
 describe('useDataLoader — loadFromLocal', function() {
   beforeEach(function() {
-    profilesGetMock.mockReset();
     profilesGetMock.mockResolvedValue(null);
-    productsWhereMock.mockReset();
     productsWhereMock.mockReturnValue(chainWhere([]));
-    transactionsWhereMock.mockReset();
     transactionsWhereMock.mockReturnValue(chainWhere([]));
-    lossesWhereMock.mockReset();
     lossesWhereMock.mockReturnValue(chainWhere([]));
-    metaGetMock.mockReset();
     metaGetMock.mockResolvedValue(null);
-    getRecurringMock.mockReset();
     getRecurringMock.mockResolvedValue([]);
-    pendingRecurringMock.mockReset();
     pendingRecurringMock.mockResolvedValue([]);
-    periodOfMock.mockReset();
     periodOfMock.mockReturnValue('2026-01');
-    transactionsBulkPutMock.mockReset();
     transactionsBulkPutMock.mockResolvedValue(undefined);
   });
 
@@ -186,9 +179,7 @@ describe('useDataLoader — loadFromLocal', function() {
 describe('useDataLoader — fetchRole', function() {
   beforeEach(function() {
     maybeSingleMock.mockReset();
-    metaPutMock.mockReset();
     metaPutMock.mockResolvedValue(undefined);
-    sessionStorage.clear();
   });
 
   it('role admin: retorna true, persiste e marca sessionStorage', async function() {

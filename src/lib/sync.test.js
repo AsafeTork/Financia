@@ -92,21 +92,21 @@ describe('syncAll', function() {
     const ldbMod = await import('./dexie.js');
     const txTable = ldbMod.__txTable;
     txTable.where.mockReturnValue({ equals: function() {
-      return { and: function() { return { toArray: function() { return Promise.resolve([]); } }; } };
+      return { toArray: function() { return Promise.resolve([]); } };
     } });
 
     const prTable = ldbMod.__prTable;
     prTable.where.mockReturnValue({ equals: function() {
-      return { and: function() { return { toArray: function() { return Promise.resolve([]); } }; } };
+      return { toArray: function() { return Promise.resolve([]); } };
     } });
 
     const lsTable = ldbMod.__lsTable;
     lsTable.where.mockReturnValue({ equals: function() {
-      return { and: function() { return { toArray: function() { return Promise.resolve([]); } }; } };
+      return { toArray: function() { return Promise.resolve([]); } };
     } });
 
     ldb.profiles.where.mockReturnValue({ equals: function() {
-      return { and: function() { return { toArray: function() { return Promise.resolve([]); } }; } };
+      return { toArray: function() { return Promise.resolve([]); } };
     } });
 
     const r = await syncAll('u1');

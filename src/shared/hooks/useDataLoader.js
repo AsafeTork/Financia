@@ -23,9 +23,9 @@ export function useDataLoader(props) {
   var loadFromLocal = useCallback(async function(userId) {
     var results = await Promise.all([
       ldb.profiles.get(userId),
-      ldb.products.where('[user_id+_deleted]').equals([userId, 0]).sortBy('created_at'),
-      ldb.transactions.where('[user_id+_deleted]').equals([userId, 0]).reverse().sortBy('date'),
-      ldb.losses.where('[user_id+_deleted]').equals([userId, 0]).reverse().sortBy('date'),
+      ldb.products.where('[user_id+_deleted+created_at]').between([userId, 0, ''], [userId, 0, '\uffff']).toArray(),
+      ldb.transactions.where('[user_id+_deleted+date]').between([userId, 0, ''], [userId, 0, '\uffff']).toArray(),
+      ldb.losses.where('[user_id+_deleted+date]').between([userId, 0, ''], [userId, 0, '\uffff']).toArray(),
       ldb.meta.get('role_' + userId).catch(function() { return null; }),
     ]);
     var profile = results[0], prods = results[1], txs = results[2], lss = results[3], roleMeta = results[4];
