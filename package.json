@@ -68,6 +68,7 @@
     "@vitest/utils": "^4.1.10",
     "autoprefixer": "^10.4.20",
     "axe-core": "^4.10.0",
+    "critters": "^0.0.25",
     "electron": "^43.0.0",
     "electron-builder": "^24.13.3",
     "eslint": "^9.39.4",

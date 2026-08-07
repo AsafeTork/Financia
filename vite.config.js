@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
+import critters from 'critters';
 import fs from 'fs';
 
 export default defineConfig(async function() {
@@ -51,6 +52,46 @@ export default defineConfig(async function() {
       maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
     },
   }));
+
+  plugins.push({
+    name: 'critters',
+    transformIndexHtml: {
+      order: 'post',
+      async handler(html, ctx) {
+        var bundle = ctx.bundle || {};
+        var c = new critters({
+          preload: 'media',
+          inlineFonts: true,
+          noscriptFallback: true,
+          logLevel: 'warn',
+          path: '/',
+          publicPath: '',
+          pruneSource: true,
+          reduceInlineStyles: true,
+        });
+        c.fs = {
+          readFile: function(filename, callback) {
+            try {
+              var name = String(filename).replace(/^\/+/, '');
+              var dropslash = '/' + name;
+              var mod = null;
+              for (var k in bundle) {
+                if (k === name || '/' + k === dropslash || k.endsWith('/' + name)) { mod = bundle[k]; break; }
+              }
+              if (!mod || !mod.source) throw new Error('Not in bundle: ' + filename);
+              var text = mod.source.toString();
+              if (callback) callback(null, text);
+              return Promise.resolve(text);
+            } catch (err) {
+              if (callback) callback(err);
+              return Promise.reject(err);
+            }
+          },
+        };
+        return c.process(html);
+      },
+    },
+  });
 
   return {
     plugins: plugins,

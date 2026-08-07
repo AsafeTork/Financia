@@ -67,6 +67,11 @@
 | ~~5~~ | ✅ ~~Touch targets ≥ 44×44px~~ | `index.css` + 16 componentes (2026-08-07, `bc07e88`) |
 | ~~7~~ | ✅ ~~Alternativa `<table>` para gráficos (screen reader)~~ | `UsageBar.jsx` → `BarChartSVG` (2026-08-07) |
 | ~~6~~ | ✅ ~~Contraste 4.5:1 em combinações de brand colors~~ | `index.css` (2026-08-07) |
+Let me re-read the file; my edits may have created an odd overlap.
+
+<｜DSML｜tool_calls>
+<｜DSML｜invoke name="grep">
+<｜DSML｜parameter name="pattern" string="true">critters|Preload LCP|P2
 | ~~8~~ | ✅ ~~`role="listitem"` em lista virtualizada~~ | `TxView.jsx` (2026-08-07) |
 | ~~9~~ | ✅ ~~Headline metric no dashboard~~ | `Dashboard.jsx` + `KpiCard` — "Resultado Líquido" em destaque + Receitas/Despesas Totais/Saldo Atual (2026-08-07) |
 | ~~10~~ | ✅ ~~Sticky headers de data na lista de transações~~ | overlay sticky no `scrollRef` de `TxView.jsx` (2026-08-07, `2c5a327`) |
@@ -77,7 +82,7 @@
 |---|--------|-----------|
 | ~~11~~ | ✅ ~~Otimizar `manualChunks` + Terser~~ | `vite.config.js` (2026-08-07, `991d312`) |
 | ~~12~~ | ✅ ~~`vite-plugin-pwa` com injectManifest~~ | `vite.config.js` + `src/sw.ts` (2026-08-07): `VitePWA` injectManifest, SW Workbox custom (precache, cache-first assets, network-first API/Supabase, background sync p/ mutations offline, cleanupOutdatedCaches), manifest gerado; `public/sw.js` removido (substituído pelo gerado `dist/sw.js`). build → 36 entries precache; typecheck/lint verdes; suite hooks flaky pré-existente (Issue #96) sem relação |
-| 13 | Preload LCP image + critical CSS | `index.html` |
+| ~~13~~ | ✅ ~~Preload LCP + critical CSS inline~~ | `index.html` (preload `/icon-192.svg` fetchpriority high) + `vite.config.js` (critters plugin: critical CSS inlined, rest async print-media, noscript fallback) (2026-08-07) |
 | ~~14~~ | ✅ ~~Upgrade Dexie 3.x → 4.x~~ | `package.json` `^4.0.10` (instalado 4.4.4) — schema composto + `.upgrade()` + APIs (`where`/`bulkPut`/`bulkGet`/`bulkDelete`/`modify`) válidas em Dexie 4; sem `liveQuery` no app; build + 83 testes dexie/sync/crud verdes (2026-08-07) |
 
 ### P3 — Polish / Diferenciais
