@@ -25,6 +25,8 @@
 
 ## 2. Concluído Recentemente
 
+- **Agent monitor contínuo de CI + fix race no CI_REPORT** (2026-08-07): falha recorrente do job `extract-errors` — CI ficava VERMELHO com testes verde porque múltiplos runs CI do main rodam em paralelo (`cancel-in-progress: false`) e todos competiam para commitar/pushar `CI_REPORT.md` no mesmo commit, estourando conflito de rebase. Fix: step "Commit CI_REPORT.md" usa `git pull --rebase -X theirs` com fallback `git rebase --abort; exit 0` (auto-resolve para upstream e aborta em vez de falhar o pipeline). Novo `scripts/ci-monitor.sh` monitora falhas de CI (detecta runs `failure`, lista jobs e expõe comando de diagnóstico + auto-fix headless); cron `*/15 * * * *` instalado no host. Commit `e3173b2` — CI 16/16 jobs verde (`31195788858`).
+
 - **Sticky date headers na lista de transações (P1 #10)** (2026-08-07): barra de data fixa (`position: sticky; top: 0; z-index: 10`) no topo da lista virtualizada de `TxView.jsx`. Implementada como overlay `h-0` sticky sobre o `VirtualList`, derivando o grupo de data corrente pelo `scrollTop` real (via `headerTops` pré-computado no memo) — não interfere na medição do virtualizer nem causa scroll jump, já que não consome layout. Acessível via `role="heading"` + `sr-only`. Commit `2c5a327`.
 
 - **Headline metric no dashboard (P1 #9)** (`2026-08-07`): "Resultado Líquido" vira o KPI principal com destaque visual (fundo tint `brandAlpha`, fonte 28px, full-width h2) + 3 apoio — Receitas Totais, Despesas Totais, Saldo Atual — em grid responsivo (1 col / 3 col desktop), tudo dentro de `<section role="region" aria-label="Resumo financeiro">`. `KpiCard` ganhou props `heading` (rótulo semântico) e `highlight`; `Card` aceita `style`.
