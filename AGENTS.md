@@ -28,9 +28,10 @@ Se a validação falhar: corrija e rode de novo. Nunca entregue vermelho.
 
 1. **Nada é "concluído" sem evidência.** Entrega = `git diff` + validação executada +
    resumo do que mudou e por quê. Sem evidência, não existe.
-2. **Git é o sistema de checkpoint.** Commits pequenos, Conventional Commits
+2. **Git é o sistema de checkpoint — autonomia total.** Commits pequenos, Conventional Commits
    (`feat:`, `fix:`, `perf:`, `docs:`, `chore:`...). O histórico é o `git log` —
-   não crie arquivos paralelos de log/checkpoint.
+   não crie arquivos paralelos de log/checkpoint. Commit, push, issues e PRs são executados
+   SEM consulta prévia (ver §3 "Autonomia").
 3. **`docs/WORKSPACE.md` é a fonte única de estado.** Leia no início de toda sessão.
    Atualize ao concluir (seções "Estado Atual" e "Backlog").
 4. **Nenhum problema é pesquisado duas vezes.** Antes de auditar, verifique o relatório
@@ -58,6 +59,16 @@ Se a validação falhar: corrija e rode de novo. Nunca entregue vermelho.
 **Autonomia:** o backlog priorizado está em `docs/WORKSPACE.md` — não pergunte "o que
 faço agora?". Só interrompa para: conflito entre documentos, risco de perda de dados,
 impossibilidade técnica comprovada, ou risco crítico de segurança.
+
+**GitHub é nativo ao fluxo (gh CLI):**
+- Commit + push: a cada passo concluído e validado, sem consultar (§2.2). Nunca deixe
+  trabalho validado preso no working tree.
+- Issues: crie para bugs/enhancements descobertos durante o trabalho (com repro/contexto
+  do código real), feche as resolvidas com referência ao commit/PR.
+- PRs: para mudanças que mereçam review/CI antes de entrar na main, abra PR com descrição
+  objetiva e acompanhe os checks (`gh pr checks`). Atualize se o CI falhar.
+- Padrão: commit direto na `main` para mudanças pequenas/isoladas; PR para mudanças
+  amplas ou que cruzam domínios (backend+front, migrations, RLS).
 
 ──────────────────────────────────────
 
@@ -145,7 +156,6 @@ Regras:
 - Commitar segredos, `.env` ou chaves de API
 - `git push --force`, `git reset --hard` ou rebase sem pedido explícito
 - Editar `CI_REPORT.md` manualmente
-- Commitar sem o usuário pedir (exceto se a tarefa for explicitamente "commitar")
 
 ──────────────────────────────────────
 
@@ -156,3 +166,4 @@ Regras:
 - [ ] Sem regressões nos testes existentes
 - [ ] `docs/WORKSPACE.md` atualizado se estado/backlog mudou
 - [ ] Evidências apresentadas: diff + validações + resumo
+- [ ] Commitado + pushed (main ou PR) conforme §3 "GitHub é nativo ao fluxo"
