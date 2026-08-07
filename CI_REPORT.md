@@ -1,7 +1,7 @@
 # CI Report
 
-**Gerado:** 2026-08-07 18:21 UTC
-**Commit:** `0820aec4525bb15532d55651f58abc99ce7ff6b7`
+**Gerado:** 2026-08-07 18:27 UTC
+**Commit:** `4ab760e345191ba6aed00c9c0f155c1ea7ba1fe4`
 **Branch:** `main`
 
 ---
@@ -23,6 +23,9 @@
 ## Lint Errors (Top 200 linhas)
 
 ```
+
+/home/runner/work/Financia/Financia/src/App.jsx
+  1:64  warning  'useState' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
 
 /home/runner/work/Financia/Financia/src/features/auth/WebAuthn.jsx
   48:8   warning  'actionLabel' is assigned a value but never used. Allowed unused vars must match /^_/u     @typescript-eslint/no-unused-vars
@@ -49,7 +52,10 @@
   140:11  warning  'result' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
   155:11  warning  'result' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
 
-✖ 11 problems (1 error, 10 warnings)
+/home/runner/work/Financia/Financia/src/shared/ui/CommandPalette.jsx
+  1:55  warning  'useCallback' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+✖ 13 problems (1 error, 12 warnings)
 
 
 ```
@@ -122,4 +128,4 @@ Nenhum relatorio admin gerado.
 
 | Data | Correcao | Commit |
 |------|----------|--------|
-| 2026-08-07 18:21 UTC | CI report gerado automaticamente | `0820aec4525bb15532d55651f58abc99ce7ff6b7` |
+| 2026-08-07 18:27 UTC | CI report gerado automaticamente | `4ab760e345191ba6aed00c9c0f155c1ea7ba1fe4` |
