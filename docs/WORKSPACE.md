@@ -59,7 +59,7 @@
 | # | Tarefa | Notas |
 |---|--------|-------|
 | ~~5~~ | ✅ ~~Touch targets ≥ 44×44px~~ | `index.css` + 16 componentes (2026-08-07, `bc07e88`) |
-| 7 | Alternativa `<table>` para gráficos (screen reader) | `BarChartSVG` |
+| ~~7~~ | ✅ ~~Alternativa `<table>` para gráficos (screen reader)~~ | `UsageBar.jsx` → `BarChartSVG` (2026-08-07) |
 | ~~6~~ | ✅ ~~Contraste 4.5:1 em combinações de brand colors~~ | `index.css` (2026-08-07) |
 | ~~8~~ | ✅ ~~`role="listitem"` em lista virtualizada~~ | `TxView.jsx` (2026-08-07) |
 | 9 | Headline metric no dashboard | 1 KPI "Resultado Líquido" + 3 apoio |
@@ -107,4 +107,4 @@
 | GitHub #94 | Issue de tracking do mapeamento multi-agente | https://github.com/AsafeTork/Financia/issues/94 |
 | CEO_PROMPT | Prompt do CEO Técnico (indexado no ctx) | `ctx_search source:financia-CEO-PROMPT` |
 
-Última atualização: **2026-08-07** (P0 #1 + #2 concluídos via subagentes paralelos)
+Última atualização: **2026-08-07** (P0 completo + P1 #5 #6 #8 + Issues #91-95 resolvidos)
