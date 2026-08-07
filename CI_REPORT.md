@@ -1,7 +1,7 @@
 # CI Report
 
-**Gerado:** 2026-08-07 17:34 UTC
-**Commit:** `fd8b2fff836a38b0835763b37eea56e6fde2d824`
+**Gerado:** 2026-08-07 17:59 UTC
+**Commit:** `fe6619e14ac641ca8f47436af69d475e22d48126`
 **Branch:** `main`
 
 ---
@@ -58,7 +58,7 @@ rendering chunks...
   ::view-transition-new(root) -> Pseudo-elements are not supported by css-select
 computing gzip size...
 [2mdist/[22m[32mmanifest.webmanifest                  [39m[1m[2m  0.59 kB[22m[1m[22m
-[2mdist/[22m[32mindex.html                            [39m[1m[2m  8.59 kB[22m[1m[22m[2m │ gzip:  2.94 kB[22m
+[2mdist/[22m[32mindex.html                            [39m[1m[2m  8.87 kB[22m[1m[22m[2m │ gzip:  3.01 kB[22m
 [2mdist/[22m[2massets/[22m[32msync.worker-IZvltoFp.js        [39m[1m[2m103.31 kB[22m[1m[22m
 [2mdist/[22m[2massets/[22m[35mindex-B3S8XtFS.css             [39m[1m[2m 58.90 kB[22m[1m[22m[2m │ gzip: 12.24 kB[22m
 [2mdist/[22m[2massets/[22m[36msupabase-vendor-vwDjcXxQ.js    [39m[1m[2m  0.00 kB[22m[1m[22m[2m │ gzip:  0.02 kB[22m
@@ -85,7 +85,7 @@ computing gzip size...
 ```
 
 Running 26 tests using 4 workers
-°°·°°°°°°°°°·F·°°°°···°···
+°°··°°°°°°°°·F·°°°°···°···
 
   1) [chromium] › e2e/error-boundary-recovery.spec.ts:40:3 › Deep Error Boundary Recovery › window.onerror captures unhandled JS errors gracefully 
 
@@ -104,8 +104,8 @@ Running 26 tests using 4 workers
 
   1 failed
     [chromium] › e2e/error-boundary-recovery.spec.ts:40:3 › Deep Error Boundary Recovery › window.onerror captures unhandled JS errors gracefully 
-  16 skipped
-  9 passed (12.8s)
+  15 skipped
+  10 passed (11.6s)
 
 ```
 
@@ -123,15 +123,15 @@ Running 42 tests using 4 workers
 
 [1/42] [chromium] › e2e/deep-sync-conflict.spec.ts:59:3 › Deep Sync Conflict Scenarios › BroadcastChannel handles duplicate messages without errors
 [2/42] [chromium] › e2e/deep-sync-conflict.spec.ts:10:3 › Deep Sync Conflict Scenarios › BroadcastChannel ping/pong survives rapid tab switching
-[3/42] [chromium] › e2e/deep-sync-conflict.spec.ts:94:3 › Deep Sync Conflict Scenarios › sync worker survives unhandled rejection
-[4/42] [chromium] › e2e/deep-sync-conflict.spec.ts:120:3 › Deep Sync Conflict Scenarios › memory leak check after sync broadcast storm
+[3/42] [chromium] › e2e/deep-sync-conflict.spec.ts:120:3 › Deep Sync Conflict Scenarios › memory leak check after sync broadcast storm
+[4/42] [chromium] › e2e/deep-sync-conflict.spec.ts:94:3 › Deep Sync Conflict Scenarios › sync worker survives unhandled rejection
 [5/42] [chromium] › e2e/indexeddb-corruption.spec.ts:12:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should recover from corrupted IndexedDB data
 [6/42] [chromium] › e2e/indexeddb-corruption.spec.ts:65:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should handle invalid schema gracefully
 [7/42] [chromium] › e2e/indexeddb-eviction.spec.ts:12:5 › IndexedDB Recovery - Eviction › Eviction Test › should handle storage pressure and persist()
 [8/42] [chromium] › e2e/indexeddb-eviction.spec.ts:89:5 › IndexedDB Recovery - Eviction › Eviction Test › should estimate storage quota
 [9/42] [chromium] › e2e/indexeddb-migration.spec.ts:12:5 › IndexedDB Recovery - Migration › Migration Test › should migrate from old schema to new schema
-[10/42] [chromium] › e2e/indexeddb-migration.spec.ts:92:5 › IndexedDB Recovery - Migration › Migration Test › should preserve data integrity during migration
-[11/42] [chromium] › e2e/memory-leak.spec.ts:6:3 › Memory Leak Detection › cyclic navigation - no detached DOM nodes
+[10/42] [chromium] › e2e/memory-leak.spec.ts:6:3 › Memory Leak Detection › cyclic navigation - no detached DOM nodes
+[11/42] [chromium] › e2e/indexeddb-migration.spec.ts:92:5 › IndexedDB Recovery - Migration › Migration Test › should preserve data integrity during migration
   1) [chromium] › e2e/indexeddb-migration.spec.ts:12:5 › IndexedDB Recovery - Migration › Migration Test › should migrate from old schema to new schema 
 
     Error: page.evaluate: AbortError: Version change transaction was aborted in upgradeneeded event handler.
@@ -148,9 +148,9 @@ Running 42 tests using 4 workers
     Error Context: test-results/indexeddb-migration-Indexe-ccb35-om-old-schema-to-new-schema-chromium/error-context.md
 
 
-[12/42] [chromium] › e2e/memory-leak.spec.ts:84:3 › Memory Leak Detection › timers and intervals cleared on unmount
-[13/42] [chromium] › e2e/memory-leak.spec.ts:110:3 › Memory Leak Detection › IndexedDB connections closed properly
-[14/42] [chromium] › e2e/memory-leak.spec.ts:57:3 › Memory Leak Detection › event listeners cleaned up on unmount
+[12/42] [chromium] › e2e/memory-leak.spec.ts:57:3 › Memory Leak Detection › event listeners cleaned up on unmount
+[13/42] [chromium] › e2e/memory-leak.spec.ts:84:3 › Memory Leak Detection › timers and intervals cleared on unmount
+[14/42] [chromium] › e2e/memory-leak.spec.ts:110:3 › Memory Leak Detection › IndexedDB connections closed properly
 [15/42] [chromium] › e2e/memory-leak.spec.ts:135:3 › Memory Leak Detection › BroadcastChannel closed on unmount
 [16/42] [chromium] › e2e/memory-leak.spec.ts:164:3 › Memory Leak Detection › memory usage stable under load
 [17/42] [chromium] › e2e/memory-leak.spec.ts:207:3 › Offline Storage Persistence › navigator.storage.persist() prevents eviction
@@ -199,4 +199,4 @@ Nenhum relatorio admin gerado.
 
 | Data | Correcao | Commit |
 |------|----------|--------|
-| 2026-08-07 17:34 UTC | CI report gerado automaticamente | `fd8b2fff836a38b0835763b37eea56e6fde2d824` |
+| 2026-08-07 17:59 UTC | CI report gerado automaticamente | `fe6619e14ac641ca8f47436af69d475e22d48126` |
