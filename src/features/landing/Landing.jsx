@@ -90,6 +90,10 @@ export default function Landing({ onEnter, onNav }) {
   const [users] = useCountUp(2800, 1200);
   const [rating] = useCountUp(95, 1000);
 
+  // TEMP: Static values to test if useCountUp causes error
+  // const [users] = [2800, null];
+  // const [rating] = [95, null];
+
   // Estado do FAQ accordion
   const [openFaq, setOpenFaq] = useState(null);
   const toggleFaq = function(idx) { setOpenFaq(function(prev) { return prev === idx ? null : idx; }); };
@@ -248,11 +252,11 @@ export default function Landing({ onEnter, onNav }) {
           </div>
           <div className="grid md:grid-cols-3 gap-8 text-center">
             <div>
-              <p className="font-display font-bold tracking-tight" style={{ color: 'var(--brand)', fontSize: 'var(--text-h1)' }}>{users > 0 ? users + '+' : '2.8k+'}</p>
+              <p className="font-display font-bold tracking-tight" style={{ color: 'var(--brand)', fontSize: 'var(--text-h1)' }}>2.8k+</p>
               <p className="text-sm mt-1" style={{ color: 'var(--text-sub)' }}>empresas usando o Financia</p>
             </div>
             <div>
-              <p className="font-display font-bold tracking-tight" style={{ color: 'var(--brand)', fontSize: 'var(--text-h1)' }}>{rating > 0 ? rating + '%' : '95%'}</p>
+              <p className="font-display font-bold tracking-tight" style={{ color: 'var(--brand)', fontSize: 'var(--text-h1)' }}>95%</p>
               <p className="text-sm mt-1" style={{ color: 'var(--text-sub)' }}>avaliam como excelente</p>
             </div>
             <div>
