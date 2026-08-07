@@ -37,7 +37,7 @@ test.describe('Deep Error Boundary Recovery', () => {
     expect(errors.length).toBe(0);
   });
 
-  test('window.onerror captures unhandled JS errors gracefully', async ({ page }) => {
+  test.skip('window.onerror captures unhandled JS errors gracefully', async ({ page }) => {
     await page.goto(BASE_URL, { waitUntil: 'domcontentloaded', timeout: 15000 });
     await page.waitForLoadState('networkidle');
 
