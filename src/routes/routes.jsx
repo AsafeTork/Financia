@@ -1,4 +1,4 @@
-import React, { lazy, useMemo } from 'react';
+import React, { lazy, useMemo, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import { PageSkeleton } from '../shared/ui/ui.jsx';
 import { useAppContext } from '../App/contexts/AppContext.jsx';

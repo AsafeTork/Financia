@@ -19,7 +19,9 @@ export class GlobalErrorBoundary extends React.Component {
         componentStack: errorInfo?.componentStack,
         timestamp: new Date().toISOString()
       }));
-    } catch (_) {}
+    } catch (e) {
+      // ignore localStorage errors
+    }
   }
 
   render() {
