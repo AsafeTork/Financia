@@ -75,7 +75,7 @@
 
 | # | Tarefa | Arquivo(s) |
 |---|--------|-----------|
-| 11 | Otimizar `manualChunks` + Terser | `vite.config.js` |
+| ~~11~~ | ✅ ~~Otimizar `manualChunks` + Terser~~ | `vite.config.js` (2026-08-07, `991d312`) |
 | 12 | `vite-plugin-pwa` com injectManifest | `vite.config.js`, `src/sw.ts` |
 | 13 | Preload LCP image + critical CSS | `index.html` |
 | 14 | Upgrade Dexie 3.x → 4.x | `package.json`, `dexie.js` |
