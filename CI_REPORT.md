@@ -1,7 +1,7 @@
 # CI Report
 
-**Gerado:** 2026-08-06 01:43 UTC
-**Commit:** `888fb2947255911742b352a8fec429daba19bf72`
+**Gerado:** 2026-08-07 13:23 UTC
+**Commit:** `6967d87aeec1894dbead927430c1ab242e2f9240`
 **Branch:** `main`
 
 ---
@@ -14,7 +14,7 @@
 | Testes Unitarios | nao executado |
 | Testes Integracao | com falhas |
 | Build | ok |
-| E2E Tests | com falhas |
+| E2E Tests | ok |
 | Auditoria de Producao | ver resultado abaixo |
 | Admin Audit | ver resultado abaixo |
 
@@ -54,21 +54,21 @@ rendering chunks...
 [39m
 computing gzip size...
 [2mdist/[22m[32mindex.html                                [39m[1m[2m  3.20 kB[22m[1m[22m[2m │ gzip:  1.00 kB[22m
-[2mdist/[22m[2massets/[22m[32msync.worker-DnggedcM.js            [39m[1m[2m 81.62 kB[22m[1m[22m
+[2mdist/[22m[2massets/[22m[32msync.worker-Fxc0cibl.js            [39m[1m[2m 81.65 kB[22m[1m[22m
 [2mdist/[22m[2massets/[22m[35mindex-B1W57wpT.css                 [39m[1m[2m 58.25 kB[22m[1m[22m[2m │ gzip: 12.09 kB[22m
 [2mdist/[22m[2massets/[22m[36mvendor-supabase-vwDjcXxQ.js        [39m[1m[2m  0.00 kB[22m[1m[22m[2m │ gzip:  0.02 kB[22m
 [2mdist/[22m[2massets/[22m[36museDebouncedValue-DhXJ-2MC.js      [39m[1m[2m  0.21 kB[22m[1m[22m[2m │ gzip:  0.17 kB[22m
 [2mdist/[22m[2massets/[22m[36mDebugBadge-CuG2Hgqz.js             [39m[1m[2m  0.83 kB[22m[1m[22m[2m │ gzip:  0.47 kB[22m
-[2mdist/[22m[2massets/[22m[36mlogoUtils-CW8SHBpH.js              [39m[1m[2m  0.88 kB[22m[1m[22m[2m │ gzip:  0.46 kB[22m
+[2mdist/[22m[2massets/[22m[36mlogoUtils-Ce-1KsP0.js              [39m[1m[2m  0.88 kB[22m[1m[22m[2m │ gzip:  0.46 kB[22m
 [2mdist/[22m[2massets/[22m[36mvendor-radix-0j1Bgcl0.js           [39m[1m[2m  1.05 kB[22m[1m[22m[2m │ gzip:  0.62 kB[22m
 [2mdist/[22m[2massets/[22m[36mvendor-class-utils-BGivqV-2.js     [39m[1m[2m  1.12 kB[22m[1m[22m[2m │ gzip:  0.56 kB[22m
 [2mdist/[22m[2massets/[22m[36mvendor-virtual-BFXXfAAg.js         [39m[1m[2m  1.82 kB[22m[1m[22m[2m │ gzip:  0.91 kB[22m
 [2mdist/[22m[2massets/[22m[36mvendor-radix-slot-CD8tn4BR.js      [39m[1m[2m  2.03 kB[22m[1m[22m[2m │ gzip:  0.98 kB[22m
 [2mdist/[22m[2massets/[22m[36mvendor-stripe-core-CUtUkgyj.js     [39m[1m[2m  2.25 kB[22m[1m[22m[2m │ gzip:  1.00 kB[22m
-[2mdist/[22m[2massets/[22m[36maiClient-C_PibYBG.js               [39m[1m[2m  2.81 kB[22m[1m[22m[2m │ gzip:  1.48 kB[22m
+[2mdist/[22m[2massets/[22m[36maiClient-D-HDlXuM.js               [39m[1m[2m  2.81 kB[22m[1m[22m[2m │ gzip:  1.48 kB[22m
 [2mdist/[22m[2massets/[22m[36mexporters-BRcQ71Kn.js              [39m[1m[2m  4.25 kB[22m[1m[22m[2m │ gzip:  1.79 kB[22m
-[2mdist/[22m[2massets/[22m[36mEmailView-B5Z-6z9p.js              [39m[1m[2m  5.22 kB[22m[1m[22m[2m │ gzip:  2.09 kB[22m
-[2mdist/[22m[2massets/[22m[36mCardPreview-D2osAlCL.j
+[2mdist/[22m[2massets/[22m[36mEmailView-BP20_Rb3.js              [39m[1m[2m  5.22 kB[22m[1m[22m[2m │ gzip:  2.09 kB[22m
+[2mdist/[22m[2massets/[22m[36mCardPreview-CUqPqhbp.j
 ```
 
 ---
@@ -77,42 +77,14 @@ computing gzip size...
 
 | Status |
 |---|
-| com falhas |
+| ok |
 
 ```
 
 Running 26 tests using 4 workers
-°°·°°°°°°°°····°·°°°··°F··
-
-  1) [chromium] › e2e/auth-flow.spec.ts:45:3 › Auth Flow › login form shows validation errors on empty submit 
-
-    Error: expect(locator).toBeVisible() failed
-
-    Locator: locator('text=obrigatório').first()
-    Expected: visible
-    Timeout: 10000ms
-    Error: element(s) not found
-
-    Call log:
-      - Expect "toBeVisible" with timeout 10000ms
-      - waiting for locator('text=obrigatório').first()
-
-
-      63 |
-      64 |     const emailError = page.locator('text=obrigatório').first();
-    > 65 |     await expect(emailError).toBeVisible({ timeout: 10000 });
-         |                              ^
-      66 |   });
-      67 |
-      68 |   test('authenticated user sees dashboard via storageState', async ({ page, browser }) => {
-        at /home/runner/work/Financia/Financia/e2e/auth-flow.spec.ts:65:30
-
-    Error Context: test-results/auth-flow-Auth-Flow-login--49015-tion-errors-on-empty-submit-chromium/error-context.md
-
-  1 failed
-    [chromium] › e2e/auth-flow.spec.ts:45:3 › Auth Flow › login form shows validation errors on empty submit 
+°°·°°·°°°°°°···°°°·°··°···
   15 skipped
-  10 passed (17.2s)
+  11 passed (15.7s)
 
 ```
 
@@ -129,9 +101,9 @@ Running 26 tests using 4 workers
 Running 42 tests using 4 workers
 
 [1/42] [chromium] › e2e/deep-sync-conflict.spec.ts:10:3 › Deep Sync Conflict Scenarios › BroadcastChannel ping/pong survives rapid tab switching
-[2/42] [chromium] › e2e/deep-sync-conflict.spec.ts:120:3 › Deep Sync Conflict Scenarios › memory leak check after sync broadcast storm
-[3/42] [chromium] › e2e/deep-sync-conflict.spec.ts:94:3 › Deep Sync Conflict Scenarios › sync worker survives unhandled rejection
-[4/42] [chromium] › e2e/deep-sync-conflict.spec.ts:59:3 › Deep Sync Conflict Scenarios › BroadcastChannel handles duplicate messages without errors
+[2/42] [chromium] › e2e/deep-sync-conflict.spec.ts:59:3 › Deep Sync Conflict Scenarios › BroadcastChannel handles duplicate messages without errors
+[3/42] [chromium] › e2e/deep-sync-conflict.spec.ts:120:3 › Deep Sync Conflict Scenarios › memory leak check after sync broadcast storm
+[4/42] [chromium] › e2e/deep-sync-conflict.spec.ts:94:3 › Deep Sync Conflict Scenarios › sync worker survives unhandled rejection
 [5/42] [chromium] › e2e/indexeddb-corruption.spec.ts:12:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should recover from corrupted IndexedDB data
 [6/42] [chromium] › e2e/indexeddb-corruption.spec.ts:65:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should handle invalid schema gracefully
 [7/42] [chromium] › e2e/indexeddb-eviction.spec.ts:12:5 › IndexedDB Recovery - Eviction › Eviction Test › should handle storage pressure and persist()
@@ -155,9 +127,9 @@ Running 42 tests using 4 workers
     Error Context: test-results/indexeddb-migration-Indexe-ccb35-om-old-schema-to-new-schema-chromium/error-context.md
 
 
-[12/42] [chromium] › e2e/memory-leak.spec.ts:57:3 › Memory Leak Detection › event listeners cleaned up on unmount
+[12/42] [chromium] › e2e/memory-leak.spec.ts:84:3 › Memory Leak Detection › timers and intervals cleared on unmount
 [13/42] [chromium] › e2e/memory-leak.spec.ts:110:3 › Memory Leak Detection › IndexedDB connections closed properly
-[14/42] [chromium] › e2e/memory-leak.spec.ts:84:3 › Memory Leak Detection › timers and intervals cleared on unmount
+[14/42] [chromium] › e2e/memory-leak.spec.ts:57:3 › Memory Leak Detection › event listeners cleaned up on unmount
 [15/42] [chromium] › e2e/memory-leak.spec.ts:135:3 › Memory Leak Detection › BroadcastChannel closed on unmount
 [16/42] [chromium] › e2e/memory-leak.spec.ts:164:3 › Memory Leak Detection › memory usage stable under load
 [17/42] [chromium] › e2e/memory-leak.spec.ts:207:3 › Offline Storage Persistence › navigator.storage.persist() prevents eviction
@@ -206,4 +178,4 @@ Nenhum relatorio admin gerado.
 
 | Data | Correcao | Commit |
 |------|----------|--------|
-| 2026-08-06 01:43 UTC | CI report gerado automaticamente | `888fb2947255911742b352a8fec429daba19bf72` |
+| 2026-08-07 13:23 UTC | CI report gerado automaticamente | `6967d87aeec1894dbead927430c1ab242e2f9240` |
