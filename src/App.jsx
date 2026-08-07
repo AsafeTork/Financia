@@ -49,7 +49,8 @@ export default function App() {
     navigationHistory: { push: () => {}, go: () => {}, back: () => {}, forward: () => {}, canGoBack: () => false, canGoForward: () => false }
   };
   const { navTo } = n;
-  usePlanEffects({ dataLoading: s.dataLoading, setDataLoading: s.setDataLoading, setSyncStatus: s.setSyncStatus, planInfo, session: s.session, toast: t.toast, path: n.path, setAnnounceMsg: s.setAnnounceMsg, firstRender: s.firstRender, toastTimeoutsRef: s.toastTimeoutsRef });
+  // TEMP: Disable usePlanEffects to isolate error
+  // usePlanEffects({ dataLoading: s.dataLoading, setDataLoading: s.setDataLoading, setSyncStatus: s.setSyncStatus, planInfo, session: s.session, toast: t.toast, path: n.path, setAnnounceMsg: s.setAnnounceMsg, firstRender: s.firstRender, toastTimeoutsRef: s.toastTimeoutsRef });
   const { appBrand, effectiveTheme, toggleTheme } = useBrandAppearance(s.brand, planInfo);
   const enforceLimit = useCallback(function(kind, currentCount) {
     if (atLimit(planInfo, kind, currentCount)) { setShowUpgrade({ kind: kind, limit: limitFor(planInfo, kind) }); return false; } return true;
