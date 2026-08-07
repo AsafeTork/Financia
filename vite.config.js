@@ -43,25 +43,23 @@ export default defineConfig(async function() {
           compact: true,
           generatedCode: 'es2015',
           manualChunks: function(id) {
-            if (id.includes('node_modules/react') && !id.includes('react-table')) return 'vendor-react';
-            if (id.includes('node_modules/react-dom')) return 'vendor-react';
-            if (id.includes('node_modules/scheduler')) return 'vendor-react';
-            if (id.includes('node_modules/@supabase')) return 'vendor-supabase';
-            if (id.includes('node_modules/@tanstack/query-core') || id.includes('node_modules/@tanstack/react-query')) return 'vendor-query';
-            if (id.includes('node_modules/@tanstack/react-virtual')) return 'vendor-virtual';
-            if (id.includes('node_modules/@radix-ui/react-slot')) return 'vendor-radix-slot';
-            if (id.includes('node_modules/@radix-ui')) return 'vendor-radix';
-            if (id.includes('node_modules/@stripe/react-stripe-js')) return 'vendor-stripe-react';
-            if (id.includes('node_modules/@stripe/stripe-js')) return 'vendor-stripe-core';
-            if (id.includes('node_modules/react-router-dom')) return 'vendor-router';
-            if (id.includes('node_modules/dexie')) return 'vendor-dexie';
-            if (id.includes('node_modules/tailwindcss')) return 'vendor-tailwind';
-            if (id.includes('node_modules/tailwind-merge') || id.includes('node_modules/tailwindcss-animate')) return 'vendor-tailwind-utils';
-            if (id.includes('node_modules/class-variance-authority') || id.includes('node_modules/clsx')) return 'vendor-class-utils';
-            if (id.includes('node_modules/@ai-sdk')) return 'vendor-ai';
-            if (id.includes('node_modules/date-fns') || id.includes('node_modules/luxon')) return 'vendor-date';
-            if (id.includes('node_modules/zod') || id.includes('node_modules/yup')) return 'vendor-validation';
-            if (id.includes('node_modules/recharts') || id.includes('node_modules/d3-')) return 'vendor-charts';
+            if (process.env.DEBUG_CHUNKS && id.includes('node_modules/@supabase')) console.log('[CHUNK]', id.split('/node_modules/')[1]);
+            if (id.includes('node_modules/react') && !id.includes('react-table')) return 'react-vendor';
+            if (id.includes('node_modules/react-dom')) return 'react-vendor';
+            if (id.includes('node_modules/scheduler')) return 'react-vendor';
+            if (id.includes('node_modules/react-router')) return 'react-vendor';
+            if (id.includes('node_modules/@supabase')) return 'supabase-vendor';
+            if (id.includes('node_modules/@stripe/react-stripe-js')) return 'stripe-vendor';
+            if (id.includes('node_modules/@stripe/stripe-js')) return 'stripe-vendor';
+            if (id.includes('node_modules/@radix-ui')) return 'ui-vendor';
+            if (id.includes('node_modules/class-variance-authority') || id.includes('node_modules/clsx') || id.includes('node_modules/tailwind-merge')) return 'ui-vendor';
+            if (id.includes('node_modules/dexie')) return 'dexie-vendor';
+            if (id.includes('node_modules/recharts') || id.includes('node_modules/d3-')) return 'charts-vendor';
+            if (id.includes('node_modules/date-fns') || id.includes('node_modules/luxon') || id.includes('node_modules/zod') || id.includes('node_modules/yup')) return 'utils-vendor';
+            if (id.includes('node_modules/@tanstack/query-core') || id.includes('node_modules/@tanstack/react-query')) return 'query-vendor';
+            if (id.includes('node_modules/@tanstack/react-virtual')) return 'virtual-vendor';
+            if (id.includes('node_modules/tailwindcss')) return 'tailwind-vendor';
+            if (id.includes('node_modules/@ai-sdk')) return 'ai-vendor';
             if (id.includes('node_modules')) return 'vendor-misc';
           },
         },
