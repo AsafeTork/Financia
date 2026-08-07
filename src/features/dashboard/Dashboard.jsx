@@ -185,37 +185,42 @@ export default React.memo(function Dashboard({ tx, products, brand, onNav, planI
           })}
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-3">
-          <div className="col-span-2">
-            <KpiCard label="Entradas do mes"
-              value={fmt(ti)}
-              color="var(--success)"
-              accentBar="var(--success)"
-              variation={inVar}
-              onClick={function() { onNav('income'); }}
-              sub={inVar === null ? 'Sem dados anteriores' : undefined}
-              headline={true}/>
+        <section role="region" aria-label="Resumo financeiro" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div className="sm:col-span-2 lg:col-span-3">
+            <KpiCard label="Resultado Liquido"
+              value={fmt(profitCurr)}
+              color={brand.color}
+              accentBar={brand.color}
+              variation={profVar}
+              sub={profVar === null ? 'Sem dados anteriores' : undefined}
+              headline={true}
+              highlight={true}
+              heading="h2"/>
           </div>
-          <KpiCard label="Saidas do mes"
+          <KpiCard label="Receitas Totais"
+            value={fmt(ti)}
+            color="var(--success)"
+            accentBar="var(--success)"
+            variation={inVar}
+            onClick={function() { onNav('income'); }}
+            sub={inVar === null ? 'Sem dados anteriores' : undefined}
+            heading="h3"/>
+          <KpiCard label="Despesas Totais"
             value={fmt(to)}
             color="var(--danger)"
             accentBar="var(--danger)"
             variation={outVar}
             invert={true}
             onClick={function() { onNav('expense'); }}
-            sub={outVar === null ? 'Sem dados anteriores' : undefined}/>
-          <KpiCard label="Resultado"
-            value={fmt(profitCurr)}
-            color={brand.color}
-            accentBar={brand.color}
-            variation={profVar}
-            sub={profVar === null ? 'Sem dados anteriores' : undefined}/>
-          <KpiCard label="Saldo hoje"
+            sub={outVar === null ? 'Sem dados anteriores' : undefined}
+            heading="h3"/>
+          <KpiCard label="Saldo Atual"
             value={fmt(di - dout)}
             color="var(--info)"
             accentBar="var(--info)"
-            sub={di > 0 || dout > 0 ? ('+' + fmt(di) + ' / -' + fmt(dout)) : 'Sem movimento hoje'}/>
-        </div>
+            sub={di > 0 || dout > 0 ? ('+' + fmt(di) + ' / -' + fmt(dout)) : 'Sem movimento hoje'}
+            heading="h3"/>
+        </section>
       )}
 
       <AiInsightsCard mtx={mtx} ti={ti} to={to} profitCurr={profitCurr} profVar={profVar} lowStock={lowStock} products={products} brand={brand} plan={plan} onUpgrade={onUpgrade}/>

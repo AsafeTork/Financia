@@ -25,6 +25,8 @@
 
 ## 2. Concluído Recentemente
 
+- **Headline metric no dashboard (P1 #9)** (2026-08-07): "Resultado Líquido" vira o KPI principal com destaque visual (fundo tint `brandAlpha`, fonte 28px, full-width h2) + 3 apoio — Receitas Totais, Despesas Totais, Saldo Atual — em grid responsivo (1 col / 3 col desktop), tudo dentro de `<section role="region" aria-label="Resumo financeiro">`. `KpiCard` ganhou props `heading` (rótulo semântico) e `highlight`; `Card` aceita `style`.
+
 - **Touch targets ≥ 44px (P1 #5)** (2026-08-07): token `--touch-target-min: 44px` no design system (`index.css`); `min-h/min-w: var(--touch-target-min)` aplicado em Button (todas as sizes), Input, Select (`Sel`), abas (SettingsView, BrandStudioView, PlanTabsEditor), selects avulsos (TransactionCard, BrandGlobalEditor), botões compactos `px-3 py-1.5`/`px-2.5 py-1.5` (EmailView, BrandStudioView undo/redo, PlanTabsEditor copy, ClientEditModal, SettingsView, AdminPanel), upload labels (BrandGlobalEditor, ModuleEditor), color inputs (ColorField, ModuleEditor, PlanTabsEditor, LogoSchemes) e ícones de ação (AdminPanel, ClientEditModal close). BottomNav/Header/ThemeToggle/Dashboard/TxView/PlansView/Confirm já estavam ≥44px. Commit `bc07e88`.
 
 - **Contraste 4.5:1 brand colors (P1 #6)** (2026-08-07): `--text-muted` claro `#94a3b8`→`#5f7086` (2.56→5.06:1 no branco; 4.63 na página off-white); `--success` desacoplado de `--green` (mint decorativo) e escurecido para `#15803d` (5.02:1 nas duas direções — texto verde no claro e texto branco sobre botão verde). Call sites de texto/ícone de verde agora usam `var(--success)` (Landing incomes/checkmarks, Login ACCENT, Dashboard step circle, PlanStatusCard stroke). Verde claro `--green` permanece só em fills decorativos (exigência WCAG não se aplica). Falhas de contraste estavam todas no light mode; dark mode já passava.
@@ -62,7 +64,7 @@
 | ~~7~~ | ✅ ~~Alternativa `<table>` para gráficos (screen reader)~~ | `UsageBar.jsx` → `BarChartSVG` (2026-08-07) |
 | ~~6~~ | ✅ ~~Contraste 4.5:1 em combinações de brand colors~~ | `index.css` (2026-08-07) |
 | ~~8~~ | ✅ ~~`role="listitem"` em lista virtualizada~~ | `TxView.jsx` (2026-08-07) |
-| 9 | Headline metric no dashboard | 1 KPI "Resultado Líquido" + 3 apoio |
+| ~~9~~ | ✅ ~~Headline metric no dashboard~~ | `Dashboard.jsx` + `KpiCard` — "Resultado Líquido" em destaque + Receitas/Despesas Totais/Saldo Atual (2026-08-07) |
 | 10 | Sticky headers de data na lista de transações | CSS `position: sticky` |
 
 ### P2 — Performance: Bundle & LCP

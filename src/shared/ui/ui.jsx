@@ -19,13 +19,13 @@ var ShadcnBadge = function({ className, variant, children, ...p }) {
   return <div className={cn('inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors', v, className)} {...p}>{children}</div>;
 };
 
-export const Card = function({ children, className, hover, variant, accent, color }) {
+export const Card = function({ children, className, hover, variant, accent, color, style }) {
   var cls = (className || '');
   if (hover) cls += ' card-hover';
   if (variant === 'flat') cls += ' shadow-none';
   if (variant === 'raised') cls += ' shadow-md';
   return (
-    <ShadcnCard className={'overflow-hidden ' + cls}>
+    <ShadcnCard style={style} className={'overflow-hidden ' + cls}>
       {accent && <div style={{position:'absolute', top:0, left:0, right:0, height:3, background: color || 'var(--brand-grad, var(--brand))', zIndex:1}}/>}
       {children}
     </ShadcnCard>

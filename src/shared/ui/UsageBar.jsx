@@ -1,5 +1,6 @@
 import React, { memo, useMemo } from 'react';
 import { Card } from './ui.jsx';
+import { brandAlpha } from '../../lib/utils.js';
 
 export const UsageBar = memo(function UsageBar({ label, used, limit, color, accentColor }) {
   var unlimited = limit === Infinity;
@@ -28,20 +29,22 @@ export const UsageBar = memo(function UsageBar({ label, used, limit, color, acce
   );
 });
 
-export const KpiCard = memo(function KpiCard({ label, value, variation, sub, color, accentBar, onClick, invert, headline }) {
+export const KpiCard = memo(function KpiCard({ label, value, variation, sub, color, accentBar, onClick, invert, headline, heading, highlight }) {
   var hasClick = typeof onClick === 'function';
   var barColor = accentBar || color;
   var hasVar = variation !== null && variation !== undefined;
   var up = hasVar && variation >= 0;
   var good = invert ? (hasVar && variation <= 0) : up;
   var kpiId = React.useId();
+  var LabelTag = heading || 'p';
+  var cardStyle = highlight ? { background: brandAlpha(barColor, 0.06) } : undefined;
   var ariaLabel = useMemo(function() {
     if (!hasClick) return undefined;
     return label + ': ' + value + (hasVar ? ', variação ' + (up ? '+' : '') + variation + '%' : '');
   }, [label, value, hasVar, up, variation, hasClick]);
 
   return (
-    <Card className={(headline ? 'p-5 sm:p-6' : 'p-4') + ' overflow-hidden' + (hasClick ? ' cursor-pointer card-hover transition-transform duration-150 active:scale-[0.98]' : '')}
+    <Card style={cardStyle} className={(headline ? 'p-5 sm:p-6' : 'p-4') + ' overflow-hidden' + (hasClick ? ' cursor-pointer card-hover transition-transform duration-150 active:scale-[0.98]' : '')}
       onClick={hasClick ? onClick : undefined}
       tabIndex={hasClick ? 0 : undefined}
       role={hasClick ? 'button' : undefined}
@@ -52,7 +55,7 @@ export const KpiCard = memo(function KpiCard({ label, value, variation, sub, col
       color={barColor}
       aria-label={ariaLabel}
       id={hasClick ? kpiId : undefined}>
-      <p className="text-xs font-semibold uppercase tracking-wider mt-2" style={{color:'var(--text-muted)'}}>{label}</p>
+      <LabelTag className="text-xs font-semibold uppercase tracking-wider mt-2" style={{color:'var(--text-muted)'}}>{label}</LabelTag>
       <p className="font-extrabold mt-2 text-gray-900 truncate tabular" style={{fontSize: headline ? 28 : 22, letterSpacing:'-0.5px'}}>{value}</p>
       {variation !== null && variation !== undefined && (
         <div className="flex items-center gap-1 mt-1.5">
