@@ -88,7 +88,7 @@ Let me re-read the file; my edits may have created an odd overlap.
 ### P3 — Polish / Diferenciais
 
 - Onboarding wizard: existe (`src/shared/ui/Onboarding.jsx`) — **verificar contra P1 do audit UX** (um campo por tela, trust signals)
-- FAB quick capture: existe (`QuickActions.jsx`) — **verificar cobertura em todas as telas**
+- ~~FAB quick capture: existe (`QuickActions.jsx`)~~ ✅ — FAB expandido para todas as telas principais (`report`, `settings`, `planos` adicionados a `SHOWN_VIEWS`); filtra ação "Configurações" na própria tela de settings. Commit `ebf3b18`
 - Focus rings padronizados (3px), card-padding token, dark mode em gráficos
 - Pull-to-refresh, swipe actions, command palette (⌘K), deep linking
 - WebAuthn/passkey (WCAG 3.3.8)
