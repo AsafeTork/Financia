@@ -105,16 +105,16 @@ export default React.memo(function Onboarding({ brand, needsName, needsPhone, on
     go(step + 1);
   }
 
-  function onName(e) {
+  var onName = React.useCallback(function onName(e) {
     setName(e.target.value);
     if (e.target.value.trim()) setNameErr('');
-  }
+  }, []);
 
-  function onPhone(d) {
+  var onPhone = React.useCallback(function onPhone(d) {
     setPhoneData(d);
     setPhoneValue(d.e164);
     if (d.valid) setPhoneErr('');
-  }
+  }, []);
 
   var cur = steps[step];
   var isLast = step === total - 1;

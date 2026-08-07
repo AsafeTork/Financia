@@ -5,6 +5,7 @@ import { IDBFactory } from 'fake-indexeddb';
 import { beforeAll, afterAll, afterEach, vi, expect } from 'vitest';
 import { setupServer } from 'msw/node';
 import { handlers } from './msw-handlers.js';
+import { cleanup } from '@testing-library/react';
 import * as matchers from 'vitest-dom/matchers';
 
 expect.extend(matchers);
@@ -16,8 +17,12 @@ const server = setupServer(...handlers);
 beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
 afterAll(async () => {
   try { await server.close(); } catch (_) { /* ignore close error */ }
+  try { document.body.innerHTML = ''; } catch (_) { /* ignore DOM reset */ }
 });
 afterEach(() => {
+  cleanup();
+  try { document.body.innerHTML = ''; } catch (_) { /* ignore DOM reset */ }
+  try { document.head.innerHTML = ''; } catch (_) { /* ignore head reset */ }
   vi.clearAllMocks();
   vi.clearAllTimers();
   vi.useRealTimers();
