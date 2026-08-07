@@ -1,12 +1,20 @@
 <!DOCTYPE html>
 <html lang="pt-BR" data-app-version="%APP_VERSION%">
 <head>
-<meta charset="UTF-8">
-<title>Gestao Financeira</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="referrer" content="strict-origin-when-cross-origin">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-hashes' 'sha256-MhtPZXr7+LpJUY5qtMutB+qWfQtMaPccfe7QXtCcEYc=' 'sha256-ieoeWczDHkReVBsRBqaal5AFMlBtNjMzgwKvLqi/tSU=' https://js.stripe.com https://*.stripe.com https://*.stripe.network https://challenges.cloudflare.com https://*.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https://*.supabase.co https://*.stripe.com https://lh3.googleusercontent.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.stripe.com https://*.stripe.com https://*.stripe.network https://api.github.com https://fonts.googleapis.com https://fonts.gstatic.com https://challenges.cloudflare.com https://*.cloudflare.com; font-src 'self' https://fonts.gstatic.com data:; frame-src 'self' https://js.stripe.com https://*.stripe.com https://*.stripe.network https://hooks.stripe.com https://checkout.stripe.com; object-src 'none'; base-uri 'self'; form-action 'self'; manifest-src 'self'; upgrade-insecure-requests">
-<link rel="preconnect" href="https://fonts.googleapis.com">
+  <meta charset="UTF-8">
+  <title>Gestao Financeira</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-hashes' 'sha256-MhtPZXr7+LpJUY5qtMutB+qWfQtMaPccfe7QXtCcEYc=' 'sha256-ieoeWczDHkReVBsRBqaal5AFMlBtNjMzgwKvLqi/tSU=' https://js.stripe.com https://*.stripe.com https://*.stripe.network https://challenges.cloudflare.com https://*.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https://*.supabase.co https://*.stripe.com https://lh3.googleusercontent.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.stripe.com https://*.stripe.com https://*.stripe.network https://api.github.com https://fonts.googleapis.com https://fonts.gstatic.com https://challenges.cloudflare.com https://*.cloudflare.com; font-src 'self' https://fonts.gstatic.com data:; frame-src 'self' https://js.stripe.com https://*.stripe.com https://*.stripe.network https://hooks.stripe.com https://checkout.stripe.com; object-src 'none'; base-uri 'self'; form-action 'self'; manifest-src 'self'; upgrade-insecure-requests">
+  <script>
+    window.addEventListener('error', function(e) {
+      try { localStorage.setItem('financia_global_error', JSON.stringify({ message: e.message, filename: e.filename, lineno: e.lineno, colno: e.colno, stack: e.error?.stack, timestamp: new Date().toISOString() })); } catch (_) {}
+    });
+    window.addEventListener('unhandledrejection', function(e) {
+      try { localStorage.setItem('financia_global_error', JSON.stringify({ message: e.reason?.message || String(e.reason), stack: e.reason?.stack, timestamp: new Date().toISOString() })); } catch (_) {}
+    });
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" href="/src/index.css" as="style">
 <link rel="preload" href="/src/animations.css" as="style">

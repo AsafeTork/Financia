@@ -1,0 +1,5 @@
+- generic [ref=f6e3]:
+  - generic [ref=f6e4]: (!)
+  - paragraph [ref=f6e5]: Algo deu errado
+  - paragraph [ref=f6e6]: Ocorreu um erro inesperado. Recarregue o app.
+  - button "Recarregar App" [ref=f6e7] [cursor=pointer]
