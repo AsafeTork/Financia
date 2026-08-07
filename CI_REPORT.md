@@ -1,7 +1,7 @@
 # CI Report
 
-**Gerado:** 2026-08-07 19:14 UTC
-**Commit:** `fba364d924cf160f6d1f6d782fc246a395d8004c`
+**Gerado:** 2026-08-07 19:48 UTC
+**Commit:** `b542d8a13cc7f205f9fdf9e2139727faddc2159f`
 **Branch:** `main`
 
 ---
@@ -25,20 +25,7 @@
 ```
 
 /home/runner/work/Financia/Financia/src/App.jsx
-    6:10   warning  'useSession' is defined but never used. Allowed unused vars must match /^_/u                                                                                                                                                                                        @typescript-eslint/no-unused-vars
-   54:9    warning  'sessionProps' is assigned a value but never used. Allowed unused vars must match /^_/u                                                                                                                                                                             @typescript-eslint/no-unused-vars
-   85:30   error    'loadData' is not defined                                                                                                                                                                                                                                           no-undef
-   85:63   error    'loadData' is not defined                                                                                                                                                                                                                                           no-undef
-   91:169  error    'saveBrand' is not defined                                                                                                                                                                                                                                          no-undef
-   91:180  error    'savePhone' is not defined                                                                                                                                                                                                                                          no-undef
-  123:7    error    'saveBrand' is not defined                                                                                                                                                                                                                                          no-undef
-  123:18   error    'savePhone' is not defined                                                                                                                                                                                                                                          no-undef
-  123:29   error    'loadData' is not defined                                                                                                                                                                                                                                           no-undef
-  126:6    warning  React Hook useMemo has unnecessary dependencies: 'loadData', 'saveBrand', and 'savePhone'. Either exclude them or remove the dependency array. Outer scope values like 'saveBrand' aren't valid dependencies because mutating them doesn't re-render the component  react-hooks/exhaustive-deps
-  146:5    error    'saveBrand' is not defined                                                                                                                                                                                                                                          no-undef
-  146:16   error    'savePhone' is not defined                                                                                                                                                                                                                                          no-undef
-  146:27   error    'loadData' is not defined                                                                                                                                                                                                                                           no-undef
-  167:282  error    'loadData' is not defined                                                                                                                                                                                                                                           no-undef
+  1:64  warning  'useState' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
 
 /home/runner/work/Financia/Financia/src/features/auth/WebAuthn.jsx
   48:8   warning  'actionLabel' is assigned a value but never used. Allowed unused vars must match /^_/u     @typescript-eslint/no-unused-vars
@@ -51,7 +38,30 @@
   52:19  error  'useCallback' is not defined  no-undef
 
 /home/runner/work/Financia/Financia/src/shared/hooks/usePullToRefresh.js
-  102:55  warning  The ref value 'rafRef.current' will likely have changed by the time
+  102:55  warning  The ref value 'rafRef.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'rafRef.current' to a variable inside the effect, and use that variable in the cleanup function  react-hooks/exhaustive-deps
+
+/home/runner/work/Financia/Financia/src/shared/hooks/usePullToRefresh.test.js
+  92:11  warning  'result' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+/home/runner/work/Financia/Financia/src/shared/hooks/useSchedulerYield.js
+  23:9   warning  'yieldToMain' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  37:28  warning  'yieldEvery' is assigned a value but never used. Allowed unused vars must match /^_/u   @typescript-eslint/no-unused-vars
+
+/home/runner/work/Financia/Financia/src/shared/hooks/useSwipeActions.js
+  9:7  warning  The 'actions' logical expression could make the dependencies of useCallback Hook (at line 45) change on every render. Move it inside the useCallback callback. Alternatively, wrap the initialization of 'actions' in its own useMemo() Hook  react-hooks/exhaustive-deps
+
+/home/runner/work/Financia/Financia/src/shared/hooks/useSwipeActions.test.js
+    1:36  warning  'beforeEach' is defined but never used. Allowed unused vars must match /^_/u       @typescript-eslint/no-unused-vars
+   95:11  warning  'result' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  140:11  warning  'result' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  155:11  warning  'result' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+/home/runner/work/Financia/Financia/src/shared/ui/CommandPalette.jsx
+  1:55  warning  'useCallback' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+✖ 15 problems (1 error, 14 warnings)
+
+
 ```
 
 ---
@@ -122,4 +132,4 @@ Nenhum relatorio admin gerado.
 
 | Data | Correcao | Commit |
 |------|----------|--------|
-| 2026-08-07 19:14 UTC | CI report gerado automaticamente | `fba364d924cf160f6d1f6d782fc246a395d8004c` |
+| 2026-08-07 19:48 UTC | CI report gerado automaticamente | `b542d8a13cc7f205f9fdf9e2139727faddc2159f` |
