@@ -89,21 +89,44 @@ export const BarChartSVG = memo(function BarChartSVG({ data, color, ...rest }) {
   var ariaDesc = 'Gráfico de barras dos últimos 7 dias. Receitas total: ' + fmtK(totalIncome) + ', Despesas total: ' + fmtK(totalOutcome) + '. ' + data.map(function(d) { return d.day + ': entrada ' + fmtK(d.i) + ', saída ' + fmtK(d.o); }).join('; ');
 
   return (
-    <svg role="img" aria-label="Gráfico de receitas e despesas" aria-describedby={rest.id ? rest.id + '-desc' : undefined} width="100%" height={H + 20} viewBox={'0 0 ' + (data.length * W + 40) + ' ' + (H + 20)} preserveAspectRatio="xMidYMid meet" {...rest}>
-      <title>Gráfico de receitas e despesas</title>
-      <desc id={rest.id ? rest.id + '-desc' : undefined}>{ariaDesc}</desc>
-      {data.map(function(d, i) {
-        var x = i * W + pad + 36;
-        var ih = Math.round((d.i / maxVal) * (H - 40));
-        var oh = Math.round((d.o / maxVal) * (H - 40));
-        return (
-          <g key={i}>
-            <rect x={x} y={H - 28 - ih} width={bw} height={ih || 2} fill={barColor} rx={3} opacity="0.85"/>
-            <rect x={x + bw + 2} y={H - 28 - oh} width={bw} height={oh || 2} fill="#ef4444" rx={3} opacity="0.85"/>
-            <text x={x + bw + 1} y={H - 6} textAnchor="middle" fontSize={9} fill="var(--text-muted, #9ca3af)">{d.day}</text>
-          </g>
-        );
-      })}
-    </svg>
+    <React.Fragment>
+      <svg role="img" aria-label="Gráfico de receitas e despesas" aria-describedby={rest.id ? rest.id + '-desc' : undefined} width="100%" height={H + 20} viewBox={'0 0 ' + (data.length * W + 40) + ' ' + (H + 20)} preserveAspectRatio="xMidYMid meet" {...rest}>
+        <title>Gráfico de receitas e despesas</title>
+        <desc id={rest.id ? rest.id + '-desc' : undefined}>{ariaDesc}</desc>
+        {data.map(function(d, i) {
+          var x = i * W + pad + 36;
+          var ih = Math.round((d.i / maxVal) * (H - 40));
+          var oh = Math.round((d.o / maxVal) * (H - 40));
+          return (
+            <g key={i}>
+              <rect x={x} y={H - 28 - ih} width={bw} height={ih || 2} fill={barColor} rx={3} opacity="0.85"/>
+              <rect x={x + bw + 2} y={H - 28 - oh} width={bw} height={oh || 2} fill="#ef4444" rx={3} opacity="0.85"/>
+              <text x={x + bw + 1} y={H - 6} textAnchor="middle" fontSize={9} fill="var(--text-muted, #9ca3af)">{d.day}</text>
+            </g>
+          );
+        })}
+      </svg>
+      <table className="sr-only">
+        <caption>Resumo do gráfico de receitas e despesas dos últimos 7 dias</caption>
+        <thead>
+          <tr>
+            <th scope="col">Dia</th>
+            <th scope="col">Receitas</th>
+            <th scope="col">Despesas</th>
+          </tr>
+        </thead>
+        <tbody>
+          {data.map(function(d, i) {
+            return (
+              <tr key={i}>
+                <th scope="row">{d.day}</th>
+                <td>{fmtK(d.i)}</td>
+                <td>{fmtK(d.o)}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </React.Fragment>
   );
 });
