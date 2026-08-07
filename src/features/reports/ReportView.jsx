@@ -1,13 +1,18 @@
-﻿import React, { useState, useMemo } from 'react';
+﻿import React, { useState, useMemo, useRef } from 'react';
 import { Card, PageHead } from '../../shared/ui/ui.jsx';
 import ExportButtons from '../../shared/ui/ExportButtons.jsx';
 import { fmt, fmtDate, monthLabel, today, brandAlpha } from '../../lib/utils.js';
 import { effectivePlan } from '../../lib/constants.js';
 import { exportPDF, exportXLS } from '../../lib/exporters.js';
+import { usePullToRefresh } from '../../shared/hooks/usePullToRefresh.js';
+import PullToRefreshIndicator from '../../shared/ui/PullToRefreshIndicator.jsx';
 
-export default React.memo(function ReportView({ tx, brand, toast, onNav, planInfo }) {
+export default React.memo(function ReportView({ tx, brand, toast, onNav, planInfo, onRefresh }) {
   var accentColor = (brand && brand.color) || '#1a6b5c';
   var paid = effectivePlan(planInfo) !== 'free';
+
+  var pr = usePullToRefresh(onRefresh);
+  var listRef = useRef(null);
 
   var curRealMonth = today().slice(0, 7);
   var allMonths = useMemo(function() {
@@ -193,7 +198,6 @@ export default React.memo(function ReportView({ tx, brand, toast, onNav, planInf
           </div>
         </Card>
       )}
-
       <Card>
         <div className="px-5 py-4 flex items-center justify-between" style={{borderBottom:'1px solid var(--border)'}}>
           <p className="text-sm font-semibold" style={{color:'var(--text-main)'}}>Movimentações</p>
@@ -203,34 +207,38 @@ export default React.memo(function ReportView({ tx, brand, toast, onNav, planInf
           ? <div className="py-10 text-center text-sm" style={{color:'var(--text-muted)'}}>Sem registros neste mês.</div>
           : (
             <>
-              <div className="divide-y" style={{borderColor:'var(--border)'}}>
-                {filtered.slice().sort(function(a, b) { return b.date.localeCompare(a.date); }).map(function(t) {
-                  var isInc = t.type === 'income';
-                  return (
-                    <div key={t.id} className="flex items-center justify-between px-5 py-3 transition-colors duration-150 hover:bg-[var(--bg-subtle)]">
-                      <div className="flex items-center gap-3 min-w-0">
-                        <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style={{background: isInc ? brandAlpha(accentColor, 0.1) : 'rgba(239,68,68,0.08)'}}>
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={isInc ? accentColor : '#ef4444'} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <path d={isInc ? 'M5 15l7-7 7 7' : 'M19 9l-7 7-7-7'}/>
-                          </svg>
+              <div ref={pr.containerRef} className="max-h-[calc(100vh-400px)] overflow-auto" style={{position:'relative'}}>
+                <PullToRefreshIndicator isPulling={pr.isPulling} pullProgress={pr.pullProgress} isRefreshing={pr.isRefreshing} color={accentColor}/>
+                <div className="divide-y" style={{borderColor:'var(--border)'}}>
+                  {filtered.slice().sort(function(a, b) { return b.date.localeCompare(a.date); }).map(function(t) {
+                    var isInc = t.type === 'income';
+                    return (
+                      <div key={t.id} className="flex items-center justify-between px-5 py-3 transition-colors duration-150 hover:bg-[var(--bg-subtle)]">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style={{background: isInc ? brandAlpha(accentColor, 0.1) : 'rgba(239,68,68,0.08)'}}>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+                              stroke={isInc ? accentColor : '#ef4444'} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                              <path d={isInc ? 'M5 15l7-7 7 7' : 'M19 9l-7 7-7-7'}/>
+                            </svg>
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-sm font-medium truncate" style={{color:'var(--text-main)'}}>{t.desc}</p>
+                            <p className="text-xs truncate" style={{color:'var(--text-muted)'}}>{fmtDate(t.date) + ' . ' + (t.method || t.category || '') + (t.registered_by ? ' . ' + t.registered_by : '')}</p>
+                          </div>
                         </div>
-                        <div className="min-w-0">
-                          <p className="text-sm font-medium truncate" style={{color:'var(--text-main)'}}>{t.desc}</p>
-                          <p className="text-xs truncate" style={{color:'var(--text-muted)'}}>{fmtDate(t.date) + ' . ' + (t.method || t.category || '') + (t.registered_by ? ' . ' + t.registered_by : '')}</p>
-                        </div>
+                        <span className="text-sm font-semibold tabular flex-shrink-0 ml-3" style={{color: isInc ? accentColor : '#ef4444'}}>
+                          {(isInc ? '+' : '-') + fmt(t.amount)}
+                        </span>
                       </div>
-                      <span className="text-sm font-semibold tabular flex-shrink-0 ml-3" style={{color: isInc ? accentColor : '#ef4444'}}>
-                        {(isInc ? '+' : '-') + fmt(t.amount)}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-              <div className="flex items-center justify-between px-5 py-3.5" style={{borderTop:'1px solid var(--border)', background:'var(--bg-subtle)'}}>
-                <span className="text-xs font-semibold uppercase tracking-wide" style={{color:'var(--text-sub)'}}>Resultado do mês</span>
-                <span className="text-sm font-bold tabular" style={{color: income - expense >= 0 ? accentColor : '#ef4444'}}>
-                  {income - expense >= 0 ? '+' : ''}{fmt(income - expense)}
-                </span>
+                    );
+                  })}
+                </div>
+                <div className="flex items-center justify-between px-5 py-3.5" style={{borderTop:'1px solid var(--border)', background:'var(--bg-subtle)'}}>
+                  <span className="text-xs font-semibold uppercase tracking-wide" style={{color:'var(--text-sub)'}}>Resultado do mês</span>
+                  <span className="text-sm font-bold tabular" style={{color: income - expense >= 0 ? accentColor : '#ef4444'}}>
+                    {income - expense >= 0 ? '+' : ''}{fmt(income - expense)}
+                  </span>
+                </div>
               </div>
             </>
           )

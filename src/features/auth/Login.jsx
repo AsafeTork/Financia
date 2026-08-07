@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Inp, Spin } from '../../shared/ui/ui.jsx';
 import { signIn, sendPasswordReset, signUp, signInWithGoogle } from '../../lib/auth.js';
+import { isWebAuthnSupported } from '../../lib/auth.js';
+import WebAuthn from './WebAuthn.jsx';
 import { passwordStrength, safe, onColor, readableBrand } from '../../lib/utils.js';
 import { SUPPORT_EMAIL } from '../../lib/constants.js';
 import PhoneInput from '../../shared/ui/PhoneInput.jsx';
@@ -236,9 +238,17 @@ export default function Login({ brand, onNav }) {
                 {mode === 'login' ? 'Bem-vindo de volta' : 'Crie sua conta grátis'}
               </h2>
 
-              <GoogleBtn onClick={doGoogle} loading={loading} label={mode === 'login' ? 'Entrar com Google' : 'Cadastrar com Google'} />
+           <GoogleBtn onClick={doGoogle} loading={loading} label={mode === 'login' ? 'Entrar com Google' : 'Cadastrar com Google'} />
 
-              <div className="flex items-center gap-3 my-1">
+           {mode === 'login' && isWebAuthnSupported() && (
+             <WebAuthn
+               mode="login"
+               brand={brand}
+               onSuccess={function() { /* auth state change → app re-render via onAuthStateChange */ }}
+             />
+           )}
+
+           <div className="flex items-center gap-3 my-1">
                 <div className="flex-1 h-px" style={{ background: '#e8e4db' }} />
                 <span className="text-xs" style={{ color: '#9aa5b1' }}>ou</span>
                 <div className="flex-1 h-px" style={{ background: '#e8e4db' }} />

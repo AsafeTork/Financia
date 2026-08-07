@@ -9,7 +9,7 @@ import { Label } from './label.jsx';
 import Tip from './Tip.jsx';
 
 var ShadcnCard = function({ className, children, ...p }) {
-  return <div className={cn('rounded-xl border bg-card text-card-foreground shadow', className)} {...p}>{children}</div>;
+  return <div className={cn('rounded-xl border bg-card text-card-foreground shadow card', className)} {...p}>{children}</div>;
 };
 var ShadcnBadge = function({ className, variant, children, ...p }) {
   var v = variant === 'default' ? 'border-transparent bg-primary text-primary-foreground shadow'
@@ -45,7 +45,7 @@ export const Inp = function({ label, hint, error, success, className, icon, id, 
         </div>
       )}
       <Input id={inputId}
-        className={'h-auto py-3 px-3.5 ' + (error ? 'border-destructive focus-visible:ring-destructive' : success ? 'border-green-500' : '')}
+        className={'h-auto py-3 px-3.5 ' + (error ? 'border-destructive focus-ring-destructive' : success ? 'border-green-500' : '')}
         aria-invalid={error ? 'true' : undefined}
         aria-describedby={error ? inputId + '-error' : undefined}
         {...p}
@@ -91,7 +91,7 @@ export const Sel = function({ label, className, children, id, ...p }) {
     <div className={'flex flex-col gap-1.5 min-w-0 ' + (className || '')}>
       {label && <Label htmlFor={selectId} className="text-xs font-semibold uppercase tracking-wide">{label}</Label>}
       <select id={selectId}
-        className="flex h-10 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 min-h-[var(--touch-target-min)]"
+        className="flex h-10 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors disabled:cursor-not-allowed disabled:opacity-50 min-h-[var(--touch-target-min)]"
         {...p}
       >{children}</select>
     </div>

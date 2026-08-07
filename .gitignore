@@ -11,3 +11,8 @@ supabase/.temp/
 .opencode/
 .config/
 opencode.json
+
+# Ruflo local secrets and runtime data
+.claude-flow/data/
+.claude-flow/logs/
+.claude-flow/sessions/

@@ -8,17 +8,17 @@ export const UsageBar = memo(function UsageBar({ label, used, limit, color, acce
   var reached = !unlimited && used >= limit;
   var warn = !reached && pct >= 80;
   var dotColor = accentColor || color || 'var(--brand, #1a6b5c)';
-  var barColor = reached ? '#ef4444' : warn ? '#f59e0b' : dotColor;
-  var countCls = reached ? 'text-red-600' : warn ? 'text-amber-600' : 'text-gray-400';
+  var barColor = reached ? 'var(--danger)' : warn ? 'var(--warning)' : dotColor;
+  var countStyle = reached ? {color: 'var(--danger)'} : warn ? {color: 'var(--warning)'} : {color: 'var(--text-muted)'};
   return (
     <div className="flex flex-col gap-1.5">
       <div className="flex justify-between items-center gap-2">
-        <span className="flex items-center gap-1.5 text-xs text-gray-500 min-w-0">
+        <span className="flex items-center gap-1.5 text-xs text-muted-foreground min-w-0">
           <span className="w-2 h-2 rounded-full flex-shrink-0" style={{background: dotColor}}/>
           <span className="truncate">{label}</span>
-          {reached && <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full text-red-600 bg-red-50 flex-shrink-0">no limite</span>}
+          {reached && <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full flex-shrink-0" style={{color: 'var(--danger)', background: 'rgba(239, 68, 68, 0.08)'}}>no limite</span>}
         </span>
-        <span className={'text-xs font-semibold tabular flex-shrink-0 ' + countCls}>
+        <span className="text-xs font-semibold tabular flex-shrink-0" style={countStyle}>
           {used}/{unlimited ? 'ilimitado' : limit}
         </span>
       </div>
@@ -56,10 +56,10 @@ export const KpiCard = memo(function KpiCard({ label, value, variation, sub, col
       aria-label={ariaLabel}
       id={hasClick ? kpiId : undefined}>
       <LabelTag className="text-xs font-semibold uppercase tracking-wider mt-2" style={{color:'var(--text-muted)'}}>{label}</LabelTag>
-      <p className="font-extrabold mt-2 text-gray-900 truncate tabular" style={{fontSize: headline ? 28 : 22, letterSpacing:'-0.5px'}}>{value}</p>
+      <p className="font-extrabold mt-2 text-foreground truncate tabular" style={{fontSize: headline ? 28 : 22, letterSpacing:'-0.5px'}}>{value}</p>
       {variation !== null && variation !== undefined && (
         <div className="flex items-center gap-1 mt-1.5">
-          <span className={'text-xs font-semibold flex items-center gap-0.5 px-1.5 py-0.5 rounded-md ' + (good ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-500')}>
+          <span className="text-xs font-semibold flex items-center gap-0.5 px-1.5 py-0.5 rounded-md" style={good ? {background: 'rgba(21, 128, 61, 0.08)', color: 'var(--success)'} : {background: 'rgba(239, 68, 68, 0.08)', color: 'var(--danger)'}}>
             {up ? (
               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" aria-hidden="true"><path d="M5 15l7-7 7 7"/></svg>
             ) : (
@@ -67,10 +67,10 @@ export const KpiCard = memo(function KpiCard({ label, value, variation, sub, col
             )}
             {variation > 0 ? '+' : ''}{variation}%
           </span>
-          <span className="text-xs text-gray-400">vs mes ant.</span>
+          <span className="text-xs text-muted-foreground">vs mes ant.</span>
         </div>
       )}
-      {sub && variation === null || (sub && variation === undefined) ? <p className="text-xs text-gray-400 mt-1 truncate">{sub}</p> : null}
+      {sub && variation === null || (sub && variation === undefined) ? <p className="text-xs text-muted-foreground mt-1 truncate">{sub}</p> : null}
     </Card>
   );
 });
@@ -103,7 +103,7 @@ export const BarChartSVG = memo(function BarChartSVG({ data, color, ...rest }) {
           return (
             <g key={i}>
               <rect x={x} y={H - 28 - ih} width={bw} height={ih || 2} fill={barColor} rx={3} opacity="0.85"/>
-              <rect x={x + bw + 2} y={H - 28 - oh} width={bw} height={oh || 2} fill="#ef4444" rx={3} opacity="0.85"/>
+              <rect x={x + bw + 2} y={H - 28 - oh} width={bw} height={oh || 2} fill="var(--danger)" rx={3} opacity="0.85"/>
               <text x={x + bw + 1} y={H - 6} textAnchor="middle" fontSize={9} fill="var(--text-muted, #9ca3af)">{d.day}</text>
             </g>
           );

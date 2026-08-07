@@ -86,7 +86,13 @@ export default React.memo(function Onboarding({ brand, needsName, needsPhone, on
     });
   }
 
-  function skip() { finish({}); }
+  function skip() {
+    var data = {};
+    var cleanName = safe(name).trim();
+    if (needsName && cleanName) data.name = cleanName;
+    if (needsPhone && phoneData.valid) data.phone = phoneData.e164;
+    finish(data);
+  }
 
   function submit(e) {
     e.preventDefault();
@@ -162,7 +168,7 @@ export default React.memo(function Onboarding({ brand, needsName, needsPhone, on
           </div>
         </div>
 
-        <form onSubmit={submit} className="flex flex-col gap-4" noValidate>
+        <form onSubmit={submit} className="flex flex-col gap-4" noValidate aria-label="Cadastro inicial do Financia">
           {step === 0 && (
             <div className="flex flex-col items-center text-center">
               <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-4" style={{ background: 'var(--brand-soft)' }}>
@@ -174,26 +180,6 @@ export default React.memo(function Onboarding({ brand, needsName, needsPhone, on
               <p className="text-sm mt-2" style={{ color: 'var(--text-sub)' }}>
                 {needsName && needsPhone ? 'Antes de começar, conte um pouco sobre você. Leva menos de 1 minuto.' : needsName ? 'Como se chama o seu negócio?' : needsPhone ? 'Falta só o seu telefone de contato.' : 'Tudo pronto — pode começar!'}
               </p>
-              {total > 1 && (
-                <p className="text-xs mt-3 inline-flex items-center gap-1.5" style={{ color: 'var(--text-muted)' }}>
-                  Seus dados ficam salvos com segurança
-                  <Tip text="Usamos seus dados apenas para personalizar o app e entrar em contato sobre seu plano. Nada é compartilhado com terceiros." />
-                </p>
-              )}
-              <div className="flex items-center justify-center gap-4 mt-4">
-                <div className="flex items-center gap-1.5 text-[10px]" style={{ color: 'var(--text-muted)' }}>
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-                  Criptografado
-                </div>
-                <div className="flex items-center gap-1.5 text-[10px]" style={{ color: 'var(--text-muted)' }}>
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-                  LGPD
-                </div>
-                <div className="flex items-center gap-1.5 text-[10px]" style={{ color: 'var(--text-muted)' }}>
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                  Rápido
-                </div>
-              </div>
             </div>
           )}
 
@@ -249,7 +235,28 @@ export default React.memo(function Onboarding({ brand, needsName, needsPhone, on
             </div>
           )}
 
-          {!loading && step === 0 && (
+          <div className="flex flex-col items-center gap-3 pt-2">
+            <div className="flex items-center justify-center gap-4">
+              <div className="flex items-center gap-1.5 text-[10px]" style={{ color: 'var(--text-muted)' }}>
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                Criptografado
+              </div>
+              <div className="flex items-center gap-1.5 text-[10px]" style={{ color: 'var(--text-muted)' }}>
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                LGPD
+              </div>
+              <div className="flex items-center gap-1.5 text-[10px]" style={{ color: 'var(--text-muted)' }}>
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                Rápido
+              </div>
+            </div>
+            <p className="text-xs inline-flex items-center gap-1.5" style={{ color: 'var(--text-muted)' }}>
+              Seus dados ficam salvos com segurança
+              <Tip text="Usamos seus dados apenas para personalizar o app e entrar em contato sobre seu plano. Nada é compartilhado com terceiros." />
+            </p>
+          </div>
+
+          {!loading && (
             <p className="text-center text-[11px]" style={{ color: 'var(--text-muted)' }}>
               {total > 1 ? 'Você pode pular e preencher depois nas configurações.' : 'Suas informações podem ser alteradas a qualquer momento nas configurações.'}
             </p>

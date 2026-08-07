@@ -34,10 +34,7 @@ body { background: var(--bg-page, #f8fafc); color: var(--text-main, #0f172a); }
 
 .btn:active { transform: scale(.97); }
 
-button:focus-visible, a:focus-visible, [role="button"]:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 3px var(--brand-soft, rgba(0,47,89,0.12));
-}
+button:focus-visible, a:focus-visible, [role="button"]:focus-visible { outline: var(--focus-ring); outline-offset: var(--focus-ring-offset); }
 
 .skeleton {
   background: linear-gradient(90deg, var(--bg-subtle) 25%, var(--border-md) 37%, var(--bg-subtle) 63%);
@@ -54,10 +51,9 @@ html { scroll-behavior: smooth; }
 
 input:focus, select:focus, textarea:focus {
   border-color: var(--brand, #002f59);
-  box-shadow: 0 0 0 3px var(--brand-soft, rgba(0,47,89,0.10));
-  outline: none;
 }
 
+.card { padding: var(--card-padding); }
 .card-hover { transition: box-shadow .15s ease, transform .15s ease; contain: layout style; }
 .card-hover:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.06); transform: translateY(-1px); }
 

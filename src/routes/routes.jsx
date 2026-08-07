@@ -44,16 +44,25 @@ var AppRoutes = React.memo(function AppRoutes() {
   var addLoss = dataCtx.addLoss, editLoss = dataCtx.editLoss, deleteLoss = dataCtx.deleteLoss;
   var adjustStock = dataCtx.adjustStock, saveBrand = ctx.saveBrand, savePhone = ctx.savePhone;
   var session = ctx.session, isAdmin = ctx.isAdminDB, dataLoading = ctx.dataLoading;
+  var loadData = ctx.loadData;
 
   var noop = useMemo(function() { return function() {}; }, []);
   var onUpgradePlano = useMemo(function() { return function() { onNav('planos'); }; }, [onNav]);
 
+  var onRefresh = useCallback(function() {
+    if (uid && loadData && navigator.onLine) {
+      loadData(uid);
+    } else if (uid && loadData) {
+      loadData(uid);
+    }
+  }, [uid, loadData]);
+
   var element = useMemo(function() {
     switch (currentPath) {
       case 'income':
-        return <TxView type="income" tx={tx} products={products} onAdd={addTx} onEdit={editTx} onDelete={deleteTx} onDeductStock={onDeductStock} planInfo={planInfo} onNav={onNav} brand={brand} toast={toast} confirm={confirm}/>;
+        return <TxView type="income" tx={tx} products={products} onAdd={addTx} onEdit={editTx} onDelete={deleteTx} onDeductStock={onDeductStock} planInfo={planInfo} onNav={onNav} onRefresh={onRefresh} brand={brand} toast={toast} confirm={confirm}/>;
       case 'expense':
-        return <TxView type="expense" tx={tx} products={products} onAdd={addTx} onEdit={editTx} onDelete={deleteTx} onDeductStock={noop} onAddGenerated={addGenerated} uid={uid} planInfo={planInfo} onNav={onNav} brand={brand} toast={toast} confirm={confirm}/>;
+        return <TxView type="expense" tx={tx} products={products} onAdd={addTx} onEdit={editTx} onDelete={deleteTx} onDeductStock={noop} onAddGenerated={addGenerated} uid={uid} planInfo={planInfo} onNav={onNav} onRefresh={onRefresh} brand={brand} toast={toast} confirm={confirm}/>;
       case 'inventory':
         return <InventoryView products={products} losses={losses} onAddProduct={addProduct} onEditProduct={editProduct} onDeleteProduct={deleteProduct} onAddLoss={addLoss} onEditLoss={editLoss} onDeleteLoss={deleteLoss} onAdjustStock={adjustStock} planInfo={planInfo} onNav={onNav} brand={brand} toast={toast} confirm={confirm}/>;
       case 'settings':
@@ -65,11 +74,11 @@ var AppRoutes = React.memo(function AppRoutes() {
       case 'email':
         return <EmailView brand={brand} toast={toast}/>;
       case 'report':
-        return <ReportView tx={tx} brand={brand} toast={toast} onNav={onNav} planInfo={planInfo}/>;
+        return <ReportView tx={tx} brand={brand} toast={toast} onNav={onNav} planInfo={planInfo} onRefresh={onRefresh}/>;
       default:
         return <Dashboard tx={tx} products={products} brand={brand} onNav={onNav} planInfo={planInfo} lossesCount={losses.length} onUpgrade={onUpgradePlano} loading={dataLoading}/>;
     }
-  }, [currentPath, tx, products, losses, addTx, editTx, deleteTx, addGenerated, addProduct, editProduct, deleteProduct, addLoss, editLoss, deleteLoss, adjustStock, onDeductStock, brand, planInfo, onNav, toast, confirm, uid, session, isAdmin, dataLoading, saveBrand, savePhone, noop, onUpgradePlano]);
+  }, [currentPath, tx, products, losses, addTx, editTx, deleteTx, addGenerated, addProduct, editProduct, deleteProduct, addLoss, editLoss, deleteLoss, adjustStock, onDeductStock, brand, planInfo, onNav, toast, confirm, uid, session, isAdmin, dataLoading, saveBrand, savePhone, noop, onUpgradePlano, onRefresh]);
 
   return (
     <LazyPage fallback={<PageSkeleton/>}>

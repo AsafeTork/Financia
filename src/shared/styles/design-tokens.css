@@ -1,8 +1,12 @@
 /* design-tokens.css — Unified design system tokens */
 :root {
-  /* Focus ring — consistent 3px across all interactive elements */
-  --focus-ring: 0 0 0 3px rgba(0, 47, 89, 0.3);
-  --focus-ring-offset: 0 0 0 2px var(--bg-page);
+  /* Focus ring — consistent 3px solid brand across all interactive elements */
+  --focus-ring: 3px solid var(--brand);
+  --focus-ring-offset: 2px;
+  --focus-ring-destructive: 3px solid var(--danger, #ef4444);
+
+  /* Card padding */
+  --card-padding: 1rem;
 
   /* Typography scale */
   --font-size-xs: 0.75rem;
@@ -33,19 +37,21 @@
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
-/* Global focus style — consistent across all interactive elements */
+/* Global focus style — consistent 3px brand ring on all interactive elements */
 *:focus-visible {
-  outline: none;
-  box-shadow: var(--focus-ring);
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* Focus ring for destructive/error states */
+.focus-ring-destructive:focus-visible {
+  outline: var(--focus-ring-destructive);
+  outline-offset: var(--focus-ring-offset);
 }
 
 /* Utility classes for consistent spacing */
 .focus-ring {
-  transition: box-shadow 150ms ease;
-}
-
-.focus-ring:focus-visible {
-  box-shadow: var(--focus-ring);
+  transition: outline-offset 150ms ease, outline-color 150ms ease;
 }
 
 /* Button base styles */
@@ -57,19 +63,14 @@
   transition: all 150ms ease;
 }
 
-.btn:focus-visible {
-  box-shadow: var(--focus-ring);
-}
-
 /* Input base styles */
 .input {
   min-height: 44px;
   border-radius: var(--radius-lg);
   border: 1px solid var(--border);
-  transition: border-color 150ms ease, box-shadow 150ms ease;
+  transition: border-color 150ms ease;
 }
 
 .input:focus-visible {
   border-color: var(--brand);
-  box-shadow: var(--focus-ring);
 }

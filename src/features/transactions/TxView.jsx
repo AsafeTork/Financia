@@ -10,8 +10,10 @@ import { exportPDF, exportXLS } from '../../lib/exporters.js';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { useDebouncedValue } from '../../shared/hooks/useDebouncedValue.js';
 import { useQuickIntent } from '../../lib/quickIntent.js';
+import { usePullToRefresh } from '../../shared/hooks/usePullToRefresh.js';
+import PullToRefreshIndicator from '../../shared/ui/PullToRefreshIndicator.jsx';
 
-export default React.memo(function TxView({ type, tx, products, onAdd, onEdit, onDelete, onDeductStock, onAddGenerated, uid: userId, brand, toast, confirm, planInfo, onNav }) {
+export default React.memo(function TxView({ type, tx, products, onAdd, onEdit, onDelete, onDeductStock, onAddGenerated, uid: userId, brand, toast, confirm, planInfo, onNav, onRefresh }) {
   var isIncome = type === 'income';
   var accentColor = isIncome ? brand.color : '#ef4444';
   var accentBg    = isIncome ? brandAlpha(brand.color, 0.08) : 'rgba(239,68,68,0.06)';
@@ -78,12 +80,14 @@ export default React.memo(function TxView({ type, tx, products, onAdd, onEdit, o
   var totalRowCount = memo.totalRowCount;
 
   var scrollRef = useRef(null);
+  var pr = usePullToRefresh(onRefresh);
+  var containerRef = pr.containerRef;
   var estimateSize = useCallback(function(index) {
     return flatRows[index].type === 'header' ? 44 : 60;
   }, [flatRows]);
   var virtualizer = useVirtualizer({
     count: flatRows.length,
-    getScrollElement: function() { return scrollRef.current; },
+    getScrollElement: function() { return containerRef.current; },
     estimateSize: estimateSize,
   });
 
@@ -281,8 +285,9 @@ export default React.memo(function TxView({ type, tx, products, onAdd, onEdit, o
                   </span>
                 </div>
               )}
-              <div ref={scrollRef} onScroll={onListScroll} className="max-h-[calc(100vh-280px)] min-h-[200px] overflow-auto" style={{position:'relative'}}>
-              {stickyHeader && (
+              <div ref={containerRef} onScroll={onListScroll} className="max-h-[calc(100vh-280px)] min-h-[200px] overflow-auto" style={{position:'relative'}}>
+                <PullToRefreshIndicator isPulling={pr.isPulling} pullProgress={pr.pullProgress} isRefreshing={pr.isRefreshing} color={accentColor}/>
+                {stickyHeader && (
                 <div className="sticky top-0 z-10 h-0 overflow-visible">
                   <div role="heading" aria-level="2" data-testid="sticky-date-header"
                     className={'flex items-center justify-between border-b px-4 py-2.5 ' + (stickyTop > 8 ? '' : 'invisible')}

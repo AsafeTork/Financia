@@ -57,7 +57,18 @@ describe('Onboarding', function() {
     expect(calls[0]).toEqual({ name: 'Padaria do João' });
   });
 
-  it('pular por agora finaliza com dados vazios', async function() {
+  it('pular por agora preserva dados ja preenchidos', async function() {
+    var user = userEvent.setup();
+    var { props, calls } = setup({ needsName: true });
+    render(React.createElement(Onboarding, props));
+    await user.click(screen.getByRole('button', { name: 'Começar' }));
+    await user.type(screen.getByLabelText('Nome da empresa'), 'Padaria do João');
+    await user.click(screen.getByRole('button', { name: 'Pular' }));
+    expect(calls.length).toBe(1);
+    expect(calls[0]).toEqual({ name: 'Padaria do João' });
+  });
+
+  it('pular por agora sem dados preenchidos finaliza com objeto vazio', async function() {
     var user = userEvent.setup();
     var { props, calls } = setup({ needsName: true });
     render(React.createElement(Onboarding, props));
@@ -149,5 +160,25 @@ describe('Onboarding', function() {
     render(React.createElement(Onboarding, props));
     await user.click(screen.getByRole('button', { name: 'Concluir' }));
     expect(localStorage.getItem(KEY)).toBeNull();
+  });
+
+  it('exibe trust signals em todos os passos (nao apenas welcome)', async function() {
+    var { props } = setup({ needsName: true });
+    render(React.createElement(Onboarding, props));
+    expect(screen.getAllByText('Criptografado').length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText(/LGPD/).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText('Rápido').length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByText('Seus dados ficam salvos com segurança')).toBeTruthy();
+    await userEvent.setup().click(screen.getByRole('button', { name: 'Começar' }));
+    expect(screen.getAllByText('Criptografado').length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText(/LGPD/).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByText('Seus dados ficam salvos com segurança')).toBeTruthy();
+  });
+
+  it('form tem aria-label para identificacao do screen reader', function() {
+    var { props } = setup({ needsName: true });
+    var { container } = render(React.createElement(Onboarding, props));
+    var form = container.querySelector('form');
+    expect(form.getAttribute('aria-label')).toBe('Cadastro inicial do Financia');
   });
 });

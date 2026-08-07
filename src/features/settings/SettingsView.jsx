@@ -13,6 +13,7 @@ import { sb } from '../../lib/supabase.js';
 import { fmt, isValidUrl } from '../../lib/utils.js';
 import { triggerApkBuild } from '../../lib/sync.js';
 import ColorField from '../../shared/ui/ColorField.jsx';
+import WebAuthn from '../auth/WebAuthn.jsx';
 
 export default React.memo(function SettingsView({ brand, session, planInfo, onSave, onSavePhone, toast, confirm, isAdmin, onNav }) {
   var hasWhiteLabel = !!(brand && brand.white_label);
@@ -262,6 +263,16 @@ export default React.memo(function SettingsView({ brand, session, planInfo, onSa
               <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="var(--text-sub)" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7"/></svg>
             </button>
             <InstallButton brand={brand}/>
+          </div>
+
+          <div className="pt-1">
+            <p className="text-xs font-semibold uppercase tracking-wide" style={{color:'var(--text-muted)'}}>Login sem senha (passkey)</p>
+            <p className="text-xs mt-1" style={{color:'var(--text-sub)'}}>Registre uma passkey para entrar com biometria, PIN ou chave de segurança. A senha continua disponível como fallback.</p>
+            {session && (
+              <div className="mt-3">
+                <WebAuthn mode="register" brand={brand} session={session} />
+              </div>
+            )}
           </div>
 
           <div className="pt-1">

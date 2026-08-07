@@ -92,10 +92,21 @@ function createNoopSupabaseClient() {
       onAuthStateChange: function() { return authSub; },
       signInWithPassword: function() { return Promise.resolve({ data: null, error: missingSupabaseError() }); },
       signUp: function() { return Promise.resolve({ data: null, error: missingSupabaseError() }); },
-      signInWithOAuth: function() { return Promise.resolve({ data: null, error: missingSupabaseError() }); },
-      resetPasswordForEmail: function() { return Promise.resolve({ data: null, error: missingSupabaseError() }); },
-      updateUser: function() { return Promise.resolve({ data: null, error: missingSupabaseError() }); },
-      signOut: function() { return Promise.resolve({ data: null, error: null }); },
+       signInWithOAuth: function() { return Promise.resolve({ data: null, error: missingSupabaseError() }); },
+       resetPasswordForEmail: function() { return Promise.resolve({ data: null, error: missingSupabaseError() }); },
+       updateUser: function() { return Promise.resolve({ data: null, error: missingSupabaseError() }); },
+       registerPasskey: function() { return Promise.resolve({ data: null, error: missingSupabaseError() }); },
+       signInWithPasskey: function() { return Promise.resolve({ data: null, error: missingSupabaseError() }); },
+       passkey: {
+         startRegistration: function() { return Promise.resolve({ data: null, error: missingSupabaseError() }); },
+         verifyRegistration: function() { return Promise.resolve({ data: null, error: missingSupabaseError() }); },
+         startAuthentication: function() { return Promise.resolve({ data: null, error: missingSupabaseError() }); },
+         verifyAuthentication: function() { return Promise.resolve({ data: null, error: missingSupabaseError() }); },
+         list: function() { return Promise.resolve({ data: null, error: missingSupabaseError() }); },
+         update: function() { return Promise.resolve({ data: null, error: missingSupabaseError() }); },
+         delete: function() { return Promise.resolve({ data: null, error: missingSupabaseError() }); },
+       },
+       signOut: function() { return Promise.resolve({ data: null, error: null }); },
     },
     storage: {
       from: function() { return createNoopStorageBucket(); },
@@ -124,6 +135,9 @@ export var sb = supabaseUrl && supabaseAnonKey ? createClient(supabaseUrl, supab
     params: {
       v: 'protocol-2',
     },
+  },
+  auth: {
+    experimental: { passkey: true },
   },
   global: {
     fetch: globalThis.fetch,
