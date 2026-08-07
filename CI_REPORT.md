@@ -1,7 +1,7 @@
 # CI Report
 
-**Gerado:** 2026-08-07 21:20 UTC
-**Commit:** `b81ef6731e97a89fada1d4156d8c12f11d98bc9b`
+**Gerado:** 2026-08-07 21:27 UTC
+**Commit:** `d9038d14ab0bd967e5ca8d6c91fbfc1aabaee3fe`
 **Branch:** `main`
 
 ---
@@ -32,8 +32,9 @@
   48:21  warning  'setActionLabel' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
 
 /home/runner/work/Financia/Financia/src/features/landing/Landing.jsx
-  97:10  warning  'users' is assigned a value but never used. Allowed unused vars must match /^_/u   @typescript-eslint/no-unused-vars
-  98:10  warning  'rating' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+   2:10  warning  'useScrollReveal' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  98:10  warning  'users' is assigned a value but never used. Allowed unused vars must match /^_/u   @typescript-eslint/no-unused-vars
+  99:10  warning  'rating' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
 
 /home/runner/work/Financia/Financia/src/features/reports/ReportView.jsx
   15:7  warning  'listRef' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
@@ -63,7 +64,7 @@
 /home/runner/work/Financia/Financia/src/shared/ui/CommandPalette.jsx
   1:55  warning  'useCallback' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
 
-✖ 17 problems (0 errors, 17 warnings)
+✖ 18 problems (0 errors, 18 warnings)
 
 
 ```
@@ -87,7 +88,7 @@
 
 [36mvite v5.4.21 [32mbuilding for production...[36m[39m
 transforming...
-[32m✓[39m 259 modules transformed.
+[32m✓[39m 260 modules transformed.
 Generated an empty chunk: "supabase-vendor".
 rendering chunks...
 [1m[33m[plugin:vite:reporter][39m[22m [33m[plugin vite:reporter] 
@@ -126,37 +127,27 @@ computing gzip size...
 ```
 
 Running 26 tests using 4 workers
-°°·°°°°°°°°·°··°°°°···°··F
+°·°·°°°°°°°°°F·°°°°···°···
 
-  1) [chromium] › e2e/auth-flow.spec.ts:45:3 › Auth Flow › login form shows validation errors on empty submit 
+  1) [chromium] › e2e/deep-sync-conflict.spec.ts:94:3 › Deep Sync Conflict Scenarios › sync worker survives unhandled rejection 
 
-    Error: expect(locator).toBeVisible() failed
+    Error: page.evaluate: Execution context was destroyed, most likely because of a navigation
 
-    Locator: locator('text=obrigatório').first()
-    Expected: visible
-    Timeout: 10000ms
-    Error: element(s) not found
+      104 |
+      105 |     // Dispatch an unhandled rejection - the app should not crash
+    > 106 |     await page.evaluate(() => {
+          |                ^
+      107 |       window.dispatchEvent(new PromiseRejectionEvent('unhandledrejection', {
+      108 |         promise: Promise.reject(new Error('test rejection')),
+      109 |         reason: new Error('test rejection')
+        at /home/runner/work/Financia/Financia/e2e/deep-sync-conflict.spec.ts:106:16
 
-    Call log:
-      - Expect "toBeVisible" with timeout 10000ms
-      - waiting for locator('text=obrigatório').first()
-
-
-      63 |
-      64 |     const emailError = page.locator('text=obrigatório').first();
-    > 65 |     await expect(emailError).toBeVisible({ timeout: 10000 });
-         |                              ^
-      66 |   });
-      67 |
-      68 |   test('authenticated user sees dashboard via storageState', async ({ page, browser }) => {
-        at /home/runner/work/Financia/Financia/e2e/auth-flow.spec.ts:65:30
-
-    Error Context: test-results/auth-flow-Auth-Flow-login--49015-tion-errors-on-empty-submit-chromium/error-context.md
+    Error Context: test-results/deep-sync-conflict-Deep-Sy-7a968-urvives-unhandled-rejection-chromium/error-context.md
 
   1 failed
-    [chromium] › e2e/auth-flow.spec.ts:45:3 › Auth Flow › login form shows validation errors on empty submit 
+    [chromium] › e2e/deep-sync-conflict.spec.ts:94:3 › Deep Sync Conflict Scenarios › sync worker survives unhandled rejection 
   16 skipped
-  9 passed (16.5s)
+  9 passed (14.8s)
 
 ```
 
@@ -172,15 +163,36 @@ Running 26 tests using 4 workers
 
 Running 42 tests using 4 workers
 
-[1/42] [chromium] › e2e/deep-sync-conflict.spec.ts:59:3 › Deep Sync Conflict Scenarios › BroadcastChannel handles duplicate messages without errors
-[2/42] [chromium] › e2e/deep-sync-conflict.spec.ts:120:3 › Deep Sync Conflict Scenarios › memory leak check after sync broadcast storm
-[3/42] [chromium] › e2e/deep-sync-conflict.spec.ts:10:3 › Deep Sync Conflict Scenarios › BroadcastChannel ping/pong survives rapid tab switching
-[4/42] [chromium] › e2e/deep-sync-conflict.spec.ts:94:3 › Deep Sync Conflict Scenarios › sync worker survives unhandled rejection
+[1/42] [chromium] › e2e/deep-sync-conflict.spec.ts:120:3 › Deep Sync Conflict Scenarios › memory leak check after sync broadcast storm
+[2/42] [chromium] › e2e/deep-sync-conflict.spec.ts:59:3 › Deep Sync Conflict Scenarios › BroadcastChannel handles duplicate messages without errors
+[3/42] [chromium] › e2e/deep-sync-conflict.spec.ts:94:3 › Deep Sync Conflict Scenarios › sync worker survives unhandled rejection
+[4/42] [chromium] › e2e/deep-sync-conflict.spec.ts:10:3 › Deep Sync Conflict Scenarios › BroadcastChannel ping/pong survives rapid tab switching
 [5/42] [chromium] › e2e/indexeddb-corruption.spec.ts:12:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should recover from corrupted IndexedDB data
 [6/42] [chromium] › e2e/indexeddb-corruption.spec.ts:65:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should handle invalid schema gracefully
+  1) [chromium] › e2e/indexeddb-corruption.spec.ts:12:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should recover from corrupted IndexedDB data 
+
+    Error: page.reload: net::ERR_ABORTED; maybe frame was detached?
+    Call log:
+      - waiting for navigation until "load"
+
+
+      34 |       });
+      35 |
+    > 36 |       await page.reload();
+         |                  ^
+      37 |       await page.waitForLoadState('networkidle');
+      38 |
+      39 |       const transactions = await page.evaluate(async () => {
+        at /home/runner/work/Financia/Financia/e2e/indexeddb-corruption.spec.ts:36:18
+
+    Error Context: test-results/indexeddb-corruption-Index-b9183-om-corrupted-IndexedDB-data-chromium/error-context.md
+
+
 [7/42] [chromium] › e2e/indexeddb-eviction.spec.ts:12:5 › IndexedDB Recovery - Eviction › Eviction Test › should handle storage pressure and persist()
 [8/42] [chromium] › e2e/indexeddb-eviction.spec.ts:89:5 › IndexedDB Recovery - Eviction › Eviction Test › should estimate storage quota
-  1) [chromium] › e2e/indexeddb-eviction.spec.ts:12:5 › IndexedDB Recovery - Eviction › Eviction Test › should handle storage pressure and persist() 
+[9/42] [chromium] › e2e/indexeddb-migration.spec.ts:12:5 › IndexedDB Recovery - Migration › Migration Test › should migrate from old schema to new schema
+[10/42] [chromium] › e2e/indexeddb-migration.spec.ts:92:5 › IndexedDB Recovery - Migration › Migration Test › should preserve data integrity during migration
+  2) [chromium] › e2e/indexeddb-eviction.spec.ts:12:5 › IndexedDB Recovery - Eviction › Eviction Test › should handle storage pressure and persist() 
 
     Error: page.evaluate: Execution context was destroyed, most likely because of a navigation
 
@@ -196,13 +208,11 @@ Running 42 tests using 4 workers
     Error Context: test-results/indexeddb-eviction-Indexed-f1bab-orage-pressure-and-persist--chromium/error-context.md
 
 
-[9/42] [chromium] › e2e/indexeddb-migration.spec.ts:92:5 › IndexedDB Recovery - Migration › Migration Test › should preserve data integrity during migration
-[10/42] [chromium] › e2e/indexeddb-migration.spec.ts:12:5 › IndexedDB Recovery - Migration › Migration Test › should migrate from old schema to new schema
-[11/42] [chromium] › e2e/memory-leak.spec.ts:6:3 › Memory Leak Detection › cyclic navigation - no detached DOM nodes
-[12/42] [chromium] › e2e/memory-leak.spec.ts:57:3 › Memory Leak Detection › event listeners cleaned up on unmount
-[13/42] [chromium] › e2e/memory-leak.spec.ts:84:3 › Memory Leak Detection › timers and intervals cleared on unmount
-[14/42] [chromium] › e2e/memory-leak.spec.ts:110:3 › Memory Leak Detection › IndexedDB connections closed properly
-  2) [chromium] › e2e/indexeddb-migration.spec.ts:12:5 › IndexedDB Recovery - Migration › Migration Test › should migrate from old schema to new schema 
+[11/42] [chromium] › e2e/memory-leak.spec.ts:57:3 › Memory Leak Detection › event listeners cleaned up on unmount
+[12/42] [chromium] › e2e/memory-leak.spec.ts:84:3 › Memory Leak Detection › timers and intervals cleared on unmount
+[13/42] [chromium] › e2e/memory-leak.spec.ts:110:3 › Memory Leak Detection › IndexedDB connections closed properly
+[14/42] [chromium] › e2e/memory-leak.spec.ts:6:3 › Memory Leak Detection › cyclic navigation - no detached DOM nodes
+  3) [chromium] › e2e/indexeddb-migration.spec.ts:12:5 › IndexedDB Recovery - Migration › Migration Test › should migrate from old schema to new schema 
 
     Error: page.evaluate: AbortError: Version change transaction was aborted in upgradeneeded event handler.
 
@@ -218,30 +228,13 @@ Running 42 tests using 4 workers
     Error Context: test-results/indexeddb-migration-Indexe-ccb35-om-old-schema-to-new-schema-chromium/error-context.md
 
 
-  3) [chromium] › e2e/memory-leak.spec.ts:110:3 › Memory Leak Detection › IndexedDB connections closed properly 
-
-    Error: page.goto: Navigation to "http://localhost:4173/#/despesas" is interrupted by another navigation to "http://localhost:4173/#/vendas"
-    Call log:
-      - navigating to "http://localhost:4173/#/despesas", waiting until "load"
-
-
-      120 |     // Navigate and perform operations
-      121 |     for (const route of ['/#/despesas', '/#/estoque', '/#/configuracoes', '/#/relatorios']) {
-    > 122 |       await page.goto(route);
-          |                  ^
-      123 |       await page.waitForLoadState('networkidle');
-      124 |     }
-      125 |     
-        at /home/runner/work/Financia/Financia/e2e/memory-leak.spec.ts:122:18
-
-    Error Context: test-results/memory-leak-Memory-Leak-De-9275d-connections-closed-properly-chromium/error-context.md
-
-
-[15/42] [chromium] › e2e/memory-leak.spec.ts:135:3 › Memory Leak Detection › BroadcastChannel closed on unmount
-[16/42] [chromium] › e2e/memory-leak.spec.ts:164:3 › Memory Leak Detection › memory usage stable under load
-[17/42] [chromium] › e2e/memory-leak.spec.ts:207:3 › Offline Storage Persistence › navigator.storage.persist() prevents eviction
+[15/42] [chromium] › e2e/memory-leak.spec.ts:164:3 › Memory Leak Detection › memory usage stable under load
+[16/42] [chromium] › e2e/memory-leak.spec.ts:207:3 › Offline Storage Persistence › navigator.storage.persist() prevents eviction
+[17/42] [chromium] › e2e/memory-leak.spec.ts:135:3 › Memory Leak Detection › BroadcastChannel closed on unmount
 [18/42] [chromium] › e2e/memory-leak.spec.ts:222:3 › Offline Storage Persistence › storage estimate available
-[19/42] [chromium] › e2e/network-error
+  4) [chromium] › e2e/memory-leak.spec.ts:110:3 › Memory Leak Detection › IndexedDB connections closed properly 
+
+    Error: page.goto: Navigation to "http://localhost:4173/#/
 ```
 
 ---
@@ -273,4 +266,4 @@ Nenhum relatorio admin gerado.
 
 | Data | Correcao | Commit |
 |------|----------|--------|
-| 2026-08-07 21:20 UTC | CI report gerado automaticamente | `b81ef6731e97a89fada1d4156d8c12f11d98bc9b` |
+| 2026-08-07 21:27 UTC | CI report gerado automaticamente | `d9038d14ab0bd967e5ca8d6c91fbfc1aabaee3fe` |
