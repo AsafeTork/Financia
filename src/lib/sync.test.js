@@ -65,9 +65,31 @@ vi.mock('./supabase.js', function() {
   };
 });
 
-import { syncAll, fetchClients, fetchClientUsage, fetchDbStats, fetchStripeOverview, setClientCustomPrice, setClientWhiteLabel, deleteClient, triggerApkBuild } from './sync.js';
-import { sb } from './supabase.js';
-import { ldb } from './dexie.js';
+let syncAll, fetchClients, fetchClientUsage, fetchDbStats, fetchStripeOverview,
+  setClientCustomPrice, setClientWhiteLabel, deleteClient, triggerApkBuild;
+let sb, ldb;
+
+async function reloadSync() {
+  vi.resetModules();
+  const mod = await import('./sync.js');
+  syncAll = mod.syncAll;
+  fetchClients = mod.fetchClients;
+  fetchClientUsage = mod.fetchClientUsage;
+  fetchDbStats = mod.fetchDbStats;
+  fetchStripeOverview = mod.fetchStripeOverview;
+  setClientCustomPrice = mod.setClientCustomPrice;
+  setClientWhiteLabel = mod.setClientWhiteLabel;
+  deleteClient = mod.deleteClient;
+  triggerApkBuild = mod.triggerApkBuild;
+  const supabaseMod = await import('./supabase.js');
+  sb = supabaseMod.sb;
+  const dexieMod = await import('./dexie.js');
+  ldb = dexieMod.ldb;
+}
+
+beforeEach(async function() {
+  await reloadSync();
+});
 
 describe('syncAll', function() {
   beforeEach(function() {

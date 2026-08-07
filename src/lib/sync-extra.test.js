@@ -4,33 +4,37 @@ vi.mock('./utils.js', function() {
   return { now: function() { return '2026-01-01T00:00:00.000Z'; } };
 });
 
-const txTable = {
-  where: vi.fn(),
-  bulkDelete: vi.fn(async function() {}),
-  bulkPut: vi.fn(async function() {}),
-  bulkGet: vi.fn(async function() { return []; }),
-  get: vi.fn(async function() { return undefined; }),
-};
-const prTable = {
-  where: vi.fn(),
-  bulkDelete: vi.fn(async function() {}),
-  bulkPut: vi.fn(async function() {}),
-  bulkGet: vi.fn(async function() { return []; }),
-  get: vi.fn(async function() { return undefined; }),
-};
-const lsTable = {
-  where: vi.fn(),
-  bulkDelete: vi.fn(async function() {}),
-  bulkPut: vi.fn(async function() {}),
-  bulkGet: vi.fn(async function() { return []; }),
-  get: vi.fn(async function() { return undefined; }),
-};
-const profilesTable = {
-  where: vi.fn(),
-  get: vi.fn(async function() { return undefined; }),
-  put: vi.fn(async function() {}),
-  update: vi.fn(async function() {}),
-};
+const { txTable, prTable, lsTable, profilesTable, fromMock } = vi.hoisted(function() {
+  const txTable = {
+    where: vi.fn(),
+    bulkDelete: vi.fn(async function() {}),
+    bulkPut: vi.fn(async function() {}),
+    bulkGet: vi.fn(async function() { return []; }),
+    get: vi.fn(async function() { return undefined; }),
+  };
+  const prTable = {
+    where: vi.fn(),
+    bulkDelete: vi.fn(async function() {}),
+    bulkPut: vi.fn(async function() {}),
+    bulkGet: vi.fn(async function() { return []; }),
+    get: vi.fn(async function() { return undefined; }),
+  };
+  const lsTable = {
+    where: vi.fn(),
+    bulkDelete: vi.fn(async function() {}),
+    bulkPut: vi.fn(async function() {}),
+    bulkGet: vi.fn(async function() { return []; }),
+    get: vi.fn(async function() { return undefined; }),
+  };
+  const profilesTable = {
+    where: vi.fn(),
+    get: vi.fn(async function() { return undefined; }),
+    put: vi.fn(async function() {}),
+    update: vi.fn(async function() {}),
+  };
+  const fromMock = vi.fn();
+  return { txTable, prTable, lsTable, profilesTable, fromMock };
+});
 
 vi.mock('./dexie.js', function() {
   return {
@@ -60,8 +64,6 @@ vi.mock('./dexie.js', function() {
     __profilesTable: profilesTable,
   };
 });
-
-const fromMock = vi.fn();
 
 function makeQb(response) {
   let api;
@@ -117,24 +119,31 @@ vi.mock('./supabase.js', function() {
   };
 });
 
-import { syncAll, resetSyncBackoff } from './sync.js';
-
-function emptyUnsynced(table) {
-  table.where.mockReturnValue({ equals: function() { return { and: function() { return { toArray: function() { return Promise.resolve([]); } }; } }; } });
+let syncAll, resetSyncBackoff;
+async function reloadSync() {
+  vi.resetModules();
+  const mod = await import('./sync.js');
+  syncAll = mod.syncAll;
+  resetSyncBackoff = mod.resetSyncBackoff;
 }
 
-// where('user_id') -> consulta de nao sincronizados; where('id') -> marcar _synced
+function emptyUnsynced(table) {
+  table.where.mockReturnValue({ equals: function() { return { toArray: function() { return Promise.resolve([]); } }; } });
+}
+
+// where('[user_id+_synced]') -> consulta de nao sincronizados; where('id') -> marcar _synced
 function unsyncedRows(table, rows) {
   table.where.mockImplementation(function(key) {
-    if (key === 'user_id') {
-      return { equals: function() { return { and: function() { return { toArray: function() { return Promise.resolve(rows); } }; } }; } };
+    if (key === '[user_id+_synced]') {
+      return { equals: function() { return { toArray: function() { return Promise.resolve(rows); } }; } };
     }
     return { anyOf: function() { return { modify: async function() {} }; } };
   });
 }
 
 describe('syncAll — upload de dados locais', function() {
-  beforeEach(function() {
+  beforeEach(async function() {
+    await reloadSync();
     resetSyncBackoff();
     Object.defineProperty(navigator, 'onLine', { value: true, configurable: true, writable: true });
     vi.clearAllMocks();
@@ -200,9 +209,10 @@ describe('syncAll — upload de dados locais', function() {
   it('pull paginado: segunda pagina quando a primeira tem 500 rows', async function() {
     const page1 = [];
     for (let i = 0; i < 500; i++) page1.push({ id: 'r' + i, user_id: 'u1', updated_at: '2026-06-01T00:00:0' + (i % 10) + 'Z' });
+    const pagedQb = makePagedQb([{ data: page1, error: null }, { data: [{ id: 'r500', user_id: 'u1', updated_at: '2026-06-02' }], error: null }]);
     fromMock.mockImplementation(function(table) {
       if (table === 'company_profiles') return makeQb({ data: null, error: null });
-      return makePagedQb([{ data: page1, error: null }, { data: [{ id: 'r500', user_id: 'u1', updated_at: '2026-06-02' }], error: null }]);
+      return pagedQb;
     });
     const r = await syncAll('u1');
     expect(r.ok).toBe(true);
@@ -238,7 +248,8 @@ describe('syncAll — upload de dados locais', function() {
 });
 
 describe('syncAll — backoff de falhas consecutivas', function() {
-  beforeEach(function() {
+  beforeEach(async function() {
+    await reloadSync();
     resetSyncBackoff();
     Object.defineProperty(navigator, 'onLine', { value: true, configurable: true, writable: true });
     vi.clearAllMocks();
@@ -284,7 +295,8 @@ describe('syncAll — backoff de falhas consecutivas', function() {
 });
 
 describe('syncAll — sincronizacao de perfil (syncProfiles interno)', function() {
-  beforeEach(function() {
+  beforeEach(async function() {
+    await reloadSync();
     resetSyncBackoff();
     Object.defineProperty(navigator, 'onLine', { value: true, configurable: true, writable: true });
     vi.clearAllMocks();
@@ -310,7 +322,7 @@ describe('syncAll — sincronizacao de perfil (syncProfiles interno)', function(
   it('sanitiza hex invalido para #002f59', async function() {
     const upsert = vi.fn(function() { return Promise.resolve({ error: null }); });
     profileFromMock(profileQb({ upsert: function() { return upsert.apply(this, arguments); } }));
-    profilesTable.where.mockReturnValue({ equals: function() { return { and: function() { return { toArray: function() { return Promise.resolve([{ user_id: 'u1', name: 'X', color: 'red', color_secondary: 'blue', color_accent: null, _synced: 0, updated_at: '2026-01-01' }]); } }; } }; } });
+    profilesTable.where.mockReturnValue({ equals: function() { return { toArray: function() { return Promise.resolve([{ user_id: 'u1', name: 'X', color: 'red', color_secondary: 'blue', color_accent: null, _synced: 0, updated_at: '2026-01-01' }]); } }; } });
     const r = await syncAll('u1');
     expect(r.ok).toBe(true);
     const clean = upsert.mock.calls[0][0];
@@ -322,7 +334,7 @@ describe('syncAll — sincronizacao de perfil (syncProfiles interno)', function(
   it('upsert do perfil com erro -> ok false', async function() {
     const upsert = vi.fn(function() { return Promise.resolve({ error: new Error('x') }); });
     profileFromMock(profileQb({ upsert: function() { return upsert.apply(this, arguments); } }));
-    profilesTable.where.mockReturnValue({ equals: function() { return { and: function() { return { toArray: function() { return Promise.resolve([{ user_id: 'u1', _synced: 0, updated_at: '2026-01-01' }]); } }; } }; } });
+    profilesTable.where.mockReturnValue({ equals: function() { return { toArray: function() { return Promise.resolve([{ user_id: 'u1', _synced: 0, updated_at: '2026-01-01' }]); } }; } });
     const r = await syncAll('u1');
     expect(r.ok).toBe(false);
   });

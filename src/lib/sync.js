@@ -95,7 +95,8 @@ const syncTable = async function(uid, table, ldbTable, mapLocal, signal) {
 };
 
 const syncProfiles = async function(uid) {
-  if (!navigator.onLine) return true;
+  if (!navigator.onLine) return { ok: true, changed: false };
+  let changed = false;
   const unsynced = await ldb.profiles.where('[user_id+_synced]').equals([uid, 0]).toArray();
   var results = await Promise.allSettled(unsynced.map(async function(row) {
     const clean = {};
@@ -105,22 +106,27 @@ const syncProfiles = async function(uid) {
     if (clean.color_accent && !validHex(clean.color_accent)) clean.color_accent = null;
     clean.updated_at = row.updated_at || now();
     var { error } = await sb.from('company_profiles').upsert(clean, { onConflict: 'user_id' });
-    if (!error) await ldb.profiles.update(uid, { _synced: 1 });
-    else { await ldb.profiles.update(uid, { _synced: 1 }); return false; }
-    return true;
+    if (!error) {
+      changed = true;
+      await ldb.profiles.update(uid, { _synced: 1 });
+      return true;
+    }
+    await ldb.profiles.update(uid, { _synced: 1 });
+    return false;
   }));
   var ok = results.every(function(r) { return r.status === 'fulfilled' && r.value !== false; });
-  if (!ok) return false;
+  if (!ok) return { ok: false, changed: false };
   var PROFILE_READ_FIELDS = 'user_id,name,logo,color,color_secondary,color_accent,theme,logo_url,white_label,phone,niche,custom_palette,visual_version,brand_config';
   const { data, error: profPullErr } = await sb.from('company_profiles').select(PROFILE_READ_FIELDS).eq('user_id', uid).maybeSingle();
-  if (profPullErr) return false;
+  if (profPullErr) return { ok: false, changed: false };
   if (data) {
     var localRow = await ldb.profiles.get(uid);
     if (!localRow || localRow._synced !== 0) {
       await ldb.profiles.put(toLocal(data));
+      changed = true;
     }
   }
-  return true;
+  return { ok: true, changed: changed };
 };
 
 export const syncAll = async function(uid) {
