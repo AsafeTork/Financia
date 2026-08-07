@@ -26,7 +26,7 @@ export default defineConfig(async function() {
     filename: 'sw.ts',
     injectRegister: null,
     registerType: 'prompt',
-    includeAssets: ['icon-192.svg', 'icon-512.svg'],
+    includeAssets: ['favicon.ico', 'favicon-32.png', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'],
     manifest: {
       name: 'Financia — Gestão financeira',
       short_name: 'Financia',
@@ -42,8 +42,8 @@ export default defineConfig(async function() {
       theme_color: '#002f59',
       categories: ['business', 'finance', 'productivity'],
       icons: [
-        { src: '/icon-192.svg', sizes: '192x192', type: 'image/svg+xml', purpose: 'any' },
-        { src: '/icon-512.svg', sizes: '512x512', type: 'image/svg+xml', purpose: 'any maskable' },
+        { src: '/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any maskable' },
+        { src: '/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' },
       ],
     },
     injectManifest: {

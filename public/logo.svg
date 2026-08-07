@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 150" width="560" height="150" role="img" aria-label="Financia" focusable="false">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&amp;display=swap');
+    .wordmark { font-family: 'Montserrat', system-ui, -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 700; fill: #0F2F59; }
+  </style>
+  <g transform="translate(90,75) scale(0.48) translate(-198.5,-200)">
+    <g transform="translate(34,200)"><rect x="0" y="0" width="71" height="125" rx="10" fill="#002f59"/></g>
+    <g transform="translate(134,129)"><rect x="0" y="0" width="71" height="196" rx="10" fill="#1a6b5c"/></g>
+    <g transform="translate(234,75)"><rect x="0" y="0" width="72" height="250" rx="10" fill="#6ec6c8"/></g>
+    <g transform="translate(169,126)"><path d="M 197 25.2 L 171.4 0 L 70.9 97.7 L 25.6 51.8 L 0 77 C 23.6 100.6 47.3 124.3 70.9 148 Z" fill="#8cf2d1"/></g>
+  </g>
+  <text class="wordmark" x="190" y="84" font-size="56" letter-spacing="-0.02em">Financia</text>
+</svg>

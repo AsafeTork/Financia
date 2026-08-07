@@ -92,7 +92,7 @@ Let me re-read the file; my edits may have created an odd overlap.
 - Focus rings padronizados (3px), card-padding token, dark mode em gráficos
 - Pull-to-refresh, swipe actions, command palette (⌘K), deep linking
 - WebAuthn/passkey (WCAG 3.3.8)
-- Assets de logo (SVG, favicon, app icon) a partir do símbolo em `VISUAL_IDENTITY.md`
+- ~~Assets de logo (SVG, favicon, app icon) a partir do símbolo em `VISUAL_IDENTITY.md`~~ ✅ — `public/logo.svg` (logo principal horizontal: símbolo + wordmark Montserrat Bold Navy `#002F59`); PNGs do símbolo centrado + padded (maskable-safe) em `favicon-16/32/48.png`, `icon-192.png`, `icon-512.png`, `apple-touch-icon.png` (180px, bg Off-White `#F5F5F0`); `favicon.ico` multi-res (16/24/32/48/64/128/256); `index.html` referencia ICO+16/32/48 PNG+SVG favicon e `apple-touch-icon.png`; `manifest.json` + `vite.config.js` manifest icons → PNG 192x192/512x512 `any maskable`; build + typecheck verdes
 - `scheduler.yield` em useMemo longos, Background Sync, LHCI budgets gate no CI
 - Habilitar leaked password protection (dashboard Supabase Auth)
 
