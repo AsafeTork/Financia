@@ -148,3 +148,78 @@ describe('useSyncLoop — listeners', function() {
     hook.unmount();
   });
 });
+
+describe('useSyncLoop — adaptive backoff', function() {
+  beforeEach(function() {
+    syncAllMock.mockReset();
+    Object.defineProperty(navigator, 'onLine', { value: true, configurable: true, writable: true });
+  });
+
+  it('expõe métricas iniciais (base de 30s, sem falhas)', async function() {
+    const { hook } = makeHook();
+    await act(async function() {});
+    expect(hook.result.current.currentInterval).toBe(30000);
+    expect(hook.result.current.consecutiveFailures).toBe(0);
+    expect(hook.result.current.lastSyncDuration).toBe(0);
+    hook.unmount();
+  });
+
+  it('falha incrementa consecutiveFailures e dobra o intervalo (30s -> 60s)', async function() {
+    syncAllMock.mockRejectedValue(new Error('boom'));
+    const { hook, ctx } = makeHook();
+    await act(async function() { hook.result.current.runSync(); });
+    expect(hook.result.current.consecutiveFailures).toBe(1);
+    expect(hook.result.current.currentInterval).toBe(60000);
+    ctx.lastSyncEndRef.current = 0;
+    await act(async function() { hook.result.current.runSync(); });
+    expect(hook.result.current.consecutiveFailures).toBe(2);
+    expect(hook.result.current.currentInterval).toBe(120000);
+    hook.unmount();
+  });
+
+  it('intervalo é limitado a 5min no máximo', async function() {
+    syncAllMock.mockRejectedValue(new Error('boom'));
+    const { hook, ctx } = makeHook();
+    for (var i = 0; i < 5; i++) {
+      await act(async function() { hook.result.current.runSync(); });
+      ctx.lastSyncEndRef.current = 0;
+    }
+    expect(hook.result.current.consecutiveFailures).toBe(5);
+    expect(hook.result.current.currentInterval).toBe(300000);
+    hook.unmount();
+  });
+
+  it('2 sucessos consecutivos após falhas resetam o backoff para base', async function() {
+    syncAllMock
+      .mockRejectedValueOnce(new Error('boom'))
+      .mockRejectedValueOnce(new Error('boom'))
+      .mockResolvedValueOnce({ ok: true, changed: false })
+      .mockResolvedValueOnce({ ok: true, changed: false });
+    const { hook, ctx } = makeHook();
+    ctx.lastSyncEndRef.current = 0;
+    await act(async function() { hook.result.current.runSync(); });
+    ctx.lastSyncEndRef.current = 0;
+    await act(async function() { hook.result.current.runSync(); });
+    expect(hook.result.current.consecutiveFailures).toBe(2);
+    expect(hook.result.current.currentInterval).toBe(120000);
+    // 1º sucesso: ainda não reseta (exige 2 sucessos)
+    ctx.lastSyncEndRef.current = 0;
+    await act(async function() { hook.result.current.runSync(); });
+    expect(hook.result.current.consecutiveFailures).toBe(2);
+    expect(hook.result.current.currentInterval).toBe(120000);
+    // 2º sucesso: reseta
+    ctx.lastSyncEndRef.current = 0;
+    await act(async function() { hook.result.current.runSync(); });
+    expect(hook.result.current.consecutiveFailures).toBe(0);
+    expect(hook.result.current.currentInterval).toBe(30000);
+    hook.unmount();
+  });
+
+  it('expõe a duração do último sync', async function() {
+    syncAllMock.mockResolvedValue({ ok: true, changed: false });
+    const { hook } = makeHook();
+    await act(async function() { hook.result.current.runSync(); });
+    expect(hook.result.current.lastSyncDuration).toBeGreaterThanOrEqual(0);
+    hook.unmount();
+  });
+});

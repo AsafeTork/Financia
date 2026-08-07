@@ -27,6 +27,7 @@
 
 - **Índices compostos Dexie (P0 #2)** (2026-08-07): 3 índices `[user_id+_synced]`, `[user_id+_deleted+date]`, `[user_id+_deleted+created_at]` — scan unsynced otimizado (sync.js/worker), carga ordenada por data (useDataLoader), zero breaking changes (v4→v5)
 - **Sync em Web Worker (P0 #1)** (2026-08-07): worker consolida drift — agora importa a pipeline compartilhada de `src/lib/sync.js` em vez de duplicá-la (upsert mantém `client_mutation_id`/`base_version` e marca `_conflict` em 23505); fallback main-thread intacto no hook
+- **Sync adaptativo + backoff (P0 #3)** (2026-08-07): `useSyncLoop.js` troca `setInterval` fixo (120s) por `setTimeout` recursivo com backoff exponencial 30s→60s→120s→240s→max 5min + jitter ±10%; reset p/ base após 2 sucessos consecutivos; respeita `navigator.onLine`; expõe métricas `lastSyncDuration`/`consecutiveFailures`/`currentInterval` mantendo a API `{ runSync }`
 - **Performance crítica** (2026-08-05): context split, render só da rota ativa, callbacks memoizados, React.memo em 8 componentes — commits `feb2be2`, `3975958`
 - **Testes** (2026-08-05): 14 falhas resolvidas, Vitest 4 config corrigida, pool threads 3-5x mais rápido — `de9c7d2`, `aeb669d`, `f26e828`
 - **CI** (2026-08-05): Playwright fora dos testes unitários, setup otimizado — `e6a8870`
@@ -43,7 +44,7 @@
 |---|--------|-----------|
 | ~~1~~ | ✅ ~~Mover `syncAll` para Web Worker~~ | `src/workers/sync.worker.js` + `useSyncLoop.js` (2026-08-07) |
 | ~~2~~ | ✅ ~~Índices compostos no schema Dexie~~ | `src/lib/dexie.js` (2026-08-07) |
-| 3 | Intervalo de sync adaptativo + backoff | `src/shared/hooks/useSyncLoop.js` |
+| ~~3~~ | ✅ ~~Intervalo de sync adaptativo + backoff~~ | `src/shared/hooks/useSyncLoop.js` (2026-08-07) |
 | 4 | `useTransition` no filtro de TxView | `src/features/transactions/TxView.jsx` |
 
 ### P1 — UX: Acessibilidade WCAG 2.2 AA (hoje ~45%) (relatório: `UX/UX_UI_AUDIT_REPORT.md`)
