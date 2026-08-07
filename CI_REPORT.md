@@ -1,7 +1,7 @@
 # CI Report
 
-**Gerado:** 2026-08-07 16:14 UTC
-**Commit:** `e3173b2be30701f6823fe8cca7b3e7bd196709e2`
+**Gerado:** 2026-08-07 16:20 UTC
+**Commit:** `8c5cb766f31e854c1966601f9517ef8a474e0347`
 **Branch:** `main`
 
 ---
@@ -82,9 +82,9 @@ computing gzip size...
 ```
 
 Running 26 tests using 4 workers
-°°·°°°°°°°°°···°·°°°··°···
+°°°·°°°°°°°°····°°°°··°···
   16 skipped
-  10 passed (17.4s)
+  10 passed (14.3s)
 
 ```
 
@@ -100,10 +100,10 @@ Running 26 tests using 4 workers
 
 Running 42 tests using 4 workers
 
-[1/42] [chromium] › e2e/deep-sync-conflict.spec.ts:59:3 › Deep Sync Conflict Scenarios › BroadcastChannel handles duplicate messages without errors
+[1/42] [chromium] › e2e/deep-sync-conflict.spec.ts:120:3 › Deep Sync Conflict Scenarios › memory leak check after sync broadcast storm
 [2/42] [chromium] › e2e/deep-sync-conflict.spec.ts:94:3 › Deep Sync Conflict Scenarios › sync worker survives unhandled rejection
 [3/42] [chromium] › e2e/deep-sync-conflict.spec.ts:10:3 › Deep Sync Conflict Scenarios › BroadcastChannel ping/pong survives rapid tab switching
-[4/42] [chromium] › e2e/deep-sync-conflict.spec.ts:120:3 › Deep Sync Conflict Scenarios › memory leak check after sync broadcast storm
+[4/42] [chromium] › e2e/deep-sync-conflict.spec.ts:59:3 › Deep Sync Conflict Scenarios › BroadcastChannel handles duplicate messages without errors
 [5/42] [chromium] › e2e/indexeddb-corruption.spec.ts:12:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should recover from corrupted IndexedDB data
 [6/42] [chromium] › e2e/indexeddb-corruption.spec.ts:65:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should handle invalid schema gracefully
 [7/42] [chromium] › e2e/indexeddb-eviction.spec.ts:12:5 › IndexedDB Recovery - Eviction › Eviction Test › should handle storage pressure and persist()
@@ -178,4 +178,4 @@ Nenhum relatorio admin gerado.
 
 | Data | Correcao | Commit |
 |------|----------|--------|
-| 2026-08-07 16:14 UTC | CI report gerado automaticamente | `e3173b2be30701f6823fe8cca7b3e7bd196709e2` |
+| 2026-08-07 16:20 UTC | CI report gerado automaticamente | `8c5cb766f31e854c1966601f9517ef8a474e0347` |
