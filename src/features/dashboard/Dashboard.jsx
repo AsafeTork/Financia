@@ -121,7 +121,7 @@ export default React.memo(function Dashboard({ tx, products, brand, onNav, planI
               var done = false;
               return (
                 <div key={step.n} className="flex items-start gap-3 rounded-xl px-4 py-3 transition-colors duration-200" style={{background: done ? 'rgba(59,191,160,0.06)' : 'var(--bg-subtle)'}}>
-                  <span className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0 transition-colors duration-300" style={{background: done ? '#3bbfa0' : brand.color}}>
+                  <span className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0 transition-colors duration-300" style={{background: done ? 'var(--success)' : brand.color}}>
                     {done ? <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"><path d="M5 13l4 4L19 7"/></svg> : step.n}
                   </span>
                   <div className="flex-1 min-w-0">

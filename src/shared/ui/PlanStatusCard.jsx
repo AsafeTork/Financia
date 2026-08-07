@@ -34,7 +34,7 @@ export default React.memo(function PlanStatusCard({ plan, brand, onUpgrade, usag
               {['IA Financeira com insights personalizados', 'Relatorios ilimitados', 'Exportacao em PDF e Excel', 'Historico ilimitado de transacoes', 'Backup prioritario'].map(function(b) {
                 return (
                   <div key={b} className="flex items-center gap-2">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3bbfa0" strokeWidth="2.5" strokeLinecap="round"><path d="M5 13l4 4L19 7"/></svg>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--success)" strokeWidth="2.5" strokeLinecap="round"><path d="M5 13l4 4L19 7"/></svg>
                     <span className="text-xs" style={{color:'var(--text-sub)'}}>{b}</span>
                   </div>
                 );

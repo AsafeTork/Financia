@@ -5,7 +5,7 @@ import { passwordStrength, safe, onColor, readableBrand } from '../../lib/utils.
 import { SUPPORT_EMAIL } from '../../lib/constants.js';
 import PhoneInput from '../../shared/ui/PhoneInput.jsx';
 
-var ACCENT = 'var(--green)';
+var ACCENT = 'var(--success)';
 
 function GoogleBtn({ onClick, loading, label }) {
   return (

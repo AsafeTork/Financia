@@ -161,7 +161,7 @@ export default function Landing({ onEnter, onNav }) {
               {['Sem cartao de credito', 'Funciona offline', 'Pronto em 1 minuto'].map(function(t) {
                 return (
                   <span key={t} className="flex items-center gap-1.5">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 13l4 4L19 7" /></svg>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--success)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 13l4 4L19 7" /></svg>
                     {t}
                   </span>
                 );
@@ -339,14 +339,14 @@ export default function Landing({ onEnter, onNav }) {
               <div key={'mov-' + i} className="flex items-center justify-between px-5 sm:px-6 py-3.5 hover:bg-[var(--bg-subtle)] transition-colors" style={{ borderBottom: i < MOCK_MOVEMENTS.length - 1 ? '1px solid var(--border)' : 'none' }}>
                 <div className="flex items-center gap-3 min-w-0 flex-1">
                   <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: inc ? 'rgba(59,191,160,0.1)' : 'rgba(239,68,68,0.07)' }}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={inc ? 'var(--green)' : 'var(--danger)'} strokeWidth="2.5" strokeLinecap="round"><path d={inc ? 'M5 15l7-7 7 7' : 'M19 9l-7 7-7-7'} /></svg>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={inc ? 'var(--success)' : 'var(--danger)'} strokeWidth="2.5" strokeLinecap="round"><path d={inc ? 'M5 15l7-7 7 7' : 'M19 9l-7 7-7-7'} /></svg>
                   </div>
                   <div className="min-w-0">
                     <p className="text-sm font-medium" style={{ color: 'var(--brand)' }}>{t.desc}</p>
                     <p className="text-xs" style={{ color: 'var(--text-sub)' }}>{t.detail}</p>
                   </div>
                 </div>
-                <span className="text-sm font-bold tabular" style={{ color: inc ? 'var(--green)' : 'var(--danger)' }}>{t.val}</span>
+                <span className="text-sm font-bold tabular" style={{ color: inc ? 'var(--success)' : 'var(--danger)' }}>{t.val}</span>
               </div>
             );
           })}
@@ -382,21 +382,21 @@ export default function Landing({ onEnter, onNav }) {
                 <div key={'g-' + gi}>
                   <div className="flex items-center justify-between px-5 py-2.5" style={{ background: 'var(--brand-soft)', borderBottom: '1px solid var(--border)' }}>
                     <span className="text-xs font-semibold uppercase tracking-wide" style={{ color: 'var(--text-sub)' }}>{g.date}</span>
-                    <span className="text-xs font-semibold tabular" style={{ color: gPos ? 'var(--green)' : 'var(--danger)' }}>{g.total}</span>
+                    <span className="text-xs font-semibold tabular" style={{ color: gPos ? 'var(--success)' : 'var(--danger)' }}>{g.total}</span>
                   </div>
                   {g.items.map(function(t, ti) {
                     return (
                       <div key={'gi-' + gi + '-' + ti} className="flex items-center justify-between px-5 py-3 hover:bg-[var(--bg-subtle)] transition-colors" style={{ borderBottom: '1px solid var(--border)' }}>
                         <div className="flex items-center gap-3 min-w-0 flex-1">
                           <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: t.inc ? 'rgba(59,191,160,0.1)' : 'rgba(239,68,68,0.07)' }}>
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={t.inc ? 'var(--green)' : 'var(--danger)'} strokeWidth="2.5" strokeLinecap="round"><path d={t.inc ? 'M5 15l7-7 7 7' : 'M19 9l-7 7-7-7'} /></svg>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={t.inc ? 'var(--success)' : 'var(--danger)'} strokeWidth="2.5" strokeLinecap="round"><path d={t.inc ? 'M5 15l7-7 7 7' : 'M19 9l-7 7-7-7'} /></svg>
                           </div>
                           <div className="min-w-0">
                             <p className="text-sm font-semibold truncate" style={{ color: 'var(--brand)' }}>{t.desc}</p>
                             <p className="text-xs truncate" style={{ color: 'var(--text-sub)' }}>{t.cat}</p>
                           </div>
                         </div>
-                        <span className="text-sm font-bold tabular" style={{ color: t.inc ? 'var(--green)' : 'var(--danger)' }}>{t.val}</span>
+                        <span className="text-sm font-bold tabular" style={{ color: t.inc ? 'var(--success)' : 'var(--danger)' }}>{t.val}</span>
                       </div>
                     );
                   })}
@@ -485,14 +485,14 @@ export default function Landing({ onEnter, onNav }) {
                       if (ladder) {
                         return (
                           <div key={feat} className="flex items-center gap-2 pb-2 mb-1" style={{ borderBottom: '1px dashed var(--border-md)' }}>
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--green)" strokeWidth="2.5" strokeLinecap="round" className="flex-shrink-0"><path d="M12 19V5M5 12l7-7 7 7" /></svg>
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--success)" strokeWidth="2.5" strokeLinecap="round" className="flex-shrink-0"><path d="M12 19V5M5 12l7-7 7 7" /></svg>
                             <span className="text-sm font-bold" style={{ color: 'var(--brand)' }}>{feat}</span>
                           </div>
                         );
                       }
                       return (
                         <div key={feat} className="flex items-start gap-2.5">
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" strokeWidth="2.5" strokeLinecap="round" className="flex-shrink-0 mt-0.5"><path d="M5 13l4 4L19 7" /></svg>
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--success)" strokeWidth="2.5" strokeLinecap="round" className="flex-shrink-0 mt-0.5"><path d="M5 13l4 4L19 7" /></svg>
                           <span className="text-sm" style={{ color: 'var(--text-sub)' }}>{feat}</span>
                         </div>
                       );
@@ -508,7 +508,7 @@ export default function Landing({ onEnter, onNav }) {
               {['Sem fidelidade', 'Troque ou cancele quando quiser', 'Pagamento seguro pela Stripe'].map(function(t) {
                 return (
                   <span key={t} className="flex items-center gap-1.5">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--green)" strokeWidth="3" strokeLinecap="round"><path d="M5 13l4 4L19 7" /></svg>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--success)" strokeWidth="3" strokeLinecap="round"><path d="M5 13l4 4L19 7" /></svg>
                     {t}
                   </span>
                 );
@@ -553,7 +553,7 @@ export default function Landing({ onEnter, onNav }) {
             <p className="text-xs font-bold uppercase tracking-[0.15em] mb-4" style={{ color: 'rgba(59,191,160,0.8)' }}>Comece agora</p>
             <h2 className="font-display font-semibold text-white tracking-tight" style={{ fontSize: 'var(--text-display)', lineHeight: 1.05 }}>
               Organize seu negocio em<br/>
-              <span style={{ color: 'var(--green)' }}>menos de 1 minuto</span>
+              <span style={{ color: 'var(--success)' }}>menos de 1 minuto</span>
             </h2>
             <p className="mt-4 text-sm max-w-md mx-auto" style={{ color: 'rgba(255,255,255,0.65)' }}>
               Conta gratis, sem cartao de credito. Quando crescer, voce escolhe o plano ideal.
