@@ -12,6 +12,7 @@ import { useDebouncedValue } from '../../shared/hooks/useDebouncedValue.js';
 import { useQuickIntent } from '../../lib/quickIntent.js';
 import { usePullToRefresh } from '../../shared/hooks/usePullToRefresh.js';
 import PullToRefreshIndicator from '../../shared/ui/PullToRefreshIndicator.jsx';
+import { categorizeBatch, learnCategory } from '../../lib/categorize.js';
 
 export default React.memo(function TxView({ type, tx, products, onAdd, onEdit, onDelete, onDeductStock, onAddGenerated, uid: userId, brand, toast, confirm, planInfo, onNav, onRefresh }) {
   var isIncome = type === 'income';
@@ -31,6 +32,25 @@ export default React.memo(function TxView({ type, tx, products, onAdd, onEdit, o
   var pendingFilters = useCallback(function(update) {
     startTransition(update);
   }, []);
+  var [aiSug, setAiSug] = useState(null);
+  var [aiBusy, setAiBusy] = useState(false);
+  var expenses = useMemo(function() { return isIncome ? [] : tx.filter(function(t) { return t.type === 'expense'; }); }, [isIncome, tx]);
+  var uncategorized = useMemo(function() {
+    return expenses.filter(function(t) { return !(t.category || t.cat); });
+  }, [expenses]);
+  var suggestCategories = useCallback(async function() {
+    if (aiBusy || !expenses.length) return;
+    setAiBusy(true);
+    try {
+      var items = expenses.filter(function(t) { return !(t.category || t.cat); }).map(function(t) { return { id: t.id, desc: t.desc }; });
+      if (!items.length) { toast('Todas as despesas já têm categoria.', 'success'); return; }
+      var out = await categorizeBatch(userId, items);
+      var sug = out.filter(function(o) { return o.category; });
+      setAiSug(sug);
+      if (!sug.length) toast('Não consegui sugerir categorias agora.', 'error');
+    } catch(_) { toast('Erro ao sugerir categorias. Tente novamente.', 'error'); }
+    finally { setAiBusy(false); }
+  }, [aiBusy, expenses, userId, toast]);
   var [form, setForm] = useState({desc:'', amount:'', date:today(), cat:'Fixo', method:'PIX', fixo:false, day:'5'});
 
   useQuickIntent(isIncome ? 'income' : 'expense', function() { setModal(true); });
@@ -127,6 +147,7 @@ export default React.memo(function TxView({ type, tx, products, onAdd, onEdit, o
         cat: isIncome ? null : editItem.cat
       });
       if (!ok) return;
+      if (!isIncome) learnCategory(userId, editItem.desc, editItem.cat);
       toast(isIncome ? 'Venda atualizada' : 'Despesa atualizada', 'success');
       setEditItem(null);
     } catch(_) { toast('Erro ao salvar. Tente novamente.', 'error'); }
@@ -148,7 +169,6 @@ export default React.memo(function TxView({ type, tx, products, onAdd, onEdit, o
         if (okR === false) return;
         toast('Despesa fixa adicionada — repete todo mês.', 'success');
         setModal(false);
-        resetForm();
         return;
       }
       var ok = await onAdd({
@@ -198,6 +218,15 @@ export default React.memo(function TxView({ type, tx, products, onAdd, onEdit, o
               onPDF={function() { doExport('pdf'); }}
               onXLS={function() { doExport('xls'); }}
               onLocked={function() { if (onNav) onNav('planos'); }}/>
+          )}
+          {!isIncome && uncategorized.length > 0 && (
+            <Btn onClick={suggestCategories} disabled={aiBusy} style={{background: brandAlpha('#2563eb', 0.14), color: '#2563eb'}}>
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.813 15.904L11.828 18.92a1 1 0 01-.448 1.307l-9.66 4.83a1 1 0 01-1.307-.448l-4.83-9.66a1 1 0 01.448-1.307l8.5-4.17a1 1 0 011.307.448 1 1 0 01.448 1.307l-1.976 3.724-2.78 1.69 1.499 1.5z"/>
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M22 2l-7.5 7.5M22 2l-3 8-5.5-5.5L19 2z"/>
+              </svg>
+              {aiBusy ? 'Analisando...' : 'Sugerir categorias'}
+            </Btn>
           )}
           <Btn onClick={function() { setModal(true); }} style={{background: accentColor}}>
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -341,6 +370,36 @@ export default React.memo(function TxView({ type, tx, products, onAdd, onEdit, o
           </div>
         )}
       </Card>
+
+      {aiSug && (
+        <Modal title="Categorias sugeridas" onClose={function() { setAiSug(null); }} color="#2563eb">
+          <p className="text-xs mb-3" style={{color:'var(--text-sub)'}}>
+            Revise as sugestões abaixo e confirme para aplicar. Cada correção manual futura é aprendida automaticamente.
+          </p>
+          <div className="max-h-72 overflow-y-auto flex flex-col gap-2 mb-4">
+            {aiSug.map(function(s) {
+              var cur = expenses.find(function(t) { return t.id === s.id; });
+              return (
+                <div key={s.id} className="rounded-xl px-3 py-2.5 flex items-center justify-between gap-3" style={{background:'var(--bg-subtle)'}}>
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium truncate" style={{color:'var(--text-main)'}}>{s.desc}</p>
+                    <p className="text-[11px] truncate" style={{color:'var(--text-muted)'}}>
+                      {cur && (cur.category || cur.cat) ? 'Atual: ' + (cur.category || cur.cat) : 'Sem categoria'} → <span className="font-semibold" style={{color:'#2563eb'}}>{s.category}</span>
+                    </p>
+                  </div>
+                  <Btn onClick={async function() {
+                    var ok = await onEdit(s.id, { cat: s.category });
+                    if (!ok) return;
+                    learnCategory(userId, s.desc, s.category);
+                    setAiSug(function(prev) { return prev ? prev.filter(function(o) { return o.id !== s.id; }) : prev; });
+                    toast('Categoria aplicada: ' + s.category, 'success');
+                  }} style={{background:'#2563eb'}} className="flex-shrink-0">Aplicar</Btn>
+                </div>
+              );
+            })}
+          </div>
+        </Modal>
+      )}
 
       {modal && (isIncome
         ? (

@@ -24,12 +24,12 @@ function apiBase() {
 
 function sanitizeMode(value: any): string {
   var m = sanitizeText(value, 24);
-  if (m === 'email' || m === 'insights' || m === 'palette') return m;
+  if (m === 'email' || m === 'insights' || m === 'palette' || m === 'categorize') return m;
   return '';
 }
 
 function modeTokens(mode: string, requested: number): number {
-  var maxByMode = mode === 'palette' ? 140 : mode === 'insights' ? 220 : mode === 'email' ? 320 : 420;
+  var maxByMode = mode === 'palette' ? 140 : mode === 'categorize' ? 400 : mode === 'insights' ? 220 : mode === 'email' ? 320 : 420;
   return Math.max(40, Math.min(maxByMode, requested));
 }
 
@@ -43,6 +43,14 @@ function modeSystem(mode: string, custom: string): string {
   }
   if (mode === 'insights') {
     return 'Consultor financeiro PT-BR. Ate 4 linhas iniciando com "- ". Acoes praticas, sem repetir dados crus.';
+  }
+  if (mode === 'categorize') {
+    return (
+      'Classificador financeiro PT-BR. Entrada: lista "id|descricao" de despesas de microempreendedor. ' +
+      'Saida: JSON puro sem texto extra: {"<id da linha>":"<categoria>"}. ' +
+      'Use APENAS estas categorias: Fixo, Variavel, Estoque, Marketing, Pessoal, Servicos, Outro. ' +
+      'Mapeie cada descricao a categoria mais adequada (aluguel/agua/luz/internet/seguro -> Fixo; iFood/uber/mercado/combustivel -> Variavel; fornecedor/estoque/mercadoria -> Estoque; anuncio/ads/marketing/redes -> Marketing; salario/pro-labore/beneficio -> Pessoal; contador/frete/manutencao/servico -> Servicos; sem clareza -> Outro).'
+    );
   }
   return 'PT-BR. Objetivo e curto.';
 }

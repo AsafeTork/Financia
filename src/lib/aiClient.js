@@ -27,6 +27,9 @@ function fallbackText(mode, prompt) {
   if (mode === 'insights') {
     return '- Reduza a maior despesa primeiro e acompanhe por 7 dias.\n- Revise preço/margem dos itens mais vendidos.\n- Aumente ticket médio com combo ou adicional simples.\n- Defina meta semanal e compare com o realizado.';
   }
+  if (mode === 'categorize') {
+    return '{}';
+  }
   if (mode === 'palette') {
     return '{"primary":"#002f59","secondary":"#dbe7f3","accent":"#2563eb","theme":"light","rationale":"fallback local"}';
   }
@@ -35,13 +38,13 @@ function fallbackText(mode, prompt) {
 
 function normalizeMode(v) {
   var m = clean(v, 24);
-  if (m === 'email' || m === 'insights' || m === 'palette') return m;
+  if (m === 'email' || m === 'insights' || m === 'palette' || m === 'categorize') return m;
   return '';
 }
 
 function maxForMode(mode, req) {
   var n = Math.round(Number(req) || 0);
-  var base = mode === 'palette' ? 140 : mode === 'insights' ? 220 : mode === 'email' ? 320 : 420;
+  var base = mode === 'palette' ? 140 : mode === 'categorize' ? 400 : mode === 'insights' ? 220 : mode === 'email' ? 320 : 420;
   if (!n) return base;
   return Math.max(40, Math.min(base, n));
 }
