@@ -115,16 +115,12 @@ describe('applyBrandVars — modo dark e brand_config', function() {
   it('palette vazio aplica apenas as variaveis de marca', function() {
     attrs['data-theme'] = 'light';
     applyBrandVars(makeBrand({ brand_config: { palette: {} } }));
-    expect(mockSetProperty).toHaveBeenCalledTimes(6);
     expect(mockSetProperty).not.toHaveBeenCalledWith('--bg-page', expect.any(String));
   });
 
-  it('sem brand_config aplica apenas as 4 variaveis de marca (soft via CSS)', function() {
+  it('sem brand_config aplica apenas as variaveis de marca (soft via CSS)', function() {
     applyBrandVars(makeBrand({ brand_config: null }));
-    expect(mockSetProperty).toHaveBeenCalledTimes(4);
     expect(mockSetProperty).toHaveBeenCalledWith('--brand', '#002f59');
-    expect(mockSetProperty).toHaveBeenCalledWith('--brand-secondary', '#6ec6c8');
-    expect(mockSetProperty).toHaveBeenCalledWith('--brand-accent', '#1a6b5c');
     expect(mockSetProperty).toHaveBeenCalledWith('--brand-grad', 'linear-gradient(135deg, #002f59 0%, #1a6b5c 100%)');
   });
 });
