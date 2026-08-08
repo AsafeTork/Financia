@@ -46,7 +46,7 @@ test.describe('IndexedDB Recovery - Migration', () => {
           request.onupgradeneeded = () => {
             const db = request.result;
             if (db.objectStoreNames.contains('old-transactions') && !db.objectStoreNames.contains('transactions')) {
-              const oldStore = db.transaction('old-transactions').objectStore('old-transactions');
+              const oldStore = request.transaction.objectStore('old-transactions');
               const newStore = db.createObjectStore('transactions', { keyPath: 'id' });
               newStore.createIndex('by-date', 'date');
               
