@@ -1,7 +1,7 @@
 # CI Report
 
-**Gerado:** 2026-08-07 22:39 UTC
-**Commit:** `f897bdc65feeff7754d26cce7ad95c4e91749225`
+**Gerado:** 2026-08-08 00:43 UTC
+**Commit:** `c2d1fb4927980d113834d774c7aed9fec078e882`
 **Branch:** `main`
 
 ---
@@ -45,7 +45,7 @@
 
 [36mvite v5.4.21 [32mbuilding for production...[36m[39m
 transforming...
-[32m✓[39m 259 modules transformed.
+[32m✓[39m 260 modules transformed.
 Generated an empty chunk: "supabase-vendor".
 rendering chunks...
 [1m[33m[plugin:vite:reporter][39m[22m [33m[plugin vite:reporter] 
@@ -60,17 +60,17 @@ computing gzip size...
 [2mdist/[22m[32mmanifest.webmanifest                       [39m[1m[2m  0.59 kB[22m[1m[22m
 [2mdist/[22m[32mindex.html                                 [39m[1m[2m  9.65 kB[22m[1m[22m[2m │ gzip:  3.33 kB[22m
 [2mdist/[22m[2massets/[22m[32msync.worker-DU9L2bZD.js             [39m[1m[2m103.98 kB[22m[1m[22m
-[2mdist/[22m[2massets/[22m[35mindex-C4_RKV2H.css                  [39m[1m[2m 60.79 kB[22m[1m[22m[2m │ gzip: 12.50 kB[22m
+[2mdist/[22m[2massets/[22m[35mindex-BIP6msm6.css                  [39m[1m[2m 60.76 kB[22m[1m[22m[2m │ gzip: 12.48 kB[22m
 [2mdist/[22m[2massets/[22m[36msupabase-vendor-vwDjcXxQ.js         [39m[1m[2m  0.00 kB[22m[1m[22m[2m │ gzip:  0.02 kB[22m
 [2mdist/[22m[2massets/[22m[36museDebouncedValue-2VSGL6HB.js       [39m[1m[2m  0.21 kB[22m[1m[22m[2m │ gzip:  0.17 kB[22m
 [2mdist/[22m[2massets/[22m[36mDebugBadge-C9B5q9cL.js              [39m[1m[2m  0.83 kB[22m[1m[22m[2m │ gzip:  0.47 kB[22m
-[2mdist/[22m[2massets/[22m[36mlogoUtils-mlD3JI7l.js               [39m[1m[2m  0.88 kB[22m[1m[22m[2m │ gzip:  0.46 kB[22m
+[2mdist/[22m[2massets/[22m[36mlogoUtils-CDYYLb6J.js               [39m[1m[2m  0.88 kB[22m[1m[22m[2m │ gzip:  0.46 kB[22m
 [2mdist/[22m[2massets/[22m[36mvirtual-vendor-DNVO4DF9.js          [39m[1m[2m  1.82 kB[22m[1m[22m[2m │ gzip:  0.92 kB[22m
-[2mdist/[22m[2massets/[22m[36maiClient-BCl_tYEb.js                [39m[1m[2m  2.81 kB[22m[1m[22m[2m │ gzip:  1.48 kB[22m
+[2mdist/[22m[2massets/[22m[36maiClient-BVeiVfVd.js                [39m[1m[2m  2.81 kB[22m[1m[22m[2m │ gzip:  1.48 kB[22m
 [2mdist/[22m[2massets/[22m[36mPullToRefreshIndicator-e6BVHaQd.js  [39m[1m[2m  3.16 kB[22m[1m[22m[2m │ gzip:  1.31 kB[22m
 [2mdist/[22m[2massets/[22m[36mexporters-B-p9KxkL.js               [39m[1m[2m  4.25 kB[22m[1m[22m[2m │ gzip:  1.79 kB[22m
-[2mdist/[22m[2massets/[22m[36mEmailView-Bcqw00kd.js               [39m[1m[2m  5.13 kB[22m[1m[22m[2m │ gzip:  2.06 kB[22m
-[2mdist/[22m[2massets/[22m[36mCardPreview-BD0iGy2G.js             [39m[1m[2m  6.26 kB[22m[1m[22m
+[2mdist/[22m[2massets/[22m[36mEmailView-C7KqpOLO.js               [39m[1m[2m  5.13 kB[22m[1m[22m[2m │ gzip:  2.06 kB[22m
+[2mdist/[22m[2massets/[22m[36mCardPreview-Dz419HK2.js             [39m[1m[2m  6.26 kB[22m[1m[22m
 ```
 
 ---
@@ -84,27 +84,85 @@ computing gzip size...
 ```
 
 Running 26 tests using 4 workers
-°°°·°°°°°°°°F··°·°°°··°···
+°°·°°°°°°°°F·F·°°°°F··°·F·
 
-  1) [chromium] › e2e/error-boundary-recovery.spec.ts:10:3 › Deep Error Boundary Recovery › app recovers from component render error without white screen 
+  1) [chromium] › e2e/auth-flow.spec.ts:45:3 › Auth Flow › login form shows validation errors on empty submit 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('text=Campo obrigatório').first()
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 10000ms
+      - waiting for locator('text=Campo obrigatório').first()
+
+
+      63 |
+      64 |     const emailError = page.locator('text=Campo obrigatório').first();
+    > 65 |     await expect(emailError).toBeVisible({ timeout: 10000 });
+         |                              ^
+      66 |   });
+      67 |
+      68 |   test('authenticated user sees dashboard via storageState', async ({ page, browser }) => {
+        at /home/runner/work/Financia/Financia/e2e/auth-flow.spec.ts:65:30
+
+    Error Context: test-results/auth-flow-Auth-Flow-login--49015-tion-errors-on-empty-submit-chromium/error-context.md
+
+  2) [chromium] › e2e/deep-sync-conflict.spec.ts:94:3 › Deep Sync Conflict Scenarios › sync worker survives unhandled rejection 
 
     Error: page.evaluate: Execution context was destroyed, most likely because of a navigation
 
-      17 |     });
-      18 |
-    > 19 |     const renderError = await page.evaluate(() => {
-         |                                    ^
-      20 |       try {
-      21 |         const root = document.getElementById('root');
-      22 |         if (!root) return 'no-root';
-        at /home/runner/work/Financia/Financia/e2e/error-boundary-recovery.spec.ts:19:36
+      104 |
+      105 |     // Dispatch an unhandled rejection - the app should not crash
+    > 106 |     await page.evaluate(() => {
+          |                ^
+      107 |       const rejection = new Error('test rejection');
+      108 |       window.dispatchEvent(new PromiseRejectionEvent('unhandledrejection', {
+      109 |         promise: Promise.reject(rejection),
+        at /home/runner/work/Financia/Financia/e2e/deep-sync-conflict.spec.ts:106:16
 
-    Error Context: test-results/error-boundary-recovery-De-dcb0c--error-without-white-screen-chromium/error-context.md
+    Error Context: test-results/deep-sync-conflict-Deep-Sy-7a968-urvives-unhandled-rejection-chromium/error-context.md
 
-  1 failed
-    [chromium] › e2e/error-boundary-recovery.spec.ts:10:3 › Deep Error Boundary Recovery › app recovers from component render error without white screen 
-  16 skipped
-  9 passed (15.4s)
+  3) [chromium] › e2e/error-boundary-recovery.spec.ts:62:3 › Deep Error Boundary Recovery › unhandled promise rejection does not crash the app 
+
+    Error: page.evaluate: Execution context was destroyed, most likely because of a navigation
+
+      71 |     });
+      72 |
+    > 73 |     await page.evaluate(() => {
+         |                ^
+      74 |       Promise.reject(new Error('test unhandled rejection'));
+      75 |     });
+      76 |
+        at /home/runner/work/Financia/Financia/e2e/error-boundary-recovery.spec.ts:73:16
+
+    Error Context: test-results/error-boundary-recovery-De-f4fda-tion-does-not-crash-the-app-chromium/error-context.md
+
+  4) [chromium] › e2e/offline-state-corruption.spec.ts:10:3 › Deep Edge Cases — Offline State Corruption & Recovery › IndexedDB corruption is handled gracefully — app does not crash on load 
+
+    Error: page.evaluate: Execution context was destroyed, most likely because of a navigation
+
+      12 |     await page.waitForLoadState('networkidle');
+      13 |
+    > 14 |     const corruptIDB = await page.evaluate(async () => {
+         |                                   ^
+      15 |       try {
+      16 |         const db = await new Promise((resolve, reject) => {
+      17 |           const request = indexedDB.open('financia-corrupt-test', 1);
+        at /home/runner/work/Financia/Financia/e2e/offline-state-corruption.spec.ts:14:35
+
+    Error Context: test-results/offline-state-corruption-D-025d2--app-does-not-crash-on-load-chromium/error-context.md
+
+  4 failed
+    [chromium] › e2e/auth-flow.spec.ts:45:3 › Auth Flow › login form shows validation errors on empty submit 
+    [chromium] › e2e/deep-sync-conflict.spec.ts:94:3 › Deep Sync Conflict Scenarios › sync worker survives unhandled rejection 
+    [chromium] › e2e/error-boundary-recovery.spec.ts:62:3 › Deep Error Boundary Recovery › unhandled promise rejection does not crash the app 
+    [chromium] › e2e/offline-state-corruption.spec.ts:10:3 › Deep Edge Cases — Offline State Corruption & Recovery › IndexedDB corruption is handled gracefully — app does not crash on load 
+  15 skipped
+  7 passed (16.2s)
 
 ```
 
@@ -120,34 +178,18 @@ Running 26 tests using 4 workers
 
 Running 42 tests using 4 workers
 
-[1/42] [chromium] › e2e/deep-sync-conflict.spec.ts:10:3 › Deep Sync Conflict Scenarios › BroadcastChannel ping/pong survives rapid tab switching
+[1/42] [chromium] › e2e/deep-sync-conflict.spec.ts:59:3 › Deep Sync Conflict Scenarios › BroadcastChannel handles duplicate messages without errors
 [2/42] [chromium] › e2e/deep-sync-conflict.spec.ts:94:3 › Deep Sync Conflict Scenarios › sync worker survives unhandled rejection
-[3/42] [chromium] › e2e/deep-sync-conflict.spec.ts:121:3 › Deep Sync Conflict Scenarios › memory leak check after sync broadcast storm
-[4/42] [chromium] › e2e/deep-sync-conflict.spec.ts:59:3 › Deep Sync Conflict Scenarios › BroadcastChannel handles duplicate messages without errors
+[3/42] [chromium] › e2e/deep-sync-conflict.spec.ts:10:3 › Deep Sync Conflict Scenarios › BroadcastChannel ping/pong survives rapid tab switching
+[4/42] [chromium] › e2e/deep-sync-conflict.spec.ts:121:3 › Deep Sync Conflict Scenarios › memory leak check after sync broadcast storm
 [5/42] [chromium] › e2e/indexeddb-corruption.spec.ts:12:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should recover from corrupted IndexedDB data
 [6/42] [chromium] › e2e/indexeddb-corruption.spec.ts:65:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should handle invalid schema gracefully
-  1) [chromium] › e2e/deep-sync-conflict.spec.ts:94:3 › Deep Sync Conflict Scenarios › sync worker survives unhandled rejection 
-
-    Error: page.evaluate: Execution context was destroyed, most likely because of a navigation
-
-      104 |
-      105 |     // Dispatch an unhandled rejection - the app should not crash
-    > 106 |     await page.evaluate(() => {
-          |                ^
-      107 |       const rejection = new Error('test rejection');
-      108 |       window.dispatchEvent(new PromiseRejectionEvent('unhandledrejection', {
-      109 |         promise: Promise.reject(rejection),
-        at /home/runner/work/Financia/Financia/e2e/deep-sync-conflict.spec.ts:106:16
-
-    Error Context: test-results/deep-sync-conflict-Deep-Sy-7a968-urvives-unhandled-rejection-chromium/error-context.md
-
-
-[7/42] [chromium] › e2e/indexeddb-eviction.spec.ts:89:5 › IndexedDB Recovery - Eviction › Eviction Test › should estimate storage quota
-[8/42] [chromium] › e2e/indexeddb-eviction.spec.ts:12:5 › IndexedDB Recovery - Eviction › Eviction Test › should handle storage pressure and persist()
+[7/42] [chromium] › e2e/indexeddb-eviction.spec.ts:12:5 › IndexedDB Recovery - Eviction › Eviction Test › should handle storage pressure and persist()
+[8/42] [chromium] › e2e/indexeddb-eviction.spec.ts:89:5 › IndexedDB Recovery - Eviction › Eviction Test › should estimate storage quota
 [9/42] [chromium] › e2e/indexeddb-migration.spec.ts:12:5 › IndexedDB Recovery - Migration › Migration Test › should migrate from old schema to new schema
 [10/42] [chromium] › e2e/indexeddb-migration.spec.ts:92:5 › IndexedDB Recovery - Migration › Migration Test › should preserve data integrity during migration
 [11/42] [chromium] › e2e/memory-leak.spec.ts:6:3 › Memory Leak Detection › cyclic navigation - no detached DOM nodes
-  2) [chromium] › e2e/indexeddb-migration.spec.ts:12:5 › IndexedDB Recovery - Migration › Migration Test › should migrate from old schema to new schema 
+  1) [chromium] › e2e/indexeddb-migration.spec.ts:12:5 › IndexedDB Recovery - Migration › Migration Test › should migrate from old schema to new schema 
 
     Error: page.evaluate: AbortError: Version change transaction was aborted in upgradeneeded event handler.
 
@@ -171,23 +213,18 @@ Running 42 tests using 4 workers
 [17/42] [chromium] › e2e/memory-leak.spec.ts:207:3 › Offline Storage Persistence › navigator.storage.persist() prevents eviction
 [18/42] [chromium] › e2e/memory-leak.spec.ts:222:3 › Offline Storage Persistence › storage estimate available
 [19/42] [chromium] › e2e/network-error-handling.spec.ts:10:3 › Network Error Handling Scenarios › app loads successfully with slow network (3G)
-  3) [chromium] › e2e/memory-leak.spec.ts:222:3 › Offline Storage Persistence › storage estimate available 
+[20/42] [chromium] › e2e/network-error-handling.spec.ts:34:3 › Network Error Handling Scenarios › app handles complete network disconnection gracefully
+[21/42] [chromium] › e2e/network-error-handling.spec.ts:48:3 › Network Error Handling Scenarios › app handles intermittent network failures
+[22/42] [chromium] › e2e/network-error-handling.spec.ts:64:3 › Network Error Handling Scenarios › fetch to missing endpoint returns handled error
+[23/42] [chromium] › e2e/network-error-handling.spec.ts:82:3 › Network Error Handling Scenarios › WebSocket connection failure is handled gracefully
+[24/42] [chromium] › e2e/network-perf.spec.ts:157:3 › Network Performance & Sync Loop Detection › detect sync loops, icon loops, and excessive network activity
+[25/42] [chromium] › e2e/offline-state-corruption.spec.ts:10:3 › Deep Edge Cases — Offline State Corruption & Recovery › IndexedDB corruption is handled gracefully — app does not crash on load
+[26/42] [chromium] › e2e/offline-state-corruption.spec.ts:47:3 › Deep Edge Cases — Offline State Corruption & Recovery › app survives localStorage quota exceeded gracefully
+[27/42] [chromium] › e2e/offline-state-corruption.spec.ts:65:3 › Deep Edge Cases — Offline State Corruption & Recovery › sessionStorage does not survive new tab
+[chromium] › e2e/network-perf.spec.ts:157:3 › Network Performance & Sync Loop Detection › detect sync loops, icon loops, and excessive network activity
+[MONITOR] Waiting 15s to capture baseline network activity...
 
-    Error: page.evaluate: Execution context was destroyed, most likely because of a navigation
-
-      224 |     await page.waitForLoadState('networkidle');
-      225 |     
-    > 226 |     const estimate = await page.evaluate(async () => {
-          |                                 ^
-      227 |       if ('storage' in navigator && 'estimate' in navigator.storage) {
-      228 |         return await navigator.storage.estimate();
-      229 |       }
-        at /home/runner/work/Financia/Financia/e2e/memory-leak.spec.ts:226:33
-
-    Error Context: test-results/memory-leak-Offline-Storag-f7ca6--storage-estimate-available-chromium/error-context.md
-
-
-[20/42] [chromium] › e2e/network-error-handling.s
+[28/42] [chromium] › e2e/offline-state-corruption.spec.ts:86:3 › Deep Edge Cases — Offline State Corruption & Recovery › multip
 ```
 
 ---
@@ -219,4 +256,4 @@ Nenhum relatorio admin gerado.
 
 | Data | Correcao | Commit |
 |------|----------|--------|
-| 2026-08-07 22:39 UTC | CI report gerado automaticamente | `f897bdc65feeff7754d26cce7ad95c4e91749225` |
+| 2026-08-08 00:43 UTC | CI report gerado automaticamente | `c2d1fb4927980d113834d774c7aed9fec078e882` |
