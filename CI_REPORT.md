@@ -1,7 +1,7 @@
 # CI Report
 
-**Gerado:** 2026-08-08 19:25 UTC
-**Commit:** `83ac47516c57a7c078dee6e9b2fa829e310d782e`
+**Gerado:** 2026-08-08 19:44 UTC
+**Commit:** `53fcc80252c645c7a38318174a0ffa59917664c4`
 **Branch:** `main`
 
 ---
@@ -14,7 +14,7 @@
 | Testes Unitarios | nao executado |
 | Testes Integracao | com falhas |
 | Build | com erros |
-| E2E Tests | com falhas |
+| E2E Tests | ok |
 | Auditoria de Producao | ver resultado abaixo |
 | Admin Audit | ver resultado abaixo |
 
@@ -64,13 +64,13 @@ computing gzip size...
 [2mdist/[22m[2massets/[22m[36msupabase-vendor-vwDjcXxQ.js         [39m[1m[2m  0.00 kB[22m[1m[22m[2m │ gzip:  0.02 kB[22m
 [2mdist/[22m[2massets/[22m[36museDebouncedValue-2VSGL6HB.js       [39m[1m[2m  0.21 kB[22m[1m[22m[2m │ gzip:  0.17 kB[22m
 [2mdist/[22m[2massets/[22m[36mDebugBadge-C9B5q9cL.js              [39m[1m[2m  0.83 kB[22m[1m[22m[2m │ gzip:  0.47 kB[22m
-[2mdist/[22m[2massets/[22m[36mlogoUtils-Bcx_X9H0.js               [39m[1m[2m  0.88 kB[22m[1m[22m[2m │ gzip:  0.46 kB[22m
+[2mdist/[22m[2massets/[22m[36mlogoUtils-CADmnhBE.js               [39m[1m[2m  0.88 kB[22m[1m[22m[2m │ gzip:  0.46 kB[22m
 [2mdist/[22m[2massets/[22m[36mvirtual-vendor-DNVO4DF9.js          [39m[1m[2m  1.82 kB[22m[1m[22m[2m │ gzip:  0.92 kB[22m
-[2mdist/[22m[2massets/[22m[36maiClient-Cmr1hw4j.js                [39m[1m[2m  2.81 kB[22m[1m[22m[2m │ gzip:  1.48 kB[22m
+[2mdist/[22m[2massets/[22m[36maiClient-C5bNYqzj.js                [39m[1m[2m  2.81 kB[22m[1m[22m[2m │ gzip:  1.48 kB[22m
 [2mdist/[22m[2massets/[22m[36mPullToRefreshIndicator-e6BVHaQd.js  [39m[1m[2m  3.16 kB[22m[1m[22m[2m │ gzip:  1.31 kB[22m
 [2mdist/[22m[2massets/[22m[36mexporters-B-p9KxkL.js               [39m[1m[2m  4.25 kB[22m[1m[22m[2m │ gzip:  1.79 kB[22m
-[2mdist/[22m[2massets/[22m[36mEmailView-DX2YgEt6.js               [39m[1m[2m  5.13 kB[22m[1m[22m[2m │ gzip:  2.06 kB[22m
-[2mdist/[22m[2massets/[22m[36mCardPreview-BEnb13_P.js             [39m[1m[2m  6.26 kB[22m[1m[22m
+[2mdist/[22m[2massets/[22m[36mEmailView-q-WIA_M6.js               [39m[1m[2m  5.13 kB[22m[1m[22m[2m │ gzip:  2.07 kB[22m
+[2mdist/[22m[2massets/[22m[36mCardPreview-BtLpvCrF.js             [39m[1m[2m  6.26 kB[22m[1m[22m
 ```
 
 ---
@@ -79,32 +79,14 @@ computing gzip size...
 
 | Status |
 |---|
-| com falhas |
+| ok |
 
 ```
 
 Running 26 tests using 4 workers
-°·°°·°°°°°°°·F·°°°°···°···
-
-  1) [chromium] › e2e/error-boundary-recovery.spec.ts:40:3 › Deep Error Boundary Recovery › window.onerror captures unhandled JS errors gracefully 
-
-    Error: page.evaluate: Execution context was destroyed, most likely because of a navigation
-
-      49 |     });
-      50 |
-    > 51 |     await page.evaluate(() => {
-         |                ^
-      52 |       Promise.reject(new Error('test unhandled rejection'));
-      53 |     });
-      54 |
-        at /home/runner/work/Financia/Financia/e2e/error-boundary-recovery.spec.ts:51:16
-
-    Error Context: test-results/error-boundary-recovery-De-5f324-andled-JS-errors-gracefully-chromium/error-context.md
-
-  1 failed
-    [chromium] › e2e/error-boundary-recovery.spec.ts:40:3 › Deep Error Boundary Recovery › window.onerror captures unhandled JS errors gracefully 
-  15 skipped
-  10 passed (13.4s)
+°···°°°°°°°°···°°·°°···°··
+  14 skipped
+  12 passed (15.2s)
 
 ```
 
@@ -121,9 +103,9 @@ Running 26 tests using 4 workers
 Running 42 tests using 4 workers
 
 [1/42] [chromium] › e2e/deep-sync-conflict.spec.ts:94:3 › Deep Sync Conflict Scenarios › sync worker survives unhandled rejection
-[2/42] [chromium] › e2e/deep-sync-conflict.spec.ts:10:3 › Deep Sync Conflict Scenarios › BroadcastChannel ping/pong survives rapid tab switching
+[2/42] [chromium] › e2e/deep-sync-conflict.spec.ts:127:3 › Deep Sync Conflict Scenarios › memory leak check after sync broadcast storm
 [3/42] [chromium] › e2e/deep-sync-conflict.spec.ts:59:3 › Deep Sync Conflict Scenarios › BroadcastChannel handles duplicate messages without errors
-[4/42] [chromium] › e2e/deep-sync-conflict.spec.ts:127:3 › Deep Sync Conflict Scenarios › memory leak check after sync broadcast storm
+[4/42] [chromium] › e2e/deep-sync-conflict.spec.ts:10:3 › Deep Sync Conflict Scenarios › BroadcastChannel ping/pong survives rapid tab switching
 [5/42] [chromium] › e2e/indexeddb-corruption.spec.ts:12:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should recover from corrupted IndexedDB data
 [6/42] [chromium] › e2e/indexeddb-corruption.spec.ts:65:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should handle invalid schema gracefully
 [7/42] [chromium] › e2e/indexeddb-eviction.spec.ts:12:5 › IndexedDB Recovery - Eviction › Eviction Test › should handle storage pressure and persist()
@@ -133,23 +115,23 @@ Running 42 tests using 4 workers
 [11/42] [chromium] › e2e/memory-leak.spec.ts:6:3 › Memory Leak Detection › cyclic navigation - no detached DOM nodes
   1) [chromium] › e2e/indexeddb-migration.spec.ts:12:5 › IndexedDB Recovery - Migration › Migration Test › should migrate from old schema to new schema 
 
-    Error: page.evaluate: Execution context was destroyed, most likely because of a navigation.
+    Error: page.evaluate: AbortError: Version change transaction was aborted in upgradeneeded event handler.
 
-      11 |   test.describe('Migration Test', () => {
-      12 |     test('should migrate from old schema to new schema', async ({ page }) => {
-    > 13 |       await page.evaluate(async () => {
-         |                  ^
-      14 |         const dbName = 'gestao_offline';
-      15 |         
-      16 |         await new Promise<void>((resolve, reject) => {
-        at /home/runner/work/Financia/Financia/e2e/indexeddb-migration.spec.ts:13:18
+      39 |       await page.waitForLoadState('networkidle');
+      40 |
+    > 41 |       const migratedData = await page.evaluate(async () => {
+         |                                       ^
+      42 |         const dbName = 'gestao_offline';
+      43 |         
+      44 |         return new Promise<any[]>((resolve, reject) => {
+        at /home/runner/work/Financia/Financia/e2e/indexeddb-migration.spec.ts:41:39
 
     Error Context: test-results/indexeddb-migration-Indexe-ccb35-om-old-schema-to-new-schema-chromium/error-context.md
 
 
-[12/42] [chromium] › e2e/memory-leak.spec.ts:57:3 › Memory Leak Detection › event listeners cleaned up on unmount
-[13/42] [chromium] › e2e/memory-leak.spec.ts:84:3 › Memory Leak Detection › timers and intervals cleared on unmount
-[14/42] [chromium] › e2e/memory-leak.spec.ts:110:3 › Memory Leak Detection › IndexedDB connections closed properly
+[12/42] [chromium] › e2e/memory-leak.spec.ts:84:3 › Memory Leak Detection › timers and intervals cleared on unmount
+[13/42] [chromium] › e2e/memory-leak.spec.ts:110:3 › Memory Leak Detection › IndexedDB connections closed properly
+[14/42] [chromium] › e2e/memory-leak.spec.ts:57:3 › Memory Leak Detection › event listeners cleaned up on unmount
 [15/42] [chromium] › e2e/memory-leak.spec.ts:135:3 › Memory Leak Detection › BroadcastChannel closed on unmount
 [16/42] [chromium] › e2e/memory-leak.spec.ts:164:3 › Memory Leak Detection › memory usage stable under load
 [17/42] [chromium] › e2e/memory-leak.spec.ts:207:3 › Offline Storage Persistence › navigator.storage.persist() prevents eviction
@@ -162,11 +144,11 @@ Running 42 tests using 4 workers
 [24/42] [chromium] › e2e/network-perf.spec.ts:157:3 › Network Performance & Sync Loop Detection › detect sync loops, icon loops, and excessive network activity
 [25/42] [chromium] › e2e/offline-state-corruption.spec.ts:10:3 › Deep Edge Cases — Offline State Corruption & Recovery › IndexedDB corruption is handled gracefully — app does not crash on load
 [26/42] [chromium] › e2e/offline-state-corruption.spec.ts:47:3 › Deep Edge Cases — Offline State Corruption & Recovery › app survives localStorage quota exceeded gracefully
+[27/42] [chromium] › e2e/offline-state-corruption.spec.ts:65:3 › Deep Edge Cases — Offline State Corruption & Recovery › sessionStorage does not survive new tab
 [chromium] › e2e/network-perf.spec.ts:157:3 › Network Performance & Sync Loop Detection › detect sync loops, icon loops, and excessive network activity
 [MONITOR] Waiting 15s to capture baseline network activity...
 
-[27/42] [chromium] › e2e/offline-state-corruption.spec.ts:65:3 › Deep Edge Cases — Offline State Corruption & Recovery › sessionStorage does not survive new tab
-[28/42] [chromium] › e2e/offline-state-corruption.spec.ts:86:3 › Deep Edge Cases — Offline State Corruption & Rec
+[28/42] [chromium] › e2e/offline-state-corruption.spec.ts:86:3 › Deep Edge Cases — Offline State Corruption & Recovery › multip
 ```
 
 ---
@@ -198,4 +180,4 @@ Nenhum relatorio admin gerado.
 
 | Data | Correcao | Commit |
 |------|----------|--------|
-| 2026-08-08 19:25 UTC | CI report gerado automaticamente | `83ac47516c57a7c078dee6e9b2fa829e310d782e` |
+| 2026-08-08 19:44 UTC | CI report gerado automaticamente | `53fcc80252c645c7a38318174a0ffa59917664c4` |
