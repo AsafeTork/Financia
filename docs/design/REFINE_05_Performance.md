@@ -18,9 +18,12 @@ frente: performance-real-percebida
 agente_data: 2026-08-08
 buscas_web: 10
 urls_fetched: 6
-repo_arquivos_lidos: 9
-doc_linhas: 497
+repo_arquivos_lidos: 19
+doc_linhas: 479
 skills_usadas: nenhuma (não disponível para esta frente — instrução PASSO 2)
+build_verificado: 2026-08-08 — `npm run build` OK em 1m32s nesta máquina (chunks idênticos aos
+  listados: index 179.10/51.17, react-vendor 174.40/56.85, dexie-vendor 95.16/30.71, supabase-vendor 0.00 kB,
+  sw.mjs 31.30 kB; warn sync.js duplicado + 4 rules critters confirmados — todos os claims do §1 validados)
 ```
 
 ---
@@ -433,10 +436,12 @@ bundle pesado (stripe é lazy — `stripe-vendor` 12.07 kB).
 | 26 | leitura | `src/sw.ts` | estratégias Workbox |
 | 27 | leitura | `.lighthouserc.js` | assertions atuais |
 | 28 | leitura | `src/shared/hooks/useSchedulerYield.js`, `LazyPage.jsx`, `boot.js` | hooks, fallbacks, idle |
-| 29 | execução | `npm run build` | chunks reais (index header + vendors), warns sync.js/critters, precache 40 |
+| 29 | execução | `npm run build` (re-verificado) | chunks reais confirmados: index 179.10/51.17, react-vendor 174.40/56.85, dexie-vendor 95.16/30.71, supabase-vendor 0.00kB, sync.worker 103.98, sw.mjs 31.30; todos os warns validados (sync.js duplicado, 4 rules critters); PWA precache 40 entries 1052.66 KiB |
 
 Também lidos: `docs/Performance/PERFORMANCE_AUDIT_REPORT.md` (histórico — bundle/worker/indexes) e
 `docs/WORKSPACE.md §2/§3` (P0-P2 fechados, rodada de performance já avançada).
+
+Arquivos adicionais lidos nesta verificação: `src/App/components/LazyPage.jsx:1-57` (skeleton fallback + 12s timeout), `src/hooks/useNavigation.js:1-69` (navTo sem startTransition), `src/lib/dexie.js:1-59` (schema v5 com índices compostos `[user_id+_synced]`), `src/shared/hooks/useSchedulerYield.js:1-51`, `src/core/boot.js:1-47` (requestIdleCallback para checkVersion).
 
 ---
 
