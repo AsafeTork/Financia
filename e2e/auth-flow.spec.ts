@@ -30,42 +30,44 @@ test.describe('Auth Flow', () => {
   test('login form opens from landing page', async ({ page }) => {
     await waitForAppReady(page);
 
-    // Click the "Entrar" button in the header/nav, not the tab in the login form
-    const enterBtn = page.locator('header >> text=Entrar').or(page.locator('nav >> text=Entrar')).or(page.locator('button:has-text("Entrar")').first());
+    // Click the "Entrar" button in the landing page header
+    const enterBtn = page.locator('header >> text=Entrar').first();
     if (!(await enterBtn.isVisible().catch(() => false))) {
       test.skip('Already logged in or no landing page');
     }
 
     await enterBtn.click();
-    await page.waitForLoadState('domcontentloaded');
-
-    const emailInput = page.locator('input[type="email"], input[name="email"]').first();
-    await expect(emailInput).toBeVisible({ timeout: 10000 });
+    // Wait for login form to appear (client-side state change, not navigation)
+    await expect(page.locator('input[type="email"]').first()).toBeVisible({ timeout: 10000 });
   });
 
   test('login form shows validation errors on empty submit', async ({ page }) => {
     await waitForAppReady(page);
 
-    // Click the "Entrar" button in the header/nav to open login form
-    const enterBtn = page.locator('header >> text=Entrar').or(page.locator('nav >> text=Entrar')).or(page.locator('button:has-text("Entrar")').first());
-    if (!(await enterBtn.isVisible().catch(() => false))) {
-      test.skip('Already logged in');
+    // Check if login form is already visible (tabs "Entrar"/"Criar conta")
+    const loginFormVisible = await page.locator('role=tablist >> text=Entrar').isVisible().catch(() => false);
+
+    if (!loginFormVisible) {
+      // Click the "Entrar" button in the landing page header to open login form
+      const enterBtn = page.locator('header >> text=Entrar').first();
+      if (!(await enterBtn.isVisible().catch(() => false))) {
+        test.skip('Already logged in');
+      }
+      await enterBtn.click();
+      // Wait for login form to appear
+      await expect(page.locator('input[type="email"]').first()).toBeVisible({ timeout: 10000 });
     }
 
-    await enterBtn.click();
-    await page.waitForLoadState('domcontentloaded');
-
-    const submitBtn = page.locator('button:has-text("Entrar"), button[type="submit"]').first();
+    // Click the submit button (Entrar) in the login form
+    const submitBtn = page.locator('button:has-text("Entrar")').last(); // Last one is the submit button in the form
     if (!(await submitBtn.isVisible().catch(() => false))) {
-      test.skip('Login form did not render');
+      test.skip('Login form submit button not found');
     }
 
     await submitBtn.click();
-    await page.waitForLoadState('domcontentloaded');
-    await page.waitForTimeout(500);
-
-    const emailError = page.locator('[invalid][description="Campo obrigatório"]').first();
-    await expect(emailError).toBeVisible({ timeout: 10000 });
+    // Wait for validation errors to appear
+    await expect(page.locator('input[aria-invalid="true"]').first()).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('Campo obrigatório').first()).toBeVisible({ timeout: 10000 });
   });
 
   test('authenticated user sees dashboard via storageState', async ({ page, browser }) => {

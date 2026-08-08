@@ -16,3 +16,7 @@ opencode.json
 .claude-flow/data/
 .claude-flow/logs/
 .claude-flow/sessions/
+
+# Playwright artifacts
+playwright-report/
+test-results/
