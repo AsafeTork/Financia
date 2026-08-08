@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useScrollReveal } from '../../shared/hooks/useScrollReveal.js';
 import { fmt } from '../../lib/utils.js';
 import { waLink, PRICING_PLANS } from '../../lib/constants.js';
 
@@ -78,26 +79,16 @@ const FAQ = [
 
 export default function Landing({ onEnter, onNav }) {
   const waLinkUrl = waLink('Quero conhecer o Financia para o meu negocio.');
-  // TEMP: Disable useScrollReveal to isolate error
-  // const statsRef = useScrollReveal();
-  // const dashRef = useScrollReveal();
-  // const txRef = useScrollReveal();
-  // const featRef = useScrollReveal();
-  // const priceRef = useScrollReveal();
-  // const faqRef = useScrollReveal();
-  // const ctaRef = useScrollReveal();
-  const statsRef = useRef(null);
-  const dashRef = useRef(null);
-  const txRef = useRef(null);
-  const featRef = useRef(null);
-  const priceRef = useRef(null);
-  const faqRef = useRef(null);
-  const ctaRef = useRef(null);
+  const statsRef = useScrollReveal();
+  const dashRef = useScrollReveal();
+  const txRef = useScrollReveal();
+  const featRef = useScrollReveal();
+  const priceRef = useScrollReveal();
+  const faqRef = useScrollReveal();
+  const ctaRef = useScrollReveal();
 
-  const [_users] = useCountUp(2800, 1200);
-  const [_rating] = useCountUp(95, 1000);
-
-  // TEMP: Static values to test if useCountUp causes error
+  const [users] = useCountUp(2800, 1200);
+  const [rating] = useCountUp(95, 1000);
   // const [users] = [2800, null];
   // const [rating] = [95, null];
 
@@ -259,11 +250,11 @@ export default function Landing({ onEnter, onNav }) {
           </div>
           <div className="grid md:grid-cols-3 gap-8 text-center">
             <div>
-              <p className="font-display font-bold tracking-tight" style={{ color: 'var(--brand)', fontSize: 'var(--text-h1)' }}>2.8k+</p>
+              <p className="font-display font-bold tracking-tight" style={{ color: 'var(--brand)', fontSize: 'var(--text-h1)' }}>{users > 0 ? users + '+' : '2.8k+'}</p>
               <p className="text-sm mt-1" style={{ color: 'var(--text-sub)' }}>empresas usando o Financia</p>
             </div>
             <div>
-              <p className="font-display font-bold tracking-tight" style={{ color: 'var(--brand)', fontSize: 'var(--text-h1)' }}>95%</p>
+              <p className="font-display font-bold tracking-tight" style={{ color: 'var(--brand)', fontSize: 'var(--text-h1)' }}>{rating > 0 ? rating + '%' : '95%'}</p>
               <p className="text-sm mt-1" style={{ color: 'var(--text-sub)' }}>avaliam como excelente</p>
             </div>
             <div>
