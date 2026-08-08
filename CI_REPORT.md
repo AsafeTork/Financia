@@ -1,7 +1,7 @@
 # CI Report
 
-**Gerado:** 2026-08-08 22:04 UTC
-**Commit:** `46676af2b03870db54767be16f11a952753a158b`
+**Gerado:** 2026-08-08 22:08 UTC
+**Commit:** `78f9bfd30c5d9bd291d719f9bbf377459e3d29d3`
 **Branch:** `main`
 
 ---
@@ -84,9 +84,9 @@ computing gzip size...
 ```
 
 Running 26 tests using 4 workers
-°°·°°·°°°°°°···°°·°°···°··
-  15 skipped
-  11 passed (13.9s)
+°··°·°°°°°°°···°°°°····°··
+  14 skipped
+  12 passed (14.8s)
 
 ```
 
@@ -102,10 +102,10 @@ Running 26 tests using 4 workers
 
 Running 42 tests using 4 workers
 
-[1/42] [chromium] › e2e/deep-sync-conflict.spec.ts:10:3 › Deep Sync Conflict Scenarios › BroadcastChannel ping/pong survives rapid tab switching
-[2/42] [chromium] › e2e/deep-sync-conflict.spec.ts:127:3 › Deep Sync Conflict Scenarios › memory leak check after sync broadcast storm
-[3/42] [chromium] › e2e/deep-sync-conflict.spec.ts:59:3 › Deep Sync Conflict Scenarios › BroadcastChannel handles duplicate messages without errors
-[4/42] [chromium] › e2e/deep-sync-conflict.spec.ts:94:3 › Deep Sync Conflict Scenarios › sync worker survives unhandled rejection
+[1/42] [chromium] › e2e/deep-sync-conflict.spec.ts:59:3 › Deep Sync Conflict Scenarios › BroadcastChannel handles duplicate messages without errors
+[2/42] [chromium] › e2e/deep-sync-conflict.spec.ts:94:3 › Deep Sync Conflict Scenarios › sync worker survives unhandled rejection
+[3/42] [chromium] › e2e/deep-sync-conflict.spec.ts:10:3 › Deep Sync Conflict Scenarios › BroadcastChannel ping/pong survives rapid tab switching
+[4/42] [chromium] › e2e/deep-sync-conflict.spec.ts:127:3 › Deep Sync Conflict Scenarios › memory leak check after sync broadcast storm
 [5/42] [chromium] › e2e/indexeddb-corruption.spec.ts:12:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should recover from corrupted IndexedDB data
 [6/42] [chromium] › e2e/indexeddb-corruption.spec.ts:65:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should handle invalid schema gracefully
 [7/42] [chromium] › e2e/indexeddb-eviction.spec.ts:12:5 › IndexedDB Recovery - Eviction › Eviction Test › should handle storage pressure and persist()
@@ -133,8 +133,8 @@ Running 42 tests using 4 workers
 
 [27/42] [chromium] › e2e/offline-state-corruption.spec.ts:65:3 › Deep Edge Cases — Offline State Corruption & Recovery › sessionStorage does not survive new tab
 [28/42] [chromium] › e2e/offline-state-corruption.spec.ts:86:3 › Deep Edge Cases — Offline State Corruption & Recovery › multiple rapid navigations do not break app
-[29/42] [chromium] › e2e/state-corruption-recovery.spec.ts:10:3 › State Corruption & Recovery › app recovers from corrupted localStorage brand config
-[30/42] [chromium] › e2e/state-corruption-recovery.spec.ts:28:3 › State Corruption & Recovery › app survives missing IndexedDB database gracefully
+[29/42] [chromium] › e2e/state-corruption-recovery.spec.ts:28:3 › State Corruption & Recovery › app survives missing IndexedDB database gracefully
+[30/42] [chromium] › e2e/state-corruption-recovery.spec.ts:10:3 › State Corruption & Recovery › app recovers from corrupted localStorage brand config
 [31/42] [chromium] › e2e/state-corruption-recovery.spec.ts:54:3 › State Corruption & Recovery › app handles sessionStorage flood without crash
 [32/42] [chromium] › e2e/state-corruption-recovery.spec.ts:76:3 › State Corruption & Recovery › app survives cache API quota exceeded
 [33/42] [chromium] › e2e/state-corruption-recovery.spec.ts:96:3 › State Corruption & Recovery › app handles service worker registration failure gracefully
@@ -170,4 +170,4 @@ Nenhum relatorio admin gerado.
 
 | Data | Correcao | Commit |
 |------|----------|--------|
-| 2026-08-08 22:04 UTC | CI report gerado automaticamente | `46676af2b03870db54767be16f11a952753a158b` |
+| 2026-08-08 22:08 UTC | CI report gerado automaticamente | `78f9bfd30c5d9bd291d719f9bbf377459e3d29d3` |
