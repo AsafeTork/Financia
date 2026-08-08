@@ -1,7 +1,7 @@
 # CI Report
 
-**Gerado:** 2026-08-08 01:12 UTC
-**Commit:** `bcaaa9b96ac8db07b02efb2e5f03be4be647d785`
+**Gerado:** 2026-08-08 13:28 UTC
+**Commit:** `e1d9e4149962204b68027cdac11ded1bd7c4a4af`
 **Branch:** `main`
 
 ---
@@ -84,37 +84,37 @@ computing gzip size...
 ```
 
 Running 26 tests using 4 workers
-°°·°°°°°°°°····°°°°···°F··
+°··°°°°°°°°····°°·°°·F·°··
 
-  1) [chromium] › e2e/auth-flow.spec.ts:46:3 › Auth Flow › login form shows validation errors on empty submit 
+  1) [chromium] › e2e/auth-flow.spec.ts:44:3 › Auth Flow › login form shows validation errors on empty submit 
 
     Error: expect(locator).toBeVisible() failed
 
-    Locator: locator('[invalid][description="Campo obrigatório"]').first()
+    Locator: locator('input[aria-invalid="true"]').first()
     Expected: visible
     Timeout: 10000ms
     Error: element(s) not found
 
     Call log:
       - Expect "toBeVisible" with timeout 10000ms
-      - waiting for locator('[invalid][description="Campo obrigatório"]').first()
+      - waiting for locator('input[aria-invalid="true"]').first()
 
 
-      66 |
-      67 |     const emailError = page.locator('[invalid][description="Campo obrigatório"]').first();
-    > 68 |     await expect(emailError).toBeVisible({ timeout: 10000 });
-         |                              ^
-      69 |   });
-      70 |
-      71 |   test('authenticated user sees dashboard via storageState', async ({ page, browser }) => {
-        at /home/runner/work/Financia/Financia/e2e/auth-flow.spec.ts:68:30
+      67 |     await submitBtn.click();
+      68 |     // Wait for validation errors to appear
+    > 69 |     await expect(page.locator('input[aria-invalid="true"]').first()).toBeVisible({ timeout: 10000 });
+         |                                                                      ^
+      70 |     await expect(page.getByText('Campo obrigatório').first()).toBeVisible({ timeout: 10000 });
+      71 |   });
+      72 |
+        at /home/runner/work/Financia/Financia/e2e/auth-flow.spec.ts:69:70
 
     Error Context: test-results/auth-flow-Auth-Flow-login--49015-tion-errors-on-empty-submit-chromium/error-context.md
 
   1 failed
-    [chromium] › e2e/auth-flow.spec.ts:46:3 › Auth Flow › login form shows validation errors on empty submit 
-  15 skipped
-  10 passed (18.1s)
+    [chromium] › e2e/auth-flow.spec.ts:44:3 › Auth Flow › login form shows validation errors on empty submit 
+  14 skipped
+  11 passed (18.2s)
 
 ```
 
@@ -130,34 +130,18 @@ Running 26 tests using 4 workers
 
 Running 42 tests using 4 workers
 
-[1/42] [chromium] › e2e/deep-sync-conflict.spec.ts:94:3 › Deep Sync Conflict Scenarios › sync worker survives unhandled rejection
-[2/42] [chromium] › e2e/deep-sync-conflict.spec.ts:10:3 › Deep Sync Conflict Scenarios › BroadcastChannel ping/pong survives rapid tab switching
+[1/42] [chromium] › e2e/deep-sync-conflict.spec.ts:121:3 › Deep Sync Conflict Scenarios › memory leak check after sync broadcast storm
+[2/42] [chromium] › e2e/deep-sync-conflict.spec.ts:94:3 › Deep Sync Conflict Scenarios › sync worker survives unhandled rejection
 [3/42] [chromium] › e2e/deep-sync-conflict.spec.ts:59:3 › Deep Sync Conflict Scenarios › BroadcastChannel handles duplicate messages without errors
-[4/42] [chromium] › e2e/deep-sync-conflict.spec.ts:121:3 › Deep Sync Conflict Scenarios › memory leak check after sync broadcast storm
+[4/42] [chromium] › e2e/deep-sync-conflict.spec.ts:10:3 › Deep Sync Conflict Scenarios › BroadcastChannel ping/pong survives rapid tab switching
 [5/42] [chromium] › e2e/indexeddb-corruption.spec.ts:12:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should recover from corrupted IndexedDB data
 [6/42] [chromium] › e2e/indexeddb-corruption.spec.ts:65:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should handle invalid schema gracefully
-  1) [chromium] › e2e/indexeddb-corruption.spec.ts:12:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should recover from corrupted IndexedDB data 
-
-    Error: page.evaluate: Execution context was destroyed, most likely because of a navigation
-
-      11 |   test.describe('Corruption Simulation', () => {
-      12 |     test('should recover from corrupted IndexedDB data', async ({ page }) => {
-    > 13 |       await page.evaluate(async () => {
-         |                  ^
-      14 |         const dbName = 'gestao_offline';
-      15 |         const storeName = 'transactions';
-      16 |         
-        at /home/runner/work/Financia/Financia/e2e/indexeddb-corruption.spec.ts:13:18
-
-    Error Context: test-results/indexeddb-corruption-Index-b9183-om-corrupted-IndexedDB-data-chromium/error-context.md
-
-
-[7/42] [chromium] › e2e/indexeddb-eviction.spec.ts:89:5 › IndexedDB Recovery - Eviction › Eviction Test › should estimate storage quota
-[8/42] [chromium] › e2e/indexeddb-eviction.spec.ts:12:5 › IndexedDB Recovery - Eviction › Eviction Test › should handle storage pressure and persist()
+[7/42] [chromium] › e2e/indexeddb-eviction.spec.ts:12:5 › IndexedDB Recovery - Eviction › Eviction Test › should handle storage pressure and persist()
+[8/42] [chromium] › e2e/indexeddb-eviction.spec.ts:89:5 › IndexedDB Recovery - Eviction › Eviction Test › should estimate storage quota
 [9/42] [chromium] › e2e/indexeddb-migration.spec.ts:12:5 › IndexedDB Recovery - Migration › Migration Test › should migrate from old schema to new schema
 [10/42] [chromium] › e2e/indexeddb-migration.spec.ts:92:5 › IndexedDB Recovery - Migration › Migration Test › should preserve data integrity during migration
 [11/42] [chromium] › e2e/memory-leak.spec.ts:6:3 › Memory Leak Detection › cyclic navigation - no detached DOM nodes
-  2) [chromium] › e2e/indexeddb-migration.spec.ts:12:5 › IndexedDB Recovery - Migration › Migration Test › should migrate from old schema to new schema 
+  1) [chromium] › e2e/indexeddb-migration.spec.ts:12:5 › IndexedDB Recovery - Migration › Migration Test › should migrate from old schema to new schema 
 
     Error: page.evaluate: AbortError: Version change transaction was aborted in upgradeneeded event handler.
 
@@ -175,8 +159,8 @@ Running 42 tests using 4 workers
 
 [12/42] [chromium] › e2e/memory-leak.spec.ts:84:3 › Memory Leak Detection › timers and intervals cleared on unmount
 [13/42] [chromium] › e2e/memory-leak.spec.ts:110:3 › Memory Leak Detection › IndexedDB connections closed properly
-[14/42] [chromium] › e2e/memory-leak.spec.ts:135:3 › Memory Leak Detection › BroadcastChannel closed on unmount
-[15/42] [chromium] › e2e/memory-leak.spec.ts:57:3 › Memory Leak Detection › event listeners cleaned up on unmount
+[14/42] [chromium] › e2e/memory-leak.spec.ts:57:3 › Memory Leak Detection › event listeners cleaned up on unmount
+[15/42] [chromium] › e2e/memory-leak.spec.ts:135:3 › Memory Leak Detection › BroadcastChannel closed on unmount
 [16/42] [chromium] › e2e/memory-leak.spec.ts:164:3 › Memory Leak Detection › memory usage stable under load
 [17/42] [chromium] › e2e/memory-leak.spec.ts:207:3 › Offline Storage Persistence › navigator.storage.persist() prevents eviction
 [18/42] [chromium] › e2e/memory-leak.spec.ts:222:3 › Offline Storage Persistence › storage estimate available
@@ -185,8 +169,24 @@ Running 42 tests using 4 workers
 [21/42] [chromium] › e2e/network-error-handling.spec.ts:48:3 › Network Error Handling Scenarios › app handles intermittent network failures
 [22/42] [chromium] › e2e/network-error-handling.spec.ts:64:3 › Network Error Handling Scenarios › fetch to missing endpoint returns handled error
 [23/42] [chromium] › e2e/network-error-handling.spec.ts:82:3 › Network Error Handling Scenarios › WebSocket connection failure is handled gracefully
+  2) [chromium] › e2e/network-error-handling.spec.ts:64:3 › Network Error Handling Scenarios › fetch to missing endpoint returns handled error 
+
+    Error: page.evaluate: Execution context was destroyed, most likely because of a navigation
+
+      66 |     await page.waitForLoadState('networkidle');
+      67 |
+    > 68 |     const result = await page.evaluate(async () => {
+         |                               ^
+      69 |       try {
+      70 |         const res = await fetch('/api/nonexistent-endpoint-' + Date.now(), {
+      71 |           signal: AbortSignal.timeout(5000),
+        at /home/runner/work/Financia/Financia/e2e/network-error-handling.spec.ts:68:31
+
+    Error Context: test-results/network-error-handling-Net-fa687-point-returns-handled-error-chromium/error-context.md
+
+
 [24/42] [chromium] › e2e/network-perf.spec.ts:157:3 › Network Performance & Sync Loop Detection › detect sync loops, icon loops, and excessive network activity
-[25/42] [chromium] › e2e/offline-state-corrupt
+[25/42] [chromium] › e2e/offline-state-corruption.spec.ts:10:3 › Deep Edge
 ```
 
 ---
@@ -218,4 +218,4 @@ Nenhum relatorio admin gerado.
 
 | Data | Correcao | Commit |
 |------|----------|--------|
-| 2026-08-08 01:12 UTC | CI report gerado automaticamente | `bcaaa9b96ac8db07b02efb2e5f03be4be647d785` |
+| 2026-08-08 13:28 UTC | CI report gerado automaticamente | `e1d9e4149962204b68027cdac11ded1bd7c4a4af` |
