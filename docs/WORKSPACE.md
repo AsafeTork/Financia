@@ -25,6 +25,8 @@
 
 ## 2. Concluído Recentemente
 
+- **Categorização automática de despesas com IA + aprendizado local (Feature 1)** (2026-08-08): lib `src/lib/categorize.js` (regras locais no Dexie `catrules_<uid>`, heurística de palavras-chave, fallback IA via EF `ai` modo `categorize`, aprendizado contínuo com correções manuais — offline-first, sem custo em casos conhecidos) + `categorize.test.js` (11 testes) + EF `ai` v10 (modo `categorize`, 400 max tokens, rate limit **fail-closed** inline) + botão "Sugerir categorias" no header de despesas do `TxView.jsx` com modal de revisão/aplicação individual via `onEdit` e aprendizado no saveEdit/saveNew. Commit `d63e485`, EF deployed v10.
+
 - **Issues #97/#98/#99 resolvidas** (2026-08-08): #97 ESLint unused vars (commit `5da7629` + `bc3ddfa`); #99 README rich display — diagrama mermaid ER `}o--||` quebrava o renderizador do GitHub, trocado por tabelas markdown balanceadas (`c1fb81b`); #98 E2E flaky — `page.route` interceptando `PromiseRejectionEvent` p/ evitar navigation durante `page.evaluate` em `deep-sync-conflict.spec.ts` e remoção do `setTimeout` no handler `window.onerror` em `error-boundary-recovery.spec.ts` (`b53766e`). 6/6 specs passam localmente. Todas fechadas no GitHub.
 
 - **E2E auth-flow estável no CI** (2026-08-08): teste "login form shows validation errors on empty submit" falhava 3 runs seguidos — `button:has-text("Entrar")` casava 4 botões (tab, Google, passkey, submit) e o submit não tinha `type` explícito. Fix: `type="submit"` explícito no botão (Login.jsx) + locator `form button[type="submit"]` no teste. CI 100% verde (`48abfdb`). Cleanup: `playwright-report/` e `test-results/` deixaram de ser trackeados no git.
