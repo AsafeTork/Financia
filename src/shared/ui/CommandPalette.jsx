@@ -86,7 +86,7 @@ export default function CommandPalette({
               onChange={e => setQuery(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder={placeholder}
-              className="w-full pl-10 pr-4 py-3 text-base border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full pl-10 pr-4 py-3 text-base border rounded-xl focus:outline-none focus:ring-[var(--brand)]"
               style={{ background: 'var(--bg-input)', color: 'var(--text-main)', borderColor: 'var(--border)' }}
             />
             <kbd className="absolute right-3 top-1/2 -translate-y-1/2 px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 rounded text-gray-500 font-mono">⌘K</kbd>
@@ -105,11 +105,7 @@ export default function CommandPalette({
                   role="option"
                   aria-selected={i === selectedIndex}
                   onClick={() => { action.onAction(); onClose(); }}
-                  className={`flex items-center gap-3 px-4 py-3 cursor-pointer transition-colors ${
-                    i === selectedIndex 
-                      ? 'bg-blue-50 dark:bg-blue-900/30' 
-                      : 'hover:bg-gray-50 dark:hover:bg-gray-800'
-                  }`}
+                  className={'flex items-center gap-3 px-4 py-3 cursor-pointer transition-colors'}
                   style={{ 
                     background: i === selectedIndex ? 'color-mix(in srgb, var(--brand) 8%, transparent)' : undefined 
                   }}

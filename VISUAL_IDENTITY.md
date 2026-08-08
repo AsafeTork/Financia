@@ -33,51 +33,53 @@
 ## 2. Color System
 
 ### 2.1 Core Palette (Base da Marca)
-| Token | Hex | HSL | Uso | CSS Variable |
-|-------|-----|-----|-----|--------------|
-| **Navy** | `#002F59` | 208° 100% 17% | Primary brand, headers, primary buttons | `--brand` |
+| Token | Hex/OKLCH | HSL | Uso | CSS Variable |
+|-------|-----------|-----|-----|--------------|
+| **Navy** | `#002F59` / `oklch(0.29 0.05 206)` | 208° 100% 17% | Primary brand, headers, primary buttons | `--brand` |
 | **Teal** | `#1A6B5C` | 169° 61% 26% | Accent, highlights, secondary actions | `--brand-accent` |
-| **Green** | `#3BBFA0` | 160° 52% 49% | Success, positive KPIs, income | `--success` |
+| **Green** | `#3BBFA0` | 160° 52% 49% | Success (decorative) | `--green` |
 | **Light Teal** | `#6EC6C8` | 181° 45% 61% | Secondary UI, hover states, borders | `--brand-secondary` |
 | **Off White** | `#F5F5F0` | 60° 16% 95% | Page background (light mode) | `--bg-page` |
 
 ### 2.2 Semantic Colors (Light Mode)
-| Token | Hex | Uso |
-|-------|-----|-----|
-| `--bg-card` | `#FFFFFF` | Cards, modais, inputs |
-| `--bg-input` | `#FFFFFF` | Input backgrounds |
-| `--bg-subtle` | `#F5F5F0` | Subtle backgrounds, hover |
-| `--text-main` | `#0F172A` | Primary text |
-| `--text-sub` | `#5B6B7C` | Secondary text |
-| `--text-muted` | `#94A3B8` | Muted, captions |
-| `--border` | `#EDEAE3` | Default borders |
-| `--border-md` | `#E2DDD4` | Medium emphasis borders |
-| `--shadow-sm` | `0 1px 2px rgba(0,47,89,0.04)` | Subtle elevation |
-| `--shadow-md` | `0 2px 8px rgba(0,47,89,0.05)` | Card elevation |
-| `--shadow-lg` | `0 8px 24px rgba(0,47,89,0.08)` | Modal, dropdown elevation |
+| Token | Valor | Uso |
+|-------|-------|-----|
+| `--bg-page` | `var(--n-50)` = `oklch(0.985 0.004 206)` | Page canvas |
+| `--bg-card` | `oklch(1 0 0)` | Cards, modais, inputs |
+| `--bg-input` | `oklch(1 0 0)` | Input backgrounds |
+| `--bg-subtle` | `var(--n-100)` = `oklch(0.965 0.006 206)` | Subtle backgrounds, hover |
+| `--text-main` | `var(--n-800)` = `oklch(0.29 0.05 206)` | Primary text |
+| `--text-sub` | `var(--n-600)` = `oklch(0.51 0.04 206)` | Secondary text |
+| `--text-muted` | `#5F7086` | Muted, captions |
+| `--border` | `var(--n-200)` = `oklch(0.93 0.010 206)` | Default borders |
+| `--border-md` | `oklch(0.9 0.012 206)` | Medium emphasis borders |
+| `--shadow-surface` | `color-mix(in srgb, var(--brand-tinted) 30%, transparent)` | Cards |
+| `--shadow-hover` | `color-mix(in srgb, var(--brand-tinted) 45%, transparent)` | Hover/surface |
+| `--shadow-overlay` | `color-mix(in srgb, var(--brand-tinted) 55%, transparent)` | Overlay |
+| `--shadow-modal` | `color-mix(in srgb, var(--brand-tinted) 65%, transparent)` | Modais |
 
 ### 2.3 Dark Mode ( `[data-theme="dark"]` )
-| Token | Hex | Nota |
-|-------|-----|------|
-| `--bg-page` | `#0A1628` | Navy 950 |
-| `--bg-card` | `#13243D` | Navy 900 |
-| `--bg-input` | `#13243D` | |
-| `--bg-subtle` | `#0F1E33` | |
-| `--text-main` | `#E8EDF2` | Slate 50 |
-| `--text-sub` | `#8BA0B5` | Slate 400 |
-| `--text-muted` | `#8899AA` | |
-| `--border` | `#1E3450` | Navy 800 |
-| `--border-md` | `#274263` | |
-| `--shadow-sm` | `0 1px 3px rgba(0,0,0,0.3)` | |
-| `--shadow-md` | `0 4px 12px rgba(0,0,0,0.35)` | |
-| `--shadow-lg` | `0 10px 30px rgba(0,0,0,0.45)` | |
+| Token | Valor | Nota |
+|-------|-------|------|
+| `--bg-page` | `oklch(0.13 0.02 206)` | |
+| `--bg-card` | `oklch(0.18 0.02 206)` | |
+| `--bg-input` | `oklch(0.18 0.02 206)` | |
+| `--bg-subtle` | `oklch(0.15 0.02 206)` | |
+| `--text-main` | `var(--n-50)` = `oklch(0.985 0.004 206)` | |
+| `--text-sub` | `var(--n-100)` = `oklch(0.965 0.006 206)` | |
+| `--text-muted` | `oklch(0.60 0.03 206)` | |
+| `--border` | `oklch(0.26 0.02 206)` | |
+| `--border-md` | `oklch(0.32 0.02 206)` | |
+| `--shadow-surface` | `0 1px 2px rgba(0,0,0,0.4)` | |
+| `--shadow-hover` | `0 4px 16px rgba(0,0,0,0.5)` | |
+| `--shadow-overlay` | `0 8px 30px rgba(0,0,0,0.6)` | |
+| `--shadow-modal` | `0 16px 48px rgba(0,0,0,0.65), 0 2px 8px rgba(0,0,0,0.5)` | |
 
 ### 2.4 Plan Variants ( `[data-plan="pro"]`, `[data-plan="premium"]` )
 ```css
 /* Pro - Blue theme */
 [data-plan="pro"] {
   --brand: #2563EB;
-  --brand-soft: rgba(37,99,235,0.08);
   --brand-secondary: #60A5FA;
   --brand-accent: #4F46E5;
   --plan-badge: #2563EB;
@@ -88,7 +90,6 @@
 /* Premium - Gold/Dark theme */
 [data-plan="premium"] {
   --brand: #0F172A;
-  --brand-soft: rgba(0,0,0,0.4);
   --brand-secondary: #FEF3C7;
   --brand-accent: #D4AF6A;
   --plan-badge: #D4AF6A;
@@ -108,17 +109,18 @@
 | **UI / Body / Subtitles** | **Inter** | 400, 500, 600 | `--font-body: 'Inter', system-ui, sans-serif` |
 | **Mono / Numbers** | **JetBrains Mono** | 400, 500 | `--font-mono: 'JetBrains Mono', monospace` |
 
-### 3.2 Type Scale (Fluid, clamp-based)
-| Token | Desktop | Mobile | Line Height | Letter Spacing | Uso |
-|-------|---------|--------|-------------|----------------|-----|
-| `--text-display` | `clamp(2.5rem, 5vw, 4rem)` | `clamp(2rem, 6vw, 3rem)` | 1.05 | -0.02em | Hero H1 |
-| `--text-h1` | `clamp(2rem, 4vw, 3rem)` | `clamp(1.75rem, 5vw, 2.5rem)` | 1.1 | -0.01em | Page titles |
-| `--text-h2` | `1.75rem` | `1.5rem` | 1.15 | -0.01em | Section headers |
-| `--text-h3` | `1.375rem` | `1.25rem` | 1.2 | 0 | Sub-sections |
-| `--text-h4` | `1.125rem` | `1.125rem` | 1.25 | 0 | Card titles |
-| `--text-lg` | `1.125rem` | `1rem` | 1.5 | 0 | Large body |
-| `--text-base` | `1rem` | `1rem` | 1.5 | 0 | Body text |
-| `--text-sm` | `0.875rem` | `0.875rem` | 1.5 | 0 | Secondary text |
+### 3.2 Type Scale (Fluid, ratio 1.25, Utopia-based)
+| Token | Valor | Uso |
+|-------|-------|-----|
+| `--fs-5` = `--text-display` | `clamp(2.5rem, 1.5rem + 5vw, 4rem)` | Hero H1 |
+| `--fs-4` = `--text-h1` | `clamp(1.75rem, 1.31rem + 1.38vw, 2.5rem)` | Page titles |
+| `--fs-3` = `--text-h2` / `--text-h3` | `clamp(1.375rem, 1.19rem + 0.63vw, 1.75rem)` | Section/Sub headers |
+| `--fs-2` = `--text-h4` | `clamp(1.125rem, 1rem + 0.42vw, 1.375rem)` | Card titles |
+| `--fs-1` = `--text-lg` | `clamp(1rem, 0.94rem + 0.21vw, 1.125rem)` | Large body |
+| `--fs-0` = `--text-base` | `1rem` | Body text |
+| `--text-sm` | `0.875rem` | Secondary text |
+| `--text-xs` | `0.75rem` | Captions |
+| `--text-xs-tight` | `0.6875rem` | Badges |
 | `--text-xs` | `0.75rem` | `0.75rem` | 1.5 | 0.01em | Captions, labels |
 | `--text-xs-tight` | `0.6875rem` | `0.6875rem` | 1.4 | 0.02em | Badges, chips |
 
@@ -427,6 +429,7 @@
 | Versão | Data | Autor | Mudanças |
 |--------|------|-------|----------|
 | 1.0 | 2026-08-04 | Stylist | Criação inicial baseada em assets + codebase |
+| 1.1 | 2026-08-08 | Agente 01 | Fase 2: OKLCH neutros, color-mix() brand derivadas, elevação semântica, motion semântica, `--brand-soft` via CSS (não JS), remoção bloco shadcn HSL. `--success` AA `#15803d` em uso; `--green` `#3BBFA0` decorativo. |
 
 ---
 

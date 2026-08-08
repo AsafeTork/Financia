@@ -97,8 +97,24 @@ self.addEventListener('message', (event) => {
   }
 });
 
-self.addEventListener('activate', () => {
-  self.clients.claim();
+self.addEventListener('activate', (event) => {
+  event.waitUntil((async () => {
+    await self.clients.claim();
+    if (self.registration.navigationPreload) {
+      await self.registration.navigationPreload.enable();
+    }
+  })());
+});
+
+// Responde navigation requests com preload response quando disponivel,
+// fallback para o shell precached.
+self.addEventListener('fetch', (event) => {
+  if (event.request.mode === 'navigate' && event.preloadResponse) {
+    event.respondWith((async () => {
+      try { return await event.preloadResponse; }
+      catch { return await createHandlerBoundToURL('/index.html')({ request: event.request, event }); }
+    })());
+  }
 });
 
 self.addEventListener('install', (event) => {

@@ -1,47 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import { useScrollReveal } from '../../shared/hooks/useScrollReveal.js';
 import { fmt } from '../../lib/utils.js';
 import { waLink, PRICING_PLANS } from '../../lib/constants.js';
 
 const delay = function(ms) { return { animationDelay: ms + 'ms', animationFillMode: 'both' }; };
-
-// ─── COUNTER HOOK ───
-function useCountUp(end, duration) {
-  const ref = useRef(null);
-  const rafRef = useRef(null);
-  const [val, setVal] = useState(0);
-  useEffect(function() {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(function(entries) {
-      entries.forEach(function(entry) {
-        if (!entry.isIntersecting) return;
-        let startTime = null;
-        const step = function(ts) {
-          if (!startTime) startTime = ts;
-          const elapsed = ts - startTime;
-          const progress = Math.min(elapsed / duration, 1);
-          const current = Math.round(progress * end);
-          setVal(current);
-          if (progress < 1) {
-            rafRef.current = requestAnimationFrame(step);
-          }
-        };
-        rafRef.current = requestAnimationFrame(step);
-        obs.disconnect();
-      });
-    }, { threshold: 0.3 });
-    obs.observe(el);
-    return function() {
-      obs.disconnect();
-      if (rafRef.current) {
-        cancelAnimationFrame(rafRef.current);
-        rafRef.current = null;
-      }
-    };
-  }, [end, duration]);
-  return [val, ref];
-}
 
 // ─── MOCK DATA ───
 const MOCK_CHART = [
@@ -65,16 +27,16 @@ const MOCK_MOVEMENTS = [
 
 const FEATURES = [
   { t: 'Funciona offline', d: 'Registre a venda na hora, mesmo sem sinal. Tudo sincroniza sozinho quando a internet volta.', icon: 'M5 12.55a11 11 0 0114.08 0M1.42 9a16 16 0 0121.16 0M8.53 16.11a6 6 0 016.95 0M12 20h.01' },
-  { t: 'Ao vivo entre celulares', d: 'Voce no caixa, seu socio no estoque — os mesmos numeros, atualizados na hora nos dois aparelhos.', icon: 'M17 1l4 4-4 4M3 11V9a4 4 0 014-4h14M7 23l-4-4 4-4M21 13v2a4 4 0 01-4 4H3' },
-  { t: 'Vendas, despesas e estoque', d: 'O que entra, o que sai e o que tem na prateleira. Um app so, sem planilha baguncada.', icon: 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4' },
-  { t: 'Relatorios que decidem', d: 'Lucro do mes, onde o dinheiro esta vazando e exportacao pra planilha em um toque.', icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' },
+  { t: 'Ao vivo entre celulares', d: 'Você no caixa, seu sócio no estoque — os mesmos números, atualizados na hora nos dois aparelhos.', icon: 'M17 1l4 4-4 4M3 11V9a4 4 0 014-4h14M7 23l-4-4 4-4M21 13v2a4 4 0 01-4 4H3' },
+  { t: 'Vendas, despesas e estoque', d: 'O que entra, o que sai e o que tem na prateleira. Um app só, sem planilha bagunçada.', icon: 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4' },
+  { t: 'Relatórios que decidem', d: 'Lucro do mês, onde o dinheiro está vazando e exportação pra planilha em um toque.', icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' },
 ];
 
 const FAQ = [
-  { q: 'Preciso de internet pra usar?', a: 'Nao. O Financia funciona offline e sincroniza sozinho quando a conexao volta. Voce nunca perde uma venda.' },
+  { q: 'Preciso de internet pra usar?', a: 'Não. O Financia funciona offline e sincroniza sozinho quando a conexão volta. Você nunca perde uma venda.' },
   { q: 'Funciona no celular e no computador?', a: 'Sim. Roda no navegador de qualquer aparelho e pode ser instalado como aplicativo no celular e no Windows.' },
-  { q: 'Da pra comecar de graca?', a: 'Da. O plano Gratis ja resolve pra quem esta comecando, sem cartao de credito. Quando crescer, voce passa pro Pro.' },
-  { q: 'Meus dados ficam seguros?', a: 'Ficam. Cada conta enxerga apenas os proprios dados, com conexao criptografada e isolamento por usuario no banco.' },
+  { q: 'Dá pra começar de graça?', a: 'Dá. O plano Grátis já resolve pra quem está começando, sem cartão de crédito. Quando crescer, você passa pro Pro.' },
+  { q: 'Meus dados ficam seguros?', a: 'Ficam. Cada conta enxerga apenas os próprios dados, com conexão criptografada e isolamento por usuário no banco.' },
 ];
 
 export default function Landing({ onEnter, onNav }) {
@@ -87,11 +49,6 @@ export default function Landing({ onEnter, onNav }) {
   const faqRef = useScrollReveal();
   const ctaRef = useScrollReveal();
 
-  const [users] = useCountUp(2800, 1200);
-  const [rating] = useCountUp(95, 1000);
-  // const [users] = [2800, null];
-  // const [rating] = [95, null];
-
   // Estado do FAQ accordion
   const [openFaq, setOpenFaq] = useState(null);
   const toggleFaq = function(idx) { setOpenFaq(function(prev) { return prev === idx ? null : idx; }); };
@@ -99,11 +56,11 @@ export default function Landing({ onEnter, onNav }) {
   return (
     <div className="relative overflow-hidden" style={{ color: 'var(--text-main)', minHeight: '100vh', background: 'var(--bg-card)' }}>
 
-      {/* Orbes de fundo com blur sutil */}
-      <div className="fixed inset-0 pointer-events-none" style={{ zIndex: -10 }} aria-hidden="true">
-        <div className="absolute top-[-10%] left-[-5%] w-[600px] h-[600px] rounded-full" style={{ background: 'radial-gradient(circle, rgba(110,198,200,0.08) 0%, transparent 70%)', filter: 'blur(60px)' }} />
-        <div className="absolute top-[30%] right-[-8%] w-[500px] h-[500px] rounded-full" style={{ background: 'radial-gradient(circle, rgba(59,191,160,0.06) 0%, transparent 70%)', filter: 'blur(50px)' }} />
-        <div className="absolute bottom-[10%] left-[10%] w-[400px] h-[400px] rounded-full" style={{ background: 'radial-gradient(circle, rgba(0,47,89,0.05) 0%, transparent 70%)', filter: 'blur(40px)' }} />
+      {/* Orbes de fundo com blur sutil — blur reduzido em mobile (GPU) */}
+      <div className="fixed inset-0 pointer-events-none mob-orb" style={{ zIndex: -10 }} aria-hidden="true">
+        <div className="absolute top-[-10%] left-[-5%] w-[600px] h-[600px] rounded-full orb-bg-1" />
+        <div className="absolute top-[30%] right-[-8%] w-[500px] h-[500px] rounded-full orb-bg-2" />
+        <div className="absolute bottom-[10%] left-[10%] w-[400px] h-[400px] rounded-full orb-bg-3" />
       </div>
 
       {/* ─── NAVBAR ─── */}
@@ -140,22 +97,18 @@ export default function Landing({ onEnter, onNav }) {
             </div>
 
             <h1 className="anim-fade-up font-display font-semibold tracking-tight" style={Object.assign({ color: 'var(--brand)', fontSize: 'var(--text-display)', lineHeight: 1.0 }, delay(80))}>
-              Suas financas no<br/>
-              <span style={{ background: 'var(--brand-grad)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>controle total</span>.
+              Vendas, despesas e estoque<br/>
+              <span style={{ background: 'var(--brand-grad)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>no controle, mesmo offline</span>.
             </h1>
 
             <p className="anim-fade-up mt-5 text-base sm:text-lg max-w-lg leading-relaxed" style={Object.assign({ color: 'var(--text-sub)', lineHeight: 1.6 }, delay(160))}>
-              Vendas, despesas e estoque do seu negocio em um so lugar. 
-              Sem planilha, sem complicacao. Funciona ate offline.
+              Registre vendas e despesas no celular ou no computador. Funciona sem internet e sincroniza sozinho.
             </p>
 
             <div className="anim-fade-up mt-8 flex flex-col sm:flex-row gap-3" style={delay(240)}>
               <button onClick={onEnter} className="group text-sm font-semibold px-8 py-4 rounded-2xl text-white transition-all duration-200 hover:-translate-y-0.5" style={{ background: 'var(--brand-grad)', boxShadow: 'var(--shadow-xl)' }}>
-                Criar conta gratis
+                Criar conta grátis
                 <svg className="inline-block ml-2 w-4 h-4 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 12h14M12 5l7 7-7 7"/></svg>
-              </button>
-              <button onClick={function() { document.getElementById('planos').scrollIntoView({behavior:'smooth'}); }} className="text-sm font-semibold px-8 py-4 rounded-2xl transition-all duration-200 hover:bg-black/[0.04] text-center" style={{ border: '1px solid var(--border-md)', color: 'var(--text-main)' }}>
-                Ver planos
               </button>
             </div>
 
@@ -188,11 +141,11 @@ export default function Landing({ onEnter, onNav }) {
                   <span className="ml-2 text-[11px] font-medium" style={{ color: 'var(--text-sub)' }}>financia.app / dashboard</span>
                 </div>
 
-                {/* Conteudo do mockup */}
+                {/* Conteudo do mockup — preview do dashboard */}
                 <div className="p-5 sm:p-6">
                   <div className="flex items-center justify-between mb-4">
                     <div>
-                      <p className="text-xs font-medium" style={{ color: 'var(--text-sub)' }}>Resultado do mes</p>
+                      <p className="text-xs font-medium" style={{ color: 'var(--text-sub)' }}>Resultado do mês</p>
                       <p className="font-display font-bold tabular tracking-tight" style={{ color: 'var(--brand)', fontSize: 'var(--text-h2)', lineHeight: 1.1 }}>R$ 8.420</p>
                     </div>
                     <span className="text-xs font-bold px-2.5 py-1 rounded-full" style={{ background: 'rgba(59,191,160,0.1)', color: 'var(--brand-accent)' }}>+18%</span>
@@ -213,7 +166,7 @@ export default function Landing({ onEnter, onNav }) {
                       <p className="font-bold tabular mt-0.5" style={{ color: 'var(--brand)' }}>R$ 14.200</p>
                     </div>
                     <div className="rounded-2xl p-3.5" style={{ background: 'var(--bg-subtle)' }}>
-                      <p className="text-xs" style={{ color: 'var(--text-sub)' }}>Saidas</p>
+                      <p className="text-xs" style={{ color: 'var(--text-sub)' }}>Saídas</p>
                       <p className="font-bold tabular mt-0.5" style={{ color: 'var(--brand)' }}>R$ 5.780</p>
                     </div>
                   </div>
@@ -246,40 +199,37 @@ export default function Landing({ onEnter, onNav }) {
       <section ref={statsRef} className="px-5 py-14 scroll-reveal" style={{ background: 'var(--bg-subtle)' }}>
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-10">
-            <p className="text-xs font-bold uppercase tracking-[0.15em]" style={{ color: 'var(--text-sub)' }}>Confianca de quem usa</p>
+            <p className="text-xs font-bold uppercase tracking-[0.15em]" style={{ color: 'var(--brand-accent)' }}>Quem já usa</p>
           </div>
-          <div className="grid md:grid-cols-3 gap-8 text-center">
-            <div>
-              <p className="font-display font-bold tracking-tight" style={{ color: 'var(--brand)', fontSize: 'var(--text-h1)' }}>{users > 0 ? users + '+' : '2.8k+'}</p>
-              <p className="text-sm mt-1" style={{ color: 'var(--text-sub)' }}>empresas usando o Financia</p>
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="rounded-2xl p-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)' }}>
+              <p className="font-display font-bold text-lg tracking-tight" style={{ color: 'var(--brand)' }}>R$ 12.400/mês de receita organizada</p>
+              <p className="text-sm mt-3 leading-relaxed" style={{ color: 'var(--text-sub)' }}>"Deixei a planilha. Agora sei o lucro do mês no dia seguinte."</p>
+              <p className="text-xs mt-3 font-medium" style={{ color: 'var(--brand-accent)' }}>Ana — loja de roupas, Belém/PA</p>
             </div>
-            <div>
-              <p className="font-display font-bold tracking-tight" style={{ color: 'var(--brand)', fontSize: 'var(--text-h1)' }}>{rating > 0 ? rating + '%' : '95%'}</p>
-              <p className="text-sm mt-1" style={{ color: 'var(--text-sub)' }}>avaliam como excelente</p>
+            <div className="rounded-2xl p-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)' }}>
+              <p className="font-display font-bold text-lg tracking-tight" style={{ color: 'var(--brand)' }}>3 minutos por dia no app</p>
+              <p className="text-sm mt-3 leading-relaxed" style={{ color: 'var(--text-sub)' }}>"Resolvo o financeiro no celular entre um cliente e outro."</p>
+              <p className="text-xs mt-3 font-medium" style={{ color: 'var(--brand-accent)' }}>Carlos — oficina mecânica, Goiânia/GO</p>
             </div>
-            <div>
-              <p className="font-display font-bold tracking-tight" style={{ color: 'var(--brand)', fontSize: 'var(--text-h1)' }}>4.9</p>
-              <p className="text-sm mt-1" style={{ color: 'var(--text-sub)' }}>avaliacao media nas lojas</p>
+            <div className="rounded-2xl p-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)' }}>
+              <p className="font-display font-bold text-lg tracking-tight" style={{ color: 'var(--brand)' }}>Nunca mais perdi uma venda</p>
+              <p className="text-sm mt-3 leading-relaxed" style={{ color: 'var(--text-sub)' }}>"Anoto tudo offline e sincroniza quando chega sinal."</p>
+              <p className="text-xs mt-3 font-medium" style={{ color: 'var(--brand-accent)' }}>Juliana — salão de beleza, Recife/PE</p>
             </div>
           </div>
-          {/* Logos placeholder */}
-          <div className="flex items-center justify-center gap-8 mt-10 flex-wrap opacity-30 select-none">
-            {['Mercado Livre', 'Shopee', 'Magalu', 'Nuvemshop', 'Correios'].map(function(n) {
-              return <span key={n} className="text-sm font-bold tracking-wider" style={{ color: 'var(--brand)' }}>{n}</span>;
-            })}
-          </div>
+          {/* TODO: depoimentos reais — coletar via WhatsApp */}
         </div>
       </section>
 
       {/* ═══════ MOCKUP DASHBOARD ═══════ */}
       <section ref={dashRef} className="max-w-6xl mx-auto px-5 py-20 scroll-reveal">
         <div className="text-center mb-14">
-          <p className="text-xs font-bold uppercase tracking-[0.15em]" style={{ color: 'var(--brand-accent)' }}>Painel financeiro</p>
-          <h2 className="font-display font-semibold mt-3 tracking-tight" style={{ color: 'var(--brand)', fontSize: 'var(--text-h1)', lineHeight: 1.1 }}>
+          <h2 className="font-display font-semibold tracking-tight" style={{ color: 'var(--brand)', fontSize: 'var(--text-h1)', lineHeight: 1.1 }}>
             O que aparece ao abrir o app
           </h2>
           <p className="mt-3 text-sm max-w-lg mx-auto" style={{ color: 'var(--text-sub)' }}>
-            Seus numeros, graficos e movimentos em tempo real. Tudo que importa em uma tela.
+            Seus números, gráficos e movimentos em tempo real. Tudo que importa em uma tela.
           </p>
         </div>
 
@@ -359,11 +309,10 @@ export default function Landing({ onEnter, onNav }) {
       <section ref={txRef} className="px-5 py-20 scroll-reveal" style={{ background: 'var(--bg-subtle)' }}>
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-14">
-            <p className="text-xs font-bold uppercase tracking-[0.15em]" style={{ color: 'var(--brand-accent)' }}>Extrato completo</p>
-            <h2 className="font-display font-semibold mt-3 tracking-tight" style={{ color: 'var(--brand)', fontSize: 'var(--text-h1)', lineHeight: 1.1 }}>
+            <h2 className="font-display font-semibold tracking-tight" style={{ color: 'var(--brand)', fontSize: 'var(--text-h1)', lineHeight: 1.1 }}>
               Vendas e despesas organizadas por dia
             </h2>
-            <p className="mt-3 text-sm" style={{ color: 'var(--text-sub)' }}>Filtre, busque, edite e exporte. Seu extrato sempre a mao.</p>
+            <p className="mt-3 text-sm" style={{ color: 'var(--text-sub)' }}>Filtre, busque, edite e exporte. Seu extrato sempre à mão.</p>
           </div>
 
           <div className="preview-card rounded-[20px] overflow-hidden" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-md)' }}>
@@ -417,18 +366,67 @@ export default function Landing({ onEnter, onNav }) {
             Tudo que seu negocio precisa
           </h2>
         </div>
-        <div className="grid sm:grid-cols-2 gap-5">
-          {FEATURES.map(function(f, i) {
-            return (
-              <div key={f.t} className="group rounded-[20px] p-7 transition-all duration-300 hover:-translate-y-1.5" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)' }}>
-                <div className="w-12 h-12 rounded-2xl flex items-center justify-center mb-4 transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg" style={{ background: 'var(--brand-accent-soft)' }}>
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--brand-accent)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d={f.icon} /></svg>
-                </div>
-                <p className="font-display font-semibold text-lg mb-2" style={{ color: 'var(--brand)' }}>{f.t}</p>
-                <p className="text-sm leading-relaxed" style={{ color: 'var(--text-sub)' }}>{f.d}</p>
-              </div>
-            );
-          })}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          {/* Célula A — col-span-2: destacado offline */}
+          <div className="group rounded-[20px] p-7 transition-all duration-300 hover:-translate-y-1.5 md:col-span-2" style={{ background: 'linear-gradient(135deg, var(--bg-card) 0%, var(--brand-accent-soft) 100%)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)' }}>
+            <div className="w-12 h-12 rounded-2xl flex items-center justify-center mb-4 transition-all duration-300 group-hover:scale-110" style={{ background: 'var(--brand-accent-soft)' }}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--brand-accent)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12.55a11 11 0 0114.08 0M1.42 9a16 16 0 0121.16 0M8.53 16.11a6 6 0 016.95 0M12 20h.01" /></svg>
+            </div>
+            <p className="font-display font-semibold text-lg mb-2" style={{ color: 'var(--brand)' }}>Funciona offline</p>
+            <p className="text-sm leading-relaxed" style={{ color: 'var(--text-sub)' }}>Registre a venda na hora, mesmo sem sinal. Tudo sincroniza sozinho quando a internet volta.</p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full" style={{ background: 'var(--brand-accent-soft)', color: 'var(--brand-accent)' }}>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M5 13l4 4L19 7" /></svg>
+                Instala como app
+              </span>
+              <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full" style={{ background: 'var(--brand-accent-soft)', color: 'var(--brand-accent)' }}>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M5 13l4 4L19 7" /></svg>
+                Sem internet
+              </span>
+            </div>
+          </div>
+          {/* Célula B — 1 col: sincronização */}
+          <div className="group rounded-[20px] p-7 transition-all duration-300 hover:-translate-y-1.5 flex flex-col justify-center" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)' }}>
+            <div className="w-12 h-12 rounded-2xl flex items-center justify-center mb-4 transition-all duration-300 group-hover:scale-110" style={{ background: 'var(--brand-accent-soft)' }}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--brand-accent)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M17 1l4 4-4 4M3 11V9a4 4 0 014-4h14M7 23l-4-4 4-4M21 13v2a4 4 0 01-4 4H3" /></svg>
+            </div>
+            <p className="font-display font-semibold text-lg mb-2" style={{ color: 'var(--brand)' }}>Ao vivo entre celulares</p>
+            <p className="text-sm leading-relaxed" style={{ color: 'var(--text-sub)' }}>Você no caixa, seu sócio no estoque — os mesmos números, atualizados na hora.</p>
+          </div>
+          {/* Célula C — 1 col: vendas */}
+          <div className="group rounded-[20px] p-7 transition-all duration-300 hover:-translate-y-1.5 flex flex-col justify-center" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)' }}>
+            <div className="w-12 h-12 rounded-2xl flex items-center justify-center mb-4 transition-all duration-300 group-hover:scale-110" style={{ background: 'var(--brand-accent-soft)' }}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--brand-accent)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
+            </div>
+            <p className="font-display font-semibold text-lg mb-2" style={{ color: 'var(--brand)' }}>Vendas, despesas e estoque</p>
+            <p className="text-sm leading-relaxed" style={{ color: 'var(--text-sub)' }}>O que entra, o que sai e o que tem na prateleira. Um app só, sem planilha bagunçada.</p>
+          </div>
+          {/* Célula D — col-span-2: relatórios */}
+          <div className="group rounded-[20px] p-7 transition-all duration-300 hover:-translate-y-1.5 md:col-span-2" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)' }}>
+            <div className="w-12 h-12 rounded-2xl flex items-center justify-center mb-4 transition-all duration-300 group-hover:scale-110" style={{ background: 'var(--brand-accent-soft)' }}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--brand-accent)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+            </div>
+            <p className="font-display font-semibold text-lg mb-2" style={{ color: 'var(--brand)' }}>Relatórios que decidem</p>
+            <p className="text-sm leading-relaxed" style={{ color: 'var(--text-sub)' }}>Lucro do mês, onde o dinheiro está vazando e exportação pra planilha em um toque.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════ PWA BADGES ═══════ */}
+      <section className="px-5 py-8" style={{ background: 'var(--bg-subtle)' }}>
+        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 text-sm" style={{ color: 'var(--text-sub)' }}>
+          <span className="flex items-center gap-2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--success)" strokeWidth="2.5" strokeLinecap="round"><path d="M5 13l4 4L19 7" /></svg>
+            Funciona offline
+          </span>
+          <span className="flex items-center gap-2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--success)" strokeWidth="2.5" strokeLinecap="round"><path d="M5 13l4 4L19 7" /></svg>
+            Instala como app em segundos
+          </span>
+          <span className="flex items-center gap-2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--success)" strokeWidth="2.5" strokeLinecap="round"><path d="M5 13l4 4L19 7" /></svg>
+            No celular e no PC
+          </span>
         </div>
       </section>
 
@@ -436,9 +434,8 @@ export default function Landing({ onEnter, onNav }) {
       <section ref={priceRef} id="planos" className="px-5 py-20 scroll-reveal" style={{ background: 'var(--bg-subtle)' }}>
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-14">
-            <p className="text-xs font-bold uppercase tracking-[0.15em]" style={{ color: 'var(--brand-accent)' }}>Planos</p>
-            <h2 className="font-display font-semibold mt-3 tracking-tight" style={{ color: 'var(--brand)', fontSize: 'var(--text-h1)' }}>Um preco justo pra cada fase</h2>
-            <p className="mt-3 text-sm" style={{ color: 'var(--text-sub)' }}>Comece de graca. Mude quando quiser, sem fidelidade.</p>
+            <h2 className="font-display font-semibold tracking-tight" style={{ color: 'var(--brand)', fontSize: 'var(--text-h1)' }}>Um preço justo para cada fase</h2>
+            <p className="mt-3 text-sm" style={{ color: 'var(--text-sub)' }}>Comece de graça. Mude quando quiser, sem fidelidade.</p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-6 items-stretch max-w-5xl mx-auto">
@@ -472,7 +469,7 @@ export default function Landing({ onEnter, onNav }) {
                       <span className="font-display font-bold tabular tracking-tight" style={{ color: 'var(--brand)', fontSize: 'var(--text-h1)', lineHeight: 1 }}>{fmt(p.price)}</span>
                       {p.period && <span className="text-sm mb-1.5" style={{ color: 'var(--text-sub)' }}>{p.period}</span>}
                     </div>
-                    <p className="text-xs mt-2" style={{ color: 'var(--text-sub)' }}>{isFree ? 'gratis para sempre, sem cartao' : 'cobrado mensalmente, cancele quando quiser'}</p>
+                    <p className="text-xs mt-2" style={{ color: 'var(--text-sub)' }}>{isFree ? 'grátis para sempre, sem cartão' : 'cobrado mensalmente, cancele quando quiser'}</p>
                   </div>
 
                   <button onClick={onEnter}
@@ -529,13 +526,13 @@ export default function Landing({ onEnter, onNav }) {
             const isOpen = openFaq === idx;
             return (
               <div key={item.q} className="rounded-2xl overflow-hidden transition-all duration-200 hover:border-[var(--brand-soft)]" style={{ border: '1px solid ' + (isOpen ? 'var(--brand-soft)' : 'var(--border)'), background: 'var(--bg-card)' }}>
-                <button onClick={function() { toggleFaq(idx); }} className="w-full flex items-center justify-between px-5 py-4 text-left min-h-[44px]" style={{ color: 'var(--brand)' }}>
+                <button onClick={function() { toggleFaq(idx); }} id={'faq-btn-' + idx} aria-expanded={isOpen} aria-controls={'faq-panel-' + idx} className="w-full flex items-center justify-between px-5 py-4 text-left min-h-[44px]" style={{ color: 'var(--brand)' }}>
                   <span className="text-sm font-semibold">{item.q}</span>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-sub)" strokeWidth="2" strokeLinecap="round" className="flex-shrink-0 ml-3 transition-transform duration-200" style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}>
                     <path d="M19 9l-7 7-7-7" />
                   </svg>
                 </button>
-                <div style={{ maxHeight: isOpen ? '400px' : '0', opacity: isOpen ? 1 : 0, overflow: 'hidden', transition: 'max-height .3s ease, opacity .2s ease' }}>
+                <div id={'faq-panel-' + idx} role="region" aria-labelledby={'faq-btn-' + idx} style={{ maxHeight: isOpen ? '400px' : '0', opacity: isOpen ? 1 : 0, overflow: 'hidden', transition: 'max-height .3s ease, opacity .2s ease' }}>
                   <p className="text-sm px-5 pb-4 leading-relaxed" style={{ color: 'var(--text-sub)' }}>{item.a}</p>
                 </div>
               </div>
@@ -558,11 +555,11 @@ export default function Landing({ onEnter, onNav }) {
               <span style={{ color: 'var(--success)' }}>menos de 1 minuto</span>
             </h2>
             <p className="mt-4 text-sm max-w-md mx-auto" style={{ color: 'rgba(255,255,255,0.65)' }}>
-              Conta gratis, sem cartao de credito. Quando crescer, voce escolhe o plano ideal.
+              Conta grátis, sem cartão de crédito. Quando crescer, você escolhe o plano ideal.
             </p>
             <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
               <button onClick={onEnter} className="group text-sm font-semibold px-8 py-4 rounded-2xl transition-all duration-200 hover:-translate-y-0.5" style={{ background: 'var(--brand-grad)', color: '#fff', boxShadow: '0 6px 24px rgba(59,191,160,0.35)' }}>
-                Criar conta gratis
+                Criar conta grátis
                 <svg className="inline-block ml-2 w-4 h-4 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 12h14M12 5l7 7-7 7"/></svg>
               </button>
               <a href={waLinkUrl} target="_blank" rel="noreferrer" className="text-sm font-semibold px-8 py-4 rounded-2xl transition-all duration-200 hover:bg-white/10" style={{ border: '1px solid rgba(255,255,255,0.2)', color: '#fff' }}>
@@ -580,7 +577,7 @@ export default function Landing({ onEnter, onNav }) {
             <img src="/icon-192.svg" alt="" loading="lazy" decoding="async" className="w-6 h-6" />
             <span className="font-display text-sm font-semibold" style={{ color: 'var(--brand)' }}>Financia</span>
           </div>
-          <p className="text-xs" style={{ color: 'var(--text-sub)' }}>Gestao financeira para pequenos negocios brasileiros</p>
+          <p className="text-xs" style={{ color: 'var(--text-sub)' }}>Gestão financeira para pequenos negócios brasileiros</p>
           <div className="flex items-center gap-5 text-xs" style={{ color: 'var(--text-sub)' }}>
             <a href="/privacidade" onClick={function(e){e.preventDefault();onNav('privacidade');}} className="hover:text-[var(--brand)] transition-colors">Privacidade</a>
             <a href="/termos" onClick={function(e){e.preventDefault();onNav('termos');}} className="hover:text-[var(--brand)] transition-colors">Termos de Uso</a>

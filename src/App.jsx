@@ -1,4 +1,5 @@
 import React, { useCallback, useRef, useMemo, lazy, useEffect } from 'react';
+import { prefetchRoutes } from './lib/prefetch.js';
 import { atLimit, limitFor } from './lib/constants.js';
 import { useTx } from './features/transactions/useTx.js';
 import { useProducts } from './features/inventory/useProducts.js';
@@ -43,6 +44,7 @@ export default function App() {
   const n = useNavigation({ modalRef: s.modalRef, setConfirmData: s.setConfirmData, setShowUpgrade: s.setShowUpgrade, setSidebarOpen: s.setSidebarOpen, setShowLogin: s.setShowLogin });
   const { navTo } = n;
   usePlanEffects({ dataLoading: s.dataLoading, setDataLoading: s.setDataLoading, setSyncStatus: s.setSyncStatus, planInfo, session: s.session, toast: t.toast, path: n.path, setAnnounceMsg: s.setAnnounceMsg, firstRender: s.firstRender, toastTimeoutsRef: s.toastTimeoutsRef });
+  useEffect(function() { var t = setTimeout(prefetchRoutes, 1000); return function() { clearTimeout(t); }; }, []);
   const { appBrand, effectiveTheme, toggleTheme } = useBrandAppearance(s.brand, planInfo);
   const enforceLimit = useCallback(function(kind, currentCount) {
     if (atLimit(planInfo, kind, currentCount)) { setShowUpgrade({ kind: kind, limit: limitFor(planInfo, kind) }); return false; } return true;

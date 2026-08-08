@@ -1,5 +1,5 @@
 // DEPRECATED — migrate to individual shadcn components
-import React from 'react';
+import React, { useCallback } from 'react';
 import { cleanNumeric, cn } from '../../lib/utils.js';
 import { Input } from './input.jsx';
 import { Button } from './button.jsx';
@@ -171,6 +171,7 @@ export const Modal = function({ title, onClose, onSave, color, saving, children,
   var titleId = React.useId() + '-title';
   var dialogRef = React.useRef(null);
   var previousActive = React.useRef(null);
+  var [closing, setClosing] = React.useState(false);
 
   React.useEffect(function() {
     previousActive.current = document.activeElement;
@@ -195,18 +196,20 @@ export const Modal = function({ title, onClose, onSave, color, saving, children,
     }
   }, [onClose]);
 
+  var handleClose = useCallback(function() { setClosing(true); setTimeout(onClose, 150); }, [onClose]);
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 anim-fade" style={{background:'rgba(15,23,42,0.55)', backdropFilter:'blur(3px)', WebkitBackdropFilter:'blur(3px)'}}>
-      <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby={titleId} className={'rounded-xl flex flex-col w-full anim-scale ' + (wide ? 'max-w-lg' : 'max-w-sm')} style={{background:'var(--bg-card)', boxShadow:'var(--shadow-lg)', maxHeight:'90vh', border:'1px solid var(--border)'}}>
+    <div className={'fixed inset-0 z-50 flex items-center justify-center p-4 ' + (closing ? 'anim-exit-overlay' : 'anim-fade')} style={{background:'rgba(15,23,42,0.55)', backdropFilter:'blur(3px)', WebkitBackdropFilter:'blur(3px)'}}>
+      <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby={titleId} className={'rounded-xl flex flex-col w-full ' + (closing ? 'anim-exit-modal' : 'anim-scale') + ' ' + (wide ? 'max-w-lg' : 'max-w-sm')} style={{background:'var(--bg-card)', boxShadow:'var(--shadow-lg)', maxHeight:'90vh', border:'1px solid var(--border)'}}>
         <div className="flex items-center justify-between px-6 py-4 border-b border-border flex-shrink-0">
           <span id={titleId} className="font-semibold text-foreground">{title}</span>
-          <button onClick={onClose} aria-label="Fechar" className="text-muted-foreground hover:text-foreground p-2 rounded-lg hover:bg-muted min-w-[44px] min-h-[44px] flex items-center justify-center">
+          <button onClick={handleClose} aria-label="Fechar" className="text-muted-foreground hover:text-foreground p-2 rounded-lg hover:bg-muted min-w-[44px] min-h-[44px] flex items-center justify-center">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"/></svg>
           </button>
         </div>
         <div className="px-6 py-4 flex flex-col gap-3 overflow-y-auto flex-1">{children}</div>
         <div className="flex gap-2 px-6 pb-5 flex-shrink-0 pt-2">
-          <button onClick={onClose} className="flex-1 border border-input text-muted-foreground rounded-xl py-2.5 text-sm font-medium hover:bg-muted">Cancelar</button>
+          <button onClick={handleClose} className="flex-1 border border-input text-muted-foreground rounded-xl py-2.5 text-sm font-medium hover:bg-muted">Cancelar</button>
           <button onClick={onSave} disabled={saving} className="flex-1 text-white rounded-xl py-2.5 text-sm font-semibold hover:opacity-90 flex items-center justify-center gap-2 disabled:opacity-40 transition" style={{background: bg}}>
             {saving ? <Spin white/> : (saveLabel || 'Salvar')}
           </button>
@@ -258,7 +261,7 @@ export const Skeleton = function({ w, h, r, className }) {
 
 export const PageSkeleton = function() {
   return (
-    <div className="flex flex-col gap-5" aria-hidden="true">
+    <div className="flex flex-col gap-5" aria-hidden="true" aria-busy="true">
       <div className="flex flex-col gap-2">
         <Skeleton w="45%" h={26} r={10} />
         <Skeleton w="28%" h={12} />

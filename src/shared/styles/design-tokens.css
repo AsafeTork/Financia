@@ -1,40 +1,16 @@
-/* design-tokens.css — Unified design system tokens */
+/* design-tokens.css — Apenas tokens que precisam de importação antecipada */
+/* Todos os tokens core vivem em `src/index.css` (fonte única, D007).    */
 :root {
   /* Focus ring — consistent 3px solid brand across all interactive elements */
-  --focus-ring: 3px solid var(--brand);
+  --focus-ring-width:  3px;
   --focus-ring-offset: 2px;
+  --focus-ring-color:  var(--brand);
   --focus-ring-destructive: 3px solid var(--danger, #ef4444);
+  --focus-ring: 3px solid var(--brand);
+  --focus-ring-surface: var(--bg-page);
 
   /* Card padding */
   --card-padding: 1rem;
-
-  /* Typography scale */
-  --font-size-xs: 0.75rem;
-  --font-size-sm: 0.875rem;
-  --font-size-base: 1rem;
-  --font-size-lg: 1.125rem;
-  --font-size-xl: 1.25rem;
-  --font-size-2xl: 1.5rem;
-
-  /* Spacing */
-  --space-1: 0.25rem;
-  --space-2: 0.5rem;
-  --space-3: 0.75rem;
-  --space-4: 1rem;
-  --space-5: 1.25rem;
-  --space-6: 1.5rem;
-  --space-8: 2rem;
-
-  /* Border radius */
-  --radius-sm: 0.375rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-  --radius-xl: 1rem;
-
-  /* Shadows */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
 /* Global focus style — consistent 3px brand ring on all interactive elements */

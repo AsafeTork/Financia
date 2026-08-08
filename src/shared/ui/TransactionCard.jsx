@@ -68,6 +68,7 @@ export var TransactionCard = React.memo(function TransactionCard({
           <div className="grid grid-cols-2 gap-3">
             <input
               type="number"
+              inputMode="decimal"
               step="0.01"
               value={editData.amount}
               onChange={function(e) { onSaveEdit(transaction.id, { amount: Number(e.target.value) || 0 }); }}

@@ -44,13 +44,19 @@ export function useSwipeActions(options) {
     reset();
   }, [actions, threshold, reset]);
 
+  var prefersReducedMotion = useCallback(function() {
+    return typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }, []);
+
   var onPointerDown = useCallback(function(e) {
     if (isSwiping) return;
+    if (prefersReducedMotion()) return;
     if (e.touches && e.touches.length > 1) return;
     var startX = e.touches ? e.touches[0].clientX : (e.clientX || 0);
     startXRef.current = startX;
     currentXRef.current = startX;
     activeRef.current = true;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSwiping]);
 
   var onPointerMove = useCallback(function(e) {

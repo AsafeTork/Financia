@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect, useDeferredValue, useTransition } from 'react';
 import { Card, PageSkeleton } from '../../shared/ui/ui.jsx';
 import { KpiCard, BarChartSVG } from '../../shared/ui/UsageBar.jsx';
 import PlanStatusCard from '../../shared/ui/PlanStatusCard.jsx';
@@ -17,6 +17,8 @@ var PERIODS = [
 
 export default React.memo(function Dashboard({ tx, products, brand, onNav, planInfo, lossesCount, onUpgrade, loading, uid }) {
   var [period, setPeriod] = useState('month');
+  var [, startPeriodTransition] = useTransition();
+  var deferredPeriod = useDeferredValue(period);
   var [forecastData, setForecastData] = useState(null);
   useEffect(function() {
     var dead = false;
@@ -26,10 +28,10 @@ export default React.memo(function Dashboard({ tx, products, brand, onNav, planI
     return function() { dead = true; };
   }, [uid, tx]);
   var now_d = new Date();
-  var pStart = period === 'year'
+  var pStart = deferredPeriod === 'year'
     ? new Date(now_d.getFullYear(), 0, 1)
-    : new Date(now_d.getFullYear(), now_d.getMonth() - ({month:0,'3months':2,'6months':5,'12months':11})[period], 1);
-  var pMonths = period === 'year' ? 12 : ({month:1,'3months':3,'6months':6,'12months':12})[period];
+    : new Date(now_d.getFullYear(), now_d.getMonth() - ({month:0,'3months':2,'6months':5,'12months':11})[deferredPeriod], 1);
+  var pMonths = deferredPeriod === 'year' ? 12 : ({month:1,'3months':3,'6months':6,'12months':12})[deferredPeriod];
   var ppStart = new Date(pStart.getFullYear(), pStart.getMonth() - pMonths, 1);
   var pS = pStart.getFullYear() + '-' + String(pStart.getMonth()+1).padStart(2,'0');
   var ppS = ppStart.getFullYear() + '-' + String(ppStart.getMonth()+1).padStart(2,'0');
@@ -98,7 +100,7 @@ export default React.memo(function Dashboard({ tx, products, brand, onNav, planI
             {new Date().toLocaleDateString('pt-BR', {weekday: 'long', day: 'numeric', month: 'long'})}
           </p>
         </div>
-        <select aria-label="Periodo" value={period} onChange={function(e){setPeriod(e.target.value)}}
+        <select aria-label="Periodo" value={period} onChange={function(e){startPeriodTransition(function(){setPeriod(e.target.value)})}}
           className="text-xs rounded-xl px-3 py-2 border min-h-[44px] flex-shrink-0"
           style={{background:'var(--bg-card)', color:'var(--text-main)', borderColor:'var(--border)'}}>
           {PERIODS.map(function(p){return <option key={p.v} value={p.v}>{p.l}</option>})}
@@ -112,26 +114,30 @@ export default React.memo(function Dashboard({ tx, products, brand, onNav, planI
             <p className="text-sm mt-1" style={{color:'var(--text-sub)'}}>Siga os passos abaixo para comecar a controlar seu negocio.</p>
           </div>
 
+          {(function() {
+            var steps = [
+              { n:'1', title:'Cadastre seus produtos', sub:'Defina precos, custos e controle de estoque', nav:'inventory', btn:'Cadastrar', done: products.length > 0 },
+              { n:'2', title:'Registre sua primeira venda', sub:'Multiplos itens, calculo automatico e baixa de estoque', nav:'income', btn:'Registrar', done: tx.some(function(t){ return t.type === 'income'; }) },
+              { n:'3', title:'Cadastre uma despesa', sub:'Descubra para onde vai seu dinheiro com categorias e fixos', nav:'expense', btn:'Registrar', done: tx.some(function(t){ return t.type === 'expense'; }) },
+              { n:'4', title:'Veja seu primeiro relatorio', sub:'Exporte PDF e Excel com seus dados organizados', nav:'report', btn:'Ver', done: tx.length > 0 },
+            ];
+            var pct = Math.round(steps.filter(function(s){ return s.done; }).length / steps.length * 100);
+            return (
+              <>
           {/* Barra de progresso */}
           <div className="flex items-center gap-2">
             <div className="flex-1 h-2 rounded-full overflow-hidden" style={{background:'var(--border)'}}>
-              <div className="h-full rounded-full transition-all duration-500" style={{width:'0%', background: brand.color}} />
+              <div className="h-full rounded-full transition-all duration-500" style={{width:pct + '%', background: brand.color}} />
             </div>
-            <span className="text-xs font-bold tabular" style={{color:brand.color}}>0%</span>
+            <span className="text-xs font-bold tabular" style={{color:brand.color}}>{pct}%</span>
           </div>
 
           <div className="flex flex-col gap-3">
-            {[
-              {n:'1', title:'Cadastre seus produtos', sub:'Defina precos, custos e controle de estoque', nav:'inventory', btn:'Cadastrar' },
-              {n:'2', title:'Registre sua primeira venda', sub:'Multiplos itens, calculo automatico e baixa de estoque', nav:'income', btn:'Registrar' },
-              {n:'3', title:'Cadastre uma despesa', sub:'Descubra para onde vai seu dinheiro com categorias e fixos', nav:'expense', btn:'Registrar' },
-              {n:'4', title:'Veja seu primeiro relatorio', sub:'Exporte PDF e Excel com seus dados organizados', nav:'report', btn:'Ver' },
-            ].map(function(step, idx) {
-              var done = false;
+            {steps.map(function(step) {
               return (
-                <div key={step.n} className="flex items-start gap-3 rounded-xl px-4 py-3 transition-colors duration-200" style={{background: done ? 'rgba(59,191,160,0.06)' : 'var(--bg-subtle)'}}>
-                  <span className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0 transition-colors duration-300" style={{background: done ? 'var(--success)' : brand.color}}>
-                    {done ? <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"><path d="M5 13l4 4L19 7"/></svg> : step.n}
+                <div key={step.n} className="flex items-start gap-3 rounded-xl px-4 py-3 transition-colors duration-200" style={{background: step.done ? 'color-mix(in srgb, var(--success) 6%, transparent)' : 'var(--bg-subtle)'}}>
+                  <span className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0 transition-colors duration-300" style={{background: step.done ? 'var(--success)' : brand.color}}>
+                    {step.done ? <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"><path d="M5 13l4 4L19 7"/></svg> : step.n}
                   </span>
                   <div className="flex-1 min-w-0">
                     <span className="text-sm font-semibold block" style={{color:'var(--text-main)'}}>{step.title}</span>
@@ -142,31 +148,34 @@ export default React.memo(function Dashboard({ tx, products, brand, onNav, planI
               );
             })}
           </div>
+              </>
+            );
+          })()}
         </div>
       )}
 
       {lowStock.length > 0 && (
-        <div className="rounded-xl border border-amber-200 px-4 py-3.5 flex flex-col gap-2" style={{background:'rgba(245,158,11,0.10)'}}>
+        <div className="rounded-xl px-4 py-3.5 flex flex-col gap-2" style={{border:'1px solid var(--warning)', background:'color-mix(in srgb, var(--warning) 10%, transparent)'}}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-amber-500" aria-label="Alerta: estoque baixo"/>
-              <p className="text-sm font-semibold text-amber-800">Estoque baixo</p>
+              <div className="w-1.5 h-1.5 rounded-full" style={{background:'var(--warning)'}} aria-label="Alerta: estoque baixo"/>
+              <p className="text-sm font-semibold" style={{color:'var(--text-main)'}}>Estoque baixo</p>
             </div>
-            <button onClick={function() { onNav('inventory'); }} className="text-xs text-amber-600 font-semibold hover:underline inline-flex items-center min-h-[44px] -my-2.5 px-1 flex-shrink-0">
+            <button onClick={function() { onNav('inventory'); }} className="text-xs font-semibold hover:underline inline-flex items-center min-h-[44px] -my-2.5 px-1 flex-shrink-0" style={{color:'var(--warning)'}}>
               Ver estoque
             </button>
           </div>
           {lowStock.slice(0, 3).map(function(p) {
             return (
               <div key={p.id} className="flex items-center justify-between pl-3.5">
-                <span className="text-sm text-amber-700">{p.name}</span>
-                <span className={'text-xs font-semibold px-2 py-0.5 rounded-full ' + (p.stock <= 0 ? 'bg-red-100 text-red-600' : 'bg-amber-100 text-amber-700')}>
+                <span className="text-sm" style={{color:'var(--text-main)'}}>{p.name}</span>
+                <span className={'text-xs font-semibold px-2 py-0.5 rounded-full ' + (p.stock <= 0 ? 'bg-red-100 text-red-600' : '')} style={p.stock <= 0 ? {} : {background:'color-mix(in srgb, var(--warning) 12%, transparent)', color:'var(--warning)'}}>
                   {p.stock <= 0 ? 'Esgotado' : p.stock + ' un.'}
                 </span>
               </div>
             );
           })}
-          {lowStock.length > 3 && <p className="text-xs text-amber-600 pl-3.5">+{lowStock.length - 3} outros com estoque baixo</p>}
+          {lowStock.length > 3 && <p className="text-xs pl-3.5" style={{color:'var(--warning)'}}>+{lowStock.length - 3} outros com estoque baixo</p>}
         </div>
       )}
 
@@ -245,9 +254,9 @@ export default React.memo(function Dashboard({ tx, products, brand, onNav, planI
               var p = forecastData.points.find(function(pt) { return pt.days === cfg[0]; });
               var neg = p && p.balance < 0;
               return (
-                <div key={cfg[0]} className="rounded-xl px-3 py-3" style={{background: neg ? 'rgba(239,68,68,0.06)' : 'var(--bg-subtle)'}}>
+                <div key={cfg[0]} className="rounded-xl px-3 py-3" style={{background: neg ? 'color-mix(in srgb, var(--danger) 6%, transparent)' : 'var(--bg-subtle)'}}>
                   <p className="text-[11px] font-medium" style={{color:'var(--text-sub)'}}>{cfg[1]} · saldo previsto</p>
-                  <p className={'text-base font-bold tabular mt-0.5 ' + (neg ? '' : 'text-green-600')} style={{color: neg ? 'var(--danger)' : 'var(--success)'}}>
+                  <p className="text-base font-bold tabular mt-0.5" style={{color: neg ? 'var(--danger)' : 'var(--success)'}}>
                     {p ? fmt(p.balance) : '—'}
                   </p>
                 </div>
@@ -255,7 +264,7 @@ export default React.memo(function Dashboard({ tx, products, brand, onNav, planI
             })}
           </div>
           {forecastData.alerts.length > 0 && (
-            <div className="mt-3 rounded-xl px-3.5 py-2.5 flex items-center gap-2" style={{background:'rgba(239,68,68,0.08)'}}>
+            <div className="mt-3 rounded-xl px-3.5 py-2.5 flex items-center gap-2" style={{background:'color-mix(in srgb, var(--danger) 8%, transparent)'}}>
               <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="var(--danger)" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
               <p className="text-xs font-medium" style={{color:'var(--danger)'}}>
                 Atençao: saldo projetado negativo em {forecastData.alerts.map(function(a) { return a.days; }).join(' e ')} dias. Reveja os proximos gastos fixos.
@@ -270,9 +279,9 @@ export default React.memo(function Dashboard({ tx, products, brand, onNav, planI
 
       <AiInsightsCard mtx={mtx} ti={ti} to={to} profitCurr={profitCurr} profVar={profVar} lowStock={lowStock} products={products} brand={brand} plan={plan} onUpgrade={onUpgrade}/>
 
-      <PlanStatusCard plan={plan} brand={brand} onUpgrade={onUpgrade} usage={usage} anyReached={anyReached} reachedCats={reachedCats} planInfo={planInfo}/>
+      <div className="cv-auto"><PlanStatusCard plan={plan} brand={brand} onUpgrade={onUpgrade} usage={usage} anyReached={anyReached} reachedCats={reachedCats} planInfo={planInfo}/></div>
 
-      <Card className="p-5">
+      <Card className="p-5 cv-auto" style={{aspectRatio:'16/9'}}>
         <div className="flex items-center justify-between mb-4">
           <p className="text-sm font-semibold" style={{color:'var(--text-main)'}}>Ultimos 7 dias</p>
           <div className="flex gap-3 text-xs" style={{color:'var(--text-muted)'}}>
@@ -310,7 +319,7 @@ export default React.memo(function Dashboard({ tx, products, brand, onNav, planI
         }
       </Card>
 
-      <Card>
+      <Card className="cv-auto">
         <div className="px-5 py-4 border-b border-gray-50 flex items-center justify-between">
           <p className="text-sm font-semibold" style={{color:'var(--text-main)'}}>Movimentacoes recentes</p>
           {recent.length > 0 && (
@@ -340,7 +349,7 @@ export default React.memo(function Dashboard({ tx, products, brand, onNav, planI
                   <div key={t.id} className="flex items-center justify-between px-5 py-3.5 hover:bg-[var(--bg-subtle)] transition-colors">
                     <div className="flex items-center gap-3 min-w-0 flex-1">
                       <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
-                        style={{background: isInc ? brandAlpha(brand.color, 0.1) : 'rgba(239,68,68,0.08)'}}>
+                        style={{background: isInc ? brandAlpha(brand.color, 0.1) : 'color-mix(in srgb, var(--danger) 8%, transparent)'}}>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
                           stroke={isInc ? brand.color : 'var(--danger)'} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                           <path d={isInc ? 'M5 15l7-7 7 7' : 'M19 9l-7 7-7-7'}/>

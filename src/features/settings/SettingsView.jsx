@@ -294,7 +294,7 @@ export default React.memo(function SettingsView({ brand, session, planInfo, onSa
           </div>
 
           <a href={waLink('Olá! Preciso de ajuda com o Financia.')} target="_blank" rel="noreferrer"
-            className="w-full rounded-xl py-3 text-sm font-semibold text-white flex items-center justify-center gap-2 transition hover:opacity-90 min-h-12" style={{background:'#16a34a'}}>
+            className="w-full rounded-xl py-3 text-sm font-semibold text-white flex items-center justify-center gap-2 transition hover:opacity-90 min-h-12" style={{background:'var(--success)'}}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm0 1.8a8.2 8.2 0 11-4.2 15.2l-.3-.2-2.8.8.8-2.7-.2-.3A8.2 8.2 0 0112 3.8zm4.7 10.3c-.3-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.3-.6.8-.8 1-.1.2-.3.2-.5.1-.7-.3-1.4-.7-2-1.4-.4-.5 0-.5.4-1.5.1-.2 0-.4 0-.5l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.8.8-.8 1.9-.1 3 .7 1.1 1.7 2.6 3.7 3.4 1.3.6 1.8.6 2.5.5.4-.1 1.2-.5 1.4-1 .2-.5.2-.9.1-1-.1-.1-.2-.1-.4-.2z"/></svg>
             Falar com o Suporte
           </a>
@@ -314,8 +314,8 @@ export default React.memo(function SettingsView({ brand, session, planInfo, onSa
                   <p className="text-xl font-bold truncate" style={{color: brand.color}}>{planMeta.name}</p>
                   {planId !== 'free' && planInfo && subStatus !== 'none' && (
                     <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{
-                      background: subStatus === 'canceled_expiring' ? 'rgba(245,158,11,0.12)' : 'rgba(59,191,160,0.12)',
-                      color: subStatus === 'canceled_expiring' ? '#d97706' : '#16a34a'
+                      background: subStatus === 'canceled_expiring' ? 'color-mix(in srgb, var(--warning) 12%, transparent)' : 'color-mix(in srgb, var(--success) 12%, transparent)',
+                      color: subStatus === 'canceled_expiring' ? 'var(--warning)' : 'var(--success)'
                     }}>
                       {subStatus === 'canceled_expiring' ? 'Cancelado' : 'Assinante'}
                     </span>
@@ -418,7 +418,7 @@ export default React.memo(function SettingsView({ brand, session, planInfo, onSa
             <div className="flex flex-col gap-3">
               <ColorField label="Primaria" desc="Sidebar, botoes, navegacao" value={appForm.color} onChange={function(v) { setAppField('color', v); }}/>
               <ColorField label="Secundaria" desc="Cards, badges, tags" value={appForm.color_secondary || '#e8f0f7'} onChange={function(v) { setAppField('color_secondary', v); }}/>
-              <ColorField label="Destaque" desc="Hover, graficos, progresso" value={appForm.color_accent || '#1a6b5c'} onChange={function(v) { setAppField('color_accent', v); }}/>
+              <ColorField label="Destaque" desc="Hover, graficos, progresso" value={appForm.color_accent || 'var(--teal)'} onChange={function(v) { setAppField('color_accent', v); }}/>
             </div>
           </div>
 

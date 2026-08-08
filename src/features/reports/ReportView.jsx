@@ -8,7 +8,7 @@ import { usePullToRefresh } from '../../shared/hooks/usePullToRefresh.js';
 import PullToRefreshIndicator from '../../shared/ui/PullToRefreshIndicator.jsx';
 
 export default React.memo(function ReportView({ tx, brand, toast, onNav, planInfo, onRefresh }) {
-  var accentColor = (brand && brand.color) || '#1a6b5c';
+  var accentColor = (brand && brand.color) || 'var(--teal)';
   var paid = effectivePlan(planInfo) !== 'free';
 
   var pr = usePullToRefresh(onRefresh);
@@ -63,7 +63,7 @@ export default React.memo(function ReportView({ tx, brand, toast, onNav, planInf
       accent: accentColor, headers: headers, rows: rows,
       kpis: [
         { label: 'Entradas', value: fmt(income), color: accentColor },
-        { label: 'Saídas', value: fmt(expense), color: '#ef4444' },
+        { label: 'Saídas', value: fmt(expense), color: 'var(--danger)' },
         { label: 'Resultado', value: fmt(income - expense) },
       ],
     });
@@ -72,8 +72,8 @@ export default React.memo(function ReportView({ tx, brand, toast, onNav, planInf
 
   var kpis = [
     {l:'Entradas', v:income, c:accentColor},
-    {l:'Saídas',   v:expense, c:'#ef4444'},
-    {l:'Resultado', v:income - expense, c: income - expense >= 0 ? accentColor : '#ef4444'},
+    {l:'Saídas',   v:expense, c:'var(--danger)'},
+    {l:'Resultado', v:income - expense, c: income - expense >= 0 ? accentColor : 'var(--danger)'},
     {l:'Registros', v:filtered.length, c:'var(--text-sub)', isCount:true},
   ];
 
@@ -101,7 +101,7 @@ export default React.memo(function ReportView({ tx, brand, toast, onNav, planInf
             <div className="relative w-full max-w-xs opacity-30 select-none">
               <div className="flex items-end gap-1.5 h-24 mb-1">
                 {[35, 48, 30, 62, 55, 78, 92].map(function(h, i) {
-                  return <div key={'rgh-' + i} className="flex-1 rounded-t-md" style={{height:h+'%', background: i === 6 ? accentColor : 'rgba(0,47,89,0.12)'}} />;
+                  return <div key={'rgh-' + i} className="flex-1 rounded-t-md" style={{height:h+'%', background: i === 6 ? accentColor : 'color-mix(in srgb, var(--brand) 12%, transparent)'}} />;
                 })}
               </div>
               <div className="flex justify-between text-[9px]" style={{color:'var(--text-muted)'}}>
@@ -188,7 +188,7 @@ export default React.memo(function ReportView({ tx, brand, toast, onNav, planInf
                 <div key={cat} className="flex items-center gap-3">
                   <span className="text-xs w-24 flex-shrink-0 truncate" style={{color:'var(--text-sub)'}}>{cat}</span>
                   <div className="flex-1 rounded-full h-1.5 overflow-hidden" style={{background:'var(--bg-subtle)'}}>
-                    <div className="h-full rounded-full" style={{width:(val/expense*100).toFixed(0)+'%', background:'#ef4444'}}/>
+                    <div className="h-full rounded-full" style={{width:(val/expense*100).toFixed(0)+'%', background:'var(--danger)'}}/>
                   </div>
                   <span className="text-xs font-semibold tabular w-20 text-right" style={{color:'var(--text-sub)'}}>{fmt(val)}</span>
                 </div>
@@ -214,9 +214,9 @@ export default React.memo(function ReportView({ tx, brand, toast, onNav, planInf
                     return (
                       <div key={t.id} className="flex items-center justify-between px-5 py-3 transition-colors duration-150 hover:bg-[var(--bg-subtle)]">
                         <div className="flex items-center gap-3 min-w-0">
-                          <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style={{background: isInc ? brandAlpha(accentColor, 0.1) : 'rgba(239,68,68,0.08)'}}>
+                          <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style={{background: isInc ? brandAlpha(accentColor, 0.1) : 'color-mix(in srgb, var(--danger) 8%, transparent)'}}>
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
-                              stroke={isInc ? accentColor : '#ef4444'} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                              stroke={isInc ? accentColor : 'var(--danger)'} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                               <path d={isInc ? 'M5 15l7-7 7 7' : 'M19 9l-7 7-7-7'}/>
                             </svg>
                           </div>
@@ -225,7 +225,7 @@ export default React.memo(function ReportView({ tx, brand, toast, onNav, planInf
                             <p className="text-xs truncate" style={{color:'var(--text-muted)'}}>{fmtDate(t.date) + ' . ' + (t.method || t.category || '') + (t.registered_by ? ' . ' + t.registered_by : '')}</p>
                           </div>
                         </div>
-                        <span className="text-sm font-semibold tabular flex-shrink-0 ml-3" style={{color: isInc ? accentColor : '#ef4444'}}>
+                        <span className="text-sm font-semibold tabular flex-shrink-0 ml-3" style={{color: isInc ? accentColor : 'var(--danger)'}}>
                           {(isInc ? '+' : '-') + fmt(t.amount)}
                         </span>
                       </div>
@@ -234,7 +234,7 @@ export default React.memo(function ReportView({ tx, brand, toast, onNav, planInf
                 </div>
                 <div className="flex items-center justify-between px-5 py-3.5" style={{borderTop:'1px solid var(--border)', background:'var(--bg-subtle)'}}>
                   <span className="text-xs font-semibold uppercase tracking-wide" style={{color:'var(--text-sub)'}}>Resultado do mês</span>
-                  <span className="text-sm font-bold tabular" style={{color: income - expense >= 0 ? accentColor : '#ef4444'}}>
+                  <span className="text-sm font-bold tabular" style={{color: income - expense >= 0 ? accentColor : 'var(--danger)'}}>
                     {income - expense >= 0 ? '+' : ''}{fmt(income - expense)}
                   </span>
                 </div>

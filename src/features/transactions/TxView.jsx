@@ -3,6 +3,7 @@ import { Card, Inp, NumInp, Sel, Modal, Btn, PageHead } from '../../shared/ui/ui
 import { SaleForm } from '../../shared/ui/SaleForm.jsx';
 import ExportButtons from '../../shared/ui/ExportButtons.jsx';
 import { TransactionCard, TransactionGroupHeader } from '../../shared/ui/TransactionCard.jsx';
+import EmptyState from '../../shared/ui/EmptyState.jsx';
 import { fmt, fmtDate, today, safe, uid, brandAlpha } from '../../lib/utils.js';
 import { getRecurring, setRecurring, buildRecurringRow, periodOf } from '../../lib/recurring.js';
 import { effectivePlan } from '../../lib/constants.js';
@@ -16,8 +17,8 @@ import { categorizeBatch, learnCategory } from '../../lib/categorize.js';
 
 export default React.memo(function TxView({ type, tx, products, onAdd, onEdit, onDelete, onDeductStock, onAddGenerated, uid: userId, brand, toast, confirm, planInfo, onNav, onRefresh }) {
   var isIncome = type === 'income';
-  var accentColor = isIncome ? brand.color : '#ef4444';
-  var accentBg    = isIncome ? brandAlpha(brand.color, 0.08) : 'rgba(239,68,68,0.06)';
+  var accentColor = isIncome ? brand.color : 'var(--danger)';
+  var accentBg    = isIncome ? brandAlpha(brand.color, 0.08) : 'color-mix(in srgb, var(--danger) 6%, transparent)';
   var paid = effectivePlan(planInfo) !== 'free';
 
   var [modal, setModal]       = useState(false);
@@ -220,7 +221,7 @@ export default React.memo(function TxView({ type, tx, products, onAdd, onEdit, o
               onLocked={function() { if (onNav) onNav('planos'); }}/>
           )}
           {!isIncome && uncategorized.length > 0 && (
-            <Btn onClick={suggestCategories} disabled={aiBusy} style={{background: brandAlpha('#2563eb', 0.14), color: '#2563eb'}}>
+            <Btn onClick={suggestCategories} disabled={aiBusy} style={{background: 'color-mix(in srgb, var(--info) 14%, transparent)', color: 'var(--info)'}}>
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.813 15.904L11.828 18.92a1 1 0 01-.448 1.307l-9.66 4.83a1 1 0 01-1.307-.448l-4.83-9.66a1 1 0 01.448-1.307l8.5-4.17a1 1 0 011.307.448 1 1 0 01.448 1.307l-1.976 3.724-2.78 1.69 1.499 1.5z"/>
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M22 2l-7.5 7.5M22 2l-3 8-5.5-5.5L19 2z"/>
@@ -265,42 +266,19 @@ export default React.memo(function TxView({ type, tx, products, onAdd, onEdit, o
 
       <Card>
         {filtered.length === 0 ? (
-          <div className="py-14 flex flex-col items-center gap-4 text-center px-6">
-            <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-1" style={{background: brandAlpha(accentColor, 0.08)}}>
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke={accentColor} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d={isIncome ? 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6' : 'M13 17h8m0 0V9m0 8l-8-8-4 4-6-6'}/>
-              </svg>
-            </div>
-            <p className="text-sm font-semibold" style={{color:'var(--text-main)'}}>
-              {isIncome ? 'Nenhuma venda registrada' : 'Nenhuma despesa registrada'}
-            </p>
-            {isIncome ? (
-              <div className="flex flex-col gap-1.5 items-center">
-                <p className="text-xs max-w-xs" style={{color:'var(--text-muted)'}}>
-                  Registre vendas com multiplos itens, calculo automatico do total e baixa no estoque.
-                </p>
-                <div className="flex flex-wrap gap-2 justify-center text-xs mt-1" style={{color:'var(--text-muted)'}}>
-                  <span className="flex items-center gap-1"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={accentColor} strokeWidth="2.5" strokeLinecap="round"><path d="M5 13l4 4L19 7"/></svg> Multiplos itens</span>
-                  <span className="flex items-center gap-1"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={accentColor} strokeWidth="2.5" strokeLinecap="round"><path d="M5 13l4 4L19 7"/></svg> Baixa no estoque</span>
-                  <span className="flex items-center gap-1"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={accentColor} strokeWidth="2.5" strokeLinecap="round"><path d="M5 13l4 4L19 7"/></svg> Calculo automatico</span>
-                </div>
-              </div>
-            ) : (
-              <div className="flex flex-col gap-1.5 items-center">
-                <p className="text-xs max-w-xs" style={{color:'var(--text-muted)'}}>
-                  Cadastre aluguel, internet, fornecedores e outras saidas para descobrir seu lucro real.
-                </p>
-                <div className="flex flex-wrap gap-2 justify-center text-xs mt-1" style={{color:'var(--text-muted)'}}>
-                  {['Aluguel', 'Internet', 'Fornecedor', 'Energia', 'Frete'].map(function(ex) {
-                    return <span key={ex} className="px-2 py-0.5 rounded-full" style={{background:'var(--bg-subtle)', color:'var(--text-muted)'}}>{ex}</span>;
-                  })}
-                </div>
-              </div>
-            )}
-            <Btn onClick={function() { setModal(true); }} className="mt-2" style={{background: accentColor}}>
-              {isIncome ? 'Registrar venda' : 'Registrar despesa'}
-            </Btn>
-          </div>
+          <EmptyState
+            icon={isIncome ? 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6' : 'M13 17h8m0 0V9m0 8l-8-8-4 4-6-6'}
+            accent={accentColor}
+            title={isIncome ? 'Nenhuma venda registrada' : 'Nenhuma despesa registrada'}
+            desc={isIncome ? 'Registre vendas com multiplos itens, calculo automatico do total e baixa no estoque.' : 'Cadastre aluguel, internet, fornecedores e outras saidas para descobrir seu lucro real.'}
+            features={isIncome ? [
+              {icon:'M5 13l4 4L19 7', label:'Multiplos itens'},
+              {icon:'M5 13l4 4L19 7', label:'Baixa no estoque'},
+              {icon:'M5 13l4 4L19 7', label:'Calculo automatico'}
+            ] : ['Aluguel', 'Internet', 'Fornecedor', 'Energia', 'Frete']}
+            action={isIncome ? 'Registrar venda' : 'Registrar despesa'}
+            onAction={function() { setModal(true); }}
+          />
           ) : (
           <div>
             <div className="relative">
@@ -372,7 +350,7 @@ export default React.memo(function TxView({ type, tx, products, onAdd, onEdit, o
       </Card>
 
       {aiSug && (
-        <Modal title="Categorias sugeridas" onClose={function() { setAiSug(null); }} color="#2563eb">
+        <Modal title="Categorias sugeridas" onClose={function() { setAiSug(null); }} color="var(--info)">
           <p className="text-xs mb-3" style={{color:'var(--text-sub)'}}>
             Revise as sugestões abaixo e confirme para aplicar. Cada correção manual futura é aprendida automaticamente.
           </p>
@@ -384,7 +362,7 @@ export default React.memo(function TxView({ type, tx, products, onAdd, onEdit, o
                   <div className="min-w-0">
                     <p className="text-sm font-medium truncate" style={{color:'var(--text-main)'}}>{s.desc}</p>
                     <p className="text-[11px] truncate" style={{color:'var(--text-muted)'}}>
-                      {cur && (cur.category || cur.cat) ? 'Atual: ' + (cur.category || cur.cat) : 'Sem categoria'} → <span className="font-semibold" style={{color:'#2563eb'}}>{s.category}</span>
+                      {cur && (cur.category || cur.cat) ? 'Atual: ' + (cur.category || cur.cat) : 'Sem categoria'} → <span className="font-semibold" style={{color:'var(--info)'}}>{s.category}</span>
                     </p>
                   </div>
                   <Btn onClick={async function() {
@@ -393,7 +371,7 @@ export default React.memo(function TxView({ type, tx, products, onAdd, onEdit, o
                     learnCategory(userId, s.desc, s.category);
                     setAiSug(function(prev) { return prev ? prev.filter(function(o) { return o.id !== s.id; }) : prev; });
                     toast('Categoria aplicada: ' + s.category, 'success');
-                  }} style={{background:'#2563eb'}} className="flex-shrink-0">Aplicar</Btn>
+                  }} style={{background:'var(--info)'}} className="flex-shrink-0">Aplicar</Btn>
                 </div>
               );
             })}

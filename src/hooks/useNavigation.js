@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useTransition } from 'react';
+import { flushSync } from 'react-dom';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useNavigationHistory } from '../shared/hooks/useNavigationHistory.js';
 
@@ -9,10 +10,16 @@ export function useNavigation({ modalRef, setConfirmData, setShowUpgrade, setSid
   const isLegal = path === 'privacidade' || path === 'termos';
   const isLanding = path === 'landing';
   const navigationHistory = useNavigationHistory();
+  const [, startNavTransition] = useTransition();
 
   const navTo = useCallback(function(v) {
-    navigate('/' + v);
-    navigationHistory.push('/' + v, { view: v });
+    var view = '/' + v;
+    var update = function() { navigate(view); navigationHistory.push(view, { view: v }); };
+    if (typeof document !== 'undefined' && document.startViewTransition && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.startViewTransition(function() { flushSync(update); });
+    } else {
+      startNavTransition(update);
+    }
   }, [navigate, navigationHistory]);
 
   const currentView = ['dashboard','income','expense','inventory','email','report','settings','planos','brandstudio'].includes(path) ? path : 'dashboard';

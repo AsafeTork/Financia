@@ -199,15 +199,13 @@ describe('useBrandAppearance', function() {
 
 describe('applyBrandVars', function() {
 
-  it('sets all 6 CSS variables', function() {
+  it('sets all 4 CSS variables (brand-soft/acc-soft via CSS color-mix)', function() {
     applyBrandVars({ color: '#123456', color_secondary: '#654321', color_accent: '#abc123' });
     expect(mockSetProperty).toHaveBeenCalledWith('--brand', '#123456');
-    expect(mockSetProperty).toHaveBeenCalledWith('--brand-soft', 'rgba(0,0,0,0.08)');
     expect(mockSetProperty).toHaveBeenCalledWith('--brand-secondary', '#654321');
     expect(mockSetProperty).toHaveBeenCalledWith('--brand-accent', '#abc123');
-    expect(mockSetProperty).toHaveBeenCalledWith('--brand-accent-soft', 'rgba(0,0,0,0.08)');
     expect(mockSetProperty).toHaveBeenCalledWith('--brand-grad', 'linear-gradient(135deg, #123456 0%, #abc123 100%)');
-    expect(mockSetProperty).toHaveBeenCalledTimes(6);
+    expect(mockSetProperty).toHaveBeenCalledTimes(4);
   });
 
   it('calls deriveCores when color_secondary is missing', function() {

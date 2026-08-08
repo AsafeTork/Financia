@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
-import { brandAlpha, deriveCores } from '../../lib/utils.js';
+import { deriveCores } from '../../lib/utils.js';
 import { planVisualDefaults, WHITE_LABEL_VISUAL_DEFAULT } from '../../lib/constants.js';
 import { PALETTE_DEFAULTS } from '../../features/branding/defaults.js';
 
@@ -100,10 +100,8 @@ function collectTokensFromBrand(b) {
   const accent = b.color_accent || derived.accent;
   const tokens = {
     '--brand': primary,
-    '--brand-soft': brandAlpha(primary, 0.08),
     '--brand-secondary': secondary,
     '--brand-accent': accent,
-    '--brand-accent-soft': brandAlpha(accent, 0.12),
     '--brand-grad': `linear-gradient(135deg, ${primary} 0%, ${accent} 100%)`,
   };
 
@@ -258,7 +256,7 @@ export function enterPreviewMode(proposedBrand) {
  */
 export function exitPreviewMode() {
   const el = document.documentElement;
-  const previewKeys = ['--brand', '--brand-soft', '--brand-secondary', '--brand-accent', '--brand-accent-soft', '--brand-grad'];
+  const previewKeys = ['--brand', '--brand-secondary', '--brand-accent', '--brand-grad'];
   previewKeys.forEach(k => el.style.removeProperty(k));
 }
 

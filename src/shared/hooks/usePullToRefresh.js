@@ -33,8 +33,13 @@ export function usePullToRefresh(onRefresh) {
     });
   }, [onRefresh]);
 
+  var prefersReducedMotion = useCallback(function() {
+    return typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }, []);
+
   var onPointerDown = useCallback(function(e) {
     if (isRefreshingRef.current) return;
+    if (prefersReducedMotion()) return;
     var container = containerRef.current;
     if (!container) return;
     if (container.scrollTop > 0) return;
@@ -42,6 +47,7 @@ export function usePullToRefresh(onRefresh) {
     startYRef.current = e.touches ? e.touches[0].clientY : (e.clientY || 0);
     currentYRef.current = startYRef.current;
     activeRef.current = true;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   var onPointerMove = useCallback(function(e) {

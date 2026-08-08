@@ -1,6 +1,7 @@
-import React, { memo, useMemo } from 'react';
+import React, { memo, useMemo, useState, useEffect } from 'react';
 import { Card } from './ui.jsx';
 import { brandAlpha } from '../../lib/utils.js';
+import { useCountUp } from '../hooks/useCountUp.js';
 
 export const UsageBar = memo(function UsageBar({ label, used, limit, color, accentColor }) {
   var unlimited = limit === Infinity;
@@ -43,6 +44,23 @@ export const KpiCard = memo(function KpiCard({ label, value, variation, sub, col
     return label + ': ' + value + (hasVar ? ', variação ' + (up ? '+' : '') + variation + '%' : '');
   }, [label, value, hasVar, up, variation, hasClick]);
 
+  var [mounted, setMounted] = useState(false);
+  var [prefersReduce, setPrefersReduce] = useState(false);
+  useEffect(function() {
+    setMounted(true);
+    setPrefersReduce(typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  }, []);
+  var valStr = String(value);
+  var numVal = parseFloat(valStr.replace(/[^\d.-]/g, ''));
+  var isNumeric = !isNaN(numVal);
+  var animatedVal = useCountUp(numVal, mounted && !prefersReduce && isNumeric && headline);
+  var displayValue = (mounted && !prefersReduce && isNumeric && headline) ? (
+    <React.Fragment>
+      <span aria-hidden="true">{animatedVal.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+      <span className="sr-only" role="status">{value}</span>
+    </React.Fragment>
+  ) : value;
+
   return (
     <Card style={cardStyle} className={(headline ? 'p-5 sm:p-6' : 'p-4') + ' overflow-hidden' + (hasClick ? ' cursor-pointer card-hover transition-transform duration-150 active:scale-[0.98]' : '')}
       onClick={hasClick ? onClick : undefined}
@@ -56,10 +74,10 @@ export const KpiCard = memo(function KpiCard({ label, value, variation, sub, col
       aria-label={ariaLabel}
       id={hasClick ? kpiId : undefined}>
       <LabelTag className="text-xs font-semibold uppercase tracking-wider mt-2" style={{color:'var(--text-muted)'}}>{label}</LabelTag>
-      <p className="font-extrabold mt-2 text-foreground truncate tabular" style={{fontSize: headline ? 28 : 22, letterSpacing:'-0.5px'}}>{value}</p>
+      <p className="font-extrabold mt-2 text-foreground truncate tabular" style={{fontSize: headline ? 28 : 22, letterSpacing:'-0.5px'}}>{displayValue}</p>
       {variation !== null && variation !== undefined && (
         <div className="flex items-center gap-1 mt-1.5">
-          <span className="text-xs font-semibold flex items-center gap-0.5 px-1.5 py-0.5 rounded-md" style={good ? {background: 'rgba(21, 128, 61, 0.08)', color: 'var(--success)'} : {background: 'rgba(239, 68, 68, 0.08)', color: 'var(--danger)'}}>
+          <span className="text-xs font-semibold flex items-center gap-0.5 px-1.5 py-0.5 rounded-md" style={good ? {background: 'color-mix(in srgb, var(--success) 8%, transparent)', color: 'var(--success)'} : {background: 'color-mix(in srgb, var(--danger) 8%, transparent)', color: 'var(--danger)'}}>
             {up ? (
               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" aria-hidden="true"><path d="M5 15l7-7 7 7"/></svg>
             ) : (

@@ -119,11 +119,12 @@ describe('applyBrandVars — modo dark e brand_config', function() {
     expect(mockSetProperty).not.toHaveBeenCalledWith('--bg-page', expect.any(String));
   });
 
-  it('sem brand_config aplica apenas as 6 variaveis de marca', function() {
+  it('sem brand_config aplica apenas as 4 variaveis de marca (soft via CSS)', function() {
     applyBrandVars(makeBrand({ brand_config: null }));
-    expect(mockSetProperty).toHaveBeenCalledTimes(6);
-    expect(mockSetProperty).toHaveBeenCalledWith('--brand-soft', 'rgba(1,2,3,0.08)');
-    expect(mockSetProperty).toHaveBeenCalledWith('--brand-accent-soft', 'rgba(1,2,3,0.12)');
+    expect(mockSetProperty).toHaveBeenCalledTimes(4);
+    expect(mockSetProperty).toHaveBeenCalledWith('--brand', '#002f59');
+    expect(mockSetProperty).toHaveBeenCalledWith('--brand-secondary', '#6ec6c8');
+    expect(mockSetProperty).toHaveBeenCalledWith('--brand-accent', '#1a6b5c');
     expect(mockSetProperty).toHaveBeenCalledWith('--brand-grad', 'linear-gradient(135deg, #002f59 0%, #1a6b5c 100%)');
   });
 });
@@ -145,12 +146,10 @@ describe('enterPreviewMode / exitPreviewMode', function() {
   it('exitPreviewMode remove apenas as vars de preview', function() {
     exitPreviewMode();
     expect(mockRemoveProperty).toHaveBeenCalledWith('--brand');
-    expect(mockRemoveProperty).toHaveBeenCalledWith('--brand-soft');
     expect(mockRemoveProperty).toHaveBeenCalledWith('--brand-secondary');
     expect(mockRemoveProperty).toHaveBeenCalledWith('--brand-accent');
-    expect(mockRemoveProperty).toHaveBeenCalledWith('--brand-accent-soft');
     expect(mockRemoveProperty).toHaveBeenCalledWith('--brand-grad');
-    expect(mockRemoveProperty).toHaveBeenCalledTimes(6);
+    expect(mockRemoveProperty).toHaveBeenCalledTimes(4);
   });
 });
 

@@ -16,8 +16,27 @@ export default defineConfig(async function() {
   plugins.push({
     name: 'html-version-replace',
     transformIndexHtml(html) {
-      return html.replace(/%APP_VERSION%/g, version);
+      var supabaseUrl = process.env.VITE_SUPABASE_URL || 'https://*.supabase.co';
+      var origin = supabaseUrl.replace(/\/+$/, '');
+      var preconnect = '<link rel="preconnect" href="' + origin + '" crossorigin>';
+      return html
+        .replace(/%APP_VERSION%/g, version)
+        .replace('<!-- SUPA_PRECONNECT -->', preconnect);
     }
+  });
+
+  // Injeta modulepreload dos chunks core (paraleliza descoberta)
+  plugins.push({
+    name: 'modulepreload-core',
+    transformIndexHtml: {
+      order: 'post',
+      handler(html) {
+        return html.replace('</head>',
+          '  <link rel="modulepreload" href="/src/main.jsx">\n'
+          + '  <link rel="modulepreload" href="/src/App.jsx">\n'
+          + '</head>');
+      },
+    },
   });
 
   plugins.push(VitePWA({
@@ -47,7 +66,7 @@ export default defineConfig(async function() {
       ],
     },
     injectManifest: {
-      globPatterns: ['**/*.{js,css,html}'],
+      globPatterns: ['**/*.{js,css,html,woff2}'],
       globIgnores: ['**/manifest.json', '**/sw.js'],
       maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
     },
@@ -111,6 +130,7 @@ export default defineConfig(async function() {
       outDir: 'dist',
       emptyOutDir: true,
       target: 'es2020',
+      modulePreload: { polyfill: false },
       sourcemap: false,
       cacheDir: 'node_modules/.vite-build-cache',
       rollupOptions: {
@@ -119,11 +139,12 @@ export default defineConfig(async function() {
           generatedCode: 'es2015',
           manualChunks: function(id) {
             if (process.env.DEBUG_CHUNKS && id.includes('node_modules/@supabase')) console.log('[CHUNK]', id.split('/node_modules/')[1]);
+            if (id.includes('/src/lib/sync.js')) return 'sync-lib';
+            if (/node_modules\/(?:tslib|@babel\/runtime)/.test(id)) return 'shared-runtime';
             if (id.includes('node_modules/react') && !id.includes('react-table')) return 'react-vendor';
             if (id.includes('node_modules/react-dom')) return 'react-vendor';
             if (id.includes('node_modules/scheduler')) return 'react-vendor';
             if (id.includes('node_modules/react-router')) return 'react-vendor';
-            if (id.includes('node_modules/@supabase')) return 'supabase-vendor';
             if (id.includes('node_modules/@stripe/react-stripe-js')) return 'stripe-vendor';
             if (id.includes('node_modules/@stripe/stripe-js')) return 'stripe-vendor';
             if (id.includes('node_modules/@radix-ui')) return 'ui-vendor';
