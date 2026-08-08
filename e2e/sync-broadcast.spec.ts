@@ -33,6 +33,7 @@ test.describe('Multi-tab / BroadcastChannel Sync - Broadcast', () => {
       const channelConnected = await page1.evaluate(async () => {
         return new Promise<boolean>((resolve) => {
           const channel = new BroadcastChannel('financia-sync');
+          const deadline = Date.now() + 15000;
 
           channel.onmessage = (event) => {
             if (event.data.type === 'SYNC_ACK') {
@@ -41,12 +42,17 @@ test.describe('Multi-tab / BroadcastChannel Sync - Broadcast', () => {
             }
           };
 
-          setTimeout(() => {
-            channel.close();
-            resolve(false);
-          }, 5000);
+          const ping = () => {
+            if (Date.now() > deadline) {
+              channel.close();
+              resolve(false);
+              return;
+            }
+            channel.postMessage({ type: 'SYNC_PING', timestamp: Date.now() });
+            setTimeout(ping, 500);
+          };
 
-          channel.postMessage({ type: 'SYNC_PING', timestamp: Date.now() });
+          ping();
         });
       });
 

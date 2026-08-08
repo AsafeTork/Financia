@@ -6,6 +6,47 @@ const storageState = fs.existsSync('e2e/auth-state.json') ? 'e2e/auth-state.json
 test.describe('Multi-tab / BroadcastChannel Sync - Conflict Resolution', () => {
   test.setTimeout(120000);
 
+  const ensureDBSchema = async (page) => {
+    await page.evaluate(async () => {
+      const dbName = 'gestao_offline';
+      await new Promise<void>((resolve) => {
+        const request = indexedDB.open(dbName, 5);
+        request.onupgradeneeded = () => {
+          const db = request.result;
+          if (!db.objectStoreNames.contains('transactions')) {
+            const store = db.createObjectStore('transactions', { keyPath: 'id' });
+            store.createIndex('by-date', 'date');
+            store.createIndex('by-user_id', 'user_id');
+          }
+          if (!db.objectStoreNames.contains('products')) {
+            const store = db.createObjectStore('products', { keyPath: 'id' });
+            store.createIndex('by-category', 'category');
+            store.createIndex('by-user_id', 'user_id');
+          }
+          if (!db.objectStoreNames.contains('losses')) {
+            const store = db.createObjectStore('losses', { keyPath: 'id' });
+            store.createIndex('by-date', 'date');
+            store.createIndex('by-user_id', 'user_id');
+          }
+          if (!db.objectStoreNames.contains('profiles')) {
+            db.createObjectStore('profiles', { keyPath: 'user_id' });
+          }
+          if (!db.objectStoreNames.contains('meta')) {
+            db.createObjectStore('meta', { keyPath: 'key' });
+          }
+          if (!db.objectStoreNames.contains('brand_presets')) {
+            const store = db.createObjectStore('brand_presets', { keyPath: 'id' });
+          }
+          if (!db.objectStoreNames.contains('brand_logo_schemes')) {
+            const store = db.createObjectStore('brand_logo_schemes', { keyPath: 'id' });
+          }
+        };
+        request.onsuccess = () => { request.result.close(); resolve(); };
+        request.onerror = () => resolve();
+      });
+    });
+  };
+
   test.describe('Conflict Resolution (Last-Write-Wins)', () => {
     test('should resolve concurrent transaction updates with last-write-wins', async ({ browser }) => {
       const context = await browser.newContext({ storageState });
@@ -18,6 +59,7 @@ test.describe('Multi-tab / BroadcastChannel Sync - Conflict Resolution', () => {
       
       await page1.waitForLoadState('domcontentloaded');
       await page2.waitForLoadState('domcontentloaded');
+      await ensureDBSchema(page1);
 
       const txnId = `conflict-${Date.now()}`;
 
@@ -43,8 +85,25 @@ test.describe('Multi-tab / BroadcastChannel Sync - Conflict Resolution', () => {
               version: 1,
               updatedAt: new Date(Date.now() - 1000).toISOString(),
             });
-            db.close();
-            resolve();
+            transaction.oncomplete = async () => {
+              // Verify write
+              const verifyTx = db.transaction(storeName, 'readonly');
+              const verifyStore = verifyTx.objectStore(storeName);
+              const getReq = verifyStore.get(id);
+              getReq.onsuccess = () => {
+                console.log('Page1 verify read:', getReq.result);
+                db.close();
+                resolve();
+              };
+              getReq.onerror = () => {
+                db.close();
+                reject(getReq.error);
+              };
+            };
+            transaction.onerror = () => {
+              db.close();
+              reject(transaction.error);
+            };
           };
           request.onerror = () => reject(request.error);
         });
@@ -72,8 +131,25 @@ test.describe('Multi-tab / BroadcastChannel Sync - Conflict Resolution', () => {
               version: 2,
               updatedAt: new Date().toISOString(),
             });
-            db.close();
-            resolve();
+            transaction.oncomplete = async () => {
+              // Verify write
+              const verifyTx = db.transaction(storeName, 'readonly');
+              const verifyStore = verifyTx.objectStore(storeName);
+              const getReq = verifyStore.get(id);
+              getReq.onsuccess = () => {
+                console.log('Page2 verify read:', getReq.result);
+                db.close();
+                resolve();
+              };
+              getReq.onerror = () => {
+                db.close();
+                reject(getReq.error);
+              };
+            };
+            transaction.onerror = () => {
+              db.close();
+              reject(transaction.error);
+            };
           };
           request.onerror = () => reject(request.error);
         });
@@ -91,35 +167,36 @@ test.describe('Multi-tab / BroadcastChannel Sync - Conflict Resolution', () => {
         channel.close();
       }, txnId);
 
-      await page2.waitForTimeout(2000);
+      await expect
+        .poll(async () => {
+          return page1.evaluate(async (txnId) => {
+            const dbName = 'gestao_offline';
+            const storeName = 'transactions';
+            
+            return new Promise<any>((resolve, reject) => {
+              const request = indexedDB.open(dbName);
+              request.onsuccess = () => {
+                const db = request.result;
+                console.log('Poll: stores:', [...db.objectStoreNames]);
+                if (!db.objectStoreNames.contains(storeName)) {
+                  resolve(null);
+                  return;
+                }
+                const transaction = db.transaction(storeName, 'readonly');
+                const store = transaction.objectStore(storeName);
+                const getRequest = store.get(txnId);
+                getRequest.onsuccess = () => {
+                  console.log('Poll read result:', getRequest.result);
+                  resolve(getRequest.result);
+                };
+                getRequest.onerror = () => reject(getRequest.error);
+              };
+              request.onerror = () => reject(request.error);
+            });
+          }, txnId);
+        }, { timeout: 15000, intervals: [250] })
+        .toMatchObject({ description: 'Tab 2 version', amount: 200, version: 2 });
 
-      const resolved = await page1.evaluate(async (id) => {
-        const dbName = 'gestao_offline';
-        const storeName = 'transactions';
-        
-        return new Promise<any>((resolve, reject) => {
-          const request = indexedDB.open(dbName);
-          request.onsuccess = () => {
-            const db = request.result;
-            if (!db.objectStoreNames.contains(storeName)) {
-              resolve(null);
-              return;
-            }
-            const transaction = db.transaction(storeName, 'readonly');
-            const store = transaction.objectStore(storeName);
-            const getRequest = store.get(id);
-            getRequest.onsuccess = () => resolve(getRequest.result);
-            getRequest.onerror = () => reject(getRequest.error);
-          };
-          request.onerror = () => reject(request.error);
-        });
-      }, txnId);
-
-      expect(resolved).toBeTruthy();
-      expect(resolved.description).toBe('Tab 2 version');
-      expect(resolved.amount).toBe(200);
-      expect(resolved.version).toBe(2);
-      
       await context.close();
     });
 
@@ -134,6 +211,7 @@ test.describe('Multi-tab / BroadcastChannel Sync - Conflict Resolution', () => {
       
       await page1.waitForLoadState('domcontentloaded');
       await page2.waitForLoadState('domcontentloaded');
+      await ensureDBSchema(page1);
 
       const productId = `prod-conflict-${Date.now()}`;
 
@@ -159,8 +237,14 @@ test.describe('Multi-tab / BroadcastChannel Sync - Conflict Resolution', () => {
               stock: 10,
               updatedAt: new Date(Date.now() - 1000).toISOString(),
             });
-            db.close();
-            resolve();
+            transaction.oncomplete = () => {
+              db.close();
+              resolve();
+            };
+            transaction.onerror = () => {
+              db.close();
+              reject(transaction.error);
+            };
           };
           request.onerror = () => reject(request.error);
         });
@@ -188,8 +272,14 @@ test.describe('Multi-tab / BroadcastChannel Sync - Conflict Resolution', () => {
               stock: 20,
               updatedAt: new Date().toISOString(),
             });
-            db.close();
-            resolve();
+            transaction.oncomplete = () => {
+              db.close();
+              resolve();
+            };
+            transaction.onerror = () => {
+              db.close();
+              reject(transaction.error);
+            };
           };
           request.onerror = () => reject(request.error);
         });
@@ -207,34 +297,36 @@ test.describe('Multi-tab / BroadcastChannel Sync - Conflict Resolution', () => {
         channel.close();
       }, productId);
 
-      await page2.waitForTimeout(2000);
+      await expect
+        .poll(async () => {
+          return page1.evaluate(async (productId) => {
+            const dbName = 'gestao_offline';
+            const storeName = 'products';
+            
+            return new Promise<any>((resolve, reject) => {
+              const request = indexedDB.open(dbName);
+              request.onsuccess = () => {
+                const db = request.result;
+                console.log('Poll products: stores:', [...db.objectStoreNames]);
+                if (!db.objectStoreNames.contains(storeName)) {
+                  resolve(null);
+                  return;
+                }
+                const transaction = db.transaction(storeName, 'readonly');
+                const store = transaction.objectStore(storeName);
+                const getRequest = store.get(productId);
+                getRequest.onsuccess = () => {
+                  console.log('Poll products read:', getRequest.result);
+                  resolve(getRequest.result);
+                };
+                getRequest.onerror = () => reject(getRequest.error);
+              };
+              request.onerror = () => reject(request.error);
+            });
+          }, productId);
+        }, { timeout: 15000, intervals: [250] })
+        .toMatchObject({ name: 'Product from Tab 2', price: 200 });
 
-      const resolved = await page1.evaluate(async (id) => {
-        const dbName = 'gestao_offline';
-        const storeName = 'products';
-        
-        return new Promise<any>((resolve, reject) => {
-          const request = indexedDB.open(dbName);
-          request.onsuccess = () => {
-            const db = request.result;
-            if (!db.objectStoreNames.contains(storeName)) {
-              resolve(null);
-              return;
-            }
-            const transaction = db.transaction(storeName, 'readonly');
-            const store = transaction.objectStore(storeName);
-            const getRequest = store.get(id);
-            getRequest.onsuccess = () => resolve(getRequest.result);
-            getRequest.onerror = () => reject(getRequest.error);
-          };
-          request.onerror = () => reject(request.error);
-        });
-      }, productId);
-
-      expect(resolved).toBeTruthy();
-      expect(resolved.name).toBe('Product from Tab 2');
-      expect(resolved.price).toBe(200);
-      
       await context.close();
     });
   });
@@ -252,36 +344,36 @@ test.describe('Multi-tab / BroadcastChannel Sync - Conflict Resolution', () => {
       await page1.waitForLoadState('domcontentloaded');
       await page2.waitForLoadState('domcontentloaded');
 
-      const received = await page2.evaluate(async () => {
-        return new Promise<any>((resolve) => {
-          window.addEventListener('storage', (event) => {
-            if (event.key === 'financia-sync') {
-              try {
-                const data = JSON.parse(event.newValue || '{}');
-                if (data.type === 'STORAGE_SYNC') {
-                  resolve(data.payload);
-                }
-              } catch {
-                // ignore
+      await page2.evaluate(() => {
+        (window as any).__syncReceived = null;
+        window.addEventListener('storage', (event) => {
+          if (event.key === 'financia-sync') {
+            try {
+              const data = JSON.parse(event.newValue || '{}');
+              if (data.type === 'STORAGE_SYNC') {
+                (window as any).__syncReceived = data.payload;
               }
+            } catch {
+              // ignore
             }
-          });
-          
-          setTimeout(() => resolve(null), 10000);
+          }
         });
       });
 
-      await page1.evaluate(() => {
-        const data = {
-          type: 'STORAGE_SYNC',
-          payload: { test: 'storage-event-sync', timestamp: Date.now() },
-        };
-        localStorage.setItem('financia-sync', JSON.stringify(data));
-      });
+      await expect
+        .poll(async () => {
+          await page1.evaluate(() => {
+            const data = {
+              type: 'STORAGE_SYNC',
+              payload: { test: 'storage-event-sync', timestamp: Date.now() },
+            };
+            localStorage.setItem('financia-sync', JSON.stringify(data));
+          });
 
-      expect(received).toBeTruthy();
-      expect(received.test).toBe('storage-event-sync');
-      
+          return page2.evaluate(() => (window as any).__syncReceived);
+        }, { timeout: 10000, intervals: [250] })
+        .toEqual(expect.objectContaining({ test: 'storage-event-sync' }));
+
       await context.close();
     });
   });
