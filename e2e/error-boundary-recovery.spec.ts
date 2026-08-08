@@ -41,22 +41,25 @@ test.describe('Deep Error Boundary Recovery', () => {
     await page.goto(BASE_URL, { waitUntil: 'domcontentloaded', timeout: 15000 });
     await page.waitForLoadState('networkidle');
 
-    const errorCaptured = await page.evaluate(() => {
-      return new Promise<boolean>((resolve) => {
-        const handler = function(msg: string, source: string, lineno: number, colno: number, error: Error) {
-          window.onerror = null;
-          resolve(true);
-          return true;
-        };
-        window.onerror = handler;
-        setTimeout(() => {
-          window.onerror = null;
-          resolve(false);
-        }, 3000);
-      });
+    let errorHandled = false;
+    page.on('pageerror', (err) => {
+      if (err.message.includes('unhandledrejection') || err.message.includes('rejection')) {
+        errorHandled = true;
+      }
     });
 
-    expect(typeof errorCaptured).toBe('boolean');
+    await page.evaluate(() => {
+      Promise.reject(new Error('test unhandled rejection'));
+    });
+
+    await page.waitForTimeout(500);
+
+    expect(errorHandled).toBe(true);
+
+    const appStillAlive = await page.evaluate(() => {
+      return document.body && document.body.innerHTML.length > 0;
+    });
+    expect(appStillAlive).toBe(true);
   });
 
   test('unhandled promise rejection does not crash the app', async ({ page }) => {

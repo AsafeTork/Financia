@@ -102,7 +102,14 @@ test.describe('Deep Sync Conflict Scenarios', () => {
       }
     });
 
-    // Dispatch an unhandled rejection - the app should not crash
+    await page.route('**', async (route, request) => {
+      if (request.url().includes('unhandled') || request.url().includes('PromiseRejectionEvent')) {
+        return;
+      }
+      await route.continue();
+    });
+
+    // Dispatch an unhandled rejection — the app should not crash
     await page.evaluate(() => {
       const rejection = new Error('test rejection');
       window.dispatchEvent(new PromiseRejectionEvent('unhandledrejection', {
@@ -113,7 +120,6 @@ test.describe('Deep Sync Conflict Scenarios', () => {
 
     await page.waitForTimeout(2000);
 
-    // App should survive (page still responsive) - check via DOM
     const stillResponsive = await page.evaluate(() => document.body !== null);
     expect(stillResponsive).toBe(true);
   });
