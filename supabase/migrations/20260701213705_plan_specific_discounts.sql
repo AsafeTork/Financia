@@ -1,3 +1,4 @@
--- Migration: 20260701213705_plan_specific_discounts
--- Applied directly to remote database
--- This is a placeholder to keep local migrations in sync
+alter table public.company_profiles
+  add column if not exists custom_price_cents_pro integer,
+  add column if not exists custom_price_cents_premium integer;
+

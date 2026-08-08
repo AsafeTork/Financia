@@ -10,6 +10,7 @@
 DROP POLICY IF EXISTS "admin_read_all_profiles" ON company_profiles;
 DROP POLICY IF EXISTS "Users can view own profile" ON company_profiles;
 DROP POLICY IF EXISTS "users_select_own" ON company_profiles;
+DROP POLICY IF EXISTS "select_own_or_admin" ON company_profiles;
 
 -- Nova policy: dono le o proprio, admin le todos
 CREATE POLICY "select_own_or_admin"

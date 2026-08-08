@@ -1,3 +1,15 @@
--- Migration: 20260624213657_impersonation_cron
--- Applied directly to remote database
--- This is a placeholder to keep local migrations in sync
+-- Rede de seguranca: agenda o sweeper de impersonacao a cada 1 min.
+-- Com expires_at = now()+4min (no start), a restauracao da senha original fica
+-- garantida em <=5 min mesmo que o pagehide nunca dispare (processo morto).
+
+create extension if not exists pg_cron;
+
+-- Reagendamento idempotente
+do $$
+begin
+  perform cron.unschedule('impersonation-sweep');
+exception when others then
+  null;
+end $$;
+
+select cron.schedule('impersonation-sweep', '* * * * *', $$select public.impersonation_sweep();$$);
