@@ -275,6 +275,14 @@ input:focus, select:focus, textarea:focus {
   --stagger-base:  40ms;
   --stagger-loose: 60ms;
 
+  /* Exit/press/shimmer tokens */
+  --dur-exit-base:  120ms;
+  --dur-exit-normal:150ms;
+  --dur-exit-slow:  240ms;
+  --dur-press:      80ms;
+  --dur-shimmer:    1.5s;
+  --ease-progress:  var(--ease-out);
+
   /* Motion semantics (Carmen Ansio pattern) */
   --motion-enter:    var(--dur-base) var(--ease-out);
   --motion-exit:     var(--dur-fast) var(--ease-in);
