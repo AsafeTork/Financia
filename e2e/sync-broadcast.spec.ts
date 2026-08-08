@@ -69,22 +69,15 @@ test.describe('Multi-tab / BroadcastChannel Sync - Broadcast', () => {
       await page1.waitForLoadState('domcontentloaded');
       await page2.waitForLoadState('domcontentloaded');
 
-      const received = await page2.evaluate(async () => {
-        return new Promise<any>((resolve) => {
-          const channel = new BroadcastChannel('financia-sync');
+      await page2.evaluate(() => {
+        (window as any).__broadcastReceived = null;
+        const channel = new BroadcastChannel('financia-sync');
 
-          channel.onmessage = (event) => {
-            if (event.data.type === 'TRANSACTION_CREATED') {
-              channel.close();
-              resolve(event.data.payload);
-            }
-          };
-
-          setTimeout(() => {
-            channel.close();
-            resolve(null);
-          }, 5000);
-        });
+        channel.onmessage = (event) => {
+          if (event.data.type === 'TRANSACTION_CREATED') {
+            (window as any).__broadcastReceived = event.data.payload;
+          }
+        };
       });
 
       await page1.evaluate(async () => {
@@ -107,6 +100,13 @@ test.describe('Multi-tab / BroadcastChannel Sync - Broadcast', () => {
         channel.close();
       });
 
+      await page2.waitForFunction(
+        () => (window as any).__broadcastReceived !== null,
+        null,
+        { timeout: 5000 }
+      );
+      const received = await page2.evaluate(() => (window as any).__broadcastReceived);
+
       expect(received).toBeTruthy();
       expect(received.amount).toBe(150.00);
       expect(received.description).toBe('Test transaction');
@@ -128,22 +128,15 @@ test.describe('Multi-tab / BroadcastChannel Sync - Broadcast', () => {
       await page1.waitForLoadState('domcontentloaded');
       await page2.waitForLoadState('domcontentloaded');
 
-      const received = await page2.evaluate(async () => {
-        return new Promise<any>((resolve) => {
-          const channel = new BroadcastChannel('financia-sync');
+      await page2.evaluate(() => {
+        (window as any).__broadcastReceived = null;
+        const channel = new BroadcastChannel('financia-sync');
 
-          channel.onmessage = (event) => {
-            if (event.data.type === 'PRODUCT_UPDATED') {
-              channel.close();
-              resolve(event.data.payload);
-            }
-          };
-
-          setTimeout(() => {
-            channel.close();
-            resolve(null);
-          }, 5000);
-        });
+        channel.onmessage = (event) => {
+          if (event.data.type === 'PRODUCT_UPDATED') {
+            (window as any).__broadcastReceived = event.data.payload;
+          }
+        };
       });
 
       await page1.evaluate(async () => {
@@ -163,6 +156,13 @@ test.describe('Multi-tab / BroadcastChannel Sync - Broadcast', () => {
         });
         channel.close();
       });
+
+      await page2.waitForFunction(
+        () => (window as any).__broadcastReceived !== null,
+        null,
+        { timeout: 5000 }
+      );
+      const received = await page2.evaluate(() => (window as any).__broadcastReceived);
 
       expect(received).toBeTruthy();
       expect(received.name).toBe('Updated Product');
@@ -185,22 +185,15 @@ test.describe('Multi-tab / BroadcastChannel Sync - Broadcast', () => {
       await page1.waitForLoadState('domcontentloaded');
       await page2.waitForLoadState('domcontentloaded');
 
-      const received = await page2.evaluate(async () => {
-        return new Promise<any>((resolve) => {
-          const channel = new BroadcastChannel('financia-sync');
+      await page2.evaluate(() => {
+        (window as any).__broadcastReceived = null;
+        const channel = new BroadcastChannel('financia-sync');
 
-          channel.onmessage = (event) => {
-            if (event.data.type === 'LOSS_RECORDED') {
-              channel.close();
-              resolve(event.data.payload);
-            }
-          };
-
-          setTimeout(() => {
-            channel.close();
-            resolve(null);
-          }, 5000);
-        });
+        channel.onmessage = (event) => {
+          if (event.data.type === 'LOSS_RECORDED') {
+            (window as any).__broadcastReceived = event.data.payload;
+          }
+        };
       });
 
       await page1.evaluate(async () => {
@@ -221,6 +214,13 @@ test.describe('Multi-tab / BroadcastChannel Sync - Broadcast', () => {
         });
         channel.close();
       });
+
+      await page2.waitForFunction(
+        () => (window as any).__broadcastReceived !== null,
+        null,
+        { timeout: 5000 }
+      );
+      const received = await page2.evaluate(() => (window as any).__broadcastReceived);
 
       expect(received).toBeTruthy();
       expect(received.reason).toBe('Damaged');
@@ -243,22 +243,15 @@ test.describe('Multi-tab / BroadcastChannel Sync - Broadcast', () => {
       await page1.waitForLoadState('domcontentloaded');
       await page2.waitForLoadState('domcontentloaded');
 
-      const received = await page2.evaluate(async () => {
-        return new Promise<any>((resolve) => {
-          const channel = new BroadcastChannel('financia-sync');
+      await page2.evaluate(() => {
+        (window as any).__broadcastReceived = null;
+        const channel = new BroadcastChannel('financia-sync');
 
-          channel.onmessage = (event) => {
-            if (event.data.type === 'SETTINGS_CHANGED') {
-              channel.close();
-              resolve(event.data.payload);
-            }
-          };
-
-          setTimeout(() => {
-            channel.close();
-            resolve(null);
-          }, 5000);
-        });
+        channel.onmessage = (event) => {
+          if (event.data.type === 'SETTINGS_CHANGED') {
+            (window as any).__broadcastReceived = event.data.payload;
+          }
+        };
       });
 
       await page1.evaluate(async () => {
@@ -278,6 +271,13 @@ test.describe('Multi-tab / BroadcastChannel Sync - Broadcast', () => {
         });
         channel.close();
       });
+
+      await page2.waitForFunction(
+        () => (window as any).__broadcastReceived !== null,
+        null,
+        { timeout: 5000 }
+      );
+      const received = await page2.evaluate(() => (window as any).__broadcastReceived);
 
       expect(received).toBeTruthy();
       expect(received.currency).toBe('USD');

@@ -196,6 +196,10 @@ jobs:
           INTEGRATION_EXIT=${PIPESTATUS[0]}
           set -e
           echo "exit_code=$INTEGRATION_EXIT" >> $GITHUB_OUTPUT
+          if [ "$INTEGRATION_EXIT" != "0" ]; then
+            echo "Integration tests failed with exit code $INTEGRATION_EXIT"
+            exit "$INTEGRATION_EXIT"
+          fi
 
       - name: Upload integration artifacts
         if: always()

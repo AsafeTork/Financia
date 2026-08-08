@@ -47,9 +47,14 @@ export function registerSW() {
   checkVersionAndReload();
 
   var refreshing = false;
+  // Só recarrega em controllerchange quando já existia um controller (update real).
+  // Na primeira instalação (sem controller prévio) o claim ativa o SW sem forçar
+  // reload — evita loop/flicker e quebra de contexto em navegações em andamento.
+  var hadController = !!navigator.serviceWorker.controller;
   var onControllerChange = function() {
     if (refreshing) return;
     refreshing = true;
+    if (!hadController) return;
     window.location.reload();
   };
   navigator.serviceWorker.addEventListener('controllerchange', onControllerChange);
