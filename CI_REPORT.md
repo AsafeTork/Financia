@@ -1,7 +1,7 @@
 # CI Report
 
-**Gerado:** 2026-08-08 00:43 UTC
-**Commit:** `c2d1fb4927980d113834d774c7aed9fec078e882`
+**Gerado:** 2026-08-08 00:59 UTC
+**Commit:** `22146871416c3cc00ffdddb77929b14f1993f347`
 **Branch:** `main`
 
 ---
@@ -84,85 +84,39 @@ computing gzip size...
 ```
 
 Running 26 tests using 4 workers
-°°·°°°°°°°°F·F·°°°°F··°·F·
+°°·°°°°°°°°····°°°°··F·°··
 
-  1) [chromium] › e2e/auth-flow.spec.ts:45:3 › Auth Flow › login form shows validation errors on empty submit 
+  1) [chromium] › e2e/auth-flow.spec.ts:30:3 › Auth Flow › login form opens from landing page ──────
 
     Error: expect(locator).toBeVisible() failed
 
-    Locator: locator('text=Campo obrigatório').first()
+    Locator: locator('input[type="email"], input[name="email"]').first()
     Expected: visible
     Timeout: 10000ms
     Error: element(s) not found
 
     Call log:
       - Expect "toBeVisible" with timeout 10000ms
-      - waiting for locator('text=Campo obrigatório').first()
+      - waiting for locator('input[type="email"], input[name="email"]').first()
+        - waiting for" http://localhost:4173/" navigation to finish...
+        - navigated to "http://localhost:4173/"
 
 
-      63 |
-      64 |     const emailError = page.locator('text=Campo obrigatório').first();
-    > 65 |     await expect(emailError).toBeVisible({ timeout: 10000 });
+      40 |
+      41 |     const emailInput = page.locator('input[type="email"], input[name="email"]').first();
+    > 42 |     await expect(emailInput).toBeVisible({ timeout: 10000 });
          |                              ^
-      66 |   });
-      67 |
-      68 |   test('authenticated user sees dashboard via storageState', async ({ page, browser }) => {
-        at /home/runner/work/Financia/Financia/e2e/auth-flow.spec.ts:65:30
+      43 |   });
+      44 |
+      45 |   test('login form shows validation errors on empty submit', async ({ page }) => {
+        at /home/runner/work/Financia/Financia/e2e/auth-flow.spec.ts:42:30
 
-    Error Context: test-results/auth-flow-Auth-Flow-login--49015-tion-errors-on-empty-submit-chromium/error-context.md
+    Error Context: test-results/auth-flow-Auth-Flow-login-form-opens-from-landing-page-chromium/error-context.md
 
-  2) [chromium] › e2e/deep-sync-conflict.spec.ts:94:3 › Deep Sync Conflict Scenarios › sync worker survives unhandled rejection 
-
-    Error: page.evaluate: Execution context was destroyed, most likely because of a navigation
-
-      104 |
-      105 |     // Dispatch an unhandled rejection - the app should not crash
-    > 106 |     await page.evaluate(() => {
-          |                ^
-      107 |       const rejection = new Error('test rejection');
-      108 |       window.dispatchEvent(new PromiseRejectionEvent('unhandledrejection', {
-      109 |         promise: Promise.reject(rejection),
-        at /home/runner/work/Financia/Financia/e2e/deep-sync-conflict.spec.ts:106:16
-
-    Error Context: test-results/deep-sync-conflict-Deep-Sy-7a968-urvives-unhandled-rejection-chromium/error-context.md
-
-  3) [chromium] › e2e/error-boundary-recovery.spec.ts:62:3 › Deep Error Boundary Recovery › unhandled promise rejection does not crash the app 
-
-    Error: page.evaluate: Execution context was destroyed, most likely because of a navigation
-
-      71 |     });
-      72 |
-    > 73 |     await page.evaluate(() => {
-         |                ^
-      74 |       Promise.reject(new Error('test unhandled rejection'));
-      75 |     });
-      76 |
-        at /home/runner/work/Financia/Financia/e2e/error-boundary-recovery.spec.ts:73:16
-
-    Error Context: test-results/error-boundary-recovery-De-f4fda-tion-does-not-crash-the-app-chromium/error-context.md
-
-  4) [chromium] › e2e/offline-state-corruption.spec.ts:10:3 › Deep Edge Cases — Offline State Corruption & Recovery › IndexedDB corruption is handled gracefully — app does not crash on load 
-
-    Error: page.evaluate: Execution context was destroyed, most likely because of a navigation
-
-      12 |     await page.waitForLoadState('networkidle');
-      13 |
-    > 14 |     const corruptIDB = await page.evaluate(async () => {
-         |                                   ^
-      15 |       try {
-      16 |         const db = await new Promise((resolve, reject) => {
-      17 |           const request = indexedDB.open('financia-corrupt-test', 1);
-        at /home/runner/work/Financia/Financia/e2e/offline-state-corruption.spec.ts:14:35
-
-    Error Context: test-results/offline-state-corruption-D-025d2--app-does-not-crash-on-load-chromium/error-context.md
-
-  4 failed
-    [chromium] › e2e/auth-flow.spec.ts:45:3 › Auth Flow › login form shows validation errors on empty submit 
-    [chromium] › e2e/deep-sync-conflict.spec.ts:94:3 › Deep Sync Conflict Scenarios › sync worker survives unhandled rejection 
-    [chromium] › e2e/error-boundary-recovery.spec.ts:62:3 › Deep Error Boundary Recovery › unhandled promise rejection does not crash the app 
-    [chromium] › e2e/offline-state-corruption.spec.ts:10:3 › Deep Edge Cases — Offline State Corruption & Recovery › IndexedDB corruption is handled gracefully — app does not crash on load 
+  1 failed
+    [chromium] › e2e/auth-flow.spec.ts:30:3 › Auth Flow › login form opens from landing page ───────
   15 skipped
-  7 passed (16.2s)
+  10 passed (17.8s)
 
 ```
 
@@ -178,10 +132,10 @@ Running 26 tests using 4 workers
 
 Running 42 tests using 4 workers
 
-[1/42] [chromium] › e2e/deep-sync-conflict.spec.ts:59:3 › Deep Sync Conflict Scenarios › BroadcastChannel handles duplicate messages without errors
-[2/42] [chromium] › e2e/deep-sync-conflict.spec.ts:94:3 › Deep Sync Conflict Scenarios › sync worker survives unhandled rejection
-[3/42] [chromium] › e2e/deep-sync-conflict.spec.ts:10:3 › Deep Sync Conflict Scenarios › BroadcastChannel ping/pong survives rapid tab switching
-[4/42] [chromium] › e2e/deep-sync-conflict.spec.ts:121:3 › Deep Sync Conflict Scenarios › memory leak check after sync broadcast storm
+[1/42] [chromium] › e2e/deep-sync-conflict.spec.ts:121:3 › Deep Sync Conflict Scenarios › memory leak check after sync broadcast storm
+[2/42] [chromium] › e2e/deep-sync-conflict.spec.ts:59:3 › Deep Sync Conflict Scenarios › BroadcastChannel handles duplicate messages without errors
+[3/42] [chromium] › e2e/deep-sync-conflict.spec.ts:94:3 › Deep Sync Conflict Scenarios › sync worker survives unhandled rejection
+[4/42] [chromium] › e2e/deep-sync-conflict.spec.ts:10:3 › Deep Sync Conflict Scenarios › BroadcastChannel ping/pong survives rapid tab switching
 [5/42] [chromium] › e2e/indexeddb-corruption.spec.ts:12:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should recover from corrupted IndexedDB data
 [6/42] [chromium] › e2e/indexeddb-corruption.spec.ts:65:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should handle invalid schema gracefully
 [7/42] [chromium] › e2e/indexeddb-eviction.spec.ts:12:5 › IndexedDB Recovery - Eviction › Eviction Test › should handle storage pressure and persist()
@@ -205,9 +159,9 @@ Running 42 tests using 4 workers
     Error Context: test-results/indexeddb-migration-Indexe-ccb35-om-old-schema-to-new-schema-chromium/error-context.md
 
 
-[12/42] [chromium] › e2e/memory-leak.spec.ts:84:3 › Memory Leak Detection › timers and intervals cleared on unmount
+[12/42] [chromium] › e2e/memory-leak.spec.ts:57:3 › Memory Leak Detection › event listeners cleaned up on unmount
 [13/42] [chromium] › e2e/memory-leak.spec.ts:110:3 › Memory Leak Detection › IndexedDB connections closed properly
-[14/42] [chromium] › e2e/memory-leak.spec.ts:57:3 › Memory Leak Detection › event listeners cleaned up on unmount
+[14/42] [chromium] › e2e/memory-leak.spec.ts:84:3 › Memory Leak Detection › timers and intervals cleared on unmount
 [15/42] [chromium] › e2e/memory-leak.spec.ts:135:3 › Memory Leak Detection › BroadcastChannel closed on unmount
 [16/42] [chromium] › e2e/memory-leak.spec.ts:164:3 › Memory Leak Detection › memory usage stable under load
 [17/42] [chromium] › e2e/memory-leak.spec.ts:207:3 › Offline Storage Persistence › navigator.storage.persist() prevents eviction
@@ -221,10 +175,9 @@ Running 42 tests using 4 workers
 [25/42] [chromium] › e2e/offline-state-corruption.spec.ts:10:3 › Deep Edge Cases — Offline State Corruption & Recovery › IndexedDB corruption is handled gracefully — app does not crash on load
 [26/42] [chromium] › e2e/offline-state-corruption.spec.ts:47:3 › Deep Edge Cases — Offline State Corruption & Recovery › app survives localStorage quota exceeded gracefully
 [27/42] [chromium] › e2e/offline-state-corruption.spec.ts:65:3 › Deep Edge Cases — Offline State Corruption & Recovery › sessionStorage does not survive new tab
-[chromium] › e2e/network-perf.spec.ts:157:3 › Network Performance & Sync Loop Detection › detect sync loops, icon loops, and excessive network activity
-[MONITOR] Waiting 15s to capture baseline network activity...
-
-[28/42] [chromium] › e2e/offline-state-corruption.spec.ts:86:3 › Deep Edge Cases — Offline State Corruption & Recovery › multip
+[28/42] [chromium] › e2e/offline-state-corruption.spec.ts:86:3 › Deep Edge Cases — Offline State Corruption & Recovery › multiple rapid navigations do not break app
+[29/42] [chromium] › e2e/state-corruption-recovery.spec.ts:10:3 › State Corruption & Recovery › app recovers from corrupted localStorage brand config
+[chromium] › e2e/network-pe
 ```
 
 ---
@@ -256,4 +209,4 @@ Nenhum relatorio admin gerado.
 
 | Data | Correcao | Commit |
 |------|----------|--------|
-| 2026-08-08 00:43 UTC | CI report gerado automaticamente | `c2d1fb4927980d113834d774c7aed9fec078e882` |
+| 2026-08-08 00:59 UTC | CI report gerado automaticamente | `22146871416c3cc00ffdddb77929b14f1993f347` |
