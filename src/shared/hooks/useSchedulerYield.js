@@ -20,7 +20,6 @@ export function useSchedulerYield() {
 }
 
 export function useChunkedMemo(factory, deps, chunkSize = 1000) {
-  useSchedulerYield();
   const cacheRef = useRef({ value: undefined, deps: null });
 
   const result = factory();
