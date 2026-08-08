@@ -30,7 +30,8 @@ test.describe('Auth Flow', () => {
   test('login form opens from landing page', async ({ page }) => {
     await waitForAppReady(page);
 
-    const enterBtn = page.locator('text=Entrar').or(page.locator('text=Criar conta')).first();
+    // Click the "Entrar" button in the header/nav, not the tab in the login form
+    const enterBtn = page.locator('header >> text=Entrar').or(page.locator('nav >> text=Entrar')).or(page.locator('button:has-text("Entrar")').first());
     if (!(await enterBtn.isVisible().catch(() => false))) {
       test.skip('Already logged in or no landing page');
     }
@@ -45,7 +46,8 @@ test.describe('Auth Flow', () => {
   test('login form shows validation errors on empty submit', async ({ page }) => {
     await waitForAppReady(page);
 
-    const enterBtn = page.locator('text=Entrar').or(page.locator('text=Criar conta')).first();
+    // Click the "Entrar" button in the header/nav to open login form
+    const enterBtn = page.locator('header >> text=Entrar').or(page.locator('nav >> text=Entrar')).or(page.locator('button:has-text("Entrar")').first());
     if (!(await enterBtn.isVisible().catch(() => false))) {
       test.skip('Already logged in');
     }
