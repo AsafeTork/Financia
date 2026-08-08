@@ -1,10 +1,11 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { Card, PageSkeleton } from '../../shared/ui/ui.jsx';
 import { KpiCard, BarChartSVG } from '../../shared/ui/UsageBar.jsx';
 import PlanStatusCard from '../../shared/ui/PlanStatusCard.jsx';
 import AiInsightsCard from '../../shared/ui/AiInsightsCard.jsx';
 import { fmt, fmtDate, today, prevDays, brandAlpha } from '../../lib/utils.js';
 import { PLAN_LIMITS, effectivePlan } from '../../lib/constants.js';
+import { forecastCashFlow } from '../../lib/forecast.js';
 
 var PERIODS = [
   { v:'month',    l:'Mês atual' },
@@ -14,8 +15,16 @@ var PERIODS = [
   { v:'12months', l:'Últimos 12 meses' },
 ];
 
-export default React.memo(function Dashboard({ tx, products, brand, onNav, planInfo, lossesCount, onUpgrade, loading }) {
+export default React.memo(function Dashboard({ tx, products, brand, onNav, planInfo, lossesCount, onUpgrade, loading, uid }) {
   var [period, setPeriod] = useState('month');
+  var [forecastData, setForecastData] = useState(null);
+  useEffect(function() {
+    var dead = false;
+    if (!uid || !tx.length) { setForecastData(null); return; }
+    forecastCashFlow(uid, tx).then(function(o) { if (!dead) setForecastData(o); })
+      .catch(function() { if (!dead) setForecastData(null); });
+    return function() { dead = true; };
+  }, [uid, tx]);
   var now_d = new Date();
   var pStart = period === 'year'
     ? new Date(now_d.getFullYear(), 0, 1)
@@ -220,6 +229,42 @@ export default React.memo(function Dashboard({ tx, products, brand, onNav, planI
             accentBar="var(--info)"
             sub={di > 0 || dout > 0 ? ('+' + fmt(di) + ' / -' + fmt(dout)) : 'Sem movimento hoje'}
             heading="h3"/>
+        </section>
+      )}
+
+      {forecastData && forecastData.months > 0 && (
+        <section role="region" aria-label="Previsão de fluxo de caixa" className="rounded-[20px] p-5" style={{background:'var(--bg-card)', border:'1px solid var(--border)', boxShadow:'var(--shadow-sm)'}}>
+          <div className="flex items-center justify-between mb-4">
+            <p className="text-sm font-semibold" style={{color:'var(--text-main)'}}>Previsão de caixa</p>
+            <span className="text-[11px] font-medium px-2.5 py-1 rounded-full" style={{background:'var(--bg-subtle)', color:'var(--text-sub)'}}>
+              Fixos + média {forecastData.months} {forecastData.months === 1 ? 'mês' : 'meses'}
+            </span>
+          </div>
+          <div className="grid grid-cols-3 gap-3">
+            {[[30, 'Em 30 dias'], [60, 'Em 60 dias'], [90, 'Em 90 dias']].map(function(cfg) {
+              var p = forecastData.points.find(function(pt) { return pt.days === cfg[0]; });
+              var neg = p && p.balance < 0;
+              return (
+                <div key={cfg[0]} className="rounded-xl px-3 py-3" style={{background: neg ? 'rgba(239,68,68,0.06)' : 'var(--bg-subtle)'}}>
+                  <p className="text-[11px] font-medium" style={{color:'var(--text-sub)'}}>{cfg[1]} · saldo previsto</p>
+                  <p className={'text-base font-bold tabular mt-0.5 ' + (neg ? '' : 'text-green-600')} style={{color: neg ? 'var(--danger)' : 'var(--success)'}}>
+                    {p ? fmt(p.balance) : '—'}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+          {forecastData.alerts.length > 0 && (
+            <div className="mt-3 rounded-xl px-3.5 py-2.5 flex items-center gap-2" style={{background:'rgba(239,68,68,0.08)'}}>
+              <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="var(--danger)" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+              <p className="text-xs font-medium" style={{color:'var(--danger)'}}>
+                Atençao: saldo projetado negativo em {forecastData.alerts.map(function(a) { return a.days; }).join(' e ')} dias. Reveja os proximos gastos fixos.
+              </p>
+            </div>
+          )}
+          <p className="text-[11px] mt-3" style={{color:'var(--text-muted)'}}>
+            Estimativa baseada nos seus gastos fixos e na media dos ultimos {forecastData.months} meses. Atualiza automaticamente conforme novas transacoes.
+          </p>
         </section>
       )}
 

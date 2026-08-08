@@ -76,7 +76,7 @@ var AppRoutes = React.memo(function AppRoutes() {
       case 'report':
         return <ReportView tx={tx} brand={brand} toast={toast} onNav={onNav} planInfo={planInfo} onRefresh={onRefresh}/>;
       default:
-        return <Dashboard tx={tx} products={products} brand={brand} onNav={onNav} planInfo={planInfo} lossesCount={losses.length} onUpgrade={onUpgradePlano} loading={dataLoading}/>;
+        return <Dashboard tx={tx} products={products} brand={brand} onNav={onNav} planInfo={planInfo} lossesCount={losses.length} onUpgrade={onUpgradePlano} loading={dataLoading} uid={uid}/>;
     }
   }, [currentPath, tx, products, losses, addTx, editTx, deleteTx, addGenerated, addProduct, editProduct, deleteProduct, addLoss, editLoss, deleteLoss, adjustStock, onDeductStock, brand, planInfo, onNav, toast, confirm, uid, session, isAdmin, dataLoading, saveBrand, savePhone, noop, onUpgradePlano, onRefresh]);
 
