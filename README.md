@@ -322,81 +322,68 @@ flowchart LR
 
 ### Tabelas
 
-```mermaid
-erDiagram
-    company_profiles ||--|| auth_users : "user_id"
-    transactions }o--|| company_profiles : "user_id"
-    products }o--|| company_profiles : "user_id"
-    losses }o--|| company_profiles : "user_id"
-    user_roles ||--|| auth_users : "user_id"
+| Tabela | Coluna | Tipo | Chave/Notas |
+|--------|--------|------|-------------|
+| **company_profiles** | user_id | uuid | PK, FK → auth.users |
+| | name | text | |
+| | logo | text | |
+| | logo_url | text | |
+| | color | text | Cor primária |
+| | color_secondary | text | Cor secundária |
+| | color_accent | text | Cor de destaque |
+| | theme | text | light/dark |
+| | white_label | boolean | |
+| | niche | text | Nicho do negócio |
+| | phone | text | |
+| | plan | text | free/pro/premium |
+| | plan_expires_at | timestamptz | |
+| | plan_activated_by | text | |
+| | custom_prices | jsonb | |
+| | custom_palette | boolean | |
+| | visual_version | integer | Versionamento visual |
+| | brand_config | jsonb | Configuração completa da marca |
+| | stripe_customer_id | text | |
+| | created_at | timestamptz | |
+| | updated_at | timestamptz | |
+| **transactions** | id | uuid | PK |
+| | user_id | uuid | FK → company_profiles |
+| | type | text | income/expense |
+| | description | text | |
+| | amount | numeric | |
+| | date | text | ISO date |
+| | method | text | pix/card/cash/etc |
+| | category | text | |
+| | items | jsonb | Itens da venda |
+| | registered_by | text | |
+| | updated_at | text | |
+| **products** | id | uuid | PK |
+| | user_id | uuid | FK → company_profiles |
+| | name | text | |
+| | category | text | |
+| | price | numeric | Preço de venda |
+| | cost | numeric | Custo |
+| | stock | integer | Quantidade em estoque |
+| | registered_by | text | |
+| | created_at | text | |
+| | updated_at | text | |
+| **losses** | id | uuid | PK |
+| | user_id | uuid | FK → company_profiles |
+| | description | text | |
+| | qty | integer | Quantidade perdida |
+| | reason | text | Motivo |
+| | date | text | ISO date |
+| | registered_by | text | |
+| | updated_at | text | |
+| **user_roles** | user_id | uuid | PK, FK → auth.users |
+| | role | text | admin/user |
 
-    company_profiles {
-        uuid user_id PK
-        text name
-        text logo
-        text logo_url
-        text color
-        text color_secondary
-        text color_accent
-        text theme
-        boolean white_label
-        text niche
-        text phone
-        text plan
-        timestamptz plan_expires_at
-        text plan_activated_by
-        jsonb custom_prices
-        boolean custom_palette
-        integer visual_version
-        jsonb brand_config
-        text stripe_customer_id
-        timestamptz created_at
-        timestamptz updated_at
-    }
+### Relacionamentos
 
-    transactions {
-        uuid id PK
-        uuid user_id FK
-        text type
-        text description
-        numeric amount
-        text date
-        text method
-        text category
-        jsonb items
-        text registered_by
-        text updated_at
-    }
-
-    products {
-        uuid id PK
-        uuid user_id FK
-        text name
-        text category
-        numeric price
-        numeric cost
-        integer stock
-        text registered_by
-        text created_at
-        text updated_at
-    }
-
-    losses {
-        uuid id PK
-        uuid user_id FK
-        text description
-        integer qty
-        text reason
-        text date
-        text registered_by
-        text updated_at
-    }
-
-    user_roles {
-        uuid user_id PK
-        text role
-    }
-```
+- `company_profiles.user_id` → `auth.users.id` (1:1)
+- `transactions.user_id` → `company_profiles.user_id` (N:1)
+- `products.user_id` → `company_profiles.user_id` (N:1)
+- `losses.user_id` → `company_profiles.user_id` (N:1)
+- `user_roles.user_id` → `auth.users.id` (1:1)
 
 ### Funções RPC (SECURITY DEFINER)
 
