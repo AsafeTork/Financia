@@ -1,0 +1,34 @@
+- generic [ref=e512]:
+  - generic [ref=e513]:
+    - paragraph [ref=e517]: Financia
+    - generic [ref=e518]:
+      - paragraph [ref=e519]: O controle do seu negócio começa aqui.
+      - generic [ref=e520]:
+        - generic [ref=e521]: Vendas, despesas e estoque num app só
+        - generic [ref=e526]: Funciona offline, sincroniza sozinho
+        - generic [ref=e531]: Relatórios que mostram o seu lucro
+    - paragraph [ref=e536]: Gestão financeira para pequenos negócios
+  - generic [ref=e538]:
+    - tablist [ref=e539]:
+      - tab "Entrar" [selected] [ref=e540] [cursor=pointer]
+      - tab "Criar conta" [ref=e541] [cursor=pointer]
+    - generic [ref=e542]:
+      - heading "Bem-vindo de volta" [level=2] [ref=e543]
+      - button "Entrar com Google" [ref=e544] [cursor=pointer]:
+        - text: Entrar com Google
+        - generic [ref=e550]: Recomendado
+      - generic [ref=e551]:
+        - button "Entrar com passkey (biometria, PIN ou chave de segurança)" [ref=e552] [cursor=pointer]:
+          - generic [ref=e555]: Entrar com passkey
+        - paragraph [ref=e556]: Usar biometria, PIN ou chave de segurança. Tem senha? Entre com e-mail e senha abaixo.
+      - generic [ref=e557]: ou
+      - generic [ref=e561]:
+        - generic [ref=e562]: E-mail
+        - textbox "E-mail" [ref=e564]:
+          - /placeholder: seu@email.com
+      - generic [ref=e566]:
+        - generic [ref=e567]: Senha
+        - textbox "Senha" [ref=e569]:
+          - /placeholder: Sua senha
+      - button "Esqueceu a senha?" [ref=e570] [cursor=pointer]
+      - button "Entrar" [ref=e571] [cursor=pointer]

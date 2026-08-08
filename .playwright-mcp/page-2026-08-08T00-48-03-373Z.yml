@@ -1,0 +1,49 @@
+- generic [ref=f7e1]:
+  - generic [ref=f7e3]:
+    - generic [ref=f7e4]:
+      - generic [ref=f7e6]:
+        - generic [ref=f7e7]: Carregando
+        - progressbar [ref=f7e8]
+      - main [ref=f7e15]:
+        - generic [ref=f7e16]:
+          - generic [ref=f7e17]: Fazer Login com o Google
+          - generic [ref=f7e23]:
+            - heading "Faça login" [level=1] [ref=f7e24]
+            - generic [ref=f7e26]:
+              - text: Prosseguir para
+              - button "kxeqhorxhlgwcgywovqr.supabase.co" [ref=f7e27] [cursor=pointer]
+        - generic [ref=f7e30]:
+          - generic [ref=f7e35]:
+            - generic [ref=f7e40]:
+              - textbox "E-mail ou telefone" [active] [ref=f7e41]
+              - generic: E-mail ou telefone
+            - button "Esqueceu o e-mail?" [ref=f7e45] [cursor=pointer]
+          - generic [ref=f7e48]:
+            - text: Consulte a
+            - link "Política de Privacidade" [ref=f7e49] [cursor=pointer]:
+              - /url: https://financiabr.me/#privacidade
+            - text: e os
+            - link "Termos de Serviço" [ref=f7e50] [cursor=pointer]:
+              - /url: https://financiabr.me/#termos
+            - text: do app kxeqhorxhlgwcgywovqr.supabase.co antes de usá-lo.
+        - generic [ref=f7e52]:
+          - button "Avançar" [ref=f7e56]
+          - button "Criar conta" [ref=f7e64]
+    - contentinfo [ref=f7e71]:
+      - combobox "Alterar idioma Português (Brasil)" [ref=f7e75] [cursor=pointer]:
+        - generic: Português (Brasil)
+      - list [ref=f7e77]:
+        - listitem [ref=f7e78]:
+          - link "Abrir a Central de Ajuda da Conta do Google (link externo, abre em uma nova janela)" [ref=f7e79] [cursor=pointer]:
+            - /url: https://support.google.com/accounts?hl=pt-BR&p=account_iph
+            - text: Ajuda
+        - listitem [ref=f7e80]:
+          - link "Política de Privacidade (link externo, abre em uma nova janela)" [ref=f7e81] [cursor=pointer]:
+            - /url: https://accounts.google.com/TOS?loc=BR&hl=pt-BR&privacy=true
+            - text: Privacidade
+        - listitem [ref=f7e82]:
+          - link "Termos de Serviço do Google (link externo, abre em uma nova janela)" [ref=f7e83] [cursor=pointer]:
+            - /url: https://accounts.google.com/TOS?loc=BR&hl=pt-BR
+            - text: Termos
+  - iframe [ref=f7e84]:
+    
