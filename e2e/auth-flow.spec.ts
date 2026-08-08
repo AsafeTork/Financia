@@ -59,13 +59,14 @@ test.describe('Auth Flow', () => {
     }
 
     // Click the submit button (Entrar) in the login form
-    const submitBtn = page.locator('button:has-text("Entrar")').last(); // Last one is the submit button in the form
+    // Use type="submit" to specifically target the form submit button, not the tab or Google/passkey buttons
+    const submitBtn = page.locator('form button[type="submit"]:has-text("Entrar")');
     if (!(await submitBtn.isVisible().catch(() => false))) {
       test.skip('Login form submit button not found');
     }
 
     await submitBtn.click();
-    // Wait for validation errors to appear
+    // Wait for validation errors to appear - use expect.poll for more resilient waiting
     await expect(page.locator('input[aria-invalid="true"]').first()).toBeVisible({ timeout: 10000 });
     await expect(page.getByText('Campo obrigatório').first()).toBeVisible({ timeout: 10000 });
   });

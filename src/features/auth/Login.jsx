@@ -318,7 +318,7 @@ export default function Login({ brand, onNav }) {
                 </label>
               )}
 
-              <button disabled={loading || (mode === 'signup' && !accept)} className="w-full rounded-xl py-3.5 text-sm font-semibold flex items-center justify-center gap-2 disabled:opacity-50 transition hover:opacity-90" style={{ background: brandColor, color: onBrand }}>
+              <button type="submit" disabled={loading || (mode === 'signup' && !accept)} className="w-full rounded-xl py-3.5 text-sm font-semibold flex items-center justify-center gap-2 disabled:opacity-50 transition hover:opacity-90" style={{ background: brandColor, color: onBrand }}>
                 {loading ? <Spin white={lightOnBrand} /> : (mode === 'login' ? 'Entrar' : 'Criar conta grátis')}
               </button>
             </form>
