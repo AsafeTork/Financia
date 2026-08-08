@@ -14,6 +14,7 @@ import { fmt, isValidUrl } from '../../lib/utils.js';
 import { triggerApkBuild } from '../../lib/sync.js';
 import ColorField from '../../shared/ui/ColorField.jsx';
 import WebAuthn from '../auth/WebAuthn.jsx';
+import MfaSection from '../auth/MfaSection.jsx';
 
 export default React.memo(function SettingsView({ brand, session, planInfo, onSave, onSavePhone, toast, confirm, isAdmin, onNav }) {
   var hasWhiteLabel = !!(brand && brand.white_label);
@@ -271,6 +272,16 @@ export default React.memo(function SettingsView({ brand, session, planInfo, onSa
             {session && (
               <div className="mt-3">
                 <WebAuthn mode="register" brand={brand} session={session} />
+              </div>
+            )}
+          </div>
+
+          <div className="pt-1">
+            <p className="text-xs font-semibold uppercase tracking-wide" style={{color:'var(--text-muted)'}}>Verificação em duas etapas (2FA)</p>
+            <p className="text-xs mt-1" style={{color:'var(--text-sub)'}}>Adicione uma camada extra de proteção com um app autenticador. Nenhuma ferramenta adicional é necessária.</p>
+            {session && (
+              <div className="mt-3">
+                <MfaSection brand={brand} session={session} />
               </div>
             )}
           </div>
