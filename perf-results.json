@@ -1,0 +1,1380 @@
+{
+  "results": {
+    "Dashboard": {
+      "label": "Dashboard",
+      "url": "https://financiabr.me",
+      "navigationTiming": {
+        "navigation": 434,
+        "domContentLoaded": 1236,
+        "load": 1236
+      },
+      "paintTiming": {
+        "firstPaint": 720,
+        "firstContentfulPaint": 2040
+      },
+      "buttonMetrics": [
+        {
+          "index": 0,
+          "text": "Recursos",
+          "clickToPaint": 123,
+          "clickToNetworkIdle": null,
+          "triggeredNavigation": false,
+          "selector": "BUTTON"
+        },
+        {
+          "index": 1,
+          "text": "Planos",
+          "clickToPaint": 166,
+          "clickToNetworkIdle": null,
+          "triggeredNavigation": false,
+          "selector": "BUTTON"
+        },
+        {
+          "index": 2,
+          "text": "FAQ",
+          "clickToPaint": 64,
+          "clickToNetworkIdle": null,
+          "triggeredNavigation": false,
+          "selector": "BUTTON"
+        },
+        {
+          "index": 3,
+          "text": "Entrar",
+          "clickToPaint": 119,
+          "clickToNetworkIdle": null,
+          "triggeredNavigation": false,
+          "selector": "BUTTON"
+        },
+        {
+          "index": 4,
+          "text": "Criar conta gratis",
+          "clickToPaint": 245,
+          "clickToNetworkIdle": null,
+          "triggeredNavigation": false,
+          "selector": "BUTTON"
+        },
+        {
+          "index": 5,
+          "text": "Entrar",
+          "clickToPaint": 184,
+          "clickToNetworkIdle": null,
+          "triggeredNavigation": false,
+          "selector": "BUTTON"
+        }
+      ],
+      "longTasks": [
+        {
+          "duration": 68,
+          "startTime": 1693.5
+        }
+      ],
+      "memory": {
+        "usedJSHeapSize": 10000000,
+        "totalJSHeapSize": 11200000,
+        "jsHeapSizeMB": "9.5MB"
+      },
+      "resources": [
+        {
+          "name": "index-BLGISeiQ.js",
+          "type": "JS",
+          "size": 51187,
+          "duration": 291
+        },
+        {
+          "name": "react-vendor-T_Lx32QZ.js",
+          "type": "JS",
+          "size": 57961,
+          "duration": 514
+        },
+        {
+          "name": "vendor-misc-CQCezr6G.js",
+          "type": "JS",
+          "size": 9299,
+          "duration": 485
+        },
+        {
+          "name": "supabase-vendor-CFsYy0hX.js",
+          "type": "JS",
+          "size": 51602,
+          "duration": 717
+        },
+        {
+          "name": "dexie-vendor-C7inUCdH.js",
+          "type": "JS",
+          "size": 31517,
+          "duration": 710
+        },
+        {
+          "name": "ui-vendor-CY273ang.js",
+          "type": "JS",
+          "size": 10364,
+          "duration": 675
+        },
+        {
+          "name": "query-vendor-7Kz42CQm.js",
+          "type": "JS",
+          "size": 8489,
+          "duration": 576
+        },
+        {
+          "name": "index-BIP6msm6.css",
+          "type": "CSS",
+          "size": 12940,
+          "duration": 689
+        },
+        {
+          "name": "Landing-ZWI9bi38.js",
+          "type": "JS",
+          "size": 8010,
+          "duration": 286
+        },
+        {
+          "name": "sync.worker-CxRHVs4o.js",
+          "type": "other",
+          "size": 86162,
+          "duration": 21
+        }
+      ],
+      "largestResources": [
+        {
+          "name": "sync.worker-CxRHVs4o.js",
+          "size": 86162
+        },
+        {
+          "name": "react-vendor-T_Lx32QZ.js",
+          "size": 57961
+        },
+        {
+          "name": "supabase-vendor-CFsYy0hX.js",
+          "size": 51602
+        },
+        {
+          "name": "index-BLGISeiQ.js",
+          "size": 51187
+        },
+        {
+          "name": "dexie-vendor-C7inUCdH.js",
+          "size": 31517
+        }
+      ],
+      "totalJSBytes": 228429,
+      "lcp": 2040,
+      "score": "FAST (<1s)"
+    },
+    "Income": {
+      "label": "Income",
+      "url": "https://financiabr.me/income",
+      "navigationTiming": {
+        "navigation": 250,
+        "domContentLoaded": 702,
+        "load": 702
+      },
+      "paintTiming": {
+        "firstPaint": 356,
+        "firstContentfulPaint": 1392
+      },
+      "buttonMetrics": [
+        {
+          "index": 0,
+          "text": "Recursos",
+          "clickToPaint": 91,
+          "clickToNetworkIdle": null,
+          "triggeredNavigation": false,
+          "selector": "BUTTON"
+        },
+        {
+          "index": 1,
+          "text": "Planos",
+          "clickToPaint": 63,
+          "clickToNetworkIdle": null,
+          "triggeredNavigation": false,
+          "selector": "BUTTON"
+        },
+        {
+          "index": 2,
+          "text": "FAQ",
+          "clickToPaint": 105,
+          "clickToNetworkIdle": null,
+          "triggeredNavigation": false,
+          "selector": "BUTTON"
+        },
+        {
+          "index": 3,
+          "text": "Entrar",
+          "clickToPaint": 67,
+          "clickToNetworkIdle": null,
+          "triggeredNavigation": false,
+          "selector": "BUTTON"
+        },
+        {
+          "index": 4,
+          "text": "Criar conta gratis",
+          "clickToPaint": 104,
+          "clickToNetworkIdle": null,
+          "triggeredNavigation": false,
+          "selector": "BUTTON"
+        },
+        {
+          "index": 5,
+          "text": "Entrar",
+          "clickToPaint": 107,
+          "clickToNetworkIdle": null,
+          "triggeredNavigation": false,
+          "selector": "BUTTON"
+        }
+      ],
+      "longTasks": [
+        {
+          "duration": 73,
+          "startTime": 1058
+        }
+      ],
+      "memory": {
+        "usedJSHeapSize": 10000000,
+        "totalJSHeapSize": 11200000,
+        "jsHeapSizeMB": "9.5MB"
+      },
+      "resources": [
+        {
+          "name": "index-BLGISeiQ.js",
+          "type": "JS",
+          "size": 300,
+          "duration": 253
+        },
+        {
+          "name": "react-vendor-T_Lx32QZ.js",
+          "type": "JS",
+          "size": 300,
+          "duration": 248
+        },
+        {
+          "name": "vendor-misc-CQCezr6G.js",
+          "type": "JS",
+          "size": 300,
+          "duration": 261
+        },
+        {
+          "name": "supabase-vendor-CFsYy0hX.js",
+          "type": "JS",
+          "size": 300,
+          "duration": 348
+        },
+        {
+          "name": "dexie-vendor-C7inUCdH.js",
+          "type": "JS",
+          "size": 300,
+          "duration": 256
+        },
+        {
+          "name": "ui-vendor-CY273ang.js",
+          "type": "JS",
+          "size": 300,
+          "duration": 249
+        },
+        {
+          "name": "query-vendor-7Kz42CQm.js",
+          "type": "JS",
+          "size": 300,
+          "duration": 252
+        },
+        {
+          "name": "index-BIP6msm6.css",
+          "type": "CSS",
+          "size": 300,
+          "duration": 266
+        },
+        {
+          "name": "Landing-ZWI9bi38.js",
+          "type": "JS",
+          "size": 300,
+          "duration": 246
+        },
+        {
+          "name": "sync.worker-CxRHVs4o.js",
+          "type": "other",
+          "size": 300,
+          "duration": -5
+        }
+      ],
+      "largestResources": [
+        {
+          "name": "index-BLGISeiQ.js",
+          "size": 300
+        },
+        {
+          "name": "react-vendor-T_Lx32QZ.js",
+          "size": 300
+        },
+        {
+          "name": "vendor-misc-CQCezr6G.js",
+          "size": 300
+        },
+        {
+          "name": "supabase-vendor-CFsYy0hX.js",
+          "size": 300
+        },
+        {
+          "name": "dexie-vendor-C7inUCdH.js",
+          "size": 300
+        }
+      ],
+      "totalJSBytes": 2400,
+      "lcp": 1392,
+      "score": "FAST (<1s)"
+    },
+    "Expense": {
+      "label": "Expense",
+      "url": "https://financiabr.me/expense",
+      "navigationTiming": {
+        "navigation": 253,
+        "domContentLoaded": 653,
+        "load": 653
+      },
+      "paintTiming": {
+        "firstPaint": 312,
+        "firstContentfulPaint": 1360
+      },
+      "buttonMetrics": [
+        {
+          "index": 0,
+          "text": "Recursos",
+          "clickToPaint": 112,
+          "clickToNetworkIdle": null,
+          "triggeredNavigation": false,
+          "selector": "BUTTON"
+        },
+        {
+          "index": 1,
+          "text": "Planos",
+          "clickToPaint": 83,
+          "clickToNetworkIdle": null,
+          "triggeredNavigation": false,
+          "selector": "BUTTON"
+        },
+        {
+          "index": 2,
+          "text": "FAQ",
+          "clickToPaint": 85,
+          "clickToNetworkIdle": null,
+          "triggeredNavigation": false,
+          "selector": "BUTTON"
+        },
+        {
+          "index": 3,
+          "text": "Entrar",
+          "clickToPaint": 131,
+          "clickToNetworkIdle": null,
+          "triggeredNavigation": false,
+          "selector": "BUTTON"
+        },
+        {
+          "index": 4,
+          "text": "Esqueceu a senha?",
+          "clickToPaint": 129,
+          "clickToNetworkIdle": null,
+          "triggeredNavigation": false,
+          "selector": "BUTTON"
+        }
+      ],
+      "longTasks": [
+        {
+          "duration": 111,
+          "startTime": 972.8999999985099
+        }
+      ],
+      "memory": {
+        "usedJSHeapSize": 10000000,
+        "totalJSHeapSize": 11200000,
+        "jsHeapSizeMB": "9.5MB"
+      },
+      "resources": [
+        {
+          "name": "index-BLGISeiQ.js",
+          "type": "JS",
+          "size": 300,
+          "duration": 244
+        },
+        {
+          "name": "react-vendor-T_Lx32QZ.js",
+          "type": "JS",
+          "size": 300,
+          "duration": 357
+        },
+        {
+          "name": "vendor-misc-CQCezr6G.js",
+          "type": "JS",
+          "size": 300,
+          "duration": 246
+        },
+        {
+          "name": "supabase-vendor-CFsYy0hX.js",
+          "type": "JS",
+          "size": 300,
+          "duration": 249
+        },
+        {
+          "name": "dexie-vendor-C7inUCdH.js",
+          "type": "JS",
+          "size": 300,
+          "duration": 267
+        },
+        {
+          "name": "ui-vendor-CY273ang.js",
+          "type": "JS",
+          "size": 300,
+          "duration": 252
+        },
+        {
+          "name": "query-vendor-7Kz42CQm.js",
+          "type": "JS",
+          "size": 300,
+          "duration": 257
+        },
+        {
+          "name": "index-BIP6msm6.css",
+          "type": "CSS",
+          "size": 300,
+          "duration": 260
+        },
+        {
+          "name": "Landing-ZWI9bi38.js",
+          "type": "JS",
+          "size": 300,
+          "duration": 241
+        },
+        {
+          "name": "sync.worker-CxRHVs4o.js",
+          "type": "other",
+          "size": 300,
+          "duration": 3
+        }
+      ],
+      "largestResources": [
+        {
+          "name": "index-BLGISeiQ.js",
+          "size": 300
+        },
+        {
+          "name": "react-vendor-T_Lx32QZ.js",
+          "size": 300
+        },
+        {
+          "name": "vendor-misc-CQCezr6G.js",
+          "size": 300
+        },
+        {
+          "name": "supabase-vendor-CFsYy0hX.js",
+          "size": 300
+        },
+        {
+          "name": "dexie-vendor-C7inUCdH.js",
+          "size": 300
+        }
+      ],
+      "totalJSBytes": 2400,
+      "lcp": 1360,
+      "score": "FAST (<1s)"
+    },
+    "Inventory": {
+      "label": "Inventory",
+      "url": "https://financiabr.me/inventory",
+      "navigationTiming": {
+        "navigation": 243,
+        "domContentLoaded": 632,
+        "load": 639
+      },
+      "paintTiming": {
+        "firstPaint": 352,
+        "firstContentfulPaint": 1228
+      },
+      "buttonMetrics": [
+        {
+          "index": 0,
+          "text": "Recursos",
+          "clickToPaint": 158,
+          "clickToNetworkIdle": null,
+          "triggeredNavigation": false,
+          "selector": "BUTTON"
+        },
+        {
+          "index": 1,
+          "text": "Planos",
+          "clickToPaint": 73,
+          "clickToNetworkIdle": null,
+          "triggeredNavigation": false,
+          "selector": "BUTTON"
+        },
+        {
+          "index": 2,
+          "text": "FAQ",
+          "clickToPaint": 83,
+          "clickToNetworkIdle": null,
+          "triggeredNavigation": false,
+          "selector": "BUTTON"
+        },
+        {
+          "index": 3,
+          "text": "Entrar",
+          "clickToPaint": 90,
+          "clickToNetworkIdle": null,
+          "triggeredNavigation": false,
+          "selector": "BUTTON"
+        },
+        {
+          "index": 4,
+          "text": "Criar conta gratis",
+          "clickToPaint": 181,
+          "clickToNetworkIdle": null,
+          "triggeredNavigation": false,
+          "selector": "BUTTON"
+        },
+        {
+          "index": 5,
+          "text": "Entrar",
+          "clickToPaint": 109,
+          "clickToNetworkIdle": null,
+          "triggeredNavigation": false,
+          "selector": "BUTTON"
+        }
+      ],
+      "longTasks": [],
+      "memory": {
+        "usedJSHeapSize": 10000000,
+        "totalJSHeapSize": 11200000,
+        "jsHeapSizeMB": "9.5MB"
+      },
+      "resources": [
+        {
+          "name": "index-BLGISeiQ.js",
+          "type": "JS",
+          "size": 177080,
+          "duration": 16
+        },
+        {
+          "name": "react-vendor-T_Lx32QZ.js",
+          "type": "JS",
+          "size": 174406,
+          "duration": 45
+        },
+        {
+          "name": "vendor-misc-CQCezr6G.js",
+          "type": "JS",
+          "size": 28990,
+          "duration": 48
+        },
+        {
+          "name": "supabase-vendor-CFsYy0hX.js",
+          "type": "JS",
+          "size": 204790,
+          "duration": 48
+        },
+        {
+          "name": "dexie-vendor-C7inUCdH.js",
+          "type": "JS",
+          "size": 95161,
+          "duration": 46
+        },
+        {
+          "name": "ui-vendor-CY273ang.js",
+          "type": "JS",
+          "size": 32136,
+          "duration": 44
+        },
+        {
+          "name": "query-vendor-7Kz42CQm.js",
+          "type": "JS",
+          "size": 26670,
+          "duration": 44
+        },
+        {
+          "name": "index-BIP6msm6.css",
+          "type": "CSS",
+          "size": 60764,
+          "duration": 43
+        },
+        {
+          "name": "Landing-ZWI9bi38.js",
+          "type": "JS",
+          "size": 33103,
+          "duration": 9
+        },
+        {
+          "name": "sync.worker-CxRHVs4o.js",
+          "type": "other",
+          "size": 0,
+          "duration": -68
+        }
+      ],
+      "largestResources": [
+        {
+          "name": "supabase-vendor-CFsYy0hX.js",
+          "size": 204790
+        },
+        {
+          "name": "index-BLGISeiQ.js",
+          "size": 177080
+        },
+        {
+          "name": "react-vendor-T_Lx32QZ.js",
+          "size": 174406
+        },
+        {
+          "name": "dexie-vendor-C7inUCdH.js",
+          "size": 95161
+        },
+        {
+          "name": "index-BIP6msm6.css",
+          "size": 60764
+        }
+      ],
+      "totalJSBytes": 772336,
+      "lcp": null,
+      "score": "FAST (<1s)"
+    },
+    "Email": {
+      "label": "Email",
+      "url": "https://financiabr.me/email",
+      "navigationTiming": {
+        "navigation": 8,
+        "domContentLoaded": 157,
+        "load": 158
+      },
+      "paintTiming": {
+        "firstPaint": 252,
+        "firstContentfulPaint": 584
+      },
+      "buttonMetrics": [
+        {
+          "index": 0,
+          "text": "Recursos",
+          "clickToPaint": 82,
+          "clickToNetworkIdle": null,
+          "triggeredNavigation": false,
+          "selector": "BUTTON"
+        },
+        {
+          "index": 1,
+          "text": "Planos",
+          "clickToPaint": 63,
+          "clickToNetworkIdle": null,
+          "triggeredNavigation": false,
+          "selector": "BUTTON"
+        },
+        {
+          "index": 2,
+          "text": "FAQ",
+          "clickToPaint": 66,
+          "clickToNetworkIdle": null,
+          "triggeredNavigation": false,
+          "selector": "BUTTON"
+        },
+        {
+          "index": 3,
+          "text": "Entrar",
+          "clickToPaint": 101,
+          "clickToNetworkIdle": null,
+          "triggeredNavigation": false,
+          "selector": "BUTTON"
+        },
+        {
+          "index": 4,
+          "text": "Criar conta gratis",
+          "clickToPaint": 139,
+          "clickToNetworkIdle": null,
+          "triggeredNavigation": false,
+          "selector": "BUTTON"
+        },
+        {
+          "index": 5,
+          "text": "Entrar",
+          "clickToPaint": 74,
+          "clickToNetworkIdle": null,
+          "triggeredNavigation": false,
+          "selector": "BUTTON"
+        }
+      ],
+      "longTasks": [
+        {
+          "duration": 70,
+          "startTime": 259.29999999701977
+        }
+      ],
+      "memory": {
+        "usedJSHeapSize": 10000000,
+        "totalJSHeapSize": 11200000,
+        "jsHeapSizeMB": "9.5MB"
+      },
+      "resources": [
+        {
+          "name": "index-BLGISeiQ.js",
+          "type": "JS",
+          "size": 177080,
+          "duration": 20
+        },
+        {
+          "name": "react-vendor-T_Lx32QZ.js",
+          "type": "JS",
+          "size": 174406,
+          "duration": 25
+        },
+        {
+          "name": "vendor-misc-CQCezr6G.js",
+          "type": "JS",
+          "size": 28990,
+          "duration": 25
+        },
+        {
+          "name": "supabase-vendor-CFsYy0hX.js",
+          "type": "JS",
+          "size": 204790,
+          "duration": 40
+        },
+        {
+          "name": "dexie-vendor-C7inUCdH.js",
+          "type": "JS",
+          "size": 95161,
+          "duration": 40
+        },
+        {
+          "name": "ui-vendor-CY273ang.js",
+          "type": "JS",
+          "size": 32136,
+          "duration": 43
+        },
+        {
+          "name": "query-vendor-7Kz42CQm.js",
+          "type": "JS",
+          "size": 26670,
+          "duration": 42
+        },
+        {
+          "name": "index-BIP6msm6.css",
+          "type": "CSS",
+          "size": 60764,
+          "duration": 37
+        },
+        {
+          "name": "Landing-ZWI9bi38.js",
+          "type": "JS",
+          "size": 33103,
+          "duration": 9
+        },
+        {
+          "name": "sync.worker-CxRHVs4o.js",
+          "type": "other",
+          "size": 0,
+          "duration": -35
+        }
+      ],
+      "largestResources": [
+        {
+          "name": "supabase-vendor-CFsYy0hX.js",
+          "size": 204790
+        },
+        {
+          "name": "index-BLGISeiQ.js",
+          "size": 177080
+        },
+        {
+          "name": "react-vendor-T_Lx32QZ.js",
+          "size": 174406
+        },
+        {
+          "name": "dexie-vendor-C7inUCdH.js",
+          "size": 95161
+        },
+        {
+          "name": "index-BIP6msm6.css",
+          "size": 60764
+        }
+      ],
+      "totalJSBytes": 772336,
+      "lcp": 584,
+      "score": "FAST (<1s)"
+    },
+    "Report": {
+      "label": "Report",
+      "url": "https://financiabr.me/report",
+      "navigationTiming": {
+        "navigation": 9,
+        "domContentLoaded": 158,
+        "load": 158
+      },
+      "paintTiming": {
+        "firstPaint": 140,
+        "firstContentfulPaint": 536
+      },
+      "buttonMetrics": [
+        {
+          "index": 0,
+          "text": "Recursos",
+          "clickToPaint": 121,
+          "clickToNetworkIdle": null,
+          "triggeredNavigation": false,
+          "selector": "BUTTON"
+        },
+        {
+          "index": 1,
+          "text": "Planos",
+          "clickToPaint": 59,
+          "clickToNetworkIdle": null,
+          "triggeredNavigation": false,
+          "selector": "BUTTON"
+        },
+        {
+          "index": 2,
+          "text": "FAQ",
+          "clickToPaint": 89,
+          "clickToNetworkIdle": null,
+          "triggeredNavigation": false,
+          "selector": "BUTTON"
+        },
+        {
+          "index": 3,
+          "text": "Entrar",
+          "clickToPaint": 138,
+          "clickToNetworkIdle": null,
+          "triggeredNavigation": false,
+          "selector": "BUTTON"
+        },
+        {
+          "index": 4,
+          "text": "Esqueceu a senha?",
+          "clickToPaint": 132,
+          "clickToNetworkIdle": null,
+          "triggeredNavigation": false,
+          "selector": "BUTTON"
+        }
+      ],
+      "longTasks": [],
+      "memory": {
+        "usedJSHeapSize": 10000000,
+        "totalJSHeapSize": 11200000,
+        "jsHeapSizeMB": "9.5MB"
+      },
+      "resources": [
+        {
+          "name": "index-BLGISeiQ.js",
+          "type": "JS",
+          "size": 177080,
+          "duration": 6
+        },
+        {
+          "name": "react-vendor-T_Lx32QZ.js",
+          "type": "JS",
+          "size": 174406,
+          "duration": 29
+        },
+        {
+          "name": "vendor-misc-CQCezr6G.js",
+          "type": "JS",
+          "size": 28990,
+          "duration": 38
+        },
+        {
+          "name": "supabase-vendor-CFsYy0hX.js",
+          "type": "JS",
+          "size": 204790,
+          "duration": 41
+        },
+        {
+          "name": "dexie-vendor-C7inUCdH.js",
+          "type": "JS",
+          "size": 95161,
+          "duration": 41
+        },
+        {
+          "name": "ui-vendor-CY273ang.js",
+          "type": "JS",
+          "size": 32136,
+          "duration": 41
+        },
+        {
+          "name": "query-vendor-7Kz42CQm.js",
+          "type": "JS",
+          "size": 26670,
+          "duration": 87
+        },
+        {
+          "name": "index-BIP6msm6.css",
+          "type": "CSS",
+          "size": 60764,
+          "duration": 40
+        },
+        {
+          "name": "Landing-ZWI9bi38.js",
+          "type": "JS",
+          "size": 33103,
+          "duration": 6
+        },
+        {
+          "name": "sync.worker-CxRHVs4o.js",
+          "type": "other",
+          "size": 0,
+          "duration": -28
+        }
+      ],
+      "largestResources": [
+        {
+          "name": "supabase-vendor-CFsYy0hX.js",
+          "size": 204790
+        },
+        {
+          "name": "index-BLGISeiQ.js",
+          "size": 177080
+        },
+        {
+          "name": "react-vendor-T_Lx32QZ.js",
+          "size": 174406
+        },
+        {
+          "name": "dexie-vendor-C7inUCdH.js",
+          "size": 95161
+        },
+        {
+          "name": "index-BIP6msm6.css",
+          "size": 60764
+        }
+      ],
+      "totalJSBytes": 772336,
+      "lcp": 536,
+      "score": "FAST (<1s)"
+    },
+    "Settings": {
+      "label": "Settings",
+      "url": "https://financiabr.me/settings",
+      "navigationTiming": {
+        "navigation": 9,
+        "domContentLoaded": 190,
+        "load": 190
+      },
+      "paintTiming": {
+        "firstPaint": 124,
+        "firstContentfulPaint": 672
+      },
+      "buttonMetrics": [
+        {
+          "index": 0,
+          "text": "Recursos",
+          "clickToPaint": 94,
+          "clickToNetworkIdle": null,
+          "triggeredNavigation": false,
+          "selector": "BUTTON"
+        },
+        {
+          "index": 1,
+          "text": "Planos",
+          "clickToPaint": 88,
+          "clickToNetworkIdle": null,
+          "triggeredNavigation": false,
+          "selector": "BUTTON"
+        },
+        {
+          "index": 3,
+          "text": "Entrar",
+          "clickToPaint": 186,
+          "clickToNetworkIdle": null,
+          "triggeredNavigation": false,
+          "selector": "BUTTON"
+        },
+        {
+          "index": 4,
+          "text": "Esqueceu a senha?",
+          "clickToPaint": 76,
+          "clickToNetworkIdle": null,
+          "triggeredNavigation": false,
+          "selector": "BUTTON"
+        }
+      ],
+      "longTasks": [
+        {
+          "duration": 80,
+          "startTime": 335.69999999925494
+        }
+      ],
+      "memory": {
+        "usedJSHeapSize": 10000000,
+        "totalJSHeapSize": 11200000,
+        "jsHeapSizeMB": "9.5MB"
+      },
+      "resources": [
+        {
+          "name": "index-BLGISeiQ.js",
+          "type": "JS",
+          "size": 177080,
+          "duration": 27
+        },
+        {
+          "name": "react-vendor-T_Lx32QZ.js",
+          "type": "JS",
+          "size": 174406,
+          "duration": 25
+        },
+        {
+          "name": "vendor-misc-CQCezr6G.js",
+          "type": "JS",
+          "size": 28990,
+          "duration": 40
+        },
+        {
+          "name": "supabase-vendor-CFsYy0hX.js",
+          "type": "JS",
+          "size": 204790,
+          "duration": 50
+        },
+        {
+          "name": "dexie-vendor-C7inUCdH.js",
+          "type": "JS",
+          "size": 95161,
+          "duration": 48
+        },
+        {
+          "name": "ui-vendor-CY273ang.js",
+          "type": "JS",
+          "size": 32136,
+          "duration": 46
+        },
+        {
+          "name": "query-vendor-7Kz42CQm.js",
+          "type": "JS",
+          "size": 26670,
+          "duration": 47
+        },
+        {
+          "name": "index-BIP6msm6.css",
+          "type": "CSS",
+          "size": 60764,
+          "duration": 44
+        },
+        {
+          "name": "Landing-ZWI9bi38.js",
+          "type": "JS",
+          "size": 33103,
+          "duration": 11
+        },
+        {
+          "name": "sync.worker-CxRHVs4o.js",
+          "type": "other",
+          "size": 0,
+          "duration": -29
+        }
+      ],
+      "largestResources": [
+        {
+          "name": "supabase-vendor-CFsYy0hX.js",
+          "size": 204790
+        },
+        {
+          "name": "index-BLGISeiQ.js",
+          "size": 177080
+        },
+        {
+          "name": "react-vendor-T_Lx32QZ.js",
+          "size": 174406
+        },
+        {
+          "name": "dexie-vendor-C7inUCdH.js",
+          "size": 95161
+        },
+        {
+          "name": "index-BIP6msm6.css",
+          "size": 60764
+        }
+      ],
+      "totalJSBytes": 772336,
+      "lcp": 672,
+      "score": "FAST (<1s)"
+    },
+    "Planos": {
+      "label": "Planos",
+      "url": "https://financiabr.me/planos",
+      "navigationTiming": {
+        "navigation": 9,
+        "domContentLoaded": 176,
+        "load": 176
+      },
+      "paintTiming": {
+        "firstPaint": 172,
+        "firstContentfulPaint": 644
+      },
+      "buttonMetrics": [
+        {
+          "index": 0,
+          "text": "Recursos",
+          "clickToPaint": 61,
+          "clickToNetworkIdle": null,
+          "triggeredNavigation": false,
+          "selector": "BUTTON"
+        },
+        {
+          "index": 2,
+          "text": "FAQ",
+          "clickToPaint": 67,
+          "clickToNetworkIdle": null,
+          "triggeredNavigation": false,
+          "selector": "BUTTON"
+        },
+        {
+          "index": 3,
+          "text": "Entrar",
+          "clickToPaint": 171,
+          "clickToNetworkIdle": null,
+          "triggeredNavigation": false,
+          "selector": "BUTTON"
+        },
+        {
+          "index": 4,
+          "text": "Esqueceu a senha?",
+          "clickToPaint": 55,
+          "clickToNetworkIdle": null,
+          "triggeredNavigation": false,
+          "selector": "BUTTON"
+        }
+      ],
+      "longTasks": [
+        {
+          "duration": 61,
+          "startTime": 299.9000000022352
+        }
+      ],
+      "memory": {
+        "usedJSHeapSize": 10000000,
+        "totalJSHeapSize": 11200000,
+        "jsHeapSizeMB": "9.5MB"
+      },
+      "resources": [
+        {
+          "name": "index-BLGISeiQ.js",
+          "type": "JS",
+          "size": 177080,
+          "duration": 35
+        },
+        {
+          "name": "react-vendor-T_Lx32QZ.js",
+          "type": "JS",
+          "size": 174406,
+          "duration": 38
+        },
+        {
+          "name": "vendor-misc-CQCezr6G.js",
+          "type": "JS",
+          "size": 28990,
+          "duration": 37
+        },
+        {
+          "name": "supabase-vendor-CFsYy0hX.js",
+          "type": "JS",
+          "size": 204790,
+          "duration": 51
+        },
+        {
+          "name": "dexie-vendor-C7inUCdH.js",
+          "type": "JS",
+          "size": 95161,
+          "duration": 51
+        },
+        {
+          "name": "ui-vendor-CY273ang.js",
+          "type": "JS",
+          "size": 32136,
+          "duration": 51
+        },
+        {
+          "name": "query-vendor-7Kz42CQm.js",
+          "type": "JS",
+          "size": 26670,
+          "duration": 51
+        },
+        {
+          "name": "index-BIP6msm6.css",
+          "type": "CSS",
+          "size": 60764,
+          "duration": 50
+        },
+        {
+          "name": "Landing-ZWI9bi38.js",
+          "type": "JS",
+          "size": 33103,
+          "duration": 8
+        },
+        {
+          "name": "sync.worker-CxRHVs4o.js",
+          "type": "other",
+          "size": 0,
+          "duration": -20
+        }
+      ],
+      "largestResources": [
+        {
+          "name": "supabase-vendor-CFsYy0hX.js",
+          "size": 204790
+        },
+        {
+          "name": "index-BLGISeiQ.js",
+          "size": 177080
+        },
+        {
+          "name": "react-vendor-T_Lx32QZ.js",
+          "size": 174406
+        },
+        {
+          "name": "dexie-vendor-C7inUCdH.js",
+          "size": 95161
+        },
+        {
+          "name": "index-BIP6msm6.css",
+          "size": 60764
+        }
+      ],
+      "totalJSBytes": 772336,
+      "lcp": 644,
+      "score": "FAST (<1s)"
+    },
+    "Brand Studio": {
+      "label": "Brand Studio",
+      "url": "https://financiabr.me/brandstudio",
+      "navigationTiming": {
+        "navigation": 13,
+        "domContentLoaded": 179,
+        "load": 179
+      },
+      "paintTiming": {
+        "firstPaint": 148,
+        "firstContentfulPaint": 636
+      },
+      "buttonMetrics": [
+        {
+          "index": 0,
+          "text": "Recursos",
+          "clickToPaint": 89,
+          "clickToNetworkIdle": null,
+          "triggeredNavigation": false,
+          "selector": "BUTTON"
+        },
+        {
+          "index": 1,
+          "text": "Planos",
+          "clickToPaint": 112,
+          "clickToNetworkIdle": null,
+          "triggeredNavigation": false,
+          "selector": "BUTTON"
+        },
+        {
+          "index": 3,
+          "text": "Entrar",
+          "clickToPaint": 97,
+          "clickToNetworkIdle": null,
+          "triggeredNavigation": false,
+          "selector": "BUTTON"
+        },
+        {
+          "index": 4,
+          "text": "Esqueceu a senha?",
+          "clickToPaint": 134,
+          "clickToNetworkIdle": null,
+          "triggeredNavigation": false,
+          "selector": "BUTTON"
+        }
+      ],
+      "longTasks": [
+        {
+          "duration": 75,
+          "startTime": 328.80000000074506
+        }
+      ],
+      "memory": {
+        "usedJSHeapSize": 10000000,
+        "totalJSHeapSize": 11200000,
+        "jsHeapSizeMB": "9.5MB"
+      },
+      "resources": [
+        {
+          "name": "index-BLGISeiQ.js",
+          "type": "JS",
+          "size": 177080,
+          "duration": 26
+        },
+        {
+          "name": "react-vendor-T_Lx32QZ.js",
+          "type": "JS",
+          "size": 174406,
+          "duration": 46
+        },
+        {
+          "name": "vendor-misc-CQCezr6G.js",
+          "type": "JS",
+          "size": 28990,
+          "duration": 45
+        },
+        {
+          "name": "supabase-vendor-CFsYy0hX.js",
+          "type": "JS",
+          "size": 204790,
+          "duration": 44
+        },
+        {
+          "name": "dexie-vendor-C7inUCdH.js",
+          "type": "JS",
+          "size": 95161,
+          "duration": 44
+        },
+        {
+          "name": "ui-vendor-CY273ang.js",
+          "type": "JS",
+          "size": 32136,
+          "duration": 44
+        },
+        {
+          "name": "query-vendor-7Kz42CQm.js",
+          "type": "JS",
+          "size": 26670,
+          "duration": 66
+        },
+        {
+          "name": "index-BIP6msm6.css",
+          "type": "CSS",
+          "size": 60764,
+          "duration": 65
+        },
+        {
+          "name": "Landing-ZWI9bi38.js",
+          "type": "JS",
+          "size": 33103,
+          "duration": 14
+        },
+        {
+          "name": "sync.worker-CxRHVs4o.js",
+          "type": "other",
+          "size": 0,
+          "duration": -44
+        }
+      ],
+      "largestResources": [
+        {
+          "name": "supabase-vendor-CFsYy0hX.js",
+          "size": 204790
+        },
+        {
+          "name": "index-BLGISeiQ.js",
+          "size": 177080
+        },
+        {
+          "name": "react-vendor-T_Lx32QZ.js",
+          "size": 174406
+        },
+        {
+          "name": "dexie-vendor-C7inUCdH.js",
+          "size": 95161
+        },
+        {
+          "name": "index-BIP6msm6.css",
+          "size": 60764
+        }
+      ],
+      "totalJSBytes": 772336,
+      "lcp": 636,
+      "score": "FAST (<1s)"
+    }
+  },
+  "generatedAt": "2026-08-08T19:22:39.544Z"
+}
