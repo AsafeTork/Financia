@@ -3,7 +3,7 @@
 > **Fonte única de estado.** Leia antes de começar qualquer tarefa; atualize ao concluir.
 > Regras de trabalho: `../AGENTS.md` · Manual operacional: `AGENT_GUIDE.md` ·
 > Decisões arquiteturais: `DECISIONS.md`
-> Última reconciliação com a realidade: **2026-08-07**
+> Última reconciliação com a realidade: **2026-08-08**
 
 ──────────────────────────────────────
 
@@ -24,6 +24,8 @@
 ──────────────────────────────────────
 
 ## 2. Concluído Recentemente
+
+- **E2E auth-flow estável no CI** (2026-08-08): teste "login form shows validation errors on empty submit" falhava 3 runs seguidos — `button:has-text("Entrar")` casava 4 botões (tab, Google, passkey, submit) e o submit não tinha `type` explícito. Fix: `type="submit"` explícito no botão (Login.jsx) + locator `form button[type="submit"]` no teste. CI 100% verde (`48abfdb`). Cleanup: `playwright-report/` e `test-results/` deixaram de ser trackeados no git.
 
 - **Agent monitor contínuo de CI + fix race no CI_REPORT** (2026-08-07): falha recorrente do job `extract-errors` — CI ficava VERMELHO com testes verde porque múltiplos runs CI do main rodam em paralelo (`cancel-in-progress: false`) e todos competiam para commitar/pushar `CI_REPORT.md` no mesmo commit, estourando conflito de rebase. Fix: step "Commit CI_REPORT.md" usa `git pull --rebase -X theirs` com fallback `git rebase --abort; exit 0` (auto-resolve para upstream e aborta em vez de falhar o pipeline). Novo `scripts/ci-monitor.sh` monitora falhas de CI (detecta runs `failure`, lista jobs e expõe comando de diagnóstico + auto-fix headless); cron `*/15 * * * *` instalado no host. Commit `e3173b2` — CI 16/16 jobs verde (`31195788858`).
 
@@ -118,4 +120,4 @@ Let me re-read the file; my edits may have created an odd overlap.
 | GitHub #94 | Issue de tracking do mapeamento multi-agente | https://github.com/AsafeTork/Financia/issues/94 |
 | CEO_PROMPT | Prompt do CEO Técnico (indexado no ctx) | `ctx_search source:financia-CEO-PROMPT` |
 
-Última atualização: **2026-08-07** (P0 completo + P1 completo + P2 completo + P3 completo + Issues #91-95 resolvidos)
+Última atualização: **2026-08-08** (P0 completo + P1 completo + P2 completo + P3 completo + Issues #91-95 resolvidos)
