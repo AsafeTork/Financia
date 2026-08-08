@@ -73,7 +73,7 @@ test.describe('Auth Flow', () => {
     await expect(page.getByText('Campo obrigatório').first()).toBeVisible({ timeout: 10000 });
   });
 
-  test('authenticated user sees dashboard via storageState', async ({ page, browser }) => {
+  test('authenticated user sees dashboard via storageState', async ({ browser }) => {
     if (!storageState) {
       test.skip('No storageState.json — run auth once to generate');
     }

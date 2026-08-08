@@ -134,8 +134,9 @@ export default function App() {
   if (n.isLegal) return <FeatureErrorBoundary featureName="Legal"><LazyPage fallback={<Loader/>}>{n.path === 'privacidade' ? <PrivacyPolicy onNav={n.navTo}/> : <TermsOfService onNav={n.navTo}/>}</LazyPage></FeatureErrorBoundary>;
   if (n.isLanding) return <FeatureErrorBoundary featureName="Landing"><LazyPage fallback={<Loader/>}><Landing brand={s.brand} onEnter={function() { n.navTo(''); s.setShowLogin(true); }} onNav={n.navTo}/></LazyPage></FeatureErrorBoundary>;
   if (!s.session) {
+    if (s.showLogin) return <Login brand={s.brand} onNav={n.navTo}/>;
     const seen = !!localStorage.getItem('financia_seen');
-    if (!seen && !s.showLogin) return <FeatureErrorBoundary featureName="Landing"><LazyPage fallback={<Loader/>}><Landing brand={s.brand} onEnter={function() { s.setShowLogin(true); }} onNav={n.navTo}/></LazyPage></FeatureErrorBoundary>;
+    if (!seen) return <FeatureErrorBoundary featureName="Landing"><LazyPage fallback={<Loader/>}><Landing brand={s.brand} onEnter={function() { s.setShowLogin(true); }} onNav={n.navTo}/></LazyPage></FeatureErrorBoundary>;
     return <Login brand={s.brand} onNav={n.navTo}/>;
   }
   if (s.dataLoading) return <Loader text="Carregando seus dados..."/>;

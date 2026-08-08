@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Inp, Spin } from '../../shared/ui/ui.jsx';
 import { signIn, sendPasswordReset, signUp, signInWithGoogle } from '../../lib/auth.js';
 import { isWebAuthnSupported } from '../../lib/auth.js';
@@ -42,6 +42,10 @@ export default function Login({ brand, onNav }) {
   var emailRef = useRef(null);
   var suNameRef = useRef(null);
   var resetEmailRef = useRef(null);
+
+  var handleWebAuthnSuccess = useCallback(function() {
+    // auth state change → app re-render via onAuthStateChange
+  }, []);
 
   useEffect(function() {
     if (err) {
@@ -247,13 +251,13 @@ export default function Login({ brand, onNav }) {
 
            <GoogleBtn onClick={doGoogle} loading={loading} label={mode === 'login' ? 'Entrar com Google' : 'Cadastrar com Google'} />
 
-           {mode === 'login' && isWebAuthnSupported() && (
-             <WebAuthn
-               mode="login"
-               brand={brand}
-               onSuccess={function() { /* auth state change → app re-render via onAuthStateChange */ }}
-             />
-           )}
+{mode === 'login' && isWebAuthnSupported() && (
+              <WebAuthn
+                mode="login"
+                brand={brand}
+                onSuccess={handleWebAuthnSuccess}
+              />
+            )}
 
            <div className="flex items-center gap-3 my-1">
                 <div className="flex-1 h-px" style={{ background: '#e8e4db' }} />
