@@ -10,8 +10,8 @@ frente: App UI interno (pós-login)
 agente_data: 2026-08-08
 buscas_web: 11            # websearch (inglês + pt-BR, 2025-2026)
 urls_fetched: 6           # webfetch executado (ver §7)
-repo_arquivos_lidos: 12   # 10 src/ + TEMPLATE.md + README.md (ver §8)
-doc_linhas: 327
+repo_arquivos_lidos: 14   # 12 src/ + TEMPLATE.md + README.md (ver §8)
+doc_linhas: 353
 skills_usadas: frontend-craft (guia industrial-brutalist-ui.md p/ dados densos — adotados só o que casa com o design system)
 ```
 
@@ -33,20 +33,29 @@ skills_usadas: frontend-craft (guia industrial-brutalist-ui.md p/ dados densos �
 
 #### Dashboard (`src/features/dashboard/Dashboard.jsx`)
 - **Opções de crescimento** período: select com `Mês atual 3/6/12m` (`Dashboard.jsx:21-27`). Acessível via `aria-label="Periodo"`, `min-h-[44px]`.
-- **Empty state onboarding** com progresso (card "Bem-vindo ao Financia", 4 passos, `Dashboard.jsx:108-146`) — **passos estão todos com `done=false`** (linha 14: `var done = false;` fixa, sem estado) — perceptível como "mock gorado": barra sempre 0% e nenhum checkmark. P0.
+- **Empty state onboarding** com progresso (card "Bem-vindo ao Financia", 4 passos, `Dashboard.jsx:108-146`) — **passos estão todos com `done=false`** (linha 130: `var done = false;` fixa, sem estado) — perceptível como "mock gorado": barra sempre 0% e nenhum checkmark. P0.
 - **Empty state KPIs educativos** (`Dashboard:173-197`): 4 cards com ícone SVG inline, lab/dodada; bom. Mas **`done`/preenchimento não existe**.
 - **KPIs numéricos**: `KpiCard` headline (Resultado Líquido, font 28, `heading=h2`, destaque `brandAlpha`, `Dashboard:197-232`) com variação vs período anterior e pills `+%`/`-`%. 
-  - Problema: pill de variação usa **`rgba(21,128,61,0.08)` — hex rgba hardcoded** no `UsageBar.jsx:51-53`, não é o token `--success`/`--danger` com alpha; **quebra D007** (cores via var). P1.
+  - Problema: pill de variação usa **`rgba(21,128,61,0.08)` — hex rgba hardcoded** no `UsageBar.jsx:62`, não é o token `--success`/`--danger` com alpha; **quebra D007** (cores via var). P1.
 - **Previsão de caixa** (`Dashboard:234-269`): 3 colunas (30/60/90 dias) + alerta de saldo negativo + rodapé explicativo. Boa a11y (`aria-label="Previsão de fluxo de caixa"`).
   - Usa **`text-green-600` classe Tailwind hardcoded** em vez de token `--success` (`Dashboard:250`) e `text-amber-*` hardcoded no Estoque baixo (`Dashboard:148-170`). P1 (D007).
 - **Gráfico 7 dias**: `BarChartSVG` (`Dashboard:309` → `UsageBar.jsx:78-135`) com `sr-only` `<table>` equivalente (excelente a11y, `UsageBar.jsx:122-131`), `aria-label` e `<desc>`.
 - **Movimentações recentes** (`Dashboard:335-362`): lista com ícone de tipo, valor `tabular`, hover `hover:bg-[var(--bg-subtle)]`. **`hover:bg-[var(--bg-subtle)]` é classe arbitrária Tailwind que referencia var — ok, mas inconsistente com `card-hover`** usado em KPIs (contrato). P2.
 
 #### Transações (`src/shared/ui/TransactionCard.jsx`)
-- Linha (`remove_key`): ícone de accion, desc, metadados, valor `+/-`. Formato `tabular` (`:36, :48, :185`), group header (`:106-114`).
+- Linha (`remove_key`): ícone de accion, desc, metadados, valor `+/-`. Formato `tabular` (`:185`), group header (`:221-236`).
 - **`EmptyTransactionState`** (`:238-289`): ícone em card 16×16, título, descrição, chips de características (tilling feature list), CTA. Bem montado, reaproveitável p/ dashboard também. 👍
 - **Edit inline** (`:40-123`): inputs `min-h-[var(--touch-target-min)]`; **falta `aria-label` nos selects/date e o `input type="number"` sem `inputMode="decimal"`** (teclado mobile vira numérico). P1.
-- **Swipe actions** (`TransactionCard:13-18` + hook `useSwipeActions`): duplicar/excluir (esquerda), editar (direita). Ação de fundo usa **`opacity` como único indicador** — acessível? O pool button `Excluir` é `aria-label`pela linha principal? Ausência de `role`/label dedicada nas ações reveladas por swipe → P2 a11y.
+- **Swipe actions** (`TransactionCard:29-34` + hook `useSwipeActions`): duplicar/excluir (esquerda), editar (direita). Ação de fundo usa **`opacity` como único indicador** (`:140`) — sem `aria-label` dedicado nas ações reveladas por swipe (os botões de ação inline `:188-211` têm `aria-label`, mas os do swipe background não) → P2 a11y.
+
+#### Transações lista (`src/features/transactions/TxView.jsx`, 470 linhas)
+- **`accentColor` hardcoded fallback `#ef4444`** em dois lugares (`:19` accentColor, `:20` accentBg `rgba(239,68,68,0.06)`) — usar token `--danger`. P1 (D007).
+- **`#2563eb` azul hardcoded** em 4 locais: sugestão de categorias Btn (`:223`), Modal title color (`:375`), Modal accent (`:387`), "Aplicar" Btn (`:396`). Não há token semântico para "AI/sugestão". P2.
+- **Empty state duplicado inline** (`:267-303`): reimplementa quase tudo de `EmptyTransactionState` (TransactionCard) em vez de reutilizar → drift visual. P2 (consistência).
+- **Sticky date header já implementado** (`:319-332`): `role="heading" aria-level="2"`, `sr-only` prefix, `position: sticky top-0` — ✅ a11y bom. Derivado do `scrollTop` real via `headerTops` pré-computado.
+- **Virtualized list** (`@tanstack/react-virtual`, `:108-112`) com `role="list"` (`:333`) + `role="listitem"` em cada item/header (`:338,347`) — ✅ a11y.
+- **`useTransition` no filtro** (`:30,32-34,245-252`) — `startTransition` evita jank no teclado. ✅
+- **`inputMode` correto**: `NumInp` já envia `inputMode="decimal"` (`:80` em ui.jsx). Mas o `<input type="number">` inline no `TransactionCard` edit mode (`:69-76`) **não** tem `inputMode`. P1.
 
 #### Relatórios (`ReportView.jsx`)
 - **Empty state rico** (`ReportView:80-132`): gráfico fictício `opacity-30`, lista de funcionalidades com check ✓. 👍 Muito bom.
@@ -64,11 +73,21 @@ skills_usadas: frontend-craft (guia industrial-brutalist-ui.md p/ dados densos �
 #### BottomNav (`BottomNav.jsx`)
 - `role="tablist"`, indicador de aba ativa (topo `w-8 h-0.5` na cor brand), `aria-selected`, `aria-current`, safe-area bottom padding. **Sólido**. P3 apenas detail: ícone `strokeWidth` ativo 2.4 vs 1.8 — transitório de peso inconsistente.
 
+#### Configurações (`src/features/settings/SettingsView.jsx`, 488 linhas)
+- **Tabs com a11y completa** (`:213-234`): `role="tablist"` + `role="tab"` + `aria-selected` + `aria-controls`. ✅
+- **Hardcoded Tailwind tab classes** (`:229`): `text-gray-900`/`text-gray-400`/`hover:text-gray-600` — P2.
+- **`#16a34a` hardcoded** WhatsApp (`:297`) e subscription badge (`:318`) → `var(--success)`. P1.
+- **`rgba(245,158,11,0.12)`/`rgba(59,191,160,0.12)`** no badge bg (`:317`). P1.
+- **`#e8f0f7`/`#1a6b5c`** fallbacks ColorField (`:420-421`). P2.
+- **WebAuthn (passkey) e MfaSection (TOTP)** já implementados (`:274, :284`). ✅
+- **PhoneInput sem `aria-label`** (`:290`) — P1 a11y.
+
 #### Command Palette ⌘K (`CommandPalette.jsx`)
 - Bons: keyboard nav (ArrowUp/Down/Enter), Escape, `role="listbox"/option`, `aria-selected`, scrollIntoView.
-- **Problema P1**: `selectedIndex` destaca com **classes Tailwind gray/blue fixed + sobrescritas `background: color-mix(...var(--brand) 8%...)`** (`CommandPalette:75, 88-94`) — Contradição: a cor real vem de `style` mas as classes `bg-blue-50 dark:bg-blue-900/30` ficam no DOM. **Telehaste de theme de marca NÃO usa o token brand** — no light mode, o seleto só é visível pela overline `style`; o `bg-gray-50` "hover" é cinza hardcoded. P1: uniformizar fundo com `brandAlpha`/CSS var e remoção das classes azul hardcoded.
-- Kbd `⌘K` (linha 79) ok.
-- Falta `aria-activedescendant` do input range (P2 a11y premium).
+  - **Problema P1**: `selectedIndex` destaca com **classes Tailwind gray/blue fixed + sobreposição `background: color-mix(...var(--brand) 8%...)`** (`CommandPalette:110-114`) — Contradição: a cor real vem de `style` (`:114`) mas as classes `bg-blue-50 dark:bg-blue-900/30` ficam no DOM (`:110`); `hover:bg-gray-50 dark:hover:bg-gray-800` (`:111`) é cinza hardcoded. **Telehastra de theme de marca NÃO usa o token brand** — no light mode, o seleto só é visível pela overline `style`; o `bg-gray-50` "hover" é cinza hardcoded. P1: uniformizar fundo com `brandAlpha`/CSS var e remoção das classes azul/gray hardcoded.
+- `focus:ring-2 focus:ring-blue-500` hardcoded no input (`:89`) em vez de `focus:ring-[var(--brand)]`; `bg-gray-50 dark:bg-gray-800` bg no input (`:89`). P1.
+- Kbd `⌘K` (`:92`) ok.
+- Falta `aria-activedescendant` do input (P2 a11y premium).
 
 #### Base `ui.jsx` (deprecado mas usado)
 - `Card` (`ui.jsx:22-33`) — `overflow-hidden` (corta sombra em KPI). P2.
@@ -80,7 +99,7 @@ skills_usadas: frontend-craft (guia industrial-brutalist-ui.md p/ dados densos �
 ### 1.3 Lacunas transversais (o que está ausente)
 
 1. **Sem `aria-sort`/`aria-sort` em listas/tabelas com ordenação** (ReportView não tem sorting; TxView?) — não encontrei sort por cabeçalho (o filtro é por período). P2.
-2. **Sem empty state padrão sendo uma só variante** — existem **3 implementações paralelas**: `Empty` (ui.jsx), `EmptyTransactionState` (TransactionCard), empty inline do dashboard/report. **Consolidar para evitar drift visual** (P1 de consistência).
+2. **Sem empty state padrão sendo uma só variante** — existem **4 implementações paralelas**: `Empty` (ui.jsx:141), `EmptyTransactionState` (TransactionCard:238), empty inline do dashboard (Dashboard:291-307), empty inline do TxView (TxView:267-303) e empty do ReportView (ReportView:80-132). **Consolidar para evitar drift visual** (P1 de consistência). Target: migração para `<EmptyState>` cobrindo todas as telas, incluindo TxView.
 3. **Sem skeleton por card específico** — apenas `PageSkeleton` genérico. Ao carregar forecast, o card some e reaparece (Dashboard `forecastData` null → hidden). P2.
 4. **Sem indicador de "última sincronização" dentro do dashboard** (só dot no Header `Header:9`). Padrão Stripe = trust signal perto dos números (benchmark §2). P2 (mas sem API até onde já existe `syncStatus`).
 5. **Estados de feedback pós-ação**: Toasts existem (`Toast.jsx`); falta indicador de sucesso inline (ex. "Salvo" no inline edit). P2.
@@ -111,13 +130,13 @@ skills_usadas: frontend-craft (guia industrial-brutalist-ui.md p/ dados densos �
 | Prioridade | Oportunidade | Arquivo(s) alvo | Impacto (percep/perf/conv) | Esforço | Risco |
 |-----------|--------------|-----------------|---------------------------|---------|-------|
 | P0 | Converter `<div>` de onboarding (dashboard) em componente reutilizável não hardcoded: `done` mapeia de verdade para dados do usuário (produtos/vendas cadastradas) | `Dashboard.jsx:108-124` | percep: progresso real = confiança | baixo | baixo |
-| P0 | Unificar empty states em um componente `<EmptyState icon/title/desc/action/ressed>` com SVG inline, reutilizar em Dashboard + ReportView + TxView (hoje 3 variantes) | `ui.jsx:141` `TransactionCard.jsx:238` `ReportView.jsx:104` | percep & manutenção | baixo | baixo |
-| P1 | Remediar hex hardcoded remanescentes → usar tokens semânticos: `rgba(21,128,61,0.08)` (KpiCard), `#ef4444` (ReportView), `text-green-600` (Dashboard previsão), `text-amber-*` (estoque) | `UsageBar.jsx:51`, `ReportView.jsx:191`, `Dashboard.jsx:250`, `Dashboard.jsx:161-208` | D007 compliance + contraste | baixo | baixo |
-| P1 | Comand palette: remover classes bg-blue hardcoded, usar `background: color-mix(var(--brand) …)` + var `--bg-subtle`; manter keyboard nav | `CommandPalette.jsx:88-94` | coerência com brand dinâmica (white label) | baixo | baixo |
+| P0 | Unificar empty states em um componente `<EmptyState icon/title/desc/action/ressed>` com SVG inline, reutilizar em Dashboard + TxView + ReportView + TransactionCard (hoje 4 variantes) | `ui.jsx:141` `TransactionCard.jsx:238` `TxView.jsx:267` `ReportView.jsx:80` | percep & manutenção | baixo | baixo |
+| P1 | Remediar hex/rgba hardcoded remanescentes → usar tokens semânticos: `rgba(21,128,61,0.08)` (KpiCard pill), `#ef4444` (ReportView/TxView fallback), `text-green-600` (Dashboard previsão), `text-amber-*` (Dashboard estoque), `rgba(245,158,11,0.10)` (Dashboard estoque bg), `rgba(239,68,68,0.06/0.08)` (Dashboard ForecastCard alert), `rgba(59,191,160,0.06)` (Dashboard onboarding step), `#16a34a` (SettingsView WhatsApp), `#d97706/#16a34a` (SettingsView sub status), `#2563eb` (TxView AI sugestão) | `UsageBar.jsx:62`, `ReportView.jsx:75-76,191,219,228,237`, `TxView.jsx:19-20,223,375,387,396`, `Dashboard.jsx:132,149,248,250,258`, `Dashboard.jsx:148-169`, `SettingsView.jsx:297,317-318,420-421` | D007 compliance + contraste | baixo | baixo |
+| P1 | Comand palette: remover classes bg-blue/gray hardcoded, usar `background: color-mix(var(--brand) …)` + var `--bg-subtle`; manter keyboard nav | `CommandPalette.jsx:89,110-111` | coerência com brand dinâmica (white label) | baixo | baixo |
 | P1 | Skeleton da aplicação: adicionar `PageSkeleton` com `aria-busy="true"` na raiz de dashboard ao carregar (hoje sem role), e skeleton da forecast card antes da data | `ui.jsx:275` e Componentes de Dashboard | acessibilidade de carregamento | baixo | baixo |
 | P2 | Adicionar sticky header de grupo na tabela do ReportView (total do mês cola no topo ao scroll) | `ReportView.jsx:200-236` | UX em listas longas | médio | médio |
 | P2 | Indicador de última sincronização dentro do card financiero (usar `syncStatus` já existente) | `Dashboard.jsx:197`+ `useSyncLoop.js` | trust signal (benchmark §2) | médio | baixo |
-| P2 | Ações do swipe ter `aria-label` próprio e parar `opacity` como sinal único; reveal de ações detectável | `TransactionCard.jsx:89-116` | a11y AA (WCAG 2.2) | baixo | baixo |
+| P2 | Ações do swipe ter `aria-label` próprio e parar `opacity` como sinal único; reveal de ações detectável | `TransactionCard.jsx:139-150` | a11y AA (WCAG 2.2) | baixo | baixo |
 
 Critério P0: alto impacto visível + risco baixo + mudança localizada + não quebrar offline/a11y/perf.
 
@@ -136,7 +155,7 @@ Critério P0: alto impacto visível + risco baixo + mudança localizada + não q
 --warning-soft:  rgba(245, 158, 11, 0.10);
 ```
 
-> Se já houver token similar em outro tema (d`themes`), BATER: pesquisar `--success-soft` global antes de criar. Alternativa: usar `color-mix(in srgb, var(--success) 8%, transparent)` (mesmo padrão do CommandPalette linha 92-97) — **sem tokens novos**.
+> Se já houver token similar em outro tema (d`themes`), BATER: pesquisar `--success-soft` global antes de criar. Alternativa: usar `color-mix(in srgb, var(--success) 8%, transparent)` (mesmo padrão do CommandPalette linha 114) — preferir `color-mix` sobre tokens novos onde `var(--brand)` já é o acorde.
 
 ### 4.2 Componente novo: `<EmptyState>` (unifica 3 variantes)
 
@@ -178,15 +197,16 @@ export default React.memo(function EmptyState({ icon, title, desc, cta, onCta, c
 ```
 
 **Migração**:
-- `Dashboard.jsx:223-309` (empty recent + chart empty) → `<EmptyState …/>`.
-- `TransactionCard.jsx:238-261` → reutilizar (manter `EmptyTransactionState` como `wrapper` chamando `<EmptyState>`).
-- `ReportView.jsx:104-128` → `<EmptyState>`.
+  - `Dashboard.jsx:291-308` (chart empty) + `Dashboard.jsx:322-334` (recent empty) → `<EmptyState …/>`.
+  - `TransactionCard.jsx:238-288` → reutilizar (manter `EmptyTransactionState` como `wrapper` chamando `<EmptyState>`).
+  - `TxView.jsx:267-303` (inline empty) → `<EmptyState …/>`.
+  - `ReportView.jsx:80-131` → `<EmptyState …/>`.
 
 > Manter `color: accent` das pill `var(--text-muted)` — contraste já validado.
 
 ### 4.3 Fix onboard progress (P0)
 
-No `Dashboard.jsx` substituir o bloco `var done = false;` (linha 14) por cálculo real reutilizando `products.length/ptx`:
+No `Dashboard.jsx` substituir o bloco `var done = false;` (linha 130) por cálculo real reutilizando `products.length/ptx`:
 
 ```jsx
 var steps = [
@@ -199,11 +219,11 @@ var pct = Math.round(steps.filter(function(s){ return s.done; }).length / steps.
 // barra: width pct%, badge "pct%"
 ```
 
-**Estados**: `done:true` → check azul (é o hardcode atual `var(--success)`), barra `background: brandAlpha(brand.color, 0.12)` → `brand.color`, transição `800ms`.
+**Estados**: `done:true` → check usa `var(--success)` atual; bg do step usa `rgba(59,191,160,0.06)` hardcoded (`:132`) → trocar para `brandAlpha(brand.color, 0.06)` ou `color-mix(in srgb, var(--brand) 6%, transparent)`; barra progresso fill já usa `brand.color` (`:118`); transição `500ms` (`:118`).
 
 ### 4.4 Command palette — contor de cor de marca (P1)
 
-No `CommandPalette.jsx`, remover `bg-blue-50 dark:bg-blue-900/30` (linha 93) e `focus:ring-blue-500` (linha 89); usar tokens:
+No `CommandPalette.jsx`, remover `bg-blue-50 dark:bg-blue-900/30` (linha 110) e `focus:ring-blue-500` + `bg-gray-50 dark:bg-gray-800` (linhas 89, 111); usar tokens:
 
 ```jsx
 // linha do <input>
@@ -249,7 +269,9 @@ style={{ background: 'color-mix(in srgb, var(--brand) 10%, transparent)' }}
 1. `4.2` EmptyState (novo componente, front único) — **primeiro**, pois as frentes usam.
 2. `4.3` Dashboard `done/pct` — local, sem conflito (Dashboard).
 3. `4.4` CommandPalette — arquivo já isolado.
-4. Fix hardcoded hex (D007) — toca várias linhas (Dashboard/TVShared/ReportView). Fazer após os componentes para evitar overwrite.
+4. Fix hardcoded hex/rgba (D007) — toca Dashboard, TxView, ReportView, TransactionCard, SettingsView. Fazer após os componentes para evitar overwrite.
+5. TxView: migrar empty state inline (`:267-303`) para `<EmptyState>`; fix `#ef4444`/`rgba(239,68,68,0.06)`/`#2563eb` → tokens.
+6. SettingsView: migrar `#16a34a`/`rgba(245,158,11,0.12)`/`#e8f0f7`/`#1a6b5c`/`text-gray-*` → tokens; PhoneInput aria-label.
 
 **Validações leves por passo** (máquina fraca do dev):
 - 🟢 `npx eslint src/features/dashboard/Dashboard.jsx src/shared/ui/CommandPalette.jsx` (*frente única lag)
@@ -282,15 +304,17 @@ style={{ background: 'color-mix(in srgb, var(--brand) 10%, transparent)' }}
 | 8 | leitura | `src/features/reports/ReportView.jsx` | kpis, bycat com `#ef4444` hardcoded, sem sticky header |
 | 9 | leitura | `src/index.css` (448) + `src/shared/styles/design-tokens.css` (76) | tokens reais (cor, `--touch-target-min`, motion, focus) |
 | 10 | leitura | `docs/design/TEMPLATE.md` + `docs/design/README.md` + `REFINE_03` | contrato/cabeçalho |
-| 11 | busca | webquery "fintech dashboard ui best practices 2025 2026" | darekit |
-| 12 | busca | "mercury/thermasterly finance dashboard design patterns" | pattern kpi, staging, tabular |
-| 13 | busca | "status chips/skeleton motion reduce/currency input a11y" (3 queries consolidadas) | regras skipper |
-| 14 | fetch | https://www.wildnetedge.com/…fintech-ux-design… | opções de dashboards, examples coins; ctas |
-| 15 | fetch | https://www.themasterly.com/…dashboard-design-guide | money alignment + trust signal (“synced”) + density |
-| 16 | fetch | https://www.pencilandpaper.io/…data-tables | empty/sorting/density/sticky/bulk |
-| 17 | fetch | https://www.stellae.design/en/components/badge | badge semantics, icon+color |
-| 18 | fetch | https://www.modern-framework-accessibility.com/…skeletons | static-skeleton reduced-motion; aria-live |
-| 19 | fetch | https://uxpatterns.dev/patterns/forms/currency-input | input monetário formatado; `inputmode="decimal"` mobile | 
+| 11 | leitura | `src/features/transactions/TxView.jsx` (470) | `#ef4444`/`rgba(239,68,68,0.06)` accent hardcoded; `#2563eb` AI sugestão; empty state duplicado; sticky header + virtualizer role já OK; useTransition; inputMode number faltando no edit inline |
+| 12 | leitura | `src/features/settings/SettingsView.jsx` (488) | hardcoded `#16a34a`/`rgba(245,158,11,0.12)`/`#e8f0f7`/`#1a6b5c`/`text-gray-*`; tabs a11y completa; WebAuthn+MfaSection OK; PhoneInput sem aria-label |
+| 13 | busca | webquery "fintech dashboard ui best practices 2025 2026" | darekit |
+| 14 | busca | "mercury/thermasterly finance dashboard design patterns" | pattern kpi, staging, tabular |
+| 15 | busca | "status chips/skeleton motion reduce/currency input a11y" (3 queries consolidadas) | regras skipper |
+| 16 | fetch | https://www.wildnetedge.com/…fintech-ux-design… | opções de dashboards, examples coins; ctas |
+| 17 | fetch | https://www.themasterly.com/…dashboard-design-guide | money alignment + trust signal ("synced") + density |
+| 18 | fetch | https://www.pencilandpaper.io/…data-tables | empty/sorting/density/sticky/bulk |
+| 19 | fetch | https://www.stellae.design/en/components/badge | badge semantics, icon+color |
+| 20 | fetch | https://www.modern-framework-accessibility.com/…skeletons | static-skeleton reduced-motion; aria-live |
+| 21 | fetch | https://uxpatterns.dev/patterns/forms/currency-input | input monetário formatado; `inputmode="decimal"` mobile | 
 
 ---
 
@@ -316,7 +340,9 @@ style={{ background: 'color-mix(in srgb, var(--brand) 10%, transparent)' }}
 - `src/shared/ui/BottomNav.jsx` (1-47)  
 - `src/features/reports/ReportView.jsx` (1-248)  
 - `src/index.css` (1-200, 201-448 parcial por grep) + `src/shared/styles/design-tokens.css` (1-76)  
-- `docs/design/TEMPLATE.md`, `docs/design/README.md`, `docs/design/REFINE_03_AppUI.md`
+  - `docs/design/TEMPLATE.md`, `docs/design/README.md`, `docs/design/REFINE_03_AppUI.md`
+- `src/features/transactions/TxView.jsx` (1-470)
+- `src/features/settings/SettingsView.jsx` (1-488)
 
 **Other skills**: `frontend-craft/reference/industrial-brutalist-ui.md` (orientação para dados densos) — adotada apenas nas disciplinas de remoção (tabular/densidade/contraste), não em estética de folha.
 
@@ -324,5 +350,5 @@ style={{ background: 'color-mix(in srgb, var(--brand) 10%, transparent)' }}
 
 ## Sobre a entrega
 
-Métricas: buscas=11, urls=6, lidos=12, doc_linhas=327.  
-Top 3 P0: (1) EmptyState unificado + onboard real progress; (2) heal hardcoded hex → tokens; (3) Command palette preserve brand (white-label).
+Métricas: buscas=11, urls=6, lidos=14, doc_linhas=353.
+Top 3 P0: (1) EmptyState unificado + onboard real `done` progress (Dashboard.jsx:130); (2) heal hardcoded hex/rgba → tokens (UsageBar:62, ReportView:191, TxView:19-20, SettingsView:297-318, Dashboard:148-169); (3) CommandPalette preserve brand token (`--brand`/`color-mix` em vez de bg-blue/gray hardcoded, linhas 89/110-111).

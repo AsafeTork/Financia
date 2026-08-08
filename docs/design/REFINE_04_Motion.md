@@ -8,7 +8,7 @@ agente_data: 2026-08-08
 buscas_web: 12 (11 executadas + 1 repetida após rate-limit 429)
 urls_fetched: 5 (ctx_fetch_and_index; acrescidas de 8 fontes lidas via websearch)
 repo_arquivos_lidos: 19
-doc_linhas: 330
+doc_linhas: 462
 skills_usadas: motion-pack (+ reference/motion-design.md lido na íntegra)
 ```
 
@@ -38,7 +38,7 @@ desligado) e guards específicos em `index.css:65-67` (pressable), `:107-109` (t
 `src/animations.css:413-421` (desliga orb/ring/pulse) e `src/animations.css:266-277`
 (`transform: none` no reduced). OK.
 
-### O que está AUSENTE / frágil (achado de leitura real)
+### O que está AUSENTE / frágil (achado de leitura real — verificado contra source)
 
 1. **View Transitions: CSS existe, transição não dispara.** `index.css:317-336` define
    `::view-transition-old(root)` / `::view-transition-new(root)` com keyframes fade+8px e já
@@ -270,11 +270,11 @@ E o "delay 300ms" (não mostrar skeleton antes de 300ms de latência) vai no com
 | 6 | 6) Progress bars (`UsageBar.jsx:26`, `Dashboard:202`, `UpdateBanner`) | value change | largura: **`transform: scaleX(pct)` + `transform-origin:left`** 300ms `--ease-out` (em vez de animar `width`) — compositor | já |
 | 7 | 7) Swipe TransactionCard (TransactionCard.jsx:152) | drag | follow: `transform: translateX(offset)` **sem NAV transition fixa** (do 1:1); ao soltar: `transition: transform .25s var(--ease-in-out)` p/ snap-back | em reduced: não abrir swipe, mostrar botões |
 | 8 | 8) Rota de view (App.jsx:162 + uso de `startViewTransition`) | navTo | VT fade+slide 200/250ms (CSS pronto) | já (`index.css:329-336`) |
-| 9 | 9) KPI headline (Demo | count-up 300ms `--ease-out`, rAF time-based; `aria-hidden` no num + `aria-live=polite` final; **uma faç apenas** | reduce: render direto (sem rAF) |
+| 9 | 9) KPI headline (`UsageBar.jsx:59` em `KpiCard`, Dashboard:199-207) — count-up 300ms `--ease-out`, rAF time-based; `aria-hidden` no num + `aria-live=polite` final; **uma faç apenas** | reduce: render direto (sem rAF) |
 | 10 | 10) Swipe | FAB (QuickActions FAB open) | rotação do ícone `rotate(45deg)` 200ms (já `transition-transform duration-200` QuickActions:76) + card `anim-up` em stagger | já |
 | 11 | 11) Onboarding (Onboarding.jsx:164) | step change | progress bar `transition: transform scaleX .3s var(--ease-out)`, step enter `anim-up` com `key` deremount | já |
 | 12 | 12) Onboarding | Sticky date header TxView (TxView.jsx:319-326) | mostrar/escondido: `opacity`+`translateY` 120ms — manter transform-only para não dar CLS/INP no scroll | já |
-| ⇢ | 13 | BottomNav (BottomNav.jsx:27-32) | item ativo: `scale(1.08)` 200ms + pill `bg` fade 150ms `--ease-out` (master `transition-all`,`140ms`) | já |
+| ⇢ | 13 | BottomNav (BottomNav.jsx:27-32) | ativo: `transition-colors` (Tailwind default 150ms) + `strokeWidth` 1.8→2.4 + bg pill `brandAlpha` + indicador pilar top `w-8 h-0.5`; **sem scale** (grep confirma zero `scale(` em ui/). Label fontSize 11px — sub-12px, mereceria bump p/ AA touch | `transition-colors` já; incluir duration explícita |
 
 12 itens fixos + plus = 13 (ok — tabela com 12+).
 
@@ -401,8 +401,7 @@ time-based, eased, cancel on unmount, arruma Double-Firing strict emode). Skelet
 | 32 | fetch | https://asoasis.tech/articles/…-react-animated-counter-component/ | recipe count-up a11y + hook useCountUp (easing, cancel, strict-mode). |
 | 33 | fetch | https://www.72technologies.com/blog/motion-budget-ui-animation-ratios | tokens exatos (100/180/280/440) , 2:1 ratio; ease-out/in/inOut pragmática. |
 | 34 | fetch | https://www.w3.org/WAI/WCAG22/Techniques/css/C39 | reduced-motion remove transform, keep opacity — design paralelo. |
-| 35 | leitura | `src/animations.css` (grep) | keyfaces anter (fadeUp, scaleIn, stagger) parte de. scroll-reveal utiliza em css; ANIMA countUp (keyframe p/ landing). |
-| 36 | leitura | `src/init/animations?` merge of CSS reduced global + `.anim-*` (see L). | — |
+| 35 | leitura | `src/animations.css` (:210-421) | `anim-fade-up` usa tokens (:213 `var(--dur-slower) var(--ease-spring)`); `countUp` keyframe landing-only (:374-379, `.count-animate` :378); `.scroll-reveal` (:258-269) + reduced guard (:413-421 `opacity:1 !important; transform:none !important`); `.lp-ring` spinSlow 26s linear (:410). |
 
 ---
 
