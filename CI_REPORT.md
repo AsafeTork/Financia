@@ -1,7 +1,7 @@
 # CI Report
 
-**Gerado:** 2026-08-08 13:28 UTC
-**Commit:** `e1d9e4149962204b68027cdac11ded1bd7c4a4af`
+**Gerado:** 2026-08-08 13:58 UTC
+**Commit:** `48abfdb2ef8f46a6d2020f860f5c88a5dfc47cea`
 **Branch:** `main`
 
 ---
@@ -14,7 +14,7 @@
 | Testes Unitarios | nao executado |
 | Testes Integracao | com falhas |
 | Build | com erros |
-| E2E Tests | com falhas |
+| E2E Tests | ok |
 | Auditoria de Producao | ver resultado abaixo |
 | Admin Audit | ver resultado abaixo |
 
@@ -64,13 +64,13 @@ computing gzip size...
 [2mdist/[22m[2massets/[22m[36msupabase-vendor-vwDjcXxQ.js         [39m[1m[2m  0.00 kB[22m[1m[22m[2m │ gzip:  0.02 kB[22m
 [2mdist/[22m[2massets/[22m[36museDebouncedValue-2VSGL6HB.js       [39m[1m[2m  0.21 kB[22m[1m[22m[2m │ gzip:  0.17 kB[22m
 [2mdist/[22m[2massets/[22m[36mDebugBadge-C9B5q9cL.js              [39m[1m[2m  0.83 kB[22m[1m[22m[2m │ gzip:  0.47 kB[22m
-[2mdist/[22m[2massets/[22m[36mlogoUtils-CDYYLb6J.js               [39m[1m[2m  0.88 kB[22m[1m[22m[2m │ gzip:  0.46 kB[22m
+[2mdist/[22m[2massets/[22m[36mlogoUtils-aR_cQwhm.js               [39m[1m[2m  0.88 kB[22m[1m[22m[2m │ gzip:  0.46 kB[22m
 [2mdist/[22m[2massets/[22m[36mvirtual-vendor-DNVO4DF9.js          [39m[1m[2m  1.82 kB[22m[1m[22m[2m │ gzip:  0.92 kB[22m
-[2mdist/[22m[2massets/[22m[36maiClient-BVeiVfVd.js                [39m[1m[2m  2.81 kB[22m[1m[22m[2m │ gzip:  1.48 kB[22m
+[2mdist/[22m[2massets/[22m[36maiClient-Btj1Und3.js                [39m[1m[2m  2.81 kB[22m[1m[22m[2m │ gzip:  1.48 kB[22m
 [2mdist/[22m[2massets/[22m[36mPullToRefreshIndicator-e6BVHaQd.js  [39m[1m[2m  3.16 kB[22m[1m[22m[2m │ gzip:  1.31 kB[22m
 [2mdist/[22m[2massets/[22m[36mexporters-B-p9KxkL.js               [39m[1m[2m  4.25 kB[22m[1m[22m[2m │ gzip:  1.79 kB[22m
-[2mdist/[22m[2massets/[22m[36mEmailView-C7KqpOLO.js               [39m[1m[2m  5.13 kB[22m[1m[22m[2m │ gzip:  2.06 kB[22m
-[2mdist/[22m[2massets/[22m[36mCardPreview-Dz419HK2.js             [39m[1m[2m  6.26 kB[22m[1m[22m
+[2mdist/[22m[2massets/[22m[36mEmailView-DZFr2JwZ.js               [39m[1m[2m  5.13 kB[22m[1m[22m[2m │ gzip:  2.06 kB[22m
+[2mdist/[22m[2massets/[22m[36mCardPreview-CCdWHBbQ.js             [39m[1m[2m  6.26 kB[22m[1m[22m
 ```
 
 ---
@@ -79,42 +79,14 @@ computing gzip size...
 
 | Status |
 |---|
-| com falhas |
+| ok |
 
 ```
 
 Running 26 tests using 4 workers
-°··°°°°°°°°····°°·°°·F·°··
-
-  1) [chromium] › e2e/auth-flow.spec.ts:44:3 › Auth Flow › login form shows validation errors on empty submit 
-
-    Error: expect(locator).toBeVisible() failed
-
-    Locator: locator('input[aria-invalid="true"]').first()
-    Expected: visible
-    Timeout: 10000ms
-    Error: element(s) not found
-
-    Call log:
-      - Expect "toBeVisible" with timeout 10000ms
-      - waiting for locator('input[aria-invalid="true"]').first()
-
-
-      67 |     await submitBtn.click();
-      68 |     // Wait for validation errors to appear
-    > 69 |     await expect(page.locator('input[aria-invalid="true"]').first()).toBeVisible({ timeout: 10000 });
-         |                                                                      ^
-      70 |     await expect(page.getByText('Campo obrigatório').first()).toBeVisible({ timeout: 10000 });
-      71 |   });
-      72 |
-        at /home/runner/work/Financia/Financia/e2e/auth-flow.spec.ts:69:70
-
-    Error Context: test-results/auth-flow-Auth-Flow-login--49015-tion-errors-on-empty-submit-chromium/error-context.md
-
-  1 failed
-    [chromium] › e2e/auth-flow.spec.ts:44:3 › Auth Flow › login form shows validation errors on empty submit 
+°···°°°°°°°°···°°°·°···°··
   14 skipped
-  11 passed (18.2s)
+  12 passed (14.0s)
 
 ```
 
@@ -130,10 +102,10 @@ Running 26 tests using 4 workers
 
 Running 42 tests using 4 workers
 
-[1/42] [chromium] › e2e/deep-sync-conflict.spec.ts:121:3 › Deep Sync Conflict Scenarios › memory leak check after sync broadcast storm
-[2/42] [chromium] › e2e/deep-sync-conflict.spec.ts:94:3 › Deep Sync Conflict Scenarios › sync worker survives unhandled rejection
-[3/42] [chromium] › e2e/deep-sync-conflict.spec.ts:59:3 › Deep Sync Conflict Scenarios › BroadcastChannel handles duplicate messages without errors
-[4/42] [chromium] › e2e/deep-sync-conflict.spec.ts:10:3 › Deep Sync Conflict Scenarios › BroadcastChannel ping/pong survives rapid tab switching
+[1/42] [chromium] › e2e/deep-sync-conflict.spec.ts:10:3 › Deep Sync Conflict Scenarios › BroadcastChannel ping/pong survives rapid tab switching
+[2/42] [chromium] › e2e/deep-sync-conflict.spec.ts:59:3 › Deep Sync Conflict Scenarios › BroadcastChannel handles duplicate messages without errors
+[3/42] [chromium] › e2e/deep-sync-conflict.spec.ts:121:3 › Deep Sync Conflict Scenarios › memory leak check after sync broadcast storm
+[4/42] [chromium] › e2e/deep-sync-conflict.spec.ts:94:3 › Deep Sync Conflict Scenarios › sync worker survives unhandled rejection
 [5/42] [chromium] › e2e/indexeddb-corruption.spec.ts:12:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should recover from corrupted IndexedDB data
 [6/42] [chromium] › e2e/indexeddb-corruption.spec.ts:65:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should handle invalid schema gracefully
 [7/42] [chromium] › e2e/indexeddb-eviction.spec.ts:12:5 › IndexedDB Recovery - Eviction › Eviction Test › should handle storage pressure and persist()
@@ -169,24 +141,14 @@ Running 42 tests using 4 workers
 [21/42] [chromium] › e2e/network-error-handling.spec.ts:48:3 › Network Error Handling Scenarios › app handles intermittent network failures
 [22/42] [chromium] › e2e/network-error-handling.spec.ts:64:3 › Network Error Handling Scenarios › fetch to missing endpoint returns handled error
 [23/42] [chromium] › e2e/network-error-handling.spec.ts:82:3 › Network Error Handling Scenarios › WebSocket connection failure is handled gracefully
-  2) [chromium] › e2e/network-error-handling.spec.ts:64:3 › Network Error Handling Scenarios › fetch to missing endpoint returns handled error 
-
-    Error: page.evaluate: Execution context was destroyed, most likely because of a navigation
-
-      66 |     await page.waitForLoadState('networkidle');
-      67 |
-    > 68 |     const result = await page.evaluate(async () => {
-         |                               ^
-      69 |       try {
-      70 |         const res = await fetch('/api/nonexistent-endpoint-' + Date.now(), {
-      71 |           signal: AbortSignal.timeout(5000),
-        at /home/runner/work/Financia/Financia/e2e/network-error-handling.spec.ts:68:31
-
-    Error Context: test-results/network-error-handling-Net-fa687-point-returns-handled-error-chromium/error-context.md
-
-
 [24/42] [chromium] › e2e/network-perf.spec.ts:157:3 › Network Performance & Sync Loop Detection › detect sync loops, icon loops, and excessive network activity
-[25/42] [chromium] › e2e/offline-state-corruption.spec.ts:10:3 › Deep Edge
+[25/42] [chromium] › e2e/offline-state-corruption.spec.ts:10:3 › Deep Edge Cases — Offline State Corruption & Recovery › IndexedDB corruption is handled gracefully — app does not crash on load
+[26/42] [chromium] › e2e/offline-state-corruption.spec.ts:47:3 › Deep Edge Cases — Offline State Corruption & Recovery › app survives localStorage quota exceeded gracefully
+[chromium] › e2e/network-perf.spec.ts:157:3 › Network Performance & Sync Loop Detection › detect sync loops, icon loops, and excessive network activity
+[MONITOR] Waiting 15s to capture baseline network activity...
+
+[27/42] [chromium] › e2e/offline-state-corruption.spec.ts:65:3 › Deep Edge Cases — Offline State Corruption & Recovery › sessionStorage does not survive new tab
+[28/42] [chromium] › e2e/offline-state-corruption.spec.ts:86:3 › Deep Edge Cases — Offline State Corruption & Recovery › multip
 ```
 
 ---
@@ -218,4 +180,4 @@ Nenhum relatorio admin gerado.
 
 | Data | Correcao | Commit |
 |------|----------|--------|
-| 2026-08-08 13:28 UTC | CI report gerado automaticamente | `e1d9e4149962204b68027cdac11ded1bd7c4a4af` |
+| 2026-08-08 13:58 UTC | CI report gerado automaticamente | `48abfdb2ef8f46a6d2020f860f5c88a5dfc47cea` |
