@@ -1,7 +1,7 @@
 # CI Report
 
-**Gerado:** 2026-08-08 20:31 UTC
-**Commit:** `b427bb5b7b8e62056459446ddd1b846178ce8ab6`
+**Gerado:** 2026-08-08 21:16 UTC
+**Commit:** `ef391ca03c7234156559fb6be4622664cba1b839`
 **Branch:** `main`
 
 ---
@@ -84,9 +84,9 @@ computing gzip size...
 ```
 
 Running 26 tests using 4 workers
-°···°°°°°°°°···°°·°°···°··
-  14 skipped
-  12 passed (13.1s)
+°°··°°°°°°°°···°·°°°··°···
+  15 skipped
+  11 passed (14.5s)
 
 ```
 
@@ -170,4 +170,4 @@ Nenhum relatorio admin gerado.
 
 | Data | Correcao | Commit |
 |------|----------|--------|
-| 2026-08-08 20:31 UTC | CI report gerado automaticamente | `b427bb5b7b8e62056459446ddd1b846178ce8ab6` |
+| 2026-08-08 21:16 UTC | CI report gerado automaticamente | `ef391ca03c7234156559fb6be4622664cba1b839` |
