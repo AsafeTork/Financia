@@ -65,7 +65,9 @@ test.describe('Auth Flow', () => {
       test.skip('Login form submit button not found');
     }
 
-    await submitBtn.click();
+    // force: skip hit-testing — element already verified visible/enabled above;
+    // CI runners with 4 parallel workers can stall pointer hit-testing, causing 45s timeouts
+    await submitBtn.click({ force: true });
     // Wait for validation errors to appear - use expect.poll for more resilient waiting
     await expect(page.locator('input[aria-invalid="true"]').first()).toBeVisible({ timeout: 10000 });
     await expect(page.getByText('Campo obrigatório').first()).toBeVisible({ timeout: 10000 });
