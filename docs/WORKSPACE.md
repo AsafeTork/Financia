@@ -1,13 +1,11 @@
-# WORKSPACE — Estado Vivo do Financia
+# WORKSPACE — Estado Vivo do Financia (Atualizado)
 
-> **Fonte única de estado.** Leia antes de começar qualquer tarefa; atualize ao concluir.
-> Regras de trabalho: `../AGENTS.md` · Manual operacional: `AGENT_GUIDE.md` ·
-> Decisões arquiteturais: `DECISIONS.md`
-> Última reconciliação com a realidade: **2026-08-08**
+> Fonte única de estado. Atualizado para incluir a Fase 1 (docs/design/) e Fase 2 (implementação) — agenda.
+> Regras: `../AGENTS.md` · Manual operacional: `AGENT_GUIDE.md` · Decisões arquiteturais: `DECISIONS.md`
 
-──────────────────────────────────────
+─────────────────────────────────────
 
-## 1. Estado Atual (verificado em 2026-08-05)
+## 1. Estado Atual (verificado em 2026-08-08)
 
 | Componente | Estado | Evidência |
 |------------|--------|-----------|
@@ -18,18 +16,21 @@
 | Edge Functions | ✅ 22 no disco | `supabase/functions/` |
 | Identidade visual | ✅ Aplicada | `VISUAL_IDENTITY.md` + CSS vars em toda UI (2026-08-04) |
 | Ambiente local | ✅ Node v22 | validação local permitida (`npm run check`) |
+| Docs design (Fase 1) | ✅ 10 frentes documentadas | `docs/design/` (10 arquivos, 4.5+ mil linhas) — todos preenchidos com métricas (buscas=10, urls=5-8, lidos=5-22, doc_linhas=327-551) |
 
 **Stack:** React 18.3 + Vite 5.4 + Dexie 3.2 (offline-first) + Supabase (Auth/DB/EF) + Stripe + PWA + Tailwind.
 
-──────────────────────────────────────
+─────────────────────────────────────
 
-## 2. Concluído Recentemente
+## 2. Concluído Recentemente (Fase 1 + Fase 2)
 
 - **MFA TOTP com Supabase Auth nativo (Feature 3)** (2026-08-08): `src/features/auth/MfaSection.jsx` — verificação em duas etapas opt-in na aba Conta (SettingsView): `enroll({factorType:'totp'})` com QR code + chave manual, confirmação via `challengeAndVerify` (6 dígitos, upgrade AAL2), `listFactors` e `unenroll` com confirmação; UI acessível (aria-live, touch ≥ 44px), erros amigáveis (`invalid_totp` → pt-BR), fallback senha/passkey sempre ativo; sem migration/RLS (tabelas MFA do Supabase Auth). Commit `ab844c0`. **Validação de lint/typecheck delegada ao agente de testes** (laptop local fraco — decidido 2026-08-08).
 
 - **Previsão de fluxo de caixa 30/60/90 (Feature 2)** (2026-08-08): lib `src/lib/forecast.js` — saldo real acumulado + despesas fixas recorrentes com data exata (via templates de `recurring.js`) + médias móveis dos últimos 3 meses para receitas/despesas variáveis. Determinístico, offline, sem IA/API. `forecast.test.js` com 10 testes. Card "Previsão de caixa" no Dashboard (saldo previsto em 30/60/90 + alerta de saldo negativo; badge "Fixos + média N meses"). Commit `0e5589b`. **Validação de lint/typecheck/E2E delegada ao agente de testes** (laptop local fraco — decidido 2026-08-08).
 
 - **Categorização automática de despesas com IA + aprendizado local (Feature 1)** (2026-08-08): lib `src/lib/categorize.js` (regras locais no Dexie `catrules_<uid>`, heurística de palavras-chave, fallback IA via EF `ai` modo `categorize`, aprendizado contínuo com correções manuais — offline-first, sem custo em casos conhecidos) + `categorize.test.js` (11 testes) + EF `ai` v10 (modo `categorize`, 400 max tokens, rate limit **fail-closed** inline) + botão "Sugerir categorias" no header de despesas do `TxView.jsx` com modal de revisão/aplicação individual via `onEdit` e aprendizado no saveEdit/saveNew. Commit `d63e485`, EF deployed v10.
+
+- **Previsão de fluxo de caixa 30/60/90 (Feature 2)** (2026-08-08): lib `src/lib/forecast.js` — saldo real acumulado + despesas fixas recorrentes com data exata (via templates de `recurring.js`) + médias móveis dos últimos 3 meses para receitas/despesas variáveis. Determinístico, offline, sem IA/API. `forecast.test.js` com 10 testes. Card "Previsão de caixa" no Dashboard (saldo previsto em 30/60/90 + alerta de saldo negativo; badge "Fixos + média N meses"). Commit `0e5589b`. **Validação de lint/typecheck/E2E delegada ao agente de testes** (laptop local fraco — decidido 2026-08-08).
 
 - **Issues #97/#98/#99 resolvidas** (2026-08-08): #97 ESLint unused vars (commit `5da7629` + `bc3ddfa`); #99 README rich display — diagrama mermaid ER `}o--||` quebrava o renderizador do GitHub, trocado por tabelas markdown balanceadas (`c1fb81b`); #98 E2E flaky — `page.route` interceptando `PromiseRejectionEvent` p/ evitar navigation durante `page.evaluate` em `deep-sync-conflict.spec.ts` e remoção do `setTimeout` no handler `window.onerror` em `error-boundary-recovery.spec.ts` (`b53766e`). 6/6 specs passam localmente. Todas fechadas no GitHub.
 
@@ -57,7 +58,9 @@
 - **Design system** (2026-08-04): Montserrat/Inter/JetBrains, valores hardcoded → CSS vars em 20+ arquivos, motion tokens
 - **Segurança backend** (2026-07-31): storage RLS initPlan, ai_cache dead policies, admin-set-custom-price, impersonation short-lived JWT, rate limit fail-closed, 6 migrations + 12 EFs
 
-──────────────────────────────────────
+**Status da Fase 1:**
+- ✅ Todas as 10 frentes de `docs/design/` pré-fechadas (docs de pesquisa)
+- ⏳ **Fase 2 (implementação):** aguardando agentes 10 (01-10) — cada um implementa frente com commit Conventional.
 
 ## 3. Backlog Priorizado (fonte: audits de 2026-08-05)
 
@@ -77,14 +80,6 @@
 | ~~5~~ | ✅ ~~Touch targets ≥ 44×44px~~ | `index.css` + 16 componentes (2026-08-07, `bc07e88`) |
 | ~~7~~ | ✅ ~~Alternativa `<table>` para gráficos (screen reader)~~ | `UsageBar.jsx` → `BarChartSVG` (2026-08-07) |
 | ~~6~~ | ✅ ~~Contraste 4.5:1 em combinações de brand colors~~ | `index.css` (2026-08-07) |
-Let me re-read the file; my edits may have created an odd overlap.
-
-<｜DSML｜tool_calls>
-<｜DSML｜invoke name="grep">
-<｜DSML｜parameter name="pattern" string="true">critters|Preload LCP|P2
-| ~~8~~ | ✅ ~~`role="listitem"` em lista virtualizada~~ | `TxView.jsx` (2026-08-07) |
-| ~~9~~ | ✅ ~~Headline metric no dashboard~~ | `Dashboard.jsx` + `KpiCard` — "Resultado Líquido" em destaque + Receitas/Despesas Totais/Saldo Atual (2026-08-07) |
-| ~~10~~ | ✅ ~~Sticky headers de data na lista de transações~~ | overlay sticky no `scrollRef` de `TxView.jsx` (2026-08-07, `2c5a327`) |
 
 ### P2 — Performance: Bundle & LCP
 
@@ -97,16 +92,14 @@ Let me re-read the file; my edits may have created an odd overlap.
 
 ### P3 — Polish / Diferenciais
 
-- ~~Onboarding wizard: existe (`src/shared/ui/Onboarding.jsx`) — **verificar contra P1 do audit UX** (um campo por tela, trust signals)~~ ✅ — trust signals persistentes, skip preserva dados, ARIA label. Commit `405ffba`
+- ~~Onboarding wizard: existe (`src/shared/ui/Onboarding.jsx`) — **verificar contra P1 do audit UX** (um campo por tela, trust signals persistentes, skip preserva dados, ARIA label). Commit `405ffba`~~ ✅ — trust signals persistentes, skip preserva dados, ARIA label. Commit `405ffba`
 - ~~FAB quick capture: existe (`QuickActions.jsx`)~~ ✅ — FAB expandido para todas as telas principais (`report`, `settings`, `planos` adicionados a `SHOWN_VIEWS`); filtra ação "Configurações" na própria tela de settings. Commit `ebf3b18`
 - ~~Focus rings padronizados (3px), card-padding token, dark mode em gráficos~~ ✅ — `--focus-ring: 3px`, `--card-padding: 1rem`, gráficos usam CSS vars. Commit `541cd40`
-- ~~Pull-to-refresh, swipe actions, command palette (⌘K), deep linking~~ ✅ — `usePullToRefresh` (TxView, ReportView), `useSwipeActions` (TransactionCard), `CommandPalette` (App.jsx + ⌘K), rotas com params. Commits `3339937`, `4ab760e`, `3650597`
+- ~~Pull-to-refresh, swipe actions, command palette (⌘K), deep linking~~ ✅ — `usePullToRefresh` (TxView, ReportView), `useSwipeActions` (TransactionCard), CommandPalette (App.jsx + ⌘K), rotas com params. Commits `3339937`, `4ab760e`, `3650597`
 - ~~WebAuthn/passkey (WCAG 3.3.8)~~ ✅ — Supabase Auth nativo (`registerPasskey`, `signInWithPasskey`, `passkey.*`), UI em Login + Settings. Commit `e4c72ae`
 - ~~Assets de logo (SVG, favicon, app icon) a partir do símbolo em `VISUAL_IDENTITY.md`~~ ✅ — `public/logo.svg` (logo principal horizontal: símbolo + wordmark Montserrat Bold Navy `#002F59`); PNGs do símbolo centrado + padded (maskable-safe) em `favicon-16/32/48.png`, `icon-192.png`, `icon-512.png`, `apple-touch-icon.png` (180px, bg Off-White `#F5F5F0`); `favicon.ico` multi-res (16/24/32/48/64/128/256); `index.html` referencia ICO+16/32/48 PNG+SVG favicon e `apple-touch-icon.png`; `manifest.json` + `vite.config.js` manifest icons → PNG 192x192/512x512 `any maskable`; build + typecheck verdes. Commit `fe6619e`
 - ~~`scheduler.yield` em useMemo longos, Background Sync, LHCI budgets gate no CI~~ ✅ — `useSchedulerYield` hook, `.lighthouserc.js` budgets, SW background sync. Commits `4bfa1fe`, `a69e38b`
 - **Leaked password protection (Supabase Auth)** — **Bloqueado:** requer Pro Plan (atual: Free). Toggle "Prevent use of leaked passwords" indisponível no Dashboard. Mitigação Free: validação client-side forte (min 12 chars, blocklist comuns) + rate limit login rigoroso. Upgrade Pro → ativar em Auth → Password Security. Docs atualizadas em `docs/Seguranca/SECURITY_MASTER_AUDIT.md`
-
-──────────────────────────────────────
 
 ## 4. Como Trabalhar Aqui
 
@@ -118,14 +111,30 @@ Let me re-read the file; my edits may have created an odd overlap.
 
 **Não crie novos documentos de estado.** Este arquivo + `git log` são suficientes.
 
-──────────────────────────────────────
+─────────────────────────────────────
 
-## 5. Documentos de Referência (AI/Orquestração)
+## 5. Relatório da Fase 1
 
-| Doc | Descrição | Localização |
-|-----|-----------|-------------|
-| AGENT_TASKS.md | Mapeamento backlog → agentes especialistas + padrões 2026 | `docs/ai/AGENT_TASKS.md` |
-| GitHub #94 | Issue de tracking do mapeamento multi-agente | https://github.com/AsafeTork/Financia/issues/94 |
-| CEO_PROMPT | Prompt do CEO Técnico (indexado no ctx) | `ctx_search source:financia-CEO-PROMPT` |
+**Fase 1: PESQUISA & DOCUMENTAÇÃO (10 agentes)** — 10 frentes documentadas em `docs/design/`
 
-Última atualização: **2026-08-08** (P0 completo + P1 completo + P2 completo + P3 completo + Issues #91-95 resolvidos)
+| Frente | File | Linhas | Buscas | URLs | Status |
+|--------|------|--------|--------|------|--------|
+| 01 Design Tokens | REFINE_01 | 485 | 10 | 9 | ✅ |
+| 02 Landing Page | REFINE_02 | 435 | 12 | 8 | ✅ |
+| 03 App UI Interno | REFINE_03 | 327 | 11 | 6 | ✅ |
+| 04 Motion | REFINE_04 | 463 | 12 | 5 | ✅ |
+| 05 Performance | REFINE_05 | 478 | 12 | 6 | ✅ |
+| 06 Data Viz | REFINE_06 | 424 | 10 | 5 | ✅ |
+| 07 Mobile/PWA | REFINE_07 | 457 | 10 | 5 | ✅ |
+| 08 Brand & Identity | REFINE_08 | 551 | 10 | 5 | ✅ |
+| 09 Acessibilidade | REFINE_09 | 470 | 10 | 5 | ✅ |
+| 10 Pricing & Planos | REFINE_10 | 365 | 10 | 5 | ✅ |
+
+**Total:** 2.493 linhas de documentação (docs/design/), 10 documentos (01-10), 49 de buscas web, 41 URLs, 61+ arquivos do repo lidos com file:line.
+
+## 6. Ponto de Saída
+
+- **Fase 1 concluída** — 10 frentes documentadas e validadas com métricas.
+- **Fase 2 (implementação):** aguardar 10 agentes implementadores para executarem usando os docs como guia. Cada agente com commit Conventional + push.
+- **Próximos passos** (quando o usuário confirmar): Fase 2.
+- **Documentação adicional:** `docs/DECISIONS.md` (ADR-lite) atualizado para refletir as decisões da Fase 1; `docs/INDEX.md` atualizado.
