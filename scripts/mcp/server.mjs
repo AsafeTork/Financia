@@ -634,10 +634,11 @@ reg("n_github", {
   run: async ({ owner, repo, kind, limit }) => {
     const k = kind || "repo";
     const n = Math.min(Math.max(Number(limit) || 5, 1), 30);
-    const q = k === "repo" ? "" : `${k}?per_page=${n}`;
+    const base = `https://api.github.com/repos/${owner}/${repo}`;
+    const url = k === "repo" ? base : `${base}/${k}?per_page=${n}`;
     const ghToken = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
     const headers = ghToken ? { authorization: `Bearer ${ghToken}` } : {};
-    const r = await httpJson(`https://api.github.com/repos/${owner}/${repo}/${q}`, { headers });
+    const r = await httpJson(url, { headers });
     if (r.status === 403) return out("GitHub rate limit exceeded (60 req/h sem token). Defina GITHUB_TOKEN/GH_TOKEN para mais.", true);
     if (r.status !== 200) return out(`GitHub API failed (HTTP ${r.status})`, true);
     if (k === "repo") {
