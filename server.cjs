@@ -66,7 +66,12 @@ async function handle(request, response) {
   let isFallback = false;
 
   try {
-    const stat = filePath ? await fs.stat(filePath) : null;
+    const stat = filePath
+      ? await fs.stat(filePath).catch((error) => {
+        if (error && error.code === 'ENOENT') return null;
+        throw error;
+      })
+      : null;
     if (!stat || !stat.isFile()) {
       if (!isNavigationRequest(request, requestUrl.pathname)) {
         response.writeHead(404, {
@@ -91,7 +96,12 @@ async function handle(request, response) {
     });
     if (request.method !== 'HEAD') response.end(body);
     else response.end();
-  } catch {
+  } catch (error) {
+    console.error('Static file request failed', {
+      pathname: requestUrl.pathname,
+      filePath,
+      error: error instanceof Error ? error.message : String(error),
+    });
     response.writeHead(500, {
       'Cache-Control': 'no-store',
       'Content-Type': 'text/plain; charset=utf-8',
