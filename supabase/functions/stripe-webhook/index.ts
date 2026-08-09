@@ -350,8 +350,8 @@ async function handler(req: Request, logger: Logger): Promise<Response> {
     // Record failure in DLQ
     const admin = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
     await recordDlqFailure(admin, event?.id || 'unknown', event?.type || 'unknown', event || {}, err as Error);
-    // Always return 200 to Stripe to avoid retries for unhandled errors
-    return corsResponse({ received: true });
+    // Return 5xx after recording the failure so Stripe retries the event.
+    return corsResponse({ received: false, error: 'processing_failed' }, 500);
   }
 }
 
