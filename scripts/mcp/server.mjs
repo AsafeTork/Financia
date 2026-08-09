@@ -295,9 +295,10 @@ reg("n_apply_patch", {
     required: ["patch"],
   },
   run: async ({ patch, reverse }) => {
+    const norm = String(patch).trimEnd() + "\n";
     const tmp = join("/tmp", `native-patch-${Date.now()}.diff`);
     try {
-      await writeFile(tmp, patch, "utf8");
+      await writeFile(tmp, norm, "utf8");
       const r = await exec("git", ["apply", "--whitespace=nowarn", ...(reverse ? ["-R"] : []), tmp], { cwd: CWD });
       return r.code === 0
         ? out(`patch applied (${Buffer.byteLength(patch)} bytes)`)
