@@ -54,14 +54,18 @@ jobs:
         run: |
           set -o pipefail
           npx eslint src/ 2>&1 | tee /tmp/lint-output.txt
-          echo "exit_code=${PIPESTATUS[0]}" >> $GITHUB_OUTPUT
+          EXIT_CODE=${PIPESTATUS[0]}
+          echo "exit_code=$EXIT_CODE" >> $GITHUB_OUTPUT
+          exit "$EXIT_CODE"
 
       - name: Typecheck
         id: typecheck
         run: |
           set -o pipefail
           npm run typecheck 2>&1 | tee /tmp/typecheck-output.txt
-          echo "exit_code=${PIPESTATUS[0]}" >> $GITHUB_OUTPUT
+          EXIT_CODE=${PIPESTATUS[0]}
+          echo "exit_code=$EXIT_CODE" >> $GITHUB_OUTPUT
+          exit "$EXIT_CODE"
 
       - name: Upload lint artifacts
         if: always()
@@ -124,7 +128,9 @@ jobs:
             exit 0
           fi
           npx vitest run $FILES --coverage.enabled=false --no-color 2>&1 | tee /tmp/test-output-shard${{ matrix.shard }}.txt
-          echo "exit_code=${PIPESTATUS[0]}" >> $GITHUB_OUTPUT
+          EXIT_CODE=${PIPESTATUS[0]}
+          echo "exit_code=$EXIT_CODE" >> $GITHUB_OUTPUT
+          exit "$EXIT_CODE"
 
       - name: Upload test artifacts
         if: always()
@@ -255,7 +261,9 @@ jobs:
         run: |
           set -o pipefail
           npm run build 2>&1 | tee /tmp/build-output.txt
-          echo "exit_code=${PIPESTATUS[0]}" >> $GITHUB_OUTPUT
+          EXIT_CODE=${PIPESTATUS[0]}
+          echo "exit_code=$EXIT_CODE" >> $GITHUB_OUTPUT
+          exit "$EXIT_CODE"
 
       - name: Verify PWA manifest
         run: |
@@ -494,7 +502,9 @@ jobs:
             e2e/keyboard-navigation.spec.ts \
             e2e/error-boundary-recovery.spec.ts \
             --project=chromium 2>&1 | tee /tmp/e2e-output.txt
-          echo "exit_code=${PIPESTATUS[0]}" >> $GITHUB_OUTPUT
+          EXIT_CODE=${PIPESTATUS[0]}
+          echo "exit_code=$EXIT_CODE" >> $GITHUB_OUTPUT
+          exit "$EXIT_CODE"
 
       - name: Upload E2E artifacts
         if: always()

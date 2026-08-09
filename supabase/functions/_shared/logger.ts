@@ -235,7 +235,7 @@ export async function handleHealthCheck(
 // Standard CORS headers helper
 export const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikee, content-type, x-request-id',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-request-id',
   'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
 };
 

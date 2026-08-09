@@ -45,6 +45,15 @@ export default function useStripeCheckoutInit(plan, brand, checkoutMode, kind, o
         if (!stripe) { setActionErr('Não foi possível carregar o Stripe. Tente de novo.'); setConfirming(false); return; }
         var r = await stripe.handleNextAction({ clientSecret: data.clientSecret });
         if (r && r.error) { setActionErr(friendlyStripeClientError(r.error)); setConfirming(false); return; }
+        if (data.paymentIntentId) {
+          await sb.functions.invoke('create-payment', {
+            body: {
+              kind: 'white_label',
+              confirm_white_label: true,
+              payment_intent_id: data.paymentIntentId,
+            },
+          });
+        }
         done();
         return;
       }

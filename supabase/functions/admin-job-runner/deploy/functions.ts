@@ -11,14 +11,14 @@ export const deployJob: JobDefinition = {
   type: 'deploy.functions',
   description: 'Deploy Edge Functions to Supabase project',
   timeoutMs: 10 * 60 * 1000, // 10 minutes
-  requiredParams: ['projectRef', 'accessToken'],
+  requiredParams: ['projectRef'],
   
   validateParams: (params) => {
     if (!params.projectRef || !String(params.projectRef).match(/^[a-z0-9]{20}$/)) {
       return { valid: false, error: 'Invalid projectRef' };
     }
-    if (!params.accessToken) {
-      return { valid: false, error: 'accessToken required' };
+    if (!Deno.env.get('SUPABASE_MANAGEMENT_API_TOKEN')) {
+      return { valid: false, error: 'management API token not configured' };
     }
     return { valid: true };
   },
@@ -26,7 +26,7 @@ export const deployJob: JobDefinition = {
   async execute(ctx: JobContext): Promise<JobResult> {
     const { logger, params } = ctx;
     const projectRef = String(params.projectRef);
-    const accessToken = String(params.accessToken);
+    const accessToken = Deno.env.get('SUPABASE_MANAGEMENT_API_TOKEN')!;
     const functions = params.functions as string[] | undefined;
     
     logger.info('Starting function deployment', { projectRef, functions });
@@ -72,7 +72,7 @@ export const deployJob: JobDefinition = {
               {
                 method: 'POST',
                 headers: {
-                  'Authorization': `Bearer ${params.accessToken}`,
+                  'Authorization': `Bearer ${accessToken}`,
                   'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({

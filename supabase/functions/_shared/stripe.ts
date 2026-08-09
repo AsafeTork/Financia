@@ -153,7 +153,7 @@ export async function checkRateLimit(
   windowSeconds: number,
   maxRequests: number
 ): Promise<boolean> {
-  if (!admin) return true;
+  if (!admin) return false;
   try {
     const key = 'rl:' + action + ':' + (userId || 'anon');
     const since = new Date(Date.now() - windowSeconds * 1000).toISOString();
@@ -176,7 +176,7 @@ export async function checkRateLimit(
     });
     return true;
   } catch {
-    return true; // Fail open
+    return false; // Fail closed
   }
 }
 

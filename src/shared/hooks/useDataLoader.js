@@ -53,7 +53,8 @@ export function useDataLoader(props) {
     });
     setPlanInfo(function(prev) {
       if (!profile) return prev;
-      var next = { plan:profile.plan||'free', plan_expires_at:profile.plan_expires_at||null, plan_activated_by:profile.plan_activated_by||null, custom_price_cents:profile.custom_price_cents||0, custom_price_cents_pro:profile.custom_price_cents_pro||0, custom_price_cents_premium:profile.custom_price_cents_premium||0 };
+      var prices = profile.custom_prices || {};
+      var next = { plan:profile.plan||'free', plan_expires_at:profile.plan_expires_at||null, plan_activated_by:profile.plan_activated_by||null, custom_price_cents:0, custom_price_cents_pro:Number(prices.pro)||0, custom_price_cents_premium:Number(prices.premium)||0, custom_price_cents_white_label:Number(prices.white_label)||0 };
       if (prev && prev.plan===next.plan && prev.plan_expires_at===next.plan_expires_at && prev.plan_activated_by===next.plan_activated_by && prev.custom_price_cents===next.custom_price_cents && prev.custom_price_cents_pro===next.custom_price_cents_pro && prev.custom_price_cents_premium===next.custom_price_cents_premium) return prev;
       return next;
     });

@@ -141,7 +141,7 @@ export function useSession(p) {
       setTimeout(function() { if (syncStatusToken === st3) setSyncStatus('idle'); }, 5000);
       if (navigator.onLine) {
         try {
-          var PROFILE_READ = 'user_id,name,logo,color,color_secondary,color_accent,theme,logo_url,white_label,phone,niche,custom_palette,visual_version,brand_config,plan,plan_expires_at,plan_activated_by,custom_price_cents,custom_price_cents_pro,custom_price_cents_premium';
+          var PROFILE_READ = 'user_id,name,logo,color,color_secondary,color_accent,theme,logo_url,white_label,phone,niche,custom_palette,visual_version,brand_config,plan,plan_expires_at,plan_activated_by,custom_prices';
           var allRes = await Promise.all([
             sb.from('company_profiles').select(PROFILE_READ).eq('user_id', userId).maybeSingle(),
             paginatedFetch('products', PRD_FIELDS, 'created_at', {ascending:true}),
@@ -152,6 +152,7 @@ export function useSession(p) {
           var pr = allRes[0], pdr = allRes[1], txr = allRes[2], lr = allRes[3], roleRes = allRes[4];
 
           var prof = pr && pr.data ? pr.data : null;
+          var customPrices = prof && prof.custom_prices ? prof.custom_prices : {};
           var prodRows = pdr || [];
           var txRows = txr || [];
           var lossRows = lr || [];
@@ -169,7 +170,7 @@ export function useSession(p) {
           });
           setPlanInfo(function(prev) {
             if (!prof) return prev;
-            var next = { plan:prof.plan||'free', plan_expires_at:prof.plan_expires_at||null, plan_activated_by:prof.plan_activated_by||null, custom_price_cents:prof.custom_price_cents||0, custom_price_cents_pro:prof.custom_price_cents_pro||0, custom_price_cents_premium:prof.custom_price_cents_premium||0 };
+            var next = { plan:prof.plan||'free', plan_expires_at:prof.plan_expires_at||null, plan_activated_by:prof.plan_activated_by||null, custom_price_cents:0, custom_price_cents_pro:Number(customPrices.pro)||0, custom_price_cents_premium:Number(customPrices.premium)||0, custom_price_cents_white_label:Number(customPrices.white_label)||0 };
             if (prev && prev.plan===next.plan && prev.plan_expires_at===next.plan_expires_at && prev.plan_activated_by===next.plan_activated_by && prev.custom_price_cents===next.custom_price_cents && prev.custom_price_cents_pro===next.custom_price_cents_pro && prev.custom_price_cents_premium===next.custom_price_cents_premium) return prev;
             return next;
           });

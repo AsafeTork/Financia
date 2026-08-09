@@ -167,9 +167,16 @@ export const resetSyncBackoff = function() {
 
 export const fetchClients = async function() {
   try {
-    var PROFILE_READ_FIELDS = 'user_id,name,logo,color,color_secondary,color_accent,theme,logo_url,white_label,phone,niche,custom_palette,visual_version,brand_config,plan,plan_expires_at,plan_activated_by,custom_price_cents_pro,custom_price_cents_premium,custom_price_cents_white_label,segment,created_at,updated_at';
+    var PROFILE_READ_FIELDS = 'user_id,name,logo,color,color_secondary,color_accent,theme,logo_url,white_label,phone,niche,custom_palette,visual_version,brand_config,plan,plan_expires_at,plan_activated_by,custom_prices,debug_mode';
     const { data } = await sb.from('company_profiles').select(PROFILE_READ_FIELDS).order('user_id');
-    return data || [];
+    return (data || []).map(function(client) {
+      var prices = client.custom_prices || {};
+      return Object.assign({}, client, {
+        custom_price_cents_pro: Number(prices.pro) || 0,
+        custom_price_cents_premium: Number(prices.premium) || 0,
+        custom_price_cents_white_label: Number(prices.white_label) || 0,
+      });
+    });
   } catch (e) { console.error('[sync] fetchClients failed:', e); return []; }
 };
 

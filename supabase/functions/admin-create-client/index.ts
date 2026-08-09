@@ -114,9 +114,7 @@ async function handler(req: Request): Promise<Response> {
       'Sua conta foi criada no Financia.' + '\n\n' +
       'Confirme seu e-mail para ativar a conta:' + '\n' +
       (confirmUrl ? (confirmUrl + '\n\n') : '') +
-      'Depois da confirmação, acesse com:' + '\n' +
-      '- E-mail: ' + email + '\n' +
-      '- Senha inicial: ' + password + '\n\n' +
+      'Depois da confirmação, defina sua senha pelo link e acesse com seu e-mail.' + '\n\n' +
       'Acesse: ' + loginUrl + '\n\n' +
       'Recomendação: altere sua senha no primeiro acesso.' + '\n\n' +
       'Equipe Financia';
@@ -133,8 +131,7 @@ async function handler(req: Request): Promise<Response> {
               ? '<p style="margin:0 0 18px 0"><a href="' + confirmUrl + '" style="display:inline-block;background:#2da44e;color:#ffffff;text-decoration:none;font-weight:600;padding:10px 16px;border-radius:8px">Confirmar e-mail</a></p>'
               : '') +
             '<p style="margin:0 0 8px 0;font-size:13px;color:#57606a">Dados de acesso:</p>' +
-            '<p style="margin:0 0 4px 0"><b>Login:</b> ' + email + '</p>' +
-            '<p style="margin:0 0 12px 0"><b>Senha inicial:</b> ' + password + '</p>' +
+            '<p style="margin:0 0 12px 0"><b>Login:</b> ' + email + '</p>' +
             (confirmUrl ? '<p style="margin:0 0 8px 0;font-size:12px;color:#57606a">Se o botão não funcionar, copie e cole este link no navegador:</p><p style="word-break:break-all;font-size:12px;color:#0969da;margin:0 0 14px 0">' + confirmUrl + '</p>' : '') +
             '<p style="margin:0;font-size:12px;color:#57606a">Após o primeiro acesso, altere sua senha em Configurações.</p>' +
           '</div>' +

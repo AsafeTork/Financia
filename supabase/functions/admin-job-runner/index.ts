@@ -73,6 +73,9 @@ async function handler(req: Request, logger: Logger): Promise<Response> {
   if (!jobName) {
     return corsResponse({ error: 'job name required' }, 400);
   }
+  if ('accessToken' in params) {
+    return corsResponse({ error: 'accessToken must be configured server-side' }, 400);
+  }
 
   const job = JobRegistry.get(jobName);
   if (!job) {
@@ -88,7 +91,9 @@ async function handler(req: Request, logger: Logger): Promise<Response> {
     }
   }
 
-  logger.info(`Starting job: ${jobName}`, { params });
+  const logParams = { ...params };
+  if ('accessToken' in logParams) logParams.accessToken = '[REDACTED]';
+  logger.info(`Starting job: ${jobName}`, { params: logParams });
 
   const startTime = Date.now();
   const ctx = {

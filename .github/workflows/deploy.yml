@@ -82,8 +82,13 @@ jobs:
 
       - name: Verify deployment
         run: |
-          curl -s -o /dev/null -w "HTTP %{http_code}" https://financiabr.me || echo "Health check failed"
-          echo "Production deploy completed."
+          curl --fail --silent --show-error --retry 5 --retry-delay 5 \
+            --retry-connrefused --max-time 20 \
+            -o /tmp/financia-index.html https://financiabr.me
+          test -s /tmp/financia-index.html
+          curl --fail --silent --show-error --max-time 20 \
+            -o /dev/null https://financiabr.me/manifest.json
+          echo "Production deploy health check passed."
 
   deploy-staging:
     name: Deploy to Staging (Render)

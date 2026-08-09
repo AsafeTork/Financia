@@ -118,7 +118,7 @@ export async function enforceRateLimit(
     const count = res.count || 0;
     if (count >= maxRequests) return false;
 
-    await admin.from('ai_cache').insert({
+    const insertResult = await admin.from('ai_cache').insert({
       scope: 'rate_limit',
       cache_key: key,
       request_hash: null,
@@ -128,6 +128,7 @@ export async function enforceRateLimit(
       status: 200,
       expires_at: new Date(Date.now() + windowSeconds * 1000).toISOString(),
     });
+    if (insertResult?.error) return false;
     return true;
   } catch (err) {
     console.error('[RATE_LIMIT] Critical failure:', err);

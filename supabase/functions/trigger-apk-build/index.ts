@@ -2,6 +2,7 @@
 // Proxy para o GitHub Actions dispatch.
 // O token GitHub fica armazenado como ENV var (GH_TOKEN), nunca exposto ao cliente.
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { enforceRateLimit, getAdminClient } from '../_shared/security.ts';
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -43,6 +44,25 @@ Deno.serve(async function (req: Request): Promise<Response> {
     const caller = userResult?.data?.user;
     if (!caller) return jsonResponse(401, { ok: false, reason: 'unauthorized' });
 
+    const admin = getAdminClient();
+    const allowed = await enforceRateLimit(admin, caller.id, 'trigger_apk_build', 3600, 3);
+    if (!allowed) return jsonResponse(429, { ok: false, reason: 'rate_limited' });
+
+    const { data: profile } = await admin
+      .from('company_profiles')
+      .select('white_label')
+      .eq('user_id', caller.id)
+      .maybeSingle();
+    const { data: adminRole } = await admin
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', caller.id)
+      .eq('role', 'admin')
+      .maybeSingle();
+    if (!profile?.white_label && !adminRole) {
+      return jsonResponse(403, { ok: false, reason: 'white_label_required' });
+    }
+
     let body: any = {};
     try { body = await req.json(); } catch (_) {}
     const clientName: string = String(body?.client_name || 'Financia').replace(/[^\w\s-]/g, '').trim().slice(0, 60) || 'Financia';
@@ -75,8 +95,8 @@ Deno.serve(async function (req: Request): Promise<Response> {
     }
     const ghBody = await ghRes.text().catch(() => '(no body)');
     console.error('GitHub dispatch failed', { status: ghRes.status, body: ghBody });
-    return jsonResponse(200, { ok: false, reason: 'api_error', status: ghRes.status, detail: ghBody });
+    return jsonResponse(502, { ok: false, reason: 'api_error', status: ghRes.status });
   } catch (err: any) {
-    return jsonResponse(200, { ok: false, reason: 'network_error', detail: String(err?.message || err) });
+    return jsonResponse(502, { ok: false, reason: 'network_error' });
   }
 });

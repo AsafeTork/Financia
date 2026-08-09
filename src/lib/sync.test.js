@@ -142,7 +142,12 @@ describe('fetchClients', function() {
       select: function() { return { order: function() { return Promise.resolve({ data: [{ user_id: 'u1' }] }); } }; },
     });
     const clients = await fetchClients();
-    expect(clients).toEqual([{ user_id: 'u1' }]);
+    expect(clients).toEqual([{
+      user_id: 'u1',
+      custom_price_cents_pro: 0,
+      custom_price_cents_premium: 0,
+      custom_price_cents_white_label: 0,
+    }]);
   });
   it('retorna array vazio no erro', async function() {
     sb.from.mockReturnValue({

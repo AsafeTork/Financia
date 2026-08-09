@@ -38,7 +38,16 @@ function PaymentForm({ plan, brand, onDone, onClose, mode }) {
         return;
       }
       if (mode === 'payment') {
-        try { await sb.functions.invoke('create-payment', { body: { kind: 'white_label', confirm_white_label: true } }); } catch (e) { void e; }
+        var activation = await sb.functions.invoke('create-payment', {
+          body: {
+            kind: 'white_label',
+            confirm_white_label: true,
+            payment_intent_id: res.paymentIntent?.id,
+          },
+        });
+        if (activation.error || activation.data?.status !== 'activated') {
+          throw new Error('payment_activation_failed');
+        }
       } else {
         try { await sb.functions.invoke('create-subscription', { body: { confirm_subscription: true } }); } catch (e) { void e; }
       }
