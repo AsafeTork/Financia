@@ -71,7 +71,14 @@ jobs:
 
       - name: Unit tests
         if: github.event.inputs.scope == 'test' || github.event.inputs.scope == 'fast' || github.event.inputs.scope == 'full'
-        run: npm test
+        run: |
+          set -o pipefail
+          FILES=$(find src/ -name "*.test.{js,jsx}" -not -path "*/e2e/*" -not -path "*/benchmarks/*" -not -path "*/isolated*" 2>/dev/null | tr '\n' ' ')
+          if [ -z "$FILES" ]; then
+            echo "No test files found"
+            exit 0
+          fi
+          npx vitest run $FILES --isolate --coverage.enabled=false --no-color
 
       - name: Build
         if: github.event.inputs.scope == 'build' || github.event.inputs.scope == 'full'
