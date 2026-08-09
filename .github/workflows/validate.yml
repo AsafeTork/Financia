@@ -1,0 +1,96 @@
+name: Validate
+
+on:
+  workflow_dispatch:
+    inputs:
+      scope:
+        description: "Escopo da validacao"
+        required: true
+        type: choice
+        default: "fast"
+        options:
+          - "fast"
+          - "lint"
+          - "typecheck"
+          - "test"
+          - "build"
+          - "full"
+      ref:
+        description: "Branch/commit/SHA para rodar (vazio = branch atual)"
+        required: false
+        type: string
+
+concurrency:
+  group: validate-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_OPTIONS: '--max-old-space-size=6144'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: "Validate (${{ github.event.inputs.scope }})"
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.inputs.ref || github.ref }}
+          persist-credentials: false
+
+      - name: Setup Node.js 24
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Cache npm dependencies
+        uses: actions/cache@v5
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+
+      - name: Install dependencies
+        run: npm install
+        env:
+          ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
+
+      - name: Lint
+        if: github.event.inputs.scope == 'lint' || github.event.inputs.scope == 'fast' || github.event.inputs.scope == 'full'
+        run: npm run lint
+
+      - name: Typecheck
+        if: github.event.inputs.scope == 'typecheck' || github.event.inputs.scope == 'fast' || github.event.inputs.scope == 'full'
+        run: npm run typecheck
+
+      - name: Unit tests
+        if: github.event.inputs.scope == 'test' || github.event.inputs.scope == 'fast' || github.event.inputs.scope == 'full'
+        run: npm test
+
+      - name: Build
+        if: github.event.inputs.scope == 'build' || github.event.inputs.scope == 'full'
+        run: npm run build
+
+  report:
+    name: "Validate Summary"
+    runs-on: ubuntu-latest
+    needs: validate
+    if: always()
+    timeout-minutes: 2
+    steps:
+      - name: Summary
+        run: |
+          echo "## Validate Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Step | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Lint | ${{ needs.validate.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Scope:** \`${{ github.event.inputs.scope }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Ref:** \`${{ github.event.inputs.ref || github.ref }}\`" >> $GITHUB_STEP_SUMMARY
