@@ -51,7 +51,10 @@ export const KpiCard = memo(function KpiCard({ label, value, variation, sub, col
     setPrefersReduce(typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   }, []);
   var valStr = String(value);
-  var numVal = parseFloat(valStr.replace(/[^\d.-]/g, ''));
+  var numericText = valStr.replace(/[^\d,.-]/g, '');
+  var numVal = numericText.indexOf(',') >= 0
+    ? parseFloat(numericText.replace(/\./g, '').replace(',', '.'))
+    : parseFloat(numericText);
   var isNumeric = !isNaN(numVal);
   var animatedVal = useCountUp(numVal, mounted && !prefersReduce && isNumeric && headline);
   var displayValue = (mounted && !prefersReduce && isNumeric && headline) ? (

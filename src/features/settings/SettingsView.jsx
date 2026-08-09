@@ -48,7 +48,6 @@ export default React.memo(function SettingsView({ brand, session, planInfo, onSa
   var initE164 = buildPhone(initParsed.iso, initParsed.digits).e164;
   var effectiveTab = React.useMemo(function() {
     var canBrand = isAdmin || hasWhiteLabel;
-    if (tab === 'account' && isAdmin) return 'clients';
     if (tab === 'clients' && !isAdmin) return 'account';
     if (tab === 'brandstudio' && !canBrand) return 'account';
     if (tab === 'appearance' && !hasWhiteLabel) return 'account';

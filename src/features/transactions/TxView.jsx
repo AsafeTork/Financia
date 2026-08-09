@@ -52,7 +52,7 @@ export default React.memo(function TxView({ type, tx, products, onAdd, onEdit, o
     } catch(_) { toast('Erro ao sugerir categorias. Tente novamente.', 'error'); }
     finally { setAiBusy(false); }
   }, [aiBusy, expenses, userId, toast]);
-  var [form, setForm] = useState({desc:'', amount:'', date:today(), cat:'Fixo', method:'PIX', fixo:false, day:'5'});
+  var [form, setForm] = useState({desc:'', amount:'', date:today(), cat:'Variavel', method:'PIX', fixo:false, day:'5'});
 
   useQuickIntent(isIncome ? 'income' : 'expense', function() { setModal(true); });
 
@@ -154,7 +154,7 @@ export default React.memo(function TxView({ type, tx, products, onAdd, onEdit, o
     } catch(_) { toast('Erro ao salvar. Tente novamente.', 'error'); }
     finally { setSaving(false); }
   };
-  var resetForm = function() { setForm({desc:'', amount:'', date:today(), cat:'Fixo', method:'PIX', fixo:false, day:'5'}); };
+  var resetForm = function() { setForm({desc:'', amount:'', date:today(), cat:'Variavel', method:'PIX', fixo:false, day:'5'}); };
   var saveNew = async function() {
     const amount = Number(form.amount) || 0;
     if (!form.desc || amount <= 0) return;

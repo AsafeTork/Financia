@@ -9,8 +9,6 @@ export default React.memo(function Confirm({ msg, onOk, onCancel }) {
 
   useEffect(function () {
     prevFocus.current = document.activeElement;
-    var root = document.getElementById('root');
-    if (root) root.setAttribute('inert', '');
 
     var dialog = dialogRef.current;
     if (!dialog) return;
@@ -48,7 +46,6 @@ export default React.memo(function Confirm({ msg, onOk, onCancel }) {
 
     return function () {
       document.removeEventListener('keydown', handleKeyDown);
-      if (root) root.removeAttribute('inert');
       if (prevFocus.current && typeof prevFocus.current.focus === 'function') {
         prevFocus.current.focus();
       }

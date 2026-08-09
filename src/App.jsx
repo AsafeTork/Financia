@@ -11,6 +11,7 @@ import BottomNav from './shared/ui/BottomNav.jsx';
 import Header from './shared/ui/Header.jsx';
 import Footer from './shared/ui/Footer.jsx';
 import QuickActions from './shared/ui/QuickActions.jsx';
+import CommandPalette from './shared/ui/CommandPalette.jsx';
 import ThemeToggle from './shared/ui/ThemeToggle.jsx';
 import Toast from './shared/ui/Toast.jsx';
 import Offline from './shared/ui/Offline.jsx';
@@ -40,10 +41,22 @@ const DebugBadge = lazy(function() { return import('./App/components/DebugBadge.
 export default function App() {
   const s = useAppState();
   const [authMode, setAuthMode] = React.useState('login');
+  const [commandOpen, setCommandOpen] = React.useState(false);
   const { planInfo, setPlanInfo, setShowUpgrade, setConfirmData, confirmData, setSidebarOpen, setShowLogin, sidebarOpen } = s;
   const t = useToasts({ toasts: s.toasts, setToasts: s.setToasts, toastId: s.toastId, toastTimeoutsRef: s.toastTimeoutsRef });
   const n = useNavigation({ modalRef: s.modalRef, setConfirmData: s.setConfirmData, setShowUpgrade: s.setShowUpgrade, setSidebarOpen: s.setSidebarOpen, setShowLogin: s.setShowLogin });
   const { navTo, path: navigationPath } = n;
+  useEffect(function() {
+    if (!s.session) return undefined;
+    var onKeyDown = function(e) {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setCommandOpen(true);
+      }
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return function() { document.removeEventListener('keydown', onKeyDown); };
+  }, [s.session]);
   usePlanEffects({ dataLoading: s.dataLoading, setDataLoading: s.setDataLoading, setSyncStatus: s.setSyncStatus, planInfo, session: s.session, toast: t.toast, path: n.path, setAnnounceMsg: s.setAnnounceMsg, firstRender: s.firstRender, toastTimeoutsRef: s.toastTimeoutsRef });
   useEffect(function() { var t = setTimeout(prefetchRoutes, 1000); return function() { clearTimeout(t); }; }, []);
   const { appBrand, effectiveTheme, toggleTheme } = useBrandAppearance(s.brand, planInfo);
@@ -72,6 +85,7 @@ export default function App() {
   const handleCloseUpgrade = useCallback(function() { setShowUpgrade(false); }, [setShowUpgrade]);
   const handleCloseSidebar = useCallback(function() { setSidebarOpen(false); }, [setSidebarOpen]);
   const handleOpenSidebar = useCallback(function() { setSidebarOpen(true); }, [setSidebarOpen]);
+  const handleOpenCommand = useCallback(function() { setCommandOpen(true); }, []);
   const handleDeductStock = useCallback(function(id, qty) { adjustStock(id, -qty); }, [adjustStock]);
   const handleNav = useCallback(function(v) { navTo(v); }, [navTo]);
   const openAuth = useCallback(function(mode) {
@@ -81,6 +95,18 @@ export default function App() {
   }, [navigationPath, navTo, setShowLogin]);
   const openLogin = useCallback(function() { openAuth('login'); }, [openAuth]);
   const openSignup = useCallback(function() { openAuth('signup'); }, [openAuth]);
+
+  const commandActions = useMemo(function() {
+    return [
+      { id:'dashboard', label:'Abrir Dashboard', description:'Resumo financeiro e próximos passos', onAction:function() { navTo('dashboard'); } },
+      { id:'income', label:'Abrir Vendas / Ganhos', description:'Registrar e consultar vendas', onAction:function() { navTo('income'); } },
+      { id:'expense', label:'Abrir Despesas', description:'Registrar e consultar despesas', onAction:function() { navTo('expense'); } },
+      { id:'inventory', label:'Abrir Estoque e Perdas', description:'Produtos, estoque e perdas', onAction:function() { navTo('inventory'); } },
+      { id:'report', label:'Abrir Relatório', description:'Acompanhar resultados do negócio', onAction:function() { navTo('report'); } },
+      { id:'settings', label:'Abrir Configurações', description:'Conta, assinatura e preferências', onAction:function() { navTo('settings'); } },
+      { id:'plans', label:'Ver Planos', description:'Comparar recursos e fazer upgrade', onAction:function() { navTo('planos'); } },
+    ];
+  }, [navTo]);
 
   var confirmFn = useCallback(function(msg, onOk) { setConfirmData({msg:msg, onOk:onOk}); }, [setConfirmData]);
 
@@ -167,8 +193,8 @@ export default function App() {
           <WidgetErrorBoundary><Sidebar view={n.currentView} onNav={n.navTo} brand={appBrand} open={s.sidebarOpen} isAdmin={s.isAdminDB} onClose={handleCloseSidebar}/></WidgetErrorBoundary>
           <div className="hidden lg:block fixed top-4 right-4 z-30"><ThemeToggle theme={effectiveTheme} onToggle={toggleTheme} variant="floating"/></div>
           <div className="flex-1 lg:ml-64 flex flex-col min-h-screen min-w-0 w-full">
-            <WidgetErrorBoundary><Header brand={appBrand} syncStatus={s.syncStatus} theme={effectiveTheme} onToggleTheme={toggleTheme} onMenuOpen={handleOpenSidebar}/></WidgetErrorBoundary>
-            <main id="main-content" tabIndex="-1" className="flex-1 p-4 lg:p-8 max-w-5xl w-full mx-auto pb-8 lg:pb-8 min-w-0 overflow-x-hidden">
+            <WidgetErrorBoundary><Header brand={appBrand} syncStatus={s.syncStatus} theme={effectiveTheme} onToggleTheme={toggleTheme} onMenuOpen={handleOpenSidebar} onOpenSearch={handleOpenCommand}/></WidgetErrorBoundary>
+            <main id="main-content" tabIndex="-1" className="flex-1 p-4 lg:p-8 max-w-5xl w-full mx-auto pb-28 lg:pb-8 min-w-0 overflow-x-hidden">
               <div key={n.currentView} className="anim-page-view">
                 <FeatureErrorBoundary featureName={n.currentView}><AppRoutes/></FeatureErrorBoundary>
               </div>
@@ -176,8 +202,9 @@ export default function App() {
             <Footer brand={appBrand} onNav={handleNav}/>
           </div>
           <WidgetErrorBoundary><BottomNav view={n.currentView} onNav={n.navTo} brand={appBrand} isAdmin={s.isAdminDB}/></WidgetErrorBoundary>
-          <WidgetErrorBoundary><QuickActions view={n.currentView} onNav={n.navTo} brand={appBrand}/></WidgetErrorBoundary>
-          <Toast toasts={s.toasts} onDismiss={t.dismissToast}/>
+            <WidgetErrorBoundary><QuickActions view={n.currentView} onNav={n.navTo} brand={appBrand}/></WidgetErrorBoundary>
+            <CommandPalette isOpen={commandOpen} onClose={function() { setCommandOpen(false); }} actions={commandActions}/>
+            <Toast toasts={s.toasts} onDismiss={t.dismissToast}/>
           {s.confirmData && <Confirm msg={s.confirmData.msg} onOk={handleConfirmOk} onCancel={handleCancel}/>}
           {s.showUpgrade && <UpgradeModal reason={typeof s.showUpgrade === 'object' ? s.showUpgrade : null} brand={appBrand} onClose={handleCloseUpgrade} onNav={handleNav}/>}
           <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">{s.announceMsg}</div>

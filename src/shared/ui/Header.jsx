@@ -2,7 +2,7 @@ import React from 'react';
 import { luminance, isValidUrl } from '../../lib/utils.js';
 import ThemeToggle from './ThemeToggle.jsx';
 
-function Header({ brand, onMenuOpen, syncStatus, theme, onToggleTheme }) {
+function Header({ brand, onMenuOpen, onOpenSearch, syncStatus, theme, onToggleTheme }) {
   const dotColor = syncStatus === 'ok' ? '#22c55e' : syncStatus === 'error' ? '#ef4444' : '#94a3b8';
   const lum = luminance(brand.color || '#002f59');
   const textColor = lum > 0.4 ? 'var(--text-main)' : '#ffffff';
@@ -36,7 +36,7 @@ function Header({ brand, onMenuOpen, syncStatus, theme, onToggleTheme }) {
           <span className="font-semibold text-sm truncate" style={{color: textColor}}>{brand.name}</span>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
-          <button data-testid="header-search" aria-label="Buscar" className="p-3 rounded-xl min-w-[44px] min-h-[44px] flex items-center justify-center transition hover:opacity-80" style={menuBtnStyle}>
+          <button data-testid="header-search" onClick={onOpenSearch} aria-label="Abrir busca" className="p-3 rounded-xl min-w-[44px] min-h-[44px] flex items-center justify-center transition hover:opacity-80" style={menuBtnStyle}>
             <svg className="w-4 h-4" fill="none" stroke={textColor} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
             </svg>
