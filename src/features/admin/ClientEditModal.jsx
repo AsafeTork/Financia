@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { sb } from '../../lib/supabase.js';
 import { luminance, deriveCores, fmt } from '../../lib/utils.js';
-import { THEME_PRESETS, WHITELABEL, waLinkTo } from '../../lib/constants.js';
+import { THEME_PRESETS, WHITELABEL, PRICING_PLANS, waLinkTo } from '../../lib/constants.js';
 import ColorField from '../../shared/ui/ColorField.jsx';
 import { setClientCustomPrice, setClientWhiteLabel } from '../../lib/sync.js';
 import { gerarPaleta } from '../../lib/aiClient.js';
@@ -47,6 +47,12 @@ function PreviewPaleta({ primary, secondary, accent }) {
   );
 }
 
+function tablePriceFor(planId) {
+  if (planId === 'white_label') return WHITELABEL.price;
+  var plan = PRICING_PLANS.find(function(item) { return item.id === planId; });
+  return plan ? plan.price : 0;
+}
+
 export default function ClientEditModal({ client, adminEmail, onSave, onClose, toast, onImpersonate, onBuildApk }) {
   var [color, setColorRaw]           = useState(client.color || '#002f59');
   var [colorSecondary, setSecondary] = useState(client.color_secondary || '');
@@ -70,9 +76,12 @@ export default function ClientEditModal({ client, adminEmail, onSave, onClose, t
   var clientWa = waLinkTo(client.phone, 'Olá! Aqui é da equipe Financia. Posso ajudar?');
 
   var applyCustomPrice = async function(planId, value) {
-    var raw = String(value).replace(/\s/g, '').replace(',', '.').trim();
-    var cents = raw ? Math.round(parseFloat(raw) * 100) : null;
-    if (raw && (isNaN(cents) || cents < 0)) { toast('Valor inválido.', 'error'); return; }
+    var raw = String(value).replace(/\s/g, '').trim();
+    var normalized = raw.indexOf(',') >= 0 ? raw.replace(/\./g, '').replace(',', '.') : raw;
+    var cents = normalized ? Math.round(Number(normalized) * 100) : null;
+    var tableCents = Math.round(tablePriceFor(planId) * 100);
+    if (raw && (!Number.isFinite(cents) || cents <= 0)) { toast('Informe um preço maior que zero.', 'error'); return; }
+    if (cents !== null && cents >= tableCents) { toast('O preço especial deve ser menor que o preço de tabela.', 'error'); return; }
     setPriceSaving(true);
     var res = await setClientCustomPrice(client.user_id, cents, planId);
     setPriceSaving(false);
@@ -411,9 +420,9 @@ export default function ClientEditModal({ client, adminEmail, onSave, onClose, t
                 <p className="text-xs mb-1" style={{color:'var(--warning)'}}>Preço customizado (tabela: <b>{fmt(WHITELABEL.price)}</b> único)</p>
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-semibold" style={{color:'var(--warning)'}}>R$</span>
-                  <input value={customWlReais}
+                  <input type="text" aria-label="Preço especial do pacote de personalização" value={customWlReais}
                     onChange={function(e) { setCustomWlReais(e.target.value.replace(/[^0-9.,]/g, '')); }}
-                    placeholder="ex: 499,00" inputMode="decimal"
+                    placeholder="ex: 399,00" inputMode="decimal" max={WHITELABEL.price} step="0.01"
                     className="border rounded-xl px-3 py-2 text-sm font-mono flex-1 focus:outline-none" style={{background:'var(--bg-input)', color:'var(--text-main)', borderColor:'var(--warning)'}}/>
                 </div>
                 <div className="flex gap-2 mt-2">
@@ -454,9 +463,9 @@ export default function ClientEditModal({ client, adminEmail, onSave, onClose, t
                     <p className="text-xs mb-1" style={{color:'var(--warning)'}}>Plano {label} (tabela: <b>{fmt(base)}</b>/mês)</p>
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-semibold" style={{color:'var(--warning)'}}>R$</span>
-                      <input value={value}
+                      <input type="text" aria-label={'Preço especial do plano ' + label} value={value}
                         onChange={function(e) { setValue(e.target.value.replace(/[^0-9.,]/g, '')); }}
-                        placeholder="ex: 29,90" inputMode="decimal"
+                        placeholder="ex: 29,90" inputMode="decimal" max={base} step="0.01"
                         className="border rounded-xl px-3 py-2 text-sm font-mono flex-1 focus:outline-none" style={{background:'var(--bg-input)', color:'var(--text-main)', borderColor:'var(--warning)'}}/>
                       <span className="text-xs" style={{color:'var(--warning)'}}>/mês</span>
                     </div>
