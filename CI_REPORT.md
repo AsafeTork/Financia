@@ -1,7 +1,7 @@
 # CI Report
 
-**Gerado:** 2026-08-09 02:01 UTC
-**Commit:** `1d815290523bddec32e0e1fb264361c4f7a21bcf`
+**Gerado:** 2026-08-09 02:06 UTC
+**Commit:** `78b743f2f46aced6ec192fb1ebfe1f88f4efef32`
 **Branch:** `main`
 
 ---
@@ -61,17 +61,17 @@ computing gzip size...
 [2mdist/[22m[2massets/[22m[36mshared-runtime-vwDjcXxQ.js          [39m[1m[2m  0.00 kB[22m[1m[22m[2m │ gzip:  0.02 kB[22m
 [2mdist/[22m[2massets/[22m[36museDebouncedValue-2VSGL6HB.js       [39m[1m[2m  0.21 kB[22m[1m[22m[2m │ gzip:  0.17 kB[22m
 [2mdist/[22m[2massets/[22m[36mDebugBadge-C9B5q9cL.js              [39m[1m[2m  0.83 kB[22m[1m[22m[2m │ gzip:  0.47 kB[22m
-[2mdist/[22m[2massets/[22m[36mlogoUtils-ClbHDUFT.js               [39m[1m[2m  0.88 kB[22m[1m[22m[2m │ gzip:  0.46 kB[22m
+[2mdist/[22m[2massets/[22m[36mlogoUtils-COPcO4ph.js               [39m[1m[2m  0.88 kB[22m[1m[22m[2m │ gzip:  0.46 kB[22m
 [2mdist/[22m[2massets/[22m[36mvirtual-vendor-DNVO4DF9.js          [39m[1m[2m  1.82 kB[22m[1m[22m[2m │ gzip:  0.92 kB[22m
 [2mdist/[22m[2massets/[22m[36maiClient-DfftPRzD.js                [39m[1m[2m  2.87 kB[22m[1m[22m[2m │ gzip:  1.50 kB[22m
 [2mdist/[22m[2massets/[22m[36mPullToRefreshIndicator-qGVDq_3U.js  [39m[1m[2m  3.31 kB[22m[1m[22m[2m │ gzip:  1.38 kB[22m
 [2mdist/[22m[2massets/[22m[36mexporters-B-p9KxkL.js               [39m[1m[2m  4.25 kB[22m[1m[22m[2m │ gzip:  1.79 kB[22m
-[2mdist/[22m[2massets/[22m[36mEmailView-HrqSGVAH.js               [39m[1m[2m  5.17 kB[22m[1m[22m[2m │ gzip:  2.08 kB[22m
+[2mdist/[22m[2massets/[22m[36mEmailView-DM9y0kMr.js               [39m[1m[2m  5.17 kB[22m[1m[22m[2m │ gzip:  2.08 kB[22m
 [2mdist/[22m[2massets/[22m[36mCardPreview-Bj3ClhaK.js             [39m[1m[2m  6.27 kB[22m[1m[22m[2m │ gzip:  2.76 kB[22m
-[2mdist/[22m[2massets/[22m[36mSaleForm-D34Ql-4T.js                [39m[1m[2m  7.48 kB[22m[1m[22m[2m │ gzip:  2.52 kB[22m
+[2mdist/[22m[2massets/[22m[36mSaleForm-3qvC8imV.js                [39m[1m[2m  7.48 kB[22m[1m[22m[2m │ gzip:  2.52 kB[22m
 [2mdist/[22m[2massets/[22m[36mPrivacyPolicy-NqBoGVC-.js           [39m[1m[2m  8.17 kB[22m[1m[22m[2m │ gzip:  3.39 kB[22m
 [2mdist/[22m[2massets/[22m[36mTermsOfService-CFYVQ0k6.js          [39m[1m[2m  8.93 kB[22m[1m[22m[2m │ gzip:  3.62 kB[22m
-[2mdist/[22m[2massets/[22m[36mReportView-BW3DFrIE.js              [39m[1m[2m 10.73 kB[22m[1m[22m[2m │ gzip:  3.27 kB[22m
+[2mdist/[22m[2massets/[22m[36mReportView-DGR9kM3_.js              [39m[1m[2m 10.73 kB[22m[1m[22m[2m │ gzip:  3.27 kB[22m
 [2mdist/[22m[2massets/[22m[36mstripe-vendo
 ```
 
@@ -86,9 +86,9 @@ computing gzip size...
 ```
 
 Running 26 tests using 4 workers
-°···°°°°°°°°···°°°·°···°··
-  14 skipped
-  12 passed (15.7s)
+°°··°°°°°°°°···°°°·°···°··
+  15 skipped
+  11 passed (13.3s)
 
 ```
 
@@ -133,10 +133,10 @@ Running 42 tests using 4 workers
 [27/42] [chromium] › e2e/offline-state-corruption.spec.ts:65:3 › Deep Edge Cases — Offline State Corruption & Recovery › sessionStorage does not survive new tab
 [28/42] [chromium] › e2e/offline-state-corruption.spec.ts:86:3 › Deep Edge Cases — Offline State Corruption & Recovery › multiple rapid navigations do not break app
 [29/42] [chromium] › e2e/state-corruption-recovery.spec.ts:10:3 › State Corruption & Recovery › app recovers from corrupted localStorage brand config
-[30/42] [chromium] › e2e/state-corruption-recovery.spec.ts:28:3 › State Corruption & Recovery › app survives missing IndexedDB database gracefully
 [chromium] › e2e/network-perf.spec.ts:157:3 › Network Performance & Sync Loop Detection › detect sync loops, icon loops, and excessive network activity
 [MONITOR] Waiting 15s to capture baseline network activity...
 
+[30/42] [chromium] › e2e/state-corruption-recovery.spec.ts:28:3 › State Corruption & Recovery › app survives missing IndexedDB database gracefully
 [31/42] [chromium] › e2e/state-corruption-recovery.spec.ts:54:3 › State Corruption & Recovery › app handles sessionStorage flood without crash
 [32/42] [chromium] › e2e/state-corruption-recovery.spec.ts:76:3 › State Corruption & Recovery › app survives cache API quota exceeded
 [33/42] [chromium] › e2e/state-corruption-recovery.spec.ts:96:3 › State Corruption & Recovery › app handles service worker registration failure gracefully
@@ -172,4 +172,4 @@ Nenhum relatorio admin gerado.
 
 | Data | Correcao | Commit |
 |------|----------|--------|
-| 2026-08-09 02:01 UTC | CI report gerado automaticamente | `1d815290523bddec32e0e1fb264361c4f7a21bcf` |
+| 2026-08-09 02:06 UTC | CI report gerado automaticamente | `78b743f2f46aced6ec192fb1ebfe1f88f4efef32` |
