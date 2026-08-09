@@ -144,7 +144,7 @@ async function httpJson(url, { timeout = 30000, headers = {}, method, body } = {
   }
 }
 
-function listDir(p, depth) {
+function listDir(p, depth, maxLines = 1500) {
   const lines = [];
   const rec = (dir, lv) => {
     let ents;
@@ -176,6 +176,11 @@ function listDir(p, depth) {
     }
   };
   rec(p, 0);
+  const total = lines.length;
+  if (total > maxLines) {
+    lines.length = maxLines;
+    lines.push(`...[truncated ${total - maxLines} lines — reduce depth or use n_glob/n_grep]`);
+  }
   return out(lines.join("\n") || "(empty)");
 }
 
@@ -190,10 +195,11 @@ reg("n_read", {
       offset: { type: "number", description: "First line (1-based)" },
       limit: { type: "number", description: "Max lines" },
       raw: { type: "boolean", description: "Content without line numbers" },
+      maxChars: { type: "number", description: "Max chars to return (default 100000)" },
     },
     required: ["filePath"],
   },
-  run: async ({ filePath, offset, limit, raw }) => {
+  run: async ({ filePath, offset, limit, raw, maxChars }) => {
     const p = fpath(filePath);
     let st;
     try {
@@ -205,7 +211,8 @@ reg("n_read", {
     const buf = readFileSync(p);
     if (buf.indexOf(0) >= 0) return out(`binary file (${buf.length} bytes) — use n_bash to handle it`);
     let text = buf.toString("utf8");
-    if (text.length > 500000) text = text.slice(0, 500000) + "\n...[truncated]";
+    const cap = Math.max(1000, Number(maxChars) || 100000);
+    if (text.length > cap) text = text.slice(0, cap) + `\n...[truncated ${text.length} chars — use offset/limit to read the rest]`;
     if (raw) return out(text);
     const lines = text.split("\n");
     const start = Math.max(1, Number(offset) || 1);
@@ -320,20 +327,25 @@ reg("n_apply_patch", {
 });
 
 reg("n_bash", {
-  description: "Run a shell command. Returns stdout, stderr and exit code.",
+  description: "Run a shell command. Returns stdout, stderr and exit code (truncated to save tokens).",
   inputSchema: {
     type: "object",
     properties: {
       command: { type: "string" },
       cwd: { type: "string", description: "Working directory (default: repo root)" },
       timeout: { type: "number", description: "Timeout ms (default 120000)" },
+      maxOutput: { type: "number", description: "Max chars of stdout (default 20000; raise for big outputs)" },
     },
     required: ["command"],
   },
-  run: async ({ command, cwd, timeout }) => {
+  run: async ({ command, cwd, timeout, maxOutput }) => {
     const r = await exec("bash", ["-lc", command], { timeout: timeout || 120000, cwd: cwd ? fpath(cwd) : CWD });
-    const msg = `exit=${r.error ? "spawn-error" : r.killed ? "timeout" : r.code}\n--- stdout ---\n${r.so}\n--- stderr ---\n${r.se}`;
-    return out(trimOut(msg), r.error ? true : r.code !== 0);
+    const cap = Math.min(Math.max(Number(maxOutput) || 20000, 1000), 200000);
+    const capErr = 4000;
+    const so = r.so.length > cap ? r.so.slice(0, cap) + `\n...[truncated ${r.so.length - cap} chars; run again with maxOutput=${cap * 2} or use n_read/n_grep for files]` : r.so;
+    const se = r.se.length > capErr ? r.se.slice(0, capErr) + `\n...[truncated ${r.se.length - capErr} chars]` : r.se;
+    const msg = `exit=${r.error ? "spawn-error" : r.killed ? "timeout" : r.code}\n--- stdout ---\n${so}\n--- stderr ---\n${se}`;
+    return out(msg, r.error ? true : r.code !== 0);
   },
 });
 
@@ -417,14 +429,16 @@ reg("n_grep", {
 /* ============================== web tools ============================== */
 
 const ttlCache = new Map();
-function cached(key, ttlMs, fn) {
+function cached(key, ttlMs, fn, ok) {
   const hit = ttlCache.get(key);
   if (hit && Date.now() - hit.ts < ttlMs) return Promise.resolve(hit.val);
   return Promise.resolve()
     .then(fn)
     .then((val) => {
-      if (ttlCache.size > 300) ttlCache.delete(ttlCache.keys().next().value);
-      ttlCache.set(key, { ts: Date.now(), val });
+      if (!ok || ok(val)) {
+        if (ttlCache.size > 300) ttlCache.delete(ttlCache.keys().next().value);
+        ttlCache.set(key, { ts: Date.now(), val });
+      }
       return val;
     });
 }
@@ -636,7 +650,12 @@ reg("n_currency", {
   run: async ({ from, to, amount }) => {
     const a = Number(amount) || 1;
     const [f, t] = [from || "BRL", to || "USD"];
-    const r = await httpJson(`https://api.frankfurter.app/latest?from=${f.toUpperCase()}&to=${t.toUpperCase()}`);
+    const r = await cached(
+      `cur:${f.toUpperCase()}:${t.toUpperCase()}`,
+      60 * 60 * 1000,
+      () => httpJson(`https://api.frankfurter.app/latest?from=${f.toUpperCase()}&to=${t.toUpperCase()}`),
+      (x) => x.status === 200
+    );
     if (r.status !== 200 || !r.data?.rates) return out(`currency API failed (HTTP ${r.status}): ${(r.data?.message || r.text || "").slice(0, 300)}`, true);
     const lines = [f.toUpperCase(), `source: https://api.frankfurter.app (ECB daily rates)`];
     for (const [cur, rate] of Object.entries(r.data.rates)) {
@@ -658,7 +677,12 @@ reg("n_cep", {
   run: async ({ cep }) => {
     const c = String(cep || "").replace(/\D/g, "");
     if (c.length !== 8) return out(`invalid CEP: "${cep}"`, true);
-    const r = await httpJson(`https://viacep.com.br/ws/${c}/json/`);
+    const r = await cached(
+      `cep:${c}`,
+      24 * 60 * 60 * 1000,
+      () => httpJson(`https://viacep.com.br/ws/${c}/json/`),
+      (x) => x.status === 200 && !x.data?.erro
+    );
     if (r.status !== 200) return out(`ViaCEP failed (HTTP ${r.status})`, true);
     if (r.data?.erro) return out("CEP not found", true);
     return out(
@@ -679,7 +703,12 @@ reg("n_cnpj", {
   run: async ({ cnpj }) => {
     const c = String(cnpj || "").replace(/\D/g, "");
     if (c.length !== 14) return out(`invalid CNPJ: "${cnpj}"`, true);
-    const r = await httpJson(`https://www.receitaws.com.br/v1/cnpj/${c}`, { timeout: 60000 });
+    const r = await cached(
+      `cnpj:${c}`,
+      24 * 60 * 60 * 1000,
+      () => httpJson(`https://www.receitaws.com.br/v1/cnpj/${c}`, { timeout: 60000 }),
+      (x) => x.status === 200 && !!x.data?.status
+    );
     if (r.status !== 200 || !r.data?.status) return out(`ReceitaWS failed (HTTP ${r.status}): ${r.text.slice(0, 300)}`, true);
     const d = r.data;
     return out(
@@ -698,8 +727,14 @@ reg("n_ipinfo", {
     required: [],
   },
   run: async ({ ip }) => {
+    const key = `ip:${ip || "self"}`;
     const url = ip ? `http://ip-api.com/json/${encodeURIComponent(ip)}?lang=pt-BR` : "http://ip-api.com/json/?lang=pt-BR";
-    const r = await httpJson(url, { timeout: 20000 });
+    const r = await cached(
+      key,
+      10 * 60 * 1000,
+      () => httpJson(url, { timeout: 20000 }),
+      (x) => x.status === 200 && x.data?.status === "success"
+    );
     if (r.status !== 200 || !r.data || r.data.status !== "success") {
       return out(`ip lookup failed (HTTP ${r.status}): ${r.data?.message || r.data?.status || r.text.slice(0, 300)}`, true);
     }
@@ -722,8 +757,14 @@ reg("n_weather", {
   },
   run: async ({ latitude, longitude, days }) => {
     const n = Math.min(Math.max(Number(days) || 3, 1), 7);
-    const r = await httpJson(
-      `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,weathercode&forecast_days=${n}&timezone=auto`
+    const r = await cached(
+      `wx:${latitude}:${longitude}:${n}`,
+      30 * 60 * 1000,
+      () =>
+        httpJson(
+          `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,weathercode&forecast_days=${n}&timezone=auto`
+        ),
+      (x) => x.status === 200 && !!x.data?.daily
     );
     if (r.status !== 200 || !r.data?.daily) return out(`weather failed (HTTP ${r.status}): ${r.text.slice(0, 300)}`, true);
     const d = r.data.daily;
@@ -755,7 +796,12 @@ reg("n_github", {
     const url = k === "repo" ? base : `${base}/${k}?per_page=${n}`;
     const ghToken = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
     const headers = ghToken ? { authorization: `Bearer ${ghToken}` } : {};
-    const r = await httpJson(url, { headers });
+    const r = await cached(
+      `gh:${k}:${owner}/${repo}:${n}`,
+      10 * 60 * 1000,
+      () => httpJson(url, { headers }),
+      (x) => x.status === 200
+    );
     if (r.status === 403) return out("GitHub rate limit exceeded (60 req/h sem token). Defina GITHUB_TOKEN/GH_TOKEN para mais.", true);
     if (r.status !== 200) return out(`GitHub API failed (HTTP ${r.status})`, true);
     if (k === "repo") {
@@ -779,10 +825,16 @@ reg("n_npm", {
   },
   run: async ({ package: pkg, scope }) => {
     const name = scope ? `${scope}/${pkg}` : pkg;
-    const [meta, dl] = await Promise.all([
-      httpJson(`https://registry.npmjs.org/${encodeURIComponent(name)}/latest`),
-      httpJson(`https://api.npmjs.org/downloads/point/last-month/${encodeURIComponent(name)}`),
-    ]);
+    const [meta, dl] = await cached(
+      `npm:${name}`,
+      60 * 60 * 1000,
+      () =>
+        Promise.all([
+          httpJson(`https://registry.npmjs.org/${encodeURIComponent(name)}/latest`),
+          httpJson(`https://api.npmjs.org/downloads/point/last-month/${encodeURIComponent(name)}`),
+        ]),
+      (x) => x[0].status === 200
+    );
     if (meta.status !== 200 || !meta.data) return out(`npm registry failed (HTTP ${meta.status})`, true);
     const d = meta.data;
     const lines = [
@@ -880,14 +932,20 @@ reg("n_todowrite", {
   run: ({ todos }) => {
     todo.length = 0;
     for (const t of todos) todo.push({ content: t.content, status: t.status || "pending", priority: t.priority || "medium" });
-    return out(JSON.stringify(todo, null, 2));
+    return out(fmtTodo());
   },
 });
+
+function fmtTodo() {
+  return todo.length
+    ? todo.map((t, i) => `[${i}] ${t.status.padEnd(11)} ${t.priority.padEnd(6)} ${t.content}`).join("\n")
+    : "(empty)";
+}
 
 reg("n_todo", {
   description: "Read the in-memory task list.",
   inputSchema: { type: "object", properties: {}, required: [] },
-  run: () => out(todo.length ? JSON.stringify(todo, null, 2) : "(empty)"),
+  run: () => out(fmtTodo()),
 });
 
 reg("n_tools_info", {
