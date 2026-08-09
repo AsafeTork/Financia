@@ -490,32 +490,80 @@ reg("n_webfetch", {
   },
 });
 
-async function searchTavily(q, n) {
-  const r = await httpJson("https://api.tavily.com/search", {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({ api_key: process.env.TAVILY_API_KEY, query: q, max_results: n, search_depth: "basic", include_answer: false }),
-  });
-  if (r.status !== 200 || !Array.isArray(r.data?.results)) return null;
-  return { source: "tavily", items: r.data.results.map((it) => ({ title: S(it.title), url: it.url, snippet: S(it.content, 260) })) };
+async function searchNews(q, n) {
+  const r = await httpJson(`https://news.google.com/rss/search?q=${encodeURIComponent(q)}&hl=pt-BR&gl=BR&ceid=BR:pt`, { timeout: 12000 });
+  if (r.status !== 200) return null;
+  const out = [];
+  for (const b of r.text.split("<item>").slice(1)) {
+    const t = b.match(/<title>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?<\/title>/s);
+    const l = b.match(/<link>(.*?)<\/link>/s);
+    const src = b.match(/<source[^>]*>(.*?)<\/source>/s);
+    if (!t || !l) continue;
+    out.push({ title: collapseHtml(t[1]), url: l[1].trim(), snippet: src ? `fonte: ${collapseHtml(src[1])}` : "" });
+    if (out.length >= n) break;
+  }
+  return out.length ? { source: "google-news", items: out } : null;
 }
-async function searchBrave(q, n) {
-  const r = await httpJson(`https://api.search.brave.com/res/v1/web/search?q=${encodeURIComponent(q)}&count=${n}`, {
-    headers: { "X-Subscription-Token": process.env.BRAVE_API_KEY },
-  });
-  if (r.status !== 200 || !Array.isArray(r.data?.web?.results)) return null;
-  return { source: "brave", items: r.data.web.results.map((it) => ({ title: S(it.title), url: it.url, snippet: S(it.description, 260) })) };
+async function searchDdgInstant(q) {
+  const r = await httpJson(`https://api.duckduckgo.com/?q=${encodeURIComponent(q)}&format=json&no_html=1&skip_disambig=1`, { timeout: 10000 });
+  if (r.status !== 200) return null;
+  const d = r.data || {};
+  const items = [];
+  if (d.AbstractText) items.push({ title: d.Heading || "DuckDuckGo", url: d.AbstractURL || "", snippet: S(d.AbstractText, 400) });
+  for (const t of d.RelatedTopics || []) {
+    if (t.Topics) for (const s of t.Topics) if (s.Text) items.push({ title: t.Name || "", url: s.FirstURL || "", snippet: S(s.Text, 260) });
+    else if (t.Text) items.push({ title: t.Name || "", url: t.FirstURL || "", snippet: S(t.Text, 260) });
+  }
+  return items.length ? { source: "ddg-instant-answer", items } : null;
 }
-async function searchSearxng(q, n) {
-  const base = String(process.env.SEARXNG_URL || "").replace(/\/+$/, "");
-  if (!base) return null;
-  const r = await httpJson(`${base}/search?q=${encodeURIComponent(q)}&format=json&language=pt-BR`, { timeout: 15000 });
-  if (r.status !== 200 || !Array.isArray(r.data?.results)) return null;
-  return { source: `searxng(${base.replace(/^https?:\/\//, "")})`, items: r.data.results.slice(0, n).map((it) => ({ title: S(it.title), url: it.url, snippet: S(it.content, 260) })) };
+async function searchWikiExtract(q) {
+  const r = await httpJson(
+    `https://pt.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(q)}&gsrlimit=1&prop=extracts&exintro&explaintext&redirects=1&format=json&utf8=1`,
+    { timeout: 12000 }
+  );
+  if (r.status !== 200 || !r.data?.query?.pages) return null;
+  const page = r.data.query.pages[Object.keys(r.data.query.pages)[0]];
+  if (!page?.extract) return null;
+  return { source: "wikipedia-resumo", items: [{ title: page.title, url: `https://pt.wikipedia.org/wiki/${encodeURIComponent(page.title.replace(/ /g, "_"))}`, snippet: S(page.extract, 500) }] };
+}
+async function searchWiki(q, n) {
+  const r = await httpJson(
+    `https://pt.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(q)}&srlimit=${n}&format=json&utf8=1`,
+    { timeout: 12000 }
+  );
+  if (r.status !== 200 || !r.data?.query?.search?.length) return null;
+  return {
+    source: "wikipedia-pt",
+    items: r.data.query.search.map((s) => ({
+      title: s.title,
+      url: `https://pt.wikipedia.org/wiki/${encodeURIComponent(s.title.replace(/ /g, "_"))}`,
+      snippet: collapseHtml(s.snippet),
+    })),
+  };
+}
+async function searchHn(q, n) {
+  const r = await httpJson(`https://hn.algolia.com/api/v1/search?query=${encodeURIComponent(q)}&tags=story&hitsPerPage=${n}`, { timeout: 12000 });
+  if (r.status !== 200 || !Array.isArray(r.data?.hits)) return null;
+  return {
+    source: "hacker-news",
+    items: r.data.hits.map((h) => ({
+      title: S(h.title),
+      url: h.url || `https://news.ycombinator.com/item?id=${h.objectID}`,
+      snippet: `${h.points ?? 0} points · ${h.num_comments ?? 0} comments · ${h.author || ""}`.trim(),
+    })),
+  };
+}
+async function searchGithub(q, n) {
+  const r = await httpJson(`https://api.github.com/search/repositories?q=${encodeURIComponent(q)}&per_page=${n}`, { timeout: 10000 });
+  if (r.status !== 200 || !Array.isArray(r.data?.items)) return null;
+  return {
+    source: "github",
+    items: r.data.items.map((it) => ({ title: it.full_name, url: it.html_url, snippet: `${S(it.description, 180)} | stars: ${it.stargazers_count}`.trimStart() })),
+  };
 }
 
 reg("n_websearch", {
-  description: "Web search with automatic backend routing (Tavily → Brave → SearXNG → DuckDuckGo) + 10min response cache. Returns compact title/URL/snippet; use n_webfetch to read a page in full.",
+  description: "Free public web search — no API keys. Runs 7 keyless backends in parallel (Google News RSS, DuckDuckGo Instant Answer, Wikipedia pt (resumo + títulos), Hacker News, GitHub repositories, DuckDuckGo HTML) and merges results grouped by source, with 10min cache. Use n_webfetch to read a page's main content.",
   inputSchema: {
     type: "object",
     properties: {
@@ -529,27 +577,23 @@ reg("n_websearch", {
     if (!q) return out("query is required", true);
     const n = Math.min(Math.max(Number(numResults) || 8, 1), 20);
     const key = `search:${q}:${n}`;
-    const found = await cached(key, 10 * 60 * 1000, async () => {
-      const backends = [
-        process.env.TAVILY_API_KEY ? searchTavily(q, n) : Promise.resolve(null),
-        process.env.BRAVE_API_KEY ? searchBrave(q, n) : Promise.resolve(null),
-        searchSearxng(q, n),
-        httpJson(`https://html.duckduckgo.com/html/?q=${encodeURIComponent(q)}`, { timeout: 30000 }).then((r) =>
+    const groups = await cached(key, 10 * 60 * 1000, async () => {
+      const settled = await Promise.allSettled([
+        searchNews(q, 4),
+        searchDdgInstant(q),
+        searchWikiExtract(q),
+        searchWiki(q, n),
+        searchHn(q, 4),
+        searchGithub(q, 4),
+        httpJson(`https://html.duckduckgo.com/html/?q=${encodeURIComponent(q)}`, { timeout: 12000 }).then((r) =>
           r.status === 200 ? { source: "duckduckgo", items: parseDdg(r.text).slice(0, n) } : null
         ),
-      ];
-      for (const attempt of backends) {
-        const r = await attempt;
-        if (r && r.items?.length) return r;
-      }
-      return null;
+      ]);
+      return settled.filter((s) => s.status === "fulfilled" && s.value?.items?.length).map((s) => s.value);
     });
-    if (!found || !found.items?.length) return out(`no results for "${q}"`);
-    return out(
-      `[${found.source}] ${found.items.length} results for "${q}" (cached 10min)\n` +
-        found.items.map((it, i) => `${i + 1}. ${it.title}\n   ${it.url}\n   ${it.snippet}\n`).join("") +
-        `\nTip: use n_webfetch to read a page's main content (maxChars caps token cost).`
-    );
+    if (!groups.length) return out(`no results for "${q}"`);
+    const blocks = groups.map((g) => `── ${g.source} ──\n` + g.items.map((it, i) => `${i + 1}. ${it.title}\n   ${it.url}\n   ${it.snippet}\n`).join(""));
+    return out(`${groups.reduce((t, g) => t + g.items.length, 0)} results for "${q}" (cached 10min, sources: ${groups.map((g) => g.source).join(", ")})\n` + blocks.join("\n") + `\nTip: use n_webfetch to read a page's main content (maxChars caps token cost).`);
   },
 });
 
