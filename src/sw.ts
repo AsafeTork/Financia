@@ -112,7 +112,7 @@ self.addEventListener('fetch', (event) => {
   if (event.request.mode === 'navigate' && event.preloadResponse) {
     event.respondWith((async () => {
       try { return await event.preloadResponse; }
-      catch { return await createHandlerBoundToURL('/index.html')({ request: event.request, event }); }
+      catch { return await createHandlerBoundToURL('/index.html')({ request: event.request, event, url: new URL(event.request.url) }); }
     })());
   }
 });
