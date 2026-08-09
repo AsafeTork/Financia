@@ -1,7 +1,7 @@
 # CI Report
 
-**Gerado:** 2026-08-08 23:59 UTC
-**Commit:** `f156740102f6921e61f0e3d4d7c5cc37a4e1552e`
+**Gerado:** 2026-08-09 00:01 UTC
+**Commit:** `fff2262b7416fe17588a2f0f007282ed12b96aac`
 **Branch:** `main`
 
 ---
@@ -10,7 +10,7 @@
 
 | Verificacao | Status |
 |---|---|
-| Lint + Typecheck | com erros |
+| Lint + Typecheck | ok |
 | Testes Unitarios | nao executado |
 | Testes Integracao | nao executado |
 | Build | nao executado |
@@ -23,18 +23,6 @@
 ## Lint Errors (Top 200 linhas)
 
 ```
-
-/home/runner/work/Financia/Financia/src/features/landing/Landing.jsx
-   28:7    warning  'FEATURES' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
-  207:96   error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`                      react/no-unescaped-entities
-  207:157  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`                      react/no-unescaped-entities
-  212:96   error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`                      react/no-unescaped-entities
-  212:154  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`                      react/no-unescaped-entities
-  217:96   error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`                      react/no-unescaped-entities
-  217:148  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`                      react/no-unescaped-entities
-
-✖ 7 problems (6 errors, 1 warning)
-
 
 ```
 
@@ -106,4 +94,4 @@ Nenhum relatorio admin gerado.
 
 | Data | Correcao | Commit |
 |------|----------|--------|
-| 2026-08-08 23:59 UTC | CI report gerado automaticamente | `f156740102f6921e61f0e3d4d7c5cc37a4e1552e` |
+| 2026-08-09 00:01 UTC | CI report gerado automaticamente | `fff2262b7416fe17588a2f0f007282ed12b96aac` |
