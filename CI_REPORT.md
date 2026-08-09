@@ -1,7 +1,7 @@
 # CI Report
 
-**Gerado:** 2026-08-09 02:06 UTC
-**Commit:** `78b743f2f46aced6ec192fb1ebfe1f88f4efef32`
+**Gerado:** 2026-08-09 13:13 UTC
+**Commit:** `a489964684d2b45e5a4966b66ef5ad2276470aeb`
 **Branch:** `main`
 
 ---
@@ -45,7 +45,7 @@
 
 [36mvite v5.4.21 [32mbuilding for production...[36m[39m
 transforming...
-[32m✓[39m 265 modules transformed.
+[32m✓[39m 266 modules transformed.
 Generated an empty chunk: "shared-runtime".
 rendering chunks...
 4 rules skipped due to selector errors:
@@ -57,21 +57,21 @@ computing gzip size...
 [2mdist/[22m[32mmanifest.webmanifest                       [39m[1m[2m  0.59 kB[22m[1m[22m
 [2mdist/[22m[32mindex.html                                 [39m[1m[2m 10.57 kB[22m[1m[22m[2m │ gzip:  3.56 kB[22m
 [2mdist/[22m[2massets/[22m[32msync.worker-DU9L2bZD.js             [39m[1m[2m103.98 kB[22m[1m[22m
-[2mdist/[22m[2massets/[22m[35mindex-C6pjH7XP.css                  [39m[1m[2m 60.17 kB[22m[1m[22m[2m │ gzip: 12.54 kB[22m
+[2mdist/[22m[2massets/[22m[35mindex-BzPFOqJT.css                  [39m[1m[2m 60.17 kB[22m[1m[22m[2m │ gzip: 12.54 kB[22m
 [2mdist/[22m[2massets/[22m[36mshared-runtime-vwDjcXxQ.js          [39m[1m[2m  0.00 kB[22m[1m[22m[2m │ gzip:  0.02 kB[22m
 [2mdist/[22m[2massets/[22m[36museDebouncedValue-2VSGL6HB.js       [39m[1m[2m  0.21 kB[22m[1m[22m[2m │ gzip:  0.17 kB[22m
 [2mdist/[22m[2massets/[22m[36mDebugBadge-C9B5q9cL.js              [39m[1m[2m  0.83 kB[22m[1m[22m[2m │ gzip:  0.47 kB[22m
-[2mdist/[22m[2massets/[22m[36mlogoUtils-COPcO4ph.js               [39m[1m[2m  0.88 kB[22m[1m[22m[2m │ gzip:  0.46 kB[22m
+[2mdist/[22m[2massets/[22m[36mlogoUtils-CZm4wnik.js               [39m[1m[2m  0.88 kB[22m[1m[22m[2m │ gzip:  0.46 kB[22m
 [2mdist/[22m[2massets/[22m[36mvirtual-vendor-DNVO4DF9.js          [39m[1m[2m  1.82 kB[22m[1m[22m[2m │ gzip:  0.92 kB[22m
 [2mdist/[22m[2massets/[22m[36maiClient-DfftPRzD.js                [39m[1m[2m  2.87 kB[22m[1m[22m[2m │ gzip:  1.50 kB[22m
 [2mdist/[22m[2massets/[22m[36mPullToRefreshIndicator-qGVDq_3U.js  [39m[1m[2m  3.31 kB[22m[1m[22m[2m │ gzip:  1.38 kB[22m
 [2mdist/[22m[2massets/[22m[36mexporters-B-p9KxkL.js               [39m[1m[2m  4.25 kB[22m[1m[22m[2m │ gzip:  1.79 kB[22m
-[2mdist/[22m[2massets/[22m[36mEmailView-DM9y0kMr.js               [39m[1m[2m  5.17 kB[22m[1m[22m[2m │ gzip:  2.08 kB[22m
+[2mdist/[22m[2massets/[22m[36mEmailView-B5VaAshR.js               [39m[1m[2m  5.17 kB[22m[1m[22m[2m │ gzip:  2.08 kB[22m
 [2mdist/[22m[2massets/[22m[36mCardPreview-Bj3ClhaK.js             [39m[1m[2m  6.27 kB[22m[1m[22m[2m │ gzip:  2.76 kB[22m
-[2mdist/[22m[2massets/[22m[36mSaleForm-3qvC8imV.js                [39m[1m[2m  7.48 kB[22m[1m[22m[2m │ gzip:  2.52 kB[22m
+[2mdist/[22m[2massets/[22m[36mSaleForm-zh1GSQeS.js                [39m[1m[2m  7.48 kB[22m[1m[22m[2m │ gzip:  2.52 kB[22m
 [2mdist/[22m[2massets/[22m[36mPrivacyPolicy-NqBoGVC-.js           [39m[1m[2m  8.17 kB[22m[1m[22m[2m │ gzip:  3.39 kB[22m
 [2mdist/[22m[2massets/[22m[36mTermsOfService-CFYVQ0k6.js          [39m[1m[2m  8.93 kB[22m[1m[22m[2m │ gzip:  3.62 kB[22m
-[2mdist/[22m[2massets/[22m[36mReportView-DGR9kM3_.js              [39m[1m[2m 10.73 kB[22m[1m[22m[2m │ gzip:  3.27 kB[22m
+[2mdist/[22m[2massets/[22m[36mReportView-0XAmc29k.js              [39m[1m[2m 10.73 kB[22m[1m[22m[2m │ gzip:  3.27 kB[22m
 [2mdist/[22m[2massets/[22m[36mstripe-vendo
 ```
 
@@ -86,9 +86,9 @@ computing gzip size...
 ```
 
 Running 26 tests using 4 workers
-°°··°°°°°°°°···°°°·°···°··
-  15 skipped
-  11 passed (13.3s)
+°···°°°°°°°°···°°°°···°···
+  14 skipped
+  12 passed (13.7s)
 
 ```
 
@@ -105,16 +105,16 @@ Running 26 tests using 4 workers
 Running 42 tests using 4 workers
 
 [1/42] [chromium] › e2e/deep-sync-conflict.spec.ts:59:3 › Deep Sync Conflict Scenarios › BroadcastChannel handles duplicate messages without errors
-[2/42] [chromium] › e2e/deep-sync-conflict.spec.ts:10:3 › Deep Sync Conflict Scenarios › BroadcastChannel ping/pong survives rapid tab switching
-[3/42] [chromium] › e2e/deep-sync-conflict.spec.ts:94:3 › Deep Sync Conflict Scenarios › sync worker survives unhandled rejection
-[4/42] [chromium] › e2e/deep-sync-conflict.spec.ts:127:3 › Deep Sync Conflict Scenarios › memory leak check after sync broadcast storm
+[2/42] [chromium] › e2e/deep-sync-conflict.spec.ts:94:3 › Deep Sync Conflict Scenarios › sync worker survives unhandled rejection
+[3/42] [chromium] › e2e/deep-sync-conflict.spec.ts:127:3 › Deep Sync Conflict Scenarios › memory leak check after sync broadcast storm
+[4/42] [chromium] › e2e/deep-sync-conflict.spec.ts:10:3 › Deep Sync Conflict Scenarios › BroadcastChannel ping/pong survives rapid tab switching
 [5/42] [chromium] › e2e/indexeddb-corruption.spec.ts:54:6 › IndexedDB Recovery - Corruption › Corruption Simulation › should recover from corrupted IndexedDB data
 [6/42] [chromium] › e2e/indexeddb-corruption.spec.ts:117:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should handle invalid schema gracefully
 [7/42] [chromium] › e2e/indexeddb-eviction.spec.ts:12:5 › IndexedDB Recovery - Eviction › Eviction Test › should handle storage pressure and persist()
 [8/42] [chromium] › e2e/indexeddb-eviction.spec.ts:89:5 › IndexedDB Recovery - Eviction › Eviction Test › should estimate storage quota
 [9/42] [chromium] › e2e/indexeddb-migration.spec.ts:12:5 › IndexedDB Recovery - Migration › Migration Test › should migrate from old schema to new schema
-[10/42] [chromium] › e2e/memory-leak.spec.ts:6:3 › Memory Leak Detection › cyclic navigation - no detached DOM nodes
-[11/42] [chromium] › e2e/indexeddb-migration.spec.ts:92:5 › IndexedDB Recovery - Migration › Migration Test › should preserve data integrity during migration
+[10/42] [chromium] › e2e/indexeddb-migration.spec.ts:92:5 › IndexedDB Recovery - Migration › Migration Test › should preserve data integrity during migration
+[11/42] [chromium] › e2e/memory-leak.spec.ts:6:3 › Memory Leak Detection › cyclic navigation - no detached DOM nodes
 [12/42] [chromium] › e2e/memory-leak.spec.ts:57:3 › Memory Leak Detection › event listeners cleaned up on unmount
 [13/42] [chromium] › e2e/memory-leak.spec.ts:84:3 › Memory Leak Detection › timers and intervals cleared on unmount
 [14/42] [chromium] › e2e/memory-leak.spec.ts:110:3 › Memory Leak Detection › IndexedDB connections closed properly
@@ -172,4 +172,4 @@ Nenhum relatorio admin gerado.
 
 | Data | Correcao | Commit |
 |------|----------|--------|
-| 2026-08-09 02:06 UTC | CI report gerado automaticamente | `78b743f2f46aced6ec192fb1ebfe1f88f4efef32` |
+| 2026-08-09 13:13 UTC | CI report gerado automaticamente | `a489964684d2b45e5a4966b66ef5ad2276470aeb` |
