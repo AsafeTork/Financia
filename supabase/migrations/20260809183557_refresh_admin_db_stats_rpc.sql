@@ -1,4 +1,4 @@
--- Refresh the admin DB stats functions so PostgREST exposes a working RPC contract.
+-- Qualify the private function's public dependency so authenticated RPC calls work.
 create or replace function private.admin_db_stats()
 returns json
 language plpgsql
