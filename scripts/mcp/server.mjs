@@ -118,11 +118,17 @@ async function exec(cmd, args, { timeout = 120000, cwd = CWD, env = {} } = {}) {
   });
 }
 
-async function httpJson(url, { timeout = 30000, headers = {} } = {}) {
+async function httpJson(url, { timeout = 30000, headers = {}, method, body } = {}) {
   const ac = new AbortController();
   const t = setTimeout(() => ac.abort(), timeout);
   try {
-    const res = await fetch(url, { signal: ac.signal, redirect: "follow", headers: { "user-agent": UA, ...headers } });
+    const res = await fetch(url, {
+      signal: ac.signal,
+      redirect: "follow",
+      method: method || "GET",
+      headers: { "user-agent": UA, ...headers },
+      body: body || undefined,
+    });
     const text = await res.text();
     let data;
     try {
@@ -410,37 +416,106 @@ reg("n_grep", {
 
 /* ============================== web tools ============================== */
 
+const ttlCache = new Map();
+function cached(key, ttlMs, fn) {
+  const hit = ttlCache.get(key);
+  if (hit && Date.now() - hit.ts < ttlMs) return Promise.resolve(hit.val);
+  return Promise.resolve()
+    .then(fn)
+    .then((val) => {
+      if (ttlCache.size > 300) ttlCache.delete(ttlCache.keys().next().value);
+      ttlCache.set(key, { ts: Date.now(), val });
+      return val;
+    });
+}
+const S = (s, n = 240) => (s ? String(s).replace(/\s+/g, " ").trim().slice(0, n) : "");
+function probeMeta(html) {
+  const t = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
+  const og = html.match(/property=["']og:title["'][^>]*content=["']([^"']+)/i);
+  return S(og?.[1] || t?.[1] || "", 160);
+}
+function mainContent(html) {
+  const clean = html.replace(/<(script|style|noscript|header|footer|nav|aside)[\s\S]*?<\/\1>/gi, " ").replace(/<!--[\s\S]*?-->/g, " ");
+  const m = clean.match(/<(?:article|main)[\s\S]*?<\/(?:article|main)>/i);
+  return m ? m[0] : clean;
+}
+
 reg("n_webfetch", {
-  description: "Fetch a URL and return its text content (HTML stripped to text).",
+  description: "Fetch a URL and return its main text content (boilerplate stripped, length-capped). Token-efficient: returns only the article/body region, not full HTML.",
   inputSchema: {
     type: "object",
     properties: {
       url: { type: "string" },
-      format: { type: "string", enum: ["markdown", "text", "html"], default: "markdown" },
+      format: { type: "string", enum: ["markdown", "text", "html"], default: "text" },
+      maxChars: { type: "number", description: "Max chars of extracted text (default 12000)" },
       timeout: { type: "number", default: 60000 },
     },
     required: ["url"],
   },
-  run: async ({ url, format, timeout }) => {
-    const ac = new AbortController();
-    const t = setTimeout(() => ac.abort(), timeout || 60000);
-    try {
-      const res = await fetch(url, { signal: ac.signal, redirect: "follow", headers: { "user-agent": UA } });
-      const raw = await res.text();
-      if (res.status >= 400) return out(`HTTP ${res.status} from ${url}\n${raw.slice(0, 2000)}`, true);
-      const isHtml = /html/i.test(res.headers.get("content-type") || "");
-      const text = isHtml ? htmlToText(raw, format === "html" ? "html" : "markdown") : raw;
-      return out(`URL ${res.url} (${res.status})\n${trimOut(text, 60000)}`);
-    } catch (e) {
-      return out(`fetch failed: ${e.message}`, true);
-    } finally {
-      clearTimeout(t);
-    }
+  run: async ({ url, format, maxChars, timeout }) => {
+    const cap = Math.min(Math.max(Number(maxChars) || 12000, 500), 60000);
+    const key = `fetch:${url}:${format}:${cap}`;
+    const result = await cached(key, 15 * 60 * 1000, async () => {
+      const ac = new AbortController();
+      const t = setTimeout(() => ac.abort(), timeout || 60000);
+      try {
+        const res = await fetch(url, { signal: ac.signal, redirect: "follow", headers: { "user-agent": UA } });
+        const raw = await res.text();
+        if (res.status >= 400) return { err: `HTTP ${res.status} from ${url}\n${raw.slice(0, 1500)}` };
+        const isHtml = /html/i.test(res.headers.get("content-type") || "");
+        if (!isHtml) return { text: trimOut(raw, cap) };
+        const core = mainContent(raw);
+        const body = core
+          .replace(/<[^>]+>/g, "\n")
+          .replace(/&nbsp;/gi, " ")
+          .replace(/&amp;/gi, "&")
+          .replace(/&lt;/gi, "<")
+          .replace(/&gt;/gi, ">")
+          .replace(/&quot;/gi, '"')
+          .replace(/&#39;/gi, "'")
+          .replace(/&(?:rsquo|lsquo|ldquo|rdquo|ndash|mdash|hellip|middot|bull|apos);/g, (m) => ({ "&rsquo;": "'", "&lsquo;": "'", "&ldquo;": '"', "&rdquo;": '"', "&ndash;": "-", "&mdash;": "-", "&hellip;": "...", "&middot;": "·", "&bull;": "•", "&apos;": "'" })[m.toLowerCase()])
+          .split("\n")
+          .map((l) => l.replace(/\s+/g, " ").trim())
+          .filter((l) => l.length > 1)
+          .join("\n");
+        return { text: `${probeMeta(raw) ? probeMeta(raw) + "\n" : ""}${format === "html" ? core : body}`.slice(0, cap), title: probeMeta(raw) };
+      } catch (e) {
+        return { err: `fetch failed: ${e.message}` };
+      } finally {
+        clearTimeout(t);
+      }
+    });
+    if (result.err) return out(result.err, true);
+    return out(`URL ${url} (200)${result.title ? ` — ${result.title}` : ""}\n${trimOut(result.text, cap)}`);
   },
 });
 
+async function searchTavily(q, n) {
+  const r = await httpJson("https://api.tavily.com/search", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ api_key: process.env.TAVILY_API_KEY, query: q, max_results: n, search_depth: "basic", include_answer: false }),
+  });
+  if (r.status !== 200 || !Array.isArray(r.data?.results)) return null;
+  return { source: "tavily", items: r.data.results.map((it) => ({ title: S(it.title), url: it.url, snippet: S(it.content, 260) })) };
+}
+async function searchBrave(q, n) {
+  const r = await httpJson(`https://api.search.brave.com/res/v1/web/search?q=${encodeURIComponent(q)}&count=${n}`, {
+    headers: { "X-Subscription-Token": process.env.BRAVE_API_KEY },
+  });
+  if (r.status !== 200 || !Array.isArray(r.data?.web?.results)) return null;
+  return { source: "brave", items: r.data.web.results.map((it) => ({ title: S(it.title), url: it.url, snippet: S(it.description, 260) })) };
+}
+async function searchSearxng(q, n) {
+  const base = String(process.env.SEARXNG_URL || "").replace(/\/+$/, "");
+  if (!base) return null;
+  const r = await httpJson(`${base}/search?q=${encodeURIComponent(q)}&format=json&language=pt-BR`, { timeout: 15000 });
+  if (r.status !== 200 || !Array.isArray(r.data?.results)) return null;
+  return { source: `searxng(${base.replace(/^https?:\/\//, "")})`, items: r.data.results.slice(0, n).map((it) => ({ title: S(it.title), url: it.url, snippet: S(it.content, 260) })) };
+}
+
 reg("n_websearch", {
-  description: "Web search (DuckDuckGo). Returns title, URL and snippet per result.",
+  description: "Web search with automatic backend routing (Tavily → Brave → SearXNG → DuckDuckGo) + 10min response cache. Returns compact title/URL/snippet; use n_webfetch to read a page in full.",
   inputSchema: {
     type: "object",
     properties: {
@@ -450,11 +525,31 @@ reg("n_websearch", {
     required: ["query"],
   },
   run: async ({ query, numResults }) => {
-    const r = await httpJson(`https://html.duckduckgo.com/html/?q=${encodeURIComponent(query)}`, { timeout: 30000 });
-    if (r.status !== 200) return out(`search failed (HTTP ${r.status}): ${r.text.slice(0, 300)}`, true);
-    const results = parseDdg(r.text).slice(0, numResults || 8);
-    if (!results.length) return out(`no results for "${query}"`);
-    return out(results.map((res, i) => `${i + 1}. ${res.title}\n   ${res.url}\n   ${res.snippet}\n`).join(""));
+    const q = String(query || "").trim();
+    if (!q) return out("query is required", true);
+    const n = Math.min(Math.max(Number(numResults) || 8, 1), 20);
+    const key = `search:${q}:${n}`;
+    const found = await cached(key, 10 * 60 * 1000, async () => {
+      const backends = [
+        process.env.TAVILY_API_KEY ? searchTavily(q, n) : Promise.resolve(null),
+        process.env.BRAVE_API_KEY ? searchBrave(q, n) : Promise.resolve(null),
+        searchSearxng(q, n),
+        httpJson(`https://html.duckduckgo.com/html/?q=${encodeURIComponent(q)}`, { timeout: 30000 }).then((r) =>
+          r.status === 200 ? { source: "duckduckgo", items: parseDdg(r.text).slice(0, n) } : null
+        ),
+      ];
+      for (const attempt of backends) {
+        const r = await attempt;
+        if (r && r.items?.length) return r;
+      }
+      return null;
+    });
+    if (!found || !found.items?.length) return out(`no results for "${q}"`);
+    return out(
+      `[${found.source}] ${found.items.length} results for "${q}" (cached 10min)\n` +
+        found.items.map((it, i) => `${i + 1}. ${it.title}\n   ${it.url}\n   ${it.snippet}\n`).join("") +
+        `\nTip: use n_webfetch to read a page's main content (maxChars caps token cost).`
+    );
   },
 });
 
@@ -479,29 +574,6 @@ function parseDdg(html) {
 
 function collapseHtml(s) {
   return s.replace(/<[^>]+>/g, " ").replace(/&[a-z]+;/g, " ").replace(/\s+/g, " ").trim();
-}
-
-function htmlToText(html, mode) {
-  const stripped = html
-    .replace(/<script[\s\S]*?<\/script>/gi, " ")
-    .replace(/<style[\s\S]*?<\/style>/gi, " ")
-    .replace(/<!--[\s\S]*?-->/g, " ");
-  if (mode === "html") return trimOut(stripped, 60000);
-  return trimOut(
-    stripped
-      .replace(/<[^>]+>/g, "\n")
-      .replace(/&nbsp;/gi, " ")
-      .replace(/&amp;/gi, "&")
-      .replace(/&lt;/gi, "<")
-      .replace(/&gt;/gi, ">")
-      .replace(/&quot;/gi, '"')
-      .replace(/&#39;/gi, "'")
-      .split("\n")
-      .map((l) => l.replace(/\s+/g, " ").trim())
-      .filter(Boolean)
-      .join("\n"),
-    60000
-  );
 }
 
 /* ============================== free API tools ============================== */
