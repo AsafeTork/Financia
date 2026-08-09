@@ -25,26 +25,12 @@ export default defineConfig(async function() {
     }
   });
 
-  // Injeta modulepreload dos chunks core (paraleliza descoberta)
-  plugins.push({
-    name: 'modulepreload-core',
-    transformIndexHtml: {
-      order: 'post',
-      handler(html) {
-        return html.replace('</head>',
-          '  <link rel="modulepreload" href="/src/main.jsx">\n'
-          + '  <link rel="modulepreload" href="/src/App.jsx">\n'
-          + '</head>');
-      },
-    },
-  });
-
   plugins.push(VitePWA({
     strategies: 'injectManifest',
     srcDir: 'src',
     filename: 'sw.ts',
     injectRegister: null,
-    registerType: 'prompt',
+    registerType: 'autoUpdate',
     includeAssets: ['favicon.ico', 'favicon-32.png', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'],
     manifest: {
       name: 'Financia — Gestão financeira',

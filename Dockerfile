@@ -22,7 +22,8 @@ WORKDIR /app
 
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/package.json ./
+COPY --from=builder /app/server.cjs ./server.cjs
 
 EXPOSE 3000
 
-CMD ["npx", "serve", "-s", "dist", "-l", "3000"]
+CMD ["node", "server.cjs"]

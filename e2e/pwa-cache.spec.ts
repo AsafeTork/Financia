@@ -28,16 +28,21 @@ test.describe('PWA Cache Strategies', () => {
       expect(response.data).toBe('network-response');
     });
 
-    test('should use cache-first strategy for static assets', async ({ page }) => {
+    test('should precache the app shell and remove the legacy static cache', async ({ page }) => {
       const cached = await page.evaluate(async () => {
         if (!('caches' in window)) return { cached: false };
-        
-        const cache = await caches.open('static-assets');
+
+        const names = await caches.keys();
+        const precacheName = names.find(name => name.startsWith('workbox-precache-'));
+        if (!precacheName) return { cached: false, legacyCache: names.includes('static-assets') };
+
+        const cache = await caches.open(precacheName);
         const response = await cache.match('/index.html');
-        return { cached: !!response };
+        return { cached: !!response, legacyCache: names.includes('static-assets') };
       });
 
       expect(cached.cached).toBeTruthy();
+      expect(cached.legacyCache).toBeFalsy();
     });
 
     test('should use stale-while-revalidate for dynamic content', async ({ page }) => {

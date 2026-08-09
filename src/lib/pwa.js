@@ -1,6 +1,6 @@
-// Registro do service worker com atualizacao controlada pelo usuario.
-// Em vez de recarregar sozinho (que falhava/atrapalhava em alguns dispositivos),
-// emitimos eventos para a UI mostrar um banner com barra de progresso e botao.
+// Registro do service worker com atualizacao automatica.
+// O banner permanece como fallback para workers antigos que ainda aguardem
+// ativacao, mas builds novas nao ficam presas em cache aguardando clique.
 
 var listeners = [];
 var waitingSW = null;

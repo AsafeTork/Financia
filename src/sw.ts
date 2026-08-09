@@ -19,10 +19,11 @@ registerRoute(
   })
 );
 
-// Assets estaticos (bundle, imagens, fonts locais): cache-first.
+// Bundles hashados pelo Vite: cache-first e seguro porque cada build gera uma URL nova.
 registerRoute(
   ({ url }) =>
     url.origin === self.location.origin &&
+    url.pathname.startsWith('/assets/') &&
     /\.(?:js|css|png|svg|woff2?)$/i.test(url.pathname),
   new CacheFirst({
     cacheName: 'static-assets',
@@ -89,7 +90,8 @@ registerRoute(isMutation, mutationHandler, 'POST');
 registerRoute(isMutation, mutationHandler, 'PATCH');
 registerRoute(isMutation, mutationHandler, 'DELETE');
 
-// Mantem o fluxo de atualizacao controlado pela UI (src/lib/pwa.js).
+// Atualizacao automatica: o cliente ainda pode usar SKIP_WAITING como fallback
+// para navegadores que ja tenham um worker antigo aguardando.
 self.addEventListener('message', (event) => {
   const data = event.data as { type?: string } | undefined;
   if (data && data.type === 'SKIP_WAITING') {
@@ -99,6 +101,7 @@ self.addEventListener('message', (event) => {
 
 self.addEventListener('activate', (event) => {
   event.waitUntil((async () => {
+    await caches.delete('static-assets');
     await self.clients.claim();
     if (self.registration.navigationPreload) {
       await self.registration.navigationPreload.enable();
@@ -118,6 +121,7 @@ self.addEventListener('fetch', (event) => {
 });
 
 self.addEventListener('install', (event) => {
+  self.skipWaiting();
   // Posta progresso minimo para a UI (pwa.js) saber que houve instalacao.
   event.waitUntil(
     (async () => {

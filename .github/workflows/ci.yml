@@ -261,6 +261,11 @@ jobs:
         run: |
           test -f dist/manifest.json && echo "manifest.json OK" || (echo "manifest.json MISSING" && exit 1)
           test -f dist/sw.js && echo "sw.js OK" || echo "sw.js not found (optional)"
+          node --check server.cjs
+          if grep -Eq 'modulepreload[^>]+/src/|src="/src/' dist/index.html; then
+            echo "Development source paths leaked into production index.html"
+            exit 1
+          fi
 
       - name: Upload build artifacts
         if: always()
@@ -702,4 +707,3 @@ jobs:
             echo "Render deploy triggered for production branch (main)"
             echo "Verify at: https://financiabr.me"
           fi
-
