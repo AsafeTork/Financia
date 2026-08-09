@@ -184,10 +184,10 @@ export default React.memo(function Dashboard({ tx, products, brand, onNav, planI
       {!hasFirstSale ? (
         <div className="grid grid-cols-2 gap-3">
           {[
-            { icon:'M12 4v16m8-8l-8-8-8 8', label:'Entradas', desc:'Registre vendas para ver o quanto entrou', action:'Registrar venda', nav:'income', color:'var(--success)' },
-            { icon:'M12 20V4m-8 8l8 8 8-8', label:'Despesas', desc:'Cadastre contas e veja para onde vai o dinheiro', action:'Registrar despesa', nav:'expense', color:'var(--danger)' },
-            { icon:'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4', label:'Estoque', desc:'Gerencie produtos, precos e controle de quantidade', action:'Adicionar produto', nav:'inventory', color:brand.color },
-            { icon:'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z', label:'Relatorios', desc:'Exporte PDF e Excel com dados organizados', action:'Ver relatorios', nav:'report', color:'var(--info)' },
+             { icon:'M12 4v16m8-8l-8-8-8 8', label:'Entradas', desc:'Registre vendas para ver o quanto entrou', action:'Registrar venda', nav:'income', color:'var(--success)', buttonColor:'var(--success)' },
+             { icon:'M12 20V4m-8 8l8 8 8-8', label:'Despesas', desc:'Cadastre contas e veja para onde vai o dinheiro', action:'Registrar despesa', nav:'expense', color:'var(--danger)', buttonColor:'var(--danger-strong)' },
+             { icon:'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4', label:'Estoque', desc:'Gerencie produtos, precos e controle de quantidade', action:'Adicionar produto', nav:'inventory', color:brand.color, buttonColor:brand.color },
+             { icon:'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z', label:'Relatorios', desc:'Exporte PDF e Excel com dados organizados', action:'Ver relatorios', nav:'report', color:'var(--info)', buttonColor:'var(--info-strong)' },
           ].map(function(k) {
             return (
               <div key={k.label} className="rounded-[20px] p-4 sm:p-5 hover:-translate-y-0.5" style={{background:'var(--bg-card)', border:'1px solid var(--border)', boxShadow:'var(--shadow-sm)', transition:'background-color .15s ease, transform .12s ease'}}>
@@ -196,7 +196,7 @@ export default React.memo(function Dashboard({ tx, products, brand, onNav, planI
                 </div>
                 <p className="text-sm font-semibold" style={{color:'var(--text-main)'}}>{k.label}</p>
                 <p className="text-xs mt-1 mb-3 leading-relaxed" style={{color:'var(--text-muted)'}}>{k.desc}</p>
-                <button onClick={function() { onNav(k.nav); }} className="text-xs font-semibold px-4 py-2.5 rounded-xl text-white hover:brightness-110 hover:-translate-y-0.5 transition min-h-[44px]" style={{background: k.color}}>
+                <button onClick={function() { onNav(k.nav); }} className="text-xs font-semibold px-4 py-2.5 rounded-xl text-white hover:brightness-110 hover:-translate-y-0.5 transition min-h-[44px]" style={{background: k.buttonColor || k.color}}>
                   {k.action}
                 </button>
               </div>
@@ -287,12 +287,12 @@ export default React.memo(function Dashboard({ tx, products, brand, onNav, planI
           <p className="text-sm font-semibold" style={{color:'var(--text-main)'}}>Ultimos 7 dias</p>
           <div className="flex gap-3 text-xs" style={{color:'var(--text-muted)'}}>
             <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-sm inline-block" style={{background: brand.color}} aria-label="Entradas"/>
+               <span role="img" className="w-2.5 h-2.5 rounded-sm inline-block" style={{background: brand.color}} aria-label="Entradas"/>
               <span className="sr-only">Entrada</span>
                Entradas
              </span>
              <span className="flex items-center gap-1.5">
-               <span className="w-2.5 h-2.5 rounded-sm inline-block" style={{background:'var(--danger)'}} aria-label="Saídas"/>
+               <span role="img" className="w-2.5 h-2.5 rounded-sm inline-block" style={{background:'var(--danger)'}} aria-label="Saídas"/>
               <span className="sr-only">Saída</span>
                Saidas
             </span>
