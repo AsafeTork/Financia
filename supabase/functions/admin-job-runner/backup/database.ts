@@ -1,8 +1,7 @@
 // Job: Backup
 // Creates backups of critical database tables to Supabase Storage
 
-import { JobDefinition, JobContext, JobResult, withRetry } from './job-runner.ts';
-import { corsResponse } from './logger.ts';
+import { JobDefinition, JobContext, JobResult } from '../job-runner.ts';
 
 const BACKUP_BUCKET = 'backups';
 const MAX_BACKUP_AGE_DAYS = 30;
@@ -77,7 +76,7 @@ export const backupJob: JobDefinition = {
     }
 
     // Cleanup old backups
-    await cleanupOldBackups(ctx.admin);
+    await cleanupOldBackups(ctx.admin, logger);
 
     const failed = results.filter(r => !r.success);
     return {
@@ -87,7 +86,7 @@ export const backupJob: JobDefinition = {
   },
 };
 
-async function cleanupOldBackups(admin: ReturnType<typeof import('https://esm.sh/@supabase/supabase-js@2').createClient>) {
+async function cleanupOldBackups(admin: ReturnType<typeof import('https://esm.sh/@supabase/supabase-js@2').createClient>, logger: JobContext['logger']) {
   const cutoffDate = new Date(Date.now() - MAX_BACKUP_AGE_DAYS * 24 * 60 * 60 * 1000).toISOString();
   
   // List and delete old backup files
@@ -97,5 +96,5 @@ async function cleanupOldBackups(admin: ReturnType<typeof import('https://esm.sh
   logger.info('Old backup cleanup would run here');
 }
 
-import { registerJob } from './job-runner.ts';
+import { registerJob } from '../job-runner.ts';
 registerJob(backupJob);

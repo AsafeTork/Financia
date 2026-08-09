@@ -1,7 +1,7 @@
 // Job: Migrate
 // Runs pending database migrations
 
-import { JobDefinition, JobContext, JobResult, withRetry } from './job-runner.ts';
+import { JobDefinition, JobContext, JobResult } from '../job-runner.ts';
 
 export const migrateJob: JobDefinition = {
   name: 'Database Migration',
@@ -63,5 +63,5 @@ export const migrateJob: JobDefinition = {
   },
 };
 
-import { registerJob } from './job-runner.ts';
+import { registerJob } from '../job-runner.ts';
 registerJob(migrateJob);

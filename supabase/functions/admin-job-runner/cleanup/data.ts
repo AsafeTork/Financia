@@ -1,7 +1,7 @@
 // Job: Cleanup
 // Removes old/expired data from database and storage
 
-import { JobDefinition, JobContext, JobResult, withRetry } from './job-runner.ts';
+import { JobDefinition, JobContext, JobResult } from '../job-runner.ts';
 
 export const cleanupJob: JobDefinition = {
   name: 'Data Cleanup',
@@ -98,5 +98,5 @@ export const cleanupJob: JobDefinition = {
   },
 };
 
-import { registerJob } from './job-runner.ts';
+import { registerJob } from '../job-runner.ts';
 registerJob(cleanupJob);

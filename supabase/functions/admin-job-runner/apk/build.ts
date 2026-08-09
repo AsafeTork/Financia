@@ -2,8 +2,7 @@
 // Triggers GitHub Actions workflow to build Android APK for a client
 // Replaces the old triggerApkBuild in sync.js
 
-import { JobDefinition, JobContext, JobResult, withRetry } from './job-runner.ts';
-import { corsResponse } from './logger.ts';
+import { JobDefinition, JobContext, JobResult, withRetry } from '../job-runner.ts';
 
 const GH_REPO = Deno.env.get('GH_REPO') || 'AsafeTork/financia';
 const GH_WORKFLOW = 'build.yml';
@@ -148,5 +147,5 @@ export const apkBuildJob: JobDefinition = {
 };
 
 // Register the job
-import { registerJob } from './job-runner.ts';
+import { registerJob } from '../job-runner.ts';
 registerJob(apkBuildJob);
