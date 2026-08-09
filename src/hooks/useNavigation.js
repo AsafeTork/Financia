@@ -6,7 +6,10 @@ import { useNavigationHistory } from '../shared/hooks/useNavigationHistory.js';
 export function useNavigation({ modalRef, setConfirmData, setShowUpgrade, setSidebarOpen, setShowLogin }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const path = location.pathname.replace(/^\//, '');
+  const routerPath = location.pathname.replace(/^\//, '');
+  const hasHashRoute = typeof window !== 'undefined' && window.location.hash;
+  const directPath = !hasHashRoute && typeof window !== 'undefined' ? window.location.pathname.replace(/^\//, '') : '';
+  const path = routerPath || (directPath === 'privacidade' || directPath === 'termos' ? directPath : '');
   const isLegal = path === 'privacidade' || path === 'termos';
   const isLanding = path === 'landing';
   const navigationHistory = useNavigationHistory();

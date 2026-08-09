@@ -62,6 +62,22 @@ describe('useNavigation — valores derivados', function() {
     h2.hook.unmount();
   });
 
+  it('reconhece pagina legal direta e libera a rota apos entrar no hash router', function() {
+    const originalUrl = window.location.href;
+    window.history.pushState({}, '', '/privacidade');
+    mockLocation.pathname = '/';
+    const { hook } = makeHook();
+    expect(hook.result.current.isLegal).toBe(true);
+
+    window.location.hash = '#/';
+    act(function() { hook.rerender(); });
+    expect(hook.result.current.isLegal).toBe(false);
+
+    hook.unmount();
+    window.history.replaceState({}, '', originalUrl);
+    window.location.hash = '';
+  });
+
   it('isLanding verdadeiro para /landing', function() {
     mockLocation.pathname = '/landing';
     const { hook } = makeHook();

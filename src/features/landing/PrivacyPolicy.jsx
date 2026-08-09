@@ -44,12 +44,12 @@ export default function PrivacyPolicy({ onNav }) {
 
       <header className="sticky top-0 z-30" style={{ background: 'rgba(251,250,247,0.92)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', borderBottom: '1px solid var(--border-md)' }}>
         <div className="max-w-3xl mx-auto px-5 h-16 flex items-center justify-between">
-          <a href="#" className="flex items-center gap-2.5 min-h-[44px]" style={{ textDecoration: 'none' }}>
+          <a href="/" className="flex items-center gap-2.5 min-h-[44px]" style={{ textDecoration: 'none' }}>
             <img src="/icon-192.svg" alt="Financia" fetchPriority="high" decoding="sync" className="w-7 h-7" />
             <span className="font-display text-lg font-semibold" style={{ color: 'var(--text-main)' }}>Financia</span>
           </a>
           <button
-            onClick={function() { onNav(''); }}
+            onClick={function() { window.location.assign('/'); }}
             className="flex items-center gap-1.5 text-sm font-medium px-4 min-h-[44px] rounded-xl transition hover:bg-black/5"
             style={{ color: 'var(--text-sub)' }}
           >

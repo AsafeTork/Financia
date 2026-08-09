@@ -15,7 +15,22 @@ function sanitizeCorruptedStorage() {
   } catch (_) { /* ignore */ }
 }
 
+function installGlobalErrorMonitor() {
+  if (typeof window === 'undefined' || window.__financiaErrorMonitorInstalled) return;
+  window.__financiaErrorMonitorInstalled = true;
+  var save = function(data) {
+    try { localStorage.setItem('financia_global_error', JSON.stringify(data)); } catch (_) { /* ignore */ }
+  };
+  window.addEventListener('error', function(e) {
+    save({ message: e.message, filename: e.filename, lineno: e.lineno, colno: e.colno, stack: e.error?.stack, timestamp: new Date().toISOString() });
+  });
+  window.addEventListener('unhandledrejection', function(e) {
+    save({ message: e.reason?.message || String(e.reason), stack: e.reason?.stack, timestamp: new Date().toISOString() });
+  });
+}
+
 export function bootApp() {
+  installGlobalErrorMonitor();
   sanitizeCorruptedStorage();
   registerSW();
   // Defer version check until after React has fully hydrated

@@ -39,6 +39,8 @@
 - **Agent monitor contínuo de CI + fix race no CI_REPORT** (2026-08-07): falha recorrente do job `extract-errors` — CI ficava VERMELHO com testes verde porque múltiplos runs CI do main rodam em paralelo (`cancel-in-progress: false`) e todos competiam para commitar/pushar `CI_REPORT.md` no mesmo commit, estourando conflito de rebase. Fix: step "Commit CI_REPORT.md" usa `git pull --rebase -X theirs` com fallback `git rebase --abort; exit 0` (auto-resolve para upstream e aborta em vez de falhar o pipeline). Novo `scripts/ci-monitor.sh` monitora falhas de CI (detecta runs `failure`, lista jobs e expõe comando de diagnóstico + auto-fix headless); cron `*/15 * * * *` instalado no host. Commit `e3173b2` — CI 16/16 jobs verde (`31195788858`).
 
 - **Atualização PWA sem cache obsoleto** (2026-08-09): servidor Docker próprio (`server.cjs`) aplica `no-store` ao HTML, `sw.js` e manifest, cache imutável somente para assets hashados, e retorna 404 para assets ausentes em vez de fallback HTML. Service Worker ativa updates imediatamente, remove o cache legado `static-assets` e mantém precache Workbox/offline-first. Removido `modulepreload` manual de `/src/*.jsx` que vazava paths de desenvolvimento para produção. Gate CI verifica `dist/index.html` e sintaxe do servidor; validação remota pelo GitHub Actions (laptop local não executa testes).
+- **Product discovery e funil público** (2026-08-08): jornada real testada em produção (desktop/mobile) e com conta autenticada. A proposta observável é gestão offline-first para pequenos negócios; primeiro valor = registrar a primeira venda e enxergar o resultado no Dashboard. Landing estava clara, mas o CTA "Criar conta grátis" abria login, URLs legais diretas caíam na landing e o CSP bloqueava scripts inline. Correção implementada em `App.jsx`, `Landing.jsx`, `Login.jsx`, `useNavigation.js`, páginas legais, `boot.js`, `index.html` e `render.yaml`; validação local confirmou cadastro direto, login separado, `/privacidade` direto/retorno à raiz e console sem erros. Deploy de produção ainda precisa ocorrer.
+- **Bloqueio de confiança para lançamento** (2026-08-08): as páginas legais ainda exibem placeholders de responsável, identificador, e-mail e data; Termos também divergem da vitrine atual (menciona apenas Pro a R$ 70,00, enquanto `constants.js` exibe Pro a R$ 49,90 e Premium a R$ 99,90). Não preencher dados legais por hipótese: requer decisão do responsável jurídico/comercial antes de tráfego pago ou lançamento público.
 
 - **Sticky date headers na lista de transações (P1 #10)** (2026-08-07): barra de data fixa (`position: sticky; top: 0; z-index: 10`) no topo da lista virtualizada de `TxView.jsx`. Implementada como overlay `h-0` sticky sobre o `VirtualList`, derivando o grupo de data corrente pelo `scrollTop` real (via `headerTops` pré-computado no memo) — não interfere na medição do virtualizer nem causa scroll jump, já que não consome layout. Acessível via `role="heading"` + `sr-only`. Commit `2c5a327`.
 
@@ -65,6 +67,19 @@
 - ⏳ **Fase 2 (implementação):** aguardando agentes 10 (01-10) — cada um implementa frente com commit Conventional.
 
 ## 3. Backlog Priorizado (fonte: audits de 2026-08-05)
+
+### P0 — Lançamento & Confiança
+
+| Tarefa | Arquivo(s) | Próximo passo |
+|---|---|---|
+| Preencher e revisar Política de Privacidade e Termos com dados reais do controlador, contato, vigência e preços/planos atuais | `src/features/landing/PrivacyPolicy.jsx`, `src/features/landing/TermsOfService.jsx` | Decisão do responsável jurídico/comercial; não inventar valores |
+
+### P1 — Produto & Growth
+
+| Tarefa | Arquivo(s) | Evidência / próximo experimento |
+|---|---|---|
+| Medir conversão `landing → cadastro → primeira venda → retorno em 7 dias` antes de escalar aquisição | analytics ainda não padronizado | Instrumentar somente eventos que orientem decisão; validar com 5–10 pequenos negócios |
+| Testar posicionamento por resultado financeiro ("quanto sobrou" / "caixa da semana") contra mensagem de módulos (vendas, despesas, estoque) | `src/features/landing/Landing.jsx` | A/B ou coortes de landing; hipótese ainda sem evidência comportamental |
 
 ### P0 — Performance: INP & Sync (relatório: `Performance/PERFORMANCE_AUDIT_REPORT.md`)
 

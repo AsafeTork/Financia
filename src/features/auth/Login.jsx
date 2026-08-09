@@ -21,8 +21,8 @@ function GoogleBtn({ onClick, loading, label }) {
   );
 }
 
-export default function Login({ brand, onNav }) {
-  var [mode, setMode] = useState('login');
+export default function Login({ brand, initialMode, onNav }) {
+  var [mode, setMode] = useState(initialMode === 'signup' ? 'signup' : 'login');
   var [email, setEmail] = useState('');
   var [pass, setPass] = useState('');
   var [suName, setSuName] = useState('');

@@ -39,10 +39,11 @@ const DebugBadge = lazy(function() { return import('./App/components/DebugBadge.
 
 export default function App() {
   const s = useAppState();
-  const { planInfo, setPlanInfo, setShowUpgrade, setConfirmData, confirmData, setSidebarOpen, sidebarOpen } = s;
+  const [authMode, setAuthMode] = React.useState('login');
+  const { planInfo, setPlanInfo, setShowUpgrade, setConfirmData, confirmData, setSidebarOpen, setShowLogin, sidebarOpen } = s;
   const t = useToasts({ toasts: s.toasts, setToasts: s.setToasts, toastId: s.toastId, toastTimeoutsRef: s.toastTimeoutsRef });
   const n = useNavigation({ modalRef: s.modalRef, setConfirmData: s.setConfirmData, setShowUpgrade: s.setShowUpgrade, setSidebarOpen: s.setSidebarOpen, setShowLogin: s.setShowLogin });
-  const { navTo } = n;
+  const { navTo, path: navigationPath } = n;
   usePlanEffects({ dataLoading: s.dataLoading, setDataLoading: s.setDataLoading, setSyncStatus: s.setSyncStatus, planInfo, session: s.session, toast: t.toast, path: n.path, setAnnounceMsg: s.setAnnounceMsg, firstRender: s.firstRender, toastTimeoutsRef: s.toastTimeoutsRef });
   useEffect(function() { var t = setTimeout(prefetchRoutes, 1000); return function() { clearTimeout(t); }; }, []);
   const { appBrand, effectiveTheme, toggleTheme } = useBrandAppearance(s.brand, planInfo);
@@ -73,6 +74,13 @@ export default function App() {
   const handleOpenSidebar = useCallback(function() { setSidebarOpen(true); }, [setSidebarOpen]);
   const handleDeductStock = useCallback(function(id, qty) { adjustStock(id, -qty); }, [adjustStock]);
   const handleNav = useCallback(function(v) { navTo(v); }, [navTo]);
+  const openAuth = useCallback(function(mode) {
+    setAuthMode(mode);
+    if (navigationPath === 'landing') navTo('');
+    setShowLogin(true);
+  }, [navigationPath, navTo, setShowLogin]);
+  const openLogin = useCallback(function() { openAuth('login'); }, [openAuth]);
+  const openSignup = useCallback(function() { openAuth('signup'); }, [openAuth]);
 
   var confirmFn = useCallback(function(msg, onOk) { setConfirmData({msg:msg, onOk:onOk}); }, [setConfirmData]);
 
@@ -134,12 +142,12 @@ export default function App() {
 
   if (s.appLoading) return <Loader/>;
   if (n.isLegal) return <FeatureErrorBoundary featureName="Legal"><LazyPage fallback={<Loader/>}>{n.path === 'privacidade' ? <PrivacyPolicy onNav={n.navTo}/> : <TermsOfService onNav={n.navTo}/>}</LazyPage></FeatureErrorBoundary>;
-  if (n.isLanding) return <FeatureErrorBoundary featureName="Landing"><LazyPage fallback={<Loader/>}><Landing brand={s.brand} onEnter={function() { n.navTo(''); s.setShowLogin(true); }} onNav={n.navTo}/></LazyPage></FeatureErrorBoundary>;
+  if (n.isLanding) return <FeatureErrorBoundary featureName="Landing"><LazyPage fallback={<Loader/>}><Landing brand={s.brand} onEnter={openLogin} onSignup={openSignup} onNav={n.navTo}/></LazyPage></FeatureErrorBoundary>;
   if (!s.session) {
-    if (s.showLogin) return <Login brand={s.brand} onNav={n.navTo}/>;
+    if (s.showLogin) return <Login brand={s.brand} initialMode={authMode} onNav={n.navTo}/>;
     const seen = !!localStorage.getItem('financia_seen');
-    if (!seen) return <FeatureErrorBoundary featureName="Landing"><LazyPage fallback={<Loader/>}><Landing brand={s.brand} onEnter={function() { s.setShowLogin(true); }} onNav={n.navTo}/></LazyPage></FeatureErrorBoundary>;
-    return <Login brand={s.brand} onNav={n.navTo}/>;
+    if (!seen) return <FeatureErrorBoundary featureName="Landing"><LazyPage fallback={<Loader/>}><Landing brand={s.brand} onEnter={openLogin} onSignup={openSignup} onNav={n.navTo}/></LazyPage></FeatureErrorBoundary>;
+    return <Login brand={s.brand} initialMode="login" onNav={n.navTo}/>;
   }
   if (s.dataLoading) return <Loader text="Carregando seus dados..."/>;
   if (s.dataError) return <div className="min-h-screen flex items-center justify-center flex-col gap-4 p-6" style={{background:'var(--bg-page)'}}><span className="text-4xl">(!)</span><p className="text-sm font-semibold text-gray-700">{s.dataError}</p><button onClick={function() { loadData(s.session.user.id); }} className="px-6 py-2.5 text-white rounded-xl text-sm font-semibold bg-green-600">Tentar novamente</button></div>;
