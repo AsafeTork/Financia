@@ -1,7 +1,7 @@
 # CI Report
 
-**Gerado:** 2026-08-09 19:03 UTC
-**Commit:** `ecbbbf352fe6c497df402e6b33978d76cd495aee`
+**Gerado:** 2026-08-09 19:07 UTC
+**Commit:** `de215c600a9f90c58af1ecbac45f1bd7c1b3075b`
 **Branch:** `main`
 
 ---
@@ -55,7 +55,7 @@ rendering chunks...
   ::view-transition-new(root) -> Pseudo-elements are not supported by css-select
 computing gzip size...
 [2mdist/[22m[32mmanifest.webmanifest                       [39m[1m[2m  0.59 kB[22m[1m[22m
-[2mdist/[22m[32mindex.html                                 [39m[1m[2m 10.61 kB[22m[1m[22m[2m │ gzip:  3.58 kB[22m
+[2mdist/[22m[32mindex.html                                 [39m[1m[2m 11.39 kB[22m[1m[22m[2m │ gzip:  3.70 kB[22m
 [2mdist/[22m[2massets/[22m[32msync.worker-DU9L2bZD.js             [39m[1m[2m103.98 kB[22m[1m[22m
 [2mdist/[22m[2massets/[22m[35mindex-CAIKJt_3.css                  [39m[1m[2m 60.22 kB[22m[1m[22m[2m │ gzip: 12.56 kB[22m
 [2mdist/[22m[2massets/[22m[36mshared-runtime-vwDjcXxQ.js          [39m[1m[2m  0.00 kB[22m[1m[22m[2m │ gzip:  0.02 kB[22m
@@ -86,9 +86,9 @@ computing gzip size...
 ```
 
 Running 26 tests using 4 workers
-°°··°°°°°°°°···°°°°····°··
+°°··°°°°°°°°···°·°°°··°···
   15 skipped
-  11 passed (13.4s)
+  11 passed (15.1s)
 
 ```
 
@@ -104,10 +104,10 @@ Running 26 tests using 4 workers
 
 Running 42 tests using 4 workers
 
-[1/42] [chromium] › e2e/deep-sync-conflict.spec.ts:94:3 › Deep Sync Conflict Scenarios › sync worker survives unhandled rejection
-[2/42] [chromium] › e2e/deep-sync-conflict.spec.ts:10:3 › Deep Sync Conflict Scenarios › BroadcastChannel ping/pong survives rapid tab switching
-[3/42] [chromium] › e2e/deep-sync-conflict.spec.ts:59:3 › Deep Sync Conflict Scenarios › BroadcastChannel handles duplicate messages without errors
-[4/42] [chromium] › e2e/deep-sync-conflict.spec.ts:127:3 › Deep Sync Conflict Scenarios › memory leak check after sync broadcast storm
+[1/42] [chromium] › e2e/deep-sync-conflict.spec.ts:127:3 › Deep Sync Conflict Scenarios › memory leak check after sync broadcast storm
+[2/42] [chromium] › e2e/deep-sync-conflict.spec.ts:59:3 › Deep Sync Conflict Scenarios › BroadcastChannel handles duplicate messages without errors
+[3/42] [chromium] › e2e/deep-sync-conflict.spec.ts:10:3 › Deep Sync Conflict Scenarios › BroadcastChannel ping/pong survives rapid tab switching
+[4/42] [chromium] › e2e/deep-sync-conflict.spec.ts:94:3 › Deep Sync Conflict Scenarios › sync worker survives unhandled rejection
 [5/42] [chromium] › e2e/indexeddb-corruption.spec.ts:54:6 › IndexedDB Recovery - Corruption › Corruption Simulation › should recover from corrupted IndexedDB data
 [6/42] [chromium] › e2e/indexeddb-corruption.spec.ts:117:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should handle invalid schema gracefully
 [7/42] [chromium] › e2e/indexeddb-eviction.spec.ts:12:5 › IndexedDB Recovery - Eviction › Eviction Test › should handle storage pressure and persist()
@@ -137,8 +137,8 @@ Running 42 tests using 4 workers
 [MONITOR] Waiting 15s to capture baseline network activity...
 
 [30/42] [chromium] › e2e/state-corruption-recovery.spec.ts:28:3 › State Corruption & Recovery › app survives missing IndexedDB database gracefully
-[31/42] [chromium] › e2e/state-corruption-recovery.spec.ts:54:3 › State Corruption & Recovery › app handles sessionStorage flood without crash
-[32/42] [chromium] › e2e/state-corruption-recovery.spec.ts:76:3 › State Corruption & Recovery › app survives cache API quota exceeded
+[31/42] [chromium] › e2e/state-corruption-recovery.spec.ts:76:3 › State Corruption & Recovery › app survives cache API quota exceeded
+[32/42] [chromium] › e2e/state-corruption-recovery.spec.ts:54:3 › State Corruption & Recovery › app handles sessionStorage flood without crash
 [33/42] [chromium] › e2e/state-corruption-recovery.spec.ts:96:3 › State Corruption & Recovery › app handles service worker registration failure gracefully
 [34/42] [chromium] › e2e/sync-broadcas
 ```
@@ -172,4 +172,4 @@ Nenhum relatorio admin gerado.
 
 | Data | Correcao | Commit |
 |------|----------|--------|
-| 2026-08-09 19:03 UTC | CI report gerado automaticamente | `ecbbbf352fe6c497df402e6b33978d76cd495aee` |
+| 2026-08-09 19:07 UTC | CI report gerado automaticamente | `de215c600a9f90c58af1ecbac45f1bd7c1b3075b` |
