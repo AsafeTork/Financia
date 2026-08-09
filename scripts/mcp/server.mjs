@@ -233,10 +233,11 @@ reg("n_list", {
     properties: {
       path: { type: "string", description: "Directory (default: repo root)" },
       depth: { type: "number", description: "Recursion depth (default 2, max 6)" },
+      maxLines: { type: "number", description: "Max output lines (default 1500)" },
     },
     required: [],
   },
-  run: async ({ path, depth }) => listDir(fpath(path || CWD), Math.min(Number(depth) || 2, 6)),
+  run: async ({ path, depth, maxLines }) => listDir(fpath(path || CWD), Math.min(Number(depth) || 2, 6), Math.max(1, Number(maxLines) || 1500)),
 });
 
 reg("n_write", {
@@ -590,20 +591,29 @@ reg("n_websearch", {
     const q = String(query || "").trim();
     if (!q) return out("query is required", true);
     const n = Math.min(Math.max(Number(numResults) || 8, 1), 20);
-    const key = `search:${q}:${n}`;
+    const qClean = q.replace(/["“”]/g, " ").replace(/\s+/g, " ").trim();
+    const key = `search:${qClean}:${n}`;
     const groups = await cached(key, 10 * 60 * 1000, async () => {
-      const settled = await Promise.allSettled([
-        searchNews(q, 4),
-        searchDdgInstant(q),
-        searchWikiExtract(q),
-        searchWiki(q, n),
-        searchHn(q, 4),
-        searchGithub(q, 4),
-        httpJson(`https://html.duckduckgo.com/html/?q=${encodeURIComponent(q)}`, { timeout: 12000 }).then((r) =>
-          r.status === 200 ? { source: "duckduckgo", items: parseDdg(r.text).slice(0, n) } : null
-        ),
-      ]);
-      return settled.filter((s) => s.status === "fulfilled" && s.value?.items?.length).map((s) => s.value);
+      const attempt = async (qq) => {
+        const settled = await Promise.allSettled([
+          searchNews(qq, 4),
+          searchDdgInstant(qq),
+          searchWikiExtract(qq),
+          searchWiki(qq, n),
+          searchHn(qq, 4),
+          searchGithub(qq, 4),
+          httpJson(`https://html.duckduckgo.com/html/?q=${encodeURIComponent(qq)}`, { timeout: 12000 }).then((r) =>
+            r.status === 200 ? { source: "duckduckgo", items: parseDdg(r.text).slice(0, n) } : null
+          ),
+        ]);
+        return settled.filter((s) => s.status === "fulfilled" && s.value?.items?.length).map((s) => s.value);
+      };
+      let list = await attempt(qClean);
+      if (!list.length) {
+        const short = qClean.split(/\s+/).slice(0, 4).join(" ");
+        if (short && short !== qClean) list = await attempt(short);
+      }
+      return list;
     });
     if (!groups.length) return out(`no results for "${q}"`);
     const blocks = groups.map((g) => `── ${g.source} ──\n` + g.items.map((it, i) => `${i + 1}. ${it.title}\n   ${it.url}\n   ${it.snippet}\n`).join(""));
