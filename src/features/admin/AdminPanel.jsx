@@ -64,9 +64,11 @@ export default function AdminPanel({ toast, confirm, session, brand }) {
   const [stripeOv, setStripeOv] = useState(null);
   const [dbStats, setDbStats] = useState(null);
   const [loadingFin, setLoadingFin] = useState(true);
+  const [financialAttempt, setFinancialAttempt] = useState(0);
   var [subStatuses, setSubStatuses] = useState({});
   var setSubFor = function(uid, s) { setSubStatuses(function(m) { var n = Object.assign({}, m); n[uid] = s; return n; }); };
   const _logoRef = useRef();
+  const retryFinancial = useCallback(function() { setFinancialAttempt(function(value) { return value + 1; }); }, []);
 
   const reload = useCallback(function() {
     setLoadError(false);
@@ -118,7 +120,7 @@ export default function AdminPanel({ toast, confirm, session, brand }) {
       if (toast) toast('Erro ao carregar dados financeiros.', 'error');
     });
     return function() { alive = false; };
-  }, [toast]);
+  }, [financialAttempt, toast]);
 
   var realPriceOf = function(c, ep) {
     if (ep === 'pro') {
@@ -321,7 +323,10 @@ export default function AdminPanel({ toast, confirm, session, brand }) {
             <p className="text-[11px] mt-2" style={{color:'var(--text-muted)'}}>O saque para sua conta/chave PIX é feito no painel da Stripe (o app não move o dinheiro por segurança).{stripeOv.truncated ? ' Mostrando as 100 primeiras assinaturas.' : ''}</p>
           </React.Fragment>
         ) : (
-          <p className="text-xs" style={{color:'var(--text-muted)'}}>Não foi possível carregar o saldo da Stripe agora. Verifique a configuração da chave ou tente recarregar.</p>
+          <div className="flex flex-col items-start gap-2">
+            <p className="text-xs" style={{color:'var(--text-muted)'}}>Não foi possível carregar o saldo da Stripe agora. Verifique a configuração da chave ou tente recarregar.</p>
+            <button type="button" onClick={retryFinancial} className="text-xs font-semibold px-3 py-2 rounded-lg min-h-[44px]" style={{background:'var(--info-bg, color-mix(in srgb, var(--info) 10%, transparent))', color:'var(--info)'}}>Tentar novamente</button>
+          </div>
         )}
       </div>
 
@@ -372,7 +377,10 @@ export default function AdminPanel({ toast, confirm, session, brand }) {
             <p className="text-[10px]" style={{color:'var(--text-muted)'}}>Valor total inclui índices e objetos além das tabelas listadas.</p>
           </div>
         ) : (
-          <p className="text-xs" style={{color:'var(--text-muted)'}}>Não foi possível ler o tamanho do banco agora.</p>
+          <div className="flex flex-col items-start gap-2">
+            <p className="text-xs" style={{color:'var(--text-muted)'}}>Não foi possível ler o tamanho do banco agora.</p>
+            <button type="button" onClick={retryFinancial} className="text-xs font-semibold px-3 py-2 rounded-lg min-h-[44px]" style={{background:'var(--warning-bg, color-mix(in srgb, var(--warning) 10%, transparent))', color:'var(--warning)'}}>Tentar novamente</button>
+          </div>
         )}
       </div>
 

@@ -74,6 +74,7 @@ export default React.memo(function Dashboard({ tx, products, brand, onNav, planI
   }, [tx]);
 
   var plan     = effectivePlan(planInfo);
+  var hasFirstSale = tx.some(function(t) { return t.type === 'income'; });
   var lowStock = useMemo(function() { return products.filter(function(p) { return p.stock != null && p.stock <= 5; }); }, [products]);
   var usage = useMemo(function() {
     return [
@@ -107,17 +108,17 @@ export default React.memo(function Dashboard({ tx, products, brand, onNav, planI
         </select>
       </div>
 
-      {tx.length === 0 && products.length === 0 && (
+      {!hasFirstSale && (
         <div className="rounded-[20px] p-5 sm:p-6 flex flex-col gap-5" style={{background:'var(--bg-card)', border:'1px solid var(--border)', boxShadow:'var(--shadow-sm)'}}>
           <div>
-            <p className="font-display text-lg font-semibold" style={{color:'var(--text-main)'}}>Bem-vindo ao Financia</p>
-            <p className="text-sm mt-1" style={{color:'var(--text-sub)'}}>Siga os passos abaixo para comecar a controlar seu negocio.</p>
+            <p className="font-display text-lg font-semibold" style={{color:'var(--text-main)'}}>{products.length > 0 ? 'Próximo passo: registre sua primeira venda' : 'Bem-vindo ao Financia'}</p>
+            <p className="text-sm mt-1" style={{color:'var(--text-sub)'}}>{products.length > 0 ? 'Seu estoque está pronto. Registre uma venda para começar a ver o resultado do seu negócio.' : 'Siga os passos abaixo para começar a controlar seu negócio.'}</p>
           </div>
 
           {(function() {
             var steps = [
               { n:'1', title:'Cadastre seus produtos', sub:'Defina precos, custos e controle de estoque', nav:'inventory', btn:'Cadastrar', done: products.length > 0 },
-              { n:'2', title:'Registre sua primeira venda', sub:'Multiplos itens, calculo automatico e baixa de estoque', nav:'income', btn:'Registrar', done: tx.some(function(t){ return t.type === 'income'; }) },
+              { n:'2', title:'Registre sua primeira venda', sub:'Multiplos itens, calculo automatico e baixa de estoque', nav:'income', btn:'Registrar', done: hasFirstSale },
               { n:'3', title:'Cadastre uma despesa', sub:'Descubra para onde vai seu dinheiro com categorias e fixos', nav:'expense', btn:'Registrar', done: tx.some(function(t){ return t.type === 'expense'; }) },
               { n:'4', title:'Veja seu primeiro relatorio', sub:'Exporte PDF e Excel com seus dados organizados', nav:'report', btn:'Ver', done: tx.length > 0 },
             ];
@@ -180,7 +181,7 @@ export default React.memo(function Dashboard({ tx, products, brand, onNav, planI
       )}
 
       {/* ─── KPIs para empty state: cards educativos ─── */}
-      {tx.length === 0 && products.length === 0 ? (
+      {!hasFirstSale ? (
         <div className="grid grid-cols-2 gap-3">
           {[
             { icon:'M12 4v16m8-8l-8-8-8 8', label:'Entradas', desc:'Registre vendas para ver o quanto entrou', action:'Registrar venda', nav:'income', color:'var(--success)' },
