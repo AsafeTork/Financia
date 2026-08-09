@@ -69,6 +69,10 @@ impossibilidade técnica comprovada, ou risco crítico de segurança.
   objetiva e acompanhe os checks (`gh pr checks`). Atualize se o CI falhar.
 - Padrão: commit direto na `main` para mudanças pequenas/isoladas; PR para mudanças
   amplas ou que cruzam domínios (backend+front, migrations, RLS).
+- Acompanhamento de CI: use `gh run watch <run-id>` (modo watch — bloqueia até concluir).
+  **Nunca `sleep` para esperar CI.** Obtenha o run-id com `gh run list --branch main
+  --limit 1` e monitore com `gh run watch`. Se falhar, investigue com
+  `gh run view <run-id> --log-failed`.
 
 ──────────────────────────────────────
 

@@ -25,13 +25,6 @@ const MOCK_MOVEMENTS = [
   { desc: 'Aluguel', detail: 'Fixo', val: '- R$ 1.200', type: 'expense' },
 ];
 
-const FEATURES = [
-  { t: 'Funciona offline', d: 'Registre a venda na hora, mesmo sem sinal. Tudo sincroniza sozinho quando a internet volta.', icon: 'M5 12.55a11 11 0 0114.08 0M1.42 9a16 16 0 0121.16 0M8.53 16.11a6 6 0 016.95 0M12 20h.01' },
-  { t: 'Ao vivo entre celulares', d: 'Você no caixa, seu sócio no estoque — os mesmos números, atualizados na hora nos dois aparelhos.', icon: 'M17 1l4 4-4 4M3 11V9a4 4 0 014-4h14M7 23l-4-4 4-4M21 13v2a4 4 0 01-4 4H3' },
-  { t: 'Vendas, despesas e estoque', d: 'O que entra, o que sai e o que tem na prateleira. Um app só, sem planilha bagunçada.', icon: 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4' },
-  { t: 'Relatórios que decidem', d: 'Lucro do mês, onde o dinheiro está vazando e exportação pra planilha em um toque.', icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' },
-];
-
 const FAQ = [
   { q: 'Preciso de internet pra usar?', a: 'Não. O Financia funciona offline e sincroniza sozinho quando a conexão volta. Você nunca perde uma venda.' },
   { q: 'Funciona no celular e no computador?', a: 'Sim. Roda no navegador de qualquer aparelho e pode ser instalado como aplicativo no celular e no Windows.' },
@@ -204,17 +197,17 @@ export default function Landing({ onEnter, onNav }) {
           <div className="grid md:grid-cols-3 gap-8">
             <div className="rounded-2xl p-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)' }}>
               <p className="font-display font-bold text-lg tracking-tight" style={{ color: 'var(--brand)' }}>R$ 12.400/mês de receita organizada</p>
-              <p className="text-sm mt-3 leading-relaxed" style={{ color: 'var(--text-sub)' }}>"Deixei a planilha. Agora sei o lucro do mês no dia seguinte."</p>
+              <p className="text-sm mt-3 leading-relaxed" style={{ color: 'var(--text-sub)' }}>&ldquo;Deixei a planilha. Agora sei o lucro do mês no dia seguinte.&rdquo;</p>
               <p className="text-xs mt-3 font-medium" style={{ color: 'var(--brand-accent)' }}>Ana — loja de roupas, Belém/PA</p>
             </div>
             <div className="rounded-2xl p-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)' }}>
               <p className="font-display font-bold text-lg tracking-tight" style={{ color: 'var(--brand)' }}>3 minutos por dia no app</p>
-              <p className="text-sm mt-3 leading-relaxed" style={{ color: 'var(--text-sub)' }}>"Resolvo o financeiro no celular entre um cliente e outro."</p>
+              <p className="text-sm mt-3 leading-relaxed" style={{ color: 'var(--text-sub)' }}>&ldquo;Resolvo o financeiro no celular entre um cliente e outro.&rdquo;</p>
               <p className="text-xs mt-3 font-medium" style={{ color: 'var(--brand-accent)' }}>Carlos — oficina mecânica, Goiânia/GO</p>
             </div>
             <div className="rounded-2xl p-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)' }}>
               <p className="font-display font-bold text-lg tracking-tight" style={{ color: 'var(--brand)' }}>Nunca mais perdi uma venda</p>
-              <p className="text-sm mt-3 leading-relaxed" style={{ color: 'var(--text-sub)' }}>"Anoto tudo offline e sincroniza quando chega sinal."</p>
+              <p className="text-sm mt-3 leading-relaxed" style={{ color: 'var(--text-sub)' }}>&ldquo;Anoto tudo offline e sincroniza quando chega sinal.&rdquo;</p>
               <p className="text-xs mt-3 font-medium" style={{ color: 'var(--brand-accent)' }}>Juliana — salão de beleza, Recife/PE</p>
             </div>
           </div>
