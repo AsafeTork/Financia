@@ -155,9 +155,9 @@ export default function AdminPanel({ toast, confirm, session, brand }) {
   const wlClients = clients.filter(function(c) { return c.white_label; });
 
   // Derivados do painel financeiro/infra.
-  var dbBytes = dbStats && dbStats.db_bytes ? dbStats.db_bytes : 0;
-  var dbu = dbUsage(dbBytes, DB_LIMIT_BYTES);
-  var dbTables = dbStats && dbStats.tables ? dbStats.tables : [];
+   var dbBytes = dbStats && (dbStats.db_bytes || dbStats.db_size) ? (dbStats.db_bytes || dbStats.db_size) : 0;
+   var dbu = dbUsage(dbBytes, DB_LIMIT_BYTES);
+   var dbTables = dbStats && Array.isArray(dbStats.tables) ? dbStats.tables : [];
   var shownTables = dbTables.slice(0, 5);
   var shownBytes = shownTables.reduce(function(s, t) { return s + (t.bytes || 0); }, 0);
   var otherBytes = Math.max(0, dbBytes - shownBytes);
