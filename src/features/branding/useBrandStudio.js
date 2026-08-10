@@ -44,7 +44,7 @@ export default function useBrandStudio(brand, planInfo, onSave, toast) {
   const presetCats = useMemo(() => getPresetCategories(), []);
 
   const saveToHistory = useCallback((b) => {
-    const entry = JSON.parse(JSON.stringify(b || brand));
+    const entry = JSON.parse(JSON.stringify(b || brand || {}));
     setHistory(prev => {
       const truncated = prev.slice(0, historyIndex + 1);
       truncated.push(entry);
