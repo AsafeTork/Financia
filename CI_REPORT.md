@@ -1,7 +1,7 @@
 # CI Report
 
-**Gerado:** 2026-08-10 17:51 UTC
-**Commit:** `ea7a429061ba2a3ebbfb63068b168b148f17e3ab`
+**Gerado:** 2026-08-10 17:56 UTC
+**Commit:** `4cfbb1a55af8e1744dfea9e069256f2710684d04`
 **Branch:** `main`
 
 ---
@@ -86,9 +86,9 @@ computing gzip size...
 ```
 
 Running 26 tests using 4 workers
-°°··°°°°°°°°···°°·°·°·°···
-  15 skipped
-  11 passed (14.3s)
+°···°°°°°°°°···°·°°°··°···
+  14 skipped
+  12 passed (12.6s)
 
 ```
 
@@ -105,8 +105,8 @@ Running 26 tests using 4 workers
 Running 42 tests using 4 workers
 
 [1/42] [chromium] › e2e/deep-sync-conflict.spec.ts:59:3 › Deep Sync Conflict Scenarios › BroadcastChannel handles duplicate messages without errors
-[2/42] [chromium] › e2e/deep-sync-conflict.spec.ts:127:3 › Deep Sync Conflict Scenarios › memory leak check after sync broadcast storm
-[3/42] [chromium] › e2e/deep-sync-conflict.spec.ts:10:3 › Deep Sync Conflict Scenarios › BroadcastChannel ping/pong survives rapid tab switching
+[2/42] [chromium] › e2e/deep-sync-conflict.spec.ts:10:3 › Deep Sync Conflict Scenarios › BroadcastChannel ping/pong survives rapid tab switching
+[3/42] [chromium] › e2e/deep-sync-conflict.spec.ts:127:3 › Deep Sync Conflict Scenarios › memory leak check after sync broadcast storm
 [4/42] [chromium] › e2e/deep-sync-conflict.spec.ts:94:3 › Deep Sync Conflict Scenarios › sync worker survives unhandled rejection
 [5/42] [chromium] › e2e/indexeddb-corruption.spec.ts:54:6 › IndexedDB Recovery - Corruption › Corruption Simulation › should recover from corrupted IndexedDB data
 [6/42] [chromium] › e2e/indexeddb-corruption.spec.ts:117:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should handle invalid schema gracefully
@@ -116,8 +116,8 @@ Running 42 tests using 4 workers
 [10/42] [chromium] › e2e/indexeddb-migration.spec.ts:92:5 › IndexedDB Recovery - Migration › Migration Test › should preserve data integrity during migration
 [11/42] [chromium] › e2e/memory-leak.spec.ts:6:3 › Memory Leak Detection › cyclic navigation - no detached DOM nodes
 [12/42] [chromium] › e2e/memory-leak.spec.ts:57:3 › Memory Leak Detection › event listeners cleaned up on unmount
-[13/42] [chromium] › e2e/memory-leak.spec.ts:84:3 › Memory Leak Detection › timers and intervals cleared on unmount
-[14/42] [chromium] › e2e/memory-leak.spec.ts:110:3 › Memory Leak Detection › IndexedDB connections closed properly
+[13/42] [chromium] › e2e/memory-leak.spec.ts:110:3 › Memory Leak Detection › IndexedDB connections closed properly
+[14/42] [chromium] › e2e/memory-leak.spec.ts:84:3 › Memory Leak Detection › timers and intervals cleared on unmount
 [15/42] [chromium] › e2e/memory-leak.spec.ts:135:3 › Memory Leak Detection › BroadcastChannel closed on unmount
 [16/42] [chromium] › e2e/memory-leak.spec.ts:164:3 › Memory Leak Detection › memory usage stable under load
 [17/42] [chromium] › e2e/memory-leak.spec.ts:207:3 › Offline Storage Persistence › navigator.storage.persist() prevents eviction
@@ -172,4 +172,4 @@ Nenhum relatorio admin gerado.
 
 | Data | Correcao | Commit |
 |------|----------|--------|
-| 2026-08-10 17:51 UTC | CI report gerado automaticamente | `ea7a429061ba2a3ebbfb63068b168b148f17e3ab` |
+| 2026-08-10 17:56 UTC | CI report gerado automaticamente | `4cfbb1a55af8e1744dfea9e069256f2710684d04` |
