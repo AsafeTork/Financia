@@ -24,6 +24,11 @@ export function sanitizeUuid(value: unknown): string {
   return UUID_RE.test(id) ? id : '';
 }
 
+export function sanitizeCheckoutRequestId(value: unknown): string {
+  const id = sanitizeText(value, 80);
+  return /^[A-Za-z0-9_-]{16,80}$/.test(id) ? id : '';
+}
+
 export function sanitizePaymentMethodId(value: unknown): string {
   const pm = sanitizeText(value, 80);
   return PM_RE.test(pm) ? pm : '';

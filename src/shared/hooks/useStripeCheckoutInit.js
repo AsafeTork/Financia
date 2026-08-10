@@ -14,9 +14,21 @@ export default function useStripeCheckoutInit(plan, brand, checkoutMode, kind, o
   var [confirming, setConfirming] = useState(false);
   var [actionErr, setActionErr] = useState('');
   var [attempt, setAttempt] = useState(0);
+  var [requestId, setRequestId] = useState(function() {
+    if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
+    return 'checkout-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2);
+  });
   var [useOtherCard, setUseOtherCard] = useState(false);
 
-  var retry = function() { setActionErr(''); setUseOtherCard(false); setAttempt(function(a) { return a + 1; }); };
+  var retry = function() {
+    setActionErr('');
+    setUseOtherCard(false);
+    setRequestId(function() {
+      if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
+      return 'checkout-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2);
+    });
+    setAttempt(function(a) { return a + 1; });
+  };
 
   var done = function(customMsg) {
     var msg = customMsg;
@@ -37,7 +49,7 @@ export default function useStripeCheckoutInit(plan, brand, checkoutMode, kind, o
     setConfirming(true);
     setActionErr('');
     try {
-      var res = await sb.functions.invoke('create-payment', { body: { kind: 'white_label', use_saved_card: true } });
+      var res = await sb.functions.invoke('create-payment', { body: { kind: 'white_label', use_saved_card: true, request_id: requestId } });
       var data = res && res.data ? res.data : null;
       if (data && data.status === 'paid') { done(); return; }
       if (data && data.clientSecret) {
@@ -72,7 +84,7 @@ export default function useStripeCheckoutInit(plan, brand, checkoutMode, kind, o
     setConfirming(true);
     setActionErr('');
     try {
-      var body = { plan_id: plan.id };
+      var body = { plan_id: plan.id, request_id: requestId };
       if (useSaved) body.use_saved_card = true;
       var res = await sb.functions.invoke('create-subscription', { body: body });
       var data = res && res.data ? res.data : null;
@@ -114,7 +126,7 @@ export default function useStripeCheckoutInit(plan, brand, checkoutMode, kind, o
   function startNewCardFromSaved() {
     setPhase('loading');
     if (checkoutMode === 'payment') {
-      sb.functions.invoke('create-payment', { body: { kind: 'white_label' } }).then(function(result) {
+      sb.functions.invoke('create-payment', { body: { kind: 'white_label', request_id: requestId } }).then(function(result) {
         var data = result && result.data ? result.data : null;
         if (data && data.clientSecret) { setClientSecret(data.clientSecret); setPhase('form'); return; }
         if (data && data.status === 'paid') { done(); return; }
@@ -127,7 +139,7 @@ export default function useStripeCheckoutInit(plan, brand, checkoutMode, kind, o
       });
       return;
     }
-    sb.functions.invoke('create-subscription', { body: { plan_id: plan.id } }).then(function(result) {
+    sb.functions.invoke('create-subscription', { body: { plan_id: plan.id, request_id: requestId } }).then(function(result) {
       var data = result && result.data ? result.data : null;
       if (data && data.clientSecret) { setClientSecret(data.clientSecret); setPhase('form'); return; }
       if (data && (data.status === 'changed' || data.status === 'active' || data.status === 'unchanged')) { done(); return; }
@@ -176,7 +188,7 @@ export default function useStripeCheckoutInit(plan, brand, checkoutMode, kind, o
     }, 30000);
 
     var startNewCardSubscription = function() {
-      sb.functions.invoke('create-subscription', { body: { plan_id: plan.id }, signal: abort.signal }).then(function(result) {
+      sb.functions.invoke('create-subscription', { body: { plan_id: plan.id, request_id: requestId }, signal: abort.signal }).then(function(result) {
         if (!alive || settled) return;
         var data = result && result.data ? result.data : null;
         if (data && data.clientSecret) { toForm(data.clientSecret); return; }
@@ -190,7 +202,7 @@ export default function useStripeCheckoutInit(plan, brand, checkoutMode, kind, o
     };
 
     var startNewCardPayment = function() {
-      sb.functions.invoke('create-payment', { body: { kind: 'white_label' }, signal: abort.signal }).then(function(result) {
+      sb.functions.invoke('create-payment', { body: { kind: 'white_label', request_id: requestId }, signal: abort.signal }).then(function(result) {
         if (!alive || settled) return;
         var data = result && result.data ? result.data : null;
         if (data && data.clientSecret) { toForm(data.clientSecret); return; }

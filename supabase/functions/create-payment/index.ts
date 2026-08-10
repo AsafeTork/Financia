@@ -4,7 +4,7 @@
 // DENTRO do app, sem redirecionar. Preco inline em BRL (centavos).
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { sanitizeKind, getAdminClient, enforceRateLimit } from '../_shared/security.ts';
+import { sanitizeKind, sanitizeCheckoutRequestId, getAdminClient, enforceRateLimit } from '../_shared/security.ts';
 import { createStripeClient, findOrCreateCustomer, stripeErrorCode } from '../_shared/stripe.ts';
 import { withLogging, corsResponse, handleOptions, Logger } from '../_shared/logger.ts';
 import { safeErrorResponse } from '../_shared/responses.ts';
@@ -44,6 +44,7 @@ async function handler(req: Request, logger: Logger): Promise<Response> {
     let body: any = {};
     try { body = await req.json(); } catch { body = {}; }
     const kind = sanitizeKind(body?.kind);
+    const requestId = sanitizeCheckoutRequestId(body?.request_id);
     const confirmWhiteLabel = !!(body?.confirm_white_label);
     const useSavedCard = !!(body?.use_saved_card);
     if (!kind) return corsResponse({ error: 'invalid_kind' }, 400);
@@ -107,7 +108,7 @@ async function handler(req: Request, logger: Logger): Promise<Response> {
         off_session: true,
         confirm: true,
         metadata: { user_id: user.id, kind: 'white_label' },
-      }).catch(async (confirmErr) => {
+      }, requestId ? { idempotencyKey: 'white-label:' + user.id + ':' + requestId } : undefined).catch(async (confirmErr) => {
         const raw = confirmErr?.raw;
         const failedPi = raw?.payment_intent;
         if (failedPi) return failedPi;
@@ -132,7 +133,7 @@ async function handler(req: Request, logger: Logger): Promise<Response> {
       description: 'Financia - Personalizacao (white-label)',
       automatic_payment_methods: { enabled: true },
       metadata: { user_id: user.id, kind: 'white_label' },
-    });
+    }, requestId ? { idempotencyKey: 'white-label:' + user.id + ':' + requestId } : undefined);
 
     if (!paymentIntent?.client_secret) return corsResponse({ error: 'no_client_secret' }, 500);
 

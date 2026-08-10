@@ -10,7 +10,7 @@
 
 import Stripe from 'https://esm.sh/stripe@17.7.0?target=denonext';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { enforceRateLimit, getAdminClient, sanitizePlanId } from '../_shared/security.ts';
+import { enforceRateLimit, getAdminClient, sanitizeCheckoutRequestId, sanitizePlanId } from '../_shared/security.ts';
 import { withLogging, corsResponse, handleOptions, Logger } from '../_shared/logger.ts';
 import { createStripeClient, findOrCreateCustomer, findOrCreatePrice, resolvePriceId, planOfSub, monthlyCentsOf, PLAN_PRICES, ADMIN_TEST_PRICE, PLAN_RANK, ACTIVE_STATUSES } from '../_shared/stripe.ts';
 import { safeErrorResponse } from '../_shared/responses.ts';
@@ -72,6 +72,7 @@ async function handler(req: Request, logger: Logger): Promise<Response> {
     let body: Record<string, unknown> = {};
     try { body = await req.json(); } catch { body = {}; }
     const planId = sanitizePlanId(body?.plan_id);
+    const requestId = sanitizeCheckoutRequestId(body?.request_id);
     const useSavedCard = !!(body && body.use_saved_card);
     if (!planId) return corsResponse({ error: 'invalid_plan' }, 400);
 
@@ -132,7 +133,7 @@ async function handler(req: Request, logger: Logger): Promise<Response> {
         items: [{ id: item.id, price: priceId }],
         proration_behavior: isDowngrade ? 'none' : 'always_invoice',
         metadata: { user_id: user.id, plan_id: planId },
-      });
+       }, requestId ? { idempotencyKey: 'subscription:' + user.id + ':' + requestId } : undefined);
       if (!isDowngrade) {
         await activatePlan(admin, user.id, planId, new Date(Number(activeSub.current_period_end) * 1000).toISOString());
       }
@@ -192,7 +193,7 @@ async function handler(req: Request, logger: Logger): Promise<Response> {
       payment_settings: { save_default_payment_method: 'on_subscription' },
       expand: ['latest_invoice.payment_intent'],
       metadata: { user_id: user.id, plan_id: planId },
-    });
+    }, requestId ? { idempotencyKey: 'subscription:' + user.id + ':' + requestId } : undefined);
     const invoice = subscription.latest_invoice as Stripe.Invoice | null;
     const paymentIntent = invoice?.payment_intent as Stripe.PaymentIntent | null;
 
