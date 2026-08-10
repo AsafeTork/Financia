@@ -185,10 +185,15 @@ export default function ClientEditModal({ client, adminEmail, onSave, onClose, t
         color_accent: finalAccent,
         logo_url: logoUrl || null,
       };
-      var profileRes = await sb.from('company_profiles').update(updateData).eq('user_id', client.user_id);
-      if (profileRes.error) { toast('Erro ao salvar perfil.', 'error'); return; }
+      var profileRes = await sb.functions.invoke('admin-update-client', {
+        body: { target_user_id: client.user_id, ...updateData },
+      });
+      if (profileRes.error || (profileRes.data && profileRes.data.error)) {
+        toast('Erro ao salvar perfil: ' + ((profileRes.data && profileRes.data.error) || (profileRes.error && profileRes.error.message) || 'tente novamente'), 'error');
+        return;
+      }
       if (planChanged) {
-        var planRes = await sb.rpc('set_client_plan', {a_target: client.user_id, b_plan: plan, c_actor: adminEmail || 'admin'});
+        var planRes = await sb.rpc('set_client_plan', {p_target: client.user_id, p_plan: plan, p_actor: adminEmail || 'admin'});
         if (planRes && planRes.error) { toast('Erro ao alterar plano: ' + planRes.error.message, 'error'); return; }
       }
       if (whiteLabel !== !!client.white_label) {
