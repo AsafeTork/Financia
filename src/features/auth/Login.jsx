@@ -173,10 +173,12 @@ export default function Login({ brand, initialMode, onNav }) {
           </div>
         </div>
         <div className="relative anim-up">
-          {brandLogo
-            ? <img src={brandLogo} alt="logo" fetchPriority="high" decoding="sync" className="w-12 h-12 rounded-2xl object-cover" style={{ border: '2px solid ' + onBrandBorder }} />
-             : <img src="/icon-192.svg" alt="" fetchPriority="high" decoding="sync" className="w-12 h-12" style={{ filter: lightOnBrand ? 'brightness(0) invert(1)' : 'none' }} />}
-          <p className="font-display font-semibold text-2xl mt-4" style={{ color: onBrand, letterSpacing: '-0.3px' }}>{brandName}</p>
+           <div className="flex items-center gap-3">
+             {brandLogo
+               ? <img src={brandLogo} alt="logo" fetchPriority="high" decoding="sync" className="w-14 h-14 rounded-2xl object-cover" style={{ border: '2px solid ' + onBrandBorder }} />
+               : <img src="/icon-mark.svg" alt="" fetchPriority="high" decoding="sync" className="w-14 h-14 login-mark" />}
+             <p className="font-display font-semibold text-2xl" style={{ color: onBrand, letterSpacing: '-0.3px' }}>{brandName}</p>
+           </div>
         </div>
         <div className="relative">
           <p className="font-display font-semibold anim-up" style={Object.assign({ color: onBrand, fontSize: 'var(--text-h1)', lineHeight: 1.1, letterSpacing: '-1px' }, revealDelay(80))}>
@@ -203,10 +205,12 @@ export default function Login({ brand, initialMode, onNav }) {
         <div className="w-full max-w-sm">
 
           <div className="lg:hidden text-center mb-8">
-            {brandLogo
-              ? <img src={brandLogo} alt="logo" fetchPriority="high" decoding="sync" className="w-16 h-16 rounded-2xl object-cover mx-auto" style={{ border: '3px solid rgba(0,0,0,0.06)' }} />
-              : <img src="/icon-192.svg" alt="" fetchPriority="high" decoding="sync" className="w-16 h-16 mx-auto" />}
-            <p className="font-display font-semibold text-2xl mt-3" style={{ color: brandText, letterSpacing: '-0.3px' }}>{brandName}</p>
+             <div className="flex items-center justify-center gap-3">
+               {brandLogo
+                 ? <img src={brandLogo} alt="logo" fetchPriority="high" decoding="sync" className="w-14 h-14 rounded-2xl object-cover" style={{ border: '3px solid rgba(0,0,0,0.06)' }} />
+                 : <img src="/icon-mark.svg" alt="" fetchPriority="high" decoding="sync" className="w-14 h-14 login-mark login-mark-light" />}
+               <p className="font-display font-semibold text-2xl" style={{ color: brandText, letterSpacing: '-0.3px' }}>{brandName}</p>
+             </div>
           </div>
 
           {/* Abas */}

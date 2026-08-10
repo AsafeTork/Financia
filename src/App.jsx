@@ -187,7 +187,7 @@ export default function App() {
   return (
     <AppProvider value={stableCtx}>
       <DataProvider value={dataCtx}>
-        <div className="min-h-screen flex overflow-x-hidden" style={{background:'var(--bg-page)'}}>
+        <div className="app-shell min-h-screen flex overflow-x-hidden" style={{background:'var(--bg-page)'}}>
           <a href="#main-content" onClick={function(e){e.preventDefault();var el=document.getElementById('main-content');if(el){el.setAttribute('tabindex','-1');el.focus();el.scrollIntoView();}}} className="skip-link">Pular para conteúdo</a>
           <Offline/><WidgetErrorBoundary><UpdateBanner brand={appBrand}/></WidgetErrorBoundary><LazyPage fallback={null}><DebugBadge/></LazyPage><SyncBadge status={s.syncStatus}/>
           <WidgetErrorBoundary><Sidebar view={n.currentView} onNav={n.navTo} brand={appBrand} open={s.sidebarOpen} isAdmin={s.isAdminDB} onClose={handleCloseSidebar}/></WidgetErrorBoundary>

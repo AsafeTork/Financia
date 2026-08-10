@@ -411,6 +411,23 @@ input:focus, select:focus, textarea:focus {
 .admin-panel .text-red-500 { color: var(--danger) !important; }
 .admin-panel .bg-red-50 { background: color-mix(in srgb, var(--danger) 10%, var(--bg-card)) !important; }
 
+/* Legacy Tailwind utilities must follow the active theme inside the app. */
+.app-shell .border-gray-50,
+.app-shell .border-gray-100,
+.app-shell .border-gray-200,
+.app-shell .border-gray-300 { border-color: var(--border) !important; }
+.app-shell .bg-white,
+.app-shell .bg-gray-50,
+.app-shell .bg-gray-100 { background: var(--bg-card) !important; }
+.app-shell .hover\:bg-gray-50:hover,
+.app-shell .hover\:bg-gray-100:hover { background: var(--bg-subtle) !important; }
+.app-shell .text-gray-400 { color: var(--text-muted) !important; }
+.app-shell .text-gray-500,
+.app-shell .text-gray-600,
+.app-shell .text-gray-700 { color: var(--text-sub) !important; }
+.login-mark { object-fit: contain; }
+.login-mark-light { filter: brightness(0.35) saturate(1.3); }
+
 .badge-plan {
   color: var(--plan-badge, #6b7280);
   background: var(--plan-badge-bg, rgba(107,114,128,0.10));

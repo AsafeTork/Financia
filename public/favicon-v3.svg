@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-labelledby="title">
+  <title>Financia</title>
+  <rect x="8" y="24" width="7" height="16" rx="2" fill="#002f59"/>
+  <rect x="20.5" y="16" width="7" height="24" rx="2" fill="#1a6b5c"/>
+  <rect x="33" y="8" width="7" height="32" rx="2" fill="#6ec6c8"/>
+  <path d="M12 22 23.5 29 36 12" fill="none" stroke="#0f3d3e" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

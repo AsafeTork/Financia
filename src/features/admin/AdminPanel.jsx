@@ -374,7 +374,7 @@ export default function AdminPanel({ toast, confirm, session, brand }) {
                 </div>
               )}
             </div>
-            <p className="text-[10px]" style={{color:'var(--text-muted)'}}>Valor total inclui índices e objetos além das tabelas listadas.</p>
+             <p className="text-[10px]" style={{color:'var(--text-muted)'}}>{dbTables.length ? dbTables.length + ' tabelas públicas listadas por tamanho. ' : ''}O valor total inclui índices e objetos além das tabelas.</p>
           </div>
         ) : (
           <div className="flex flex-col items-start gap-2">
