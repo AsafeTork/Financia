@@ -191,7 +191,16 @@ export default function App() {
           <a href="#main-content" onClick={function(e){e.preventDefault();var el=document.getElementById('main-content');if(el){el.setAttribute('tabindex','-1');el.focus();el.scrollIntoView();}}} className="skip-link">Pular para conteúdo</a>
           <Offline/><WidgetErrorBoundary><UpdateBanner brand={appBrand}/></WidgetErrorBoundary><LazyPage fallback={null}><DebugBadge/></LazyPage><SyncBadge status={s.syncStatus}/>
           <WidgetErrorBoundary><Sidebar view={n.currentView} onNav={n.navTo} brand={appBrand} open={s.sidebarOpen} isAdmin={s.isAdminDB} onClose={handleCloseSidebar}/></WidgetErrorBoundary>
-          <div className="hidden lg:block fixed top-4 right-4 z-30"><ThemeToggle theme={effectiveTheme} onToggle={toggleTheme} variant="floating"/></div>
+           <div className="hidden lg:flex fixed top-4 right-4 z-30 items-center gap-2">
+             <button type="button" data-testid="desktop-search" onClick={handleOpenCommand} aria-label="Abrir busca" title="Abrir busca (Ctrl+K)"
+               className="w-11 h-11 rounded-xl flex items-center justify-center transition hover:opacity-80"
+               style={{background:'var(--bg-card)', border:'1px solid var(--border)', color:'var(--text-sub)', boxShadow:'var(--shadow-sm)'}}>
+               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+               </svg>
+             </button>
+             <ThemeToggle theme={effectiveTheme} onToggle={toggleTheme} variant="floating"/>
+           </div>
           <div className="flex-1 lg:ml-64 flex flex-col min-h-screen min-w-0 w-full">
             <WidgetErrorBoundary><Header brand={appBrand} syncStatus={s.syncStatus} theme={effectiveTheme} onToggleTheme={toggleTheme} onMenuOpen={handleOpenSidebar} onOpenSearch={handleOpenCommand}/></WidgetErrorBoundary>
             <main id="main-content" tabIndex="-1" className="flex-1 p-4 lg:p-8 max-w-5xl w-full mx-auto pb-28 lg:pb-8 min-w-0 overflow-x-hidden">
