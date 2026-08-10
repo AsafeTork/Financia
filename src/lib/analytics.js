@@ -11,6 +11,7 @@ const SESSION_KEY = 'financia_analytics_session_id';
 const MAX_QUEUE = 100;
 const PRIVATE_KEYS = new Set(['email', 'name', 'phone', 'description', 'amount', 'value', 'user_id']);
 var flushPromise = null;
+var queueVersion = 0;
 
 function randomId(prefix) {
   if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
@@ -80,33 +81,49 @@ async function send(event) {
   if (typeof navigator !== 'undefined' && navigator.onLine === false) return false;
   var userId = await currentUserId();
   var row = Object.assign({}, event, { user_id: userId || null });
+  delete row._queue_id;
   var result = await sb.from('product_events').insert(row);
   return !result.error;
 }
 
 export async function flushAnalytics() {
-  if (flushPromise) return flushPromise;
-  flushPromise = flushQueue();
-  try { return await flushPromise; } finally { flushPromise = null; }
+  if (flushPromise) {
+    return flushPromise;
+  }
+  flushPromise = (async function() {
+    try {
+      var version = queueVersion;
+      for (var pass = 0; pass < 3; pass++) {
+        await flushQueue();
+        if (version === queueVersion || !readQueue().length) break;
+        version = queueVersion;
+      }
+    } finally {
+      flushPromise = null;
+    }
+  })();
+  return flushPromise;
 }
 
 async function flushQueue() {
   var queue = readQueue();
   if (!queue.length) return;
-  var remaining = [];
+  var sentIds = new Set();
   for (var i = 0; i < queue.length; i++) {
     try {
-      if (!await send(queue[i])) remaining.push(queue[i]);
+      if (await send(queue[i])) sentIds.add(queue[i]._queue_id);
     } catch (_) {
-      remaining.push(queue[i]);
+      // Keep failed events queued for a later online flush.
     }
   }
-  writeQueue(remaining);
+  var latestQueue = readQueue().filter(function(event) { return !sentIds.has(event._queue_id); });
+  writeQueue(latestQueue);
 }
 
 export function trackEvent(eventName, properties) {
   if (!EVENT_NAMES.has(eventName)) return;
   var event = {
+    _queue_id: randomId('event'),
     event_name: eventName,
     anonymous_id: storedId(ANON_KEY, 'anonymous'),
     session_id: sessionId(),
@@ -115,6 +132,7 @@ export function trackEvent(eventName, properties) {
   var queue = readQueue();
   queue.push(event);
   writeQueue(queue);
+  queueVersion++;
   flushAnalytics().catch(function() { /* analytics never blocks product actions */ });
 }
 

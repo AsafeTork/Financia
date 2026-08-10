@@ -53,4 +53,26 @@ describe('product analytics', function() {
     await flushAnalytics();
     expect(insert).toHaveBeenCalledOnce();
   });
+
+  it('nao perde evento adicionado durante um flush em andamento', async function() {
+    var resolveInsert;
+    var insertCalls = 0;
+    insert.mockImplementation(function() {
+      insertCalls++;
+      if (insertCalls > 1) return Promise.resolve({ error: null });
+      return new Promise(function(resolve) {
+        resolveInsert = resolve;
+      });
+    });
+    trackEvent('landing_cta_click', { placement: 'hero' });
+    await Promise.resolve();
+    trackEvent('signup_start');
+    resolveInsert({ error: null });
+    await flushAnalytics();
+
+    expect(insert).toHaveBeenCalledTimes(2);
+    expect(insert.mock.calls.map(function(call) { return call[0].event_name; })).toEqual([
+      'landing_cta_click', 'signup_start',
+    ]);
+  });
 });
