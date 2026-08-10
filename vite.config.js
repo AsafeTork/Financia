@@ -31,7 +31,7 @@ export default defineConfig(async function() {
     filename: 'sw.ts',
     injectRegister: null,
     registerType: 'autoUpdate',
-    includeAssets: ['favicon.ico', 'favicon-32.png', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'],
+    includeAssets: ['favicon.ico', 'favicon.svg', 'favicon-v2.svg', 'favicon-32.png', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'],
     manifest: {
       name: 'Financia — Gestão financeira',
       short_name: 'Financia',
