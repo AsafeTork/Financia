@@ -1,7 +1,7 @@
 # CI Report
 
-**Gerado:** 2026-08-10 11:23 UTC
-**Commit:** `7e60bfe7480fbc79a9dd5ff15a6372cbf7732b9a`
+**Gerado:** 2026-08-10 11:27 UTC
+**Commit:** `5d65b138a01c6a62dcc8ae7123062dbf852d241d`
 **Branch:** `main`
 
 ---
@@ -86,9 +86,9 @@ computing gzip size...
 ```
 
 Running 26 tests using 4 workers
-°··°·°°°°°°°···°°°°···°···
+°···°°°°°°°°···°°°°···°···
   14 skipped
-  12 passed (14.3s)
+  12 passed (15.0s)
 
 ```
 
@@ -134,11 +134,11 @@ Running 42 tests using 4 workers
 [28/42] [chromium] › e2e/offline-state-corruption.spec.ts:86:3 › Deep Edge Cases — Offline State Corruption & Recovery › multiple rapid navigations do not break app
 [29/42] [chromium] › e2e/state-corruption-recovery.spec.ts:10:3 › State Corruption & Recovery › app recovers from corrupted localStorage brand config
 [30/42] [chromium] › e2e/state-corruption-recovery.spec.ts:28:3 › State Corruption & Recovery › app survives missing IndexedDB database gracefully
+[31/42] [chromium] › e2e/state-corruption-recovery.spec.ts:54:3 › State Corruption & Recovery › app handles sessionStorage flood without crash
+[32/42] [chromium] › e2e/state-corruption-recovery.spec.ts:76:3 › State Corruption & Recovery › app survives cache API quota exceeded
 [chromium] › e2e/network-perf.spec.ts:157:3 › Network Performance & Sync Loop Detection › detect sync loops, icon loops, and excessive network activity
 [MONITOR] Waiting 15s to capture baseline network activity...
 
-[31/42] [chromium] › e2e/state-corruption-recovery.spec.ts:54:3 › State Corruption & Recovery › app handles sessionStorage flood without crash
-[32/42] [chromium] › e2e/state-corruption-recovery.spec.ts:76:3 › State Corruption & Recovery › app survives cache API quota exceeded
 [33/42] [chromium] › e2e/state-corruption-recovery.spec.ts:96:3 › State Corruption & Recovery › app handles service worker registration failure gracefully
 [34/42] [chromium] › e2e/sync-broadcas
 ```
@@ -172,4 +172,4 @@ Nenhum relatorio admin gerado.
 
 | Data | Correcao | Commit |
 |------|----------|--------|
-| 2026-08-10 11:23 UTC | CI report gerado automaticamente | `7e60bfe7480fbc79a9dd5ff15a6372cbf7732b9a` |
+| 2026-08-10 11:27 UTC | CI report gerado automaticamente | `5d65b138a01c6a62dcc8ae7123062dbf852d241d` |
