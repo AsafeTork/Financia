@@ -70,6 +70,6 @@ describe('displayPlanPrice', function() {
     expect(displayPlanPrice(49.9, 2990)).toEqual({ value: 29.9, custom: true, original: 49.9 });
   });
   it('white_label custom price', function() {
-    expect(displayPlanPrice(997, 49900)).toEqual({ value: 499, custom: true, original: 997 });
+    expect(displayPlanPrice(497, 49900)).toEqual({ value: 499, custom: true, original: 497 });
   });
 });

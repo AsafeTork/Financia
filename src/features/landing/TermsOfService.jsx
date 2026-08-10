@@ -2,19 +2,19 @@
 var sections = [
   {
     title: '1. Objeto e partes',
-    content: 'Estes Termos de Uso regulam o acesso e uso do Financia, plataforma de gestão financeira para pequenos negócios, disponível em financia-gestao.onrender.com e como aplicativo instalável (PWA, Android e Windows).\n\nFornecedor: [NOME RESPONSÁVEL LEGAL], CPF/CNPJ [CPF/CNPJ], com sede em [CIDADE/UF], e-mail [E-MAIL].\n\nUsuário: pessoa física ou jurídica que se cadastra e utiliza o Financia.\n\nAo criar uma conta ou usar o serviço, o Usuário aceita integralmente estes Termos.'
+    content: 'Estes Termos de Uso regulam o acesso e uso do Financia, plataforma de gestão financeira para pequenos negócios, disponível em financiabr.me e como aplicativo instalável (PWA, Android e Windows).\n\nFornecedor: [NOME RESPONSÁVEL LEGAL], CPF/CNPJ [CPF/CNPJ], com sede em [CIDADE/UF], e-mail [E-MAIL].\n\nUsuário: pessoa física ou jurídica que se cadastra e utiliza o Financia.\n\nAo criar uma conta ou usar o serviço, o Usuário aceita integralmente estes Termos.'
   },
   {
     title: '2. Planos e funcionalidades',
-    content: 'O Financia oferece dois planos:\n\n• Plano Gratuito (Free): inclui até 50 transações, 20 produtos e 10 registros de perda. Sem custo, sem cartão de crédito.\n• Plano Pro: inclui transações, produtos e perdas ilimitados, por R$ 70,00 (setenta reais) por mês.\n\nOs limites do plano Gratuito são totais acumulados, não mensais. O Fornecedor poderá alterar esses limites e preços com aviso prévio de 30 dias por e-mail.'
+    content: 'O Financia oferece três planos:\n\n• Plano Gratuito (Free): inclui até 50 transações, 20 produtos e 10 registros de perda. Sem custo, sem cartão de crédito.\n• Plano Pro: inclui transações, produtos e perdas ilimitados, por R$ 49,90 (quarenta e nove reais e noventa centavos) por mês.\n• Plano Premium: inclui os recursos do Pro, vários usuários, sincronização entre dispositivos, metas e relatórios avançados, por R$ 99,90 (noventa e nove reais e noventa centavos) por mês.\n\nOs limites do plano Gratuito são totais acumulados, não mensais. O Fornecedor poderá alterar esses limites e preços com aviso prévio de 30 dias por e-mail.'
   },
   {
     title: '3. Pagamento e cobrança',
-    content: 'A assinatura do plano Pro é processada pela Stripe, Inc. (stripe.com), plataforma de pagamentos segura.\n\n• A cobrança é mensal, no cartão de crédito informado no momento da assinatura.\n• O plano Pro é ativado imediatamente após a confirmação do pagamento.\n• Em caso de falha na cobrança, o Usuário será notificado por e-mail e terá até 5 dias para regularizar antes da suspensão do acesso Pro.\n• Os dados de cartão são tratados exclusivamente pela Stripe e não são armazenados nos servidores do Financia.'
+    content: 'As assinaturas dos planos Pro e Premium são processadas pela Stripe, Inc. (stripe.com), plataforma de pagamentos segura.\n\n• A cobrança é mensal, no cartão de crédito informado no momento da assinatura.\n• O plano escolhido é ativado após a confirmação do pagamento.\n• Em caso de falha na cobrança, o Usuário será notificado por e-mail e terá até 5 dias para regularizar antes da suspensão do plano pago.\n• Os dados de cartão são tratados exclusivamente pela Stripe e não são armazenados nos servidores do Financia.'
   },
   {
     title: '4. Cancelamento e reembolso',
-    content: 'O Usuário pode cancelar o plano Pro a qualquer momento, sem multa ou fidelidade.\n\n• O acesso Pro permanece ativo até o final do período já pago.\n• Após o cancelamento, a conta retorna automaticamente para o plano Gratuito.\n• Reembolsos: nos primeiros 7 dias corridos após a primeira contratação, o Usuário pode solicitar reembolso integral por e-mail, em cumprimento ao art. 49 do Código de Defesa do Consumidor (direito de arrependimento). Para solicitações após esse prazo, o reembolso não é garantido e será analisado caso a caso.\n• Para cancelar ou solicitar reembolso, envie e-mail para [E-MAIL].'
+    content: 'O Usuário pode cancelar o plano pago a qualquer momento, sem multa ou fidelidade.\n\n• O acesso ao plano pago permanece ativo até o final do período já pago.\n• Após o cancelamento, a conta retorna automaticamente para o plano Gratuito.\n• Reembolsos: nos primeiros 7 dias corridos após a primeira contratação, o Usuário pode solicitar reembolso integral por e-mail, em cumprimento ao art. 49 do Código de Defesa do Consumidor (direito de arrependimento). Para solicitações após esse prazo, o reembolso não é garantido e será analisado caso a caso.\n• Para cancelar ou solicitar reembolso, envie e-mail para [E-MAIL].'
   },
   {
     title: '5. Obrigações do usuário',
@@ -26,7 +26,7 @@ var sections = [
   },
   {
     title: '7. Dados e privacidade',
-    content: 'O tratamento de dados pessoais é regido pela Política de Privacidade do Financia, disponível em financia-gestao.onrender.com/#privacidade, que é parte integrante destes Termos.\n\nOs dados inseridos pelo Usuário (transações, produtos, etc.) são de sua propriedade exclusiva. O Fornecedor não utilizará esses dados para fins além da prestação do serviço.'
+    content: 'O tratamento de dados pessoais é regido pela Política de Privacidade do Financia, disponível em financiabr.me/privacidade, que é parte integrante destes Termos.\n\nOs dados inseridos pelo Usuário (transações, produtos, etc.) são de sua propriedade exclusiva. O Fornecedor não utilizará esses dados para fins além da prestação do serviço.'
   },
   {
     title: '8. Propriedade intelectual',

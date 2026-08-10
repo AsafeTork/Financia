@@ -3,7 +3,7 @@
 
 import Stripe from 'https://esm.sh/stripe@17.7.0?target=denonext';
 
-const PLAN_PRICES = { pro: 4990, premium: 9990, white_label: 99700 };
+const PLAN_PRICES = { pro: 4990, premium: 9990, white_label: 49700 };
 const ADMIN_TEST_PRICE = 1;
 const PLAN_RANK = { free: 0, pro: 1, premium: 2, white_label: 3 };
 const ACTIVE_STATUSES = ['active', 'trialing', 'past_due', 'unpaid'];

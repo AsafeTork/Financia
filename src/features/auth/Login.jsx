@@ -6,6 +6,7 @@ import WebAuthn from './WebAuthn.jsx';
 import { passwordStrength, safe, onColor, readableBrand } from '../../lib/utils.js';
 import { SUPPORT_EMAIL } from '../../lib/constants.js';
 import PhoneInput from '../../shared/ui/PhoneInput.jsx';
+import { trackEvent } from '../../lib/analytics.js';
 
 var ACCENT = 'var(--success)';
 
@@ -38,6 +39,10 @@ export default function Login({ brand, initialMode, onNav }) {
   var [resetSent, setResetSent] = useState(false);
   var [emailError, setEmailError] = useState('');
   var [passError, setPassError] = useState('');
+
+  useEffect(function() {
+    if (mode === 'signup' && !resetMode) trackEvent('signup_start');
+  }, [mode, resetMode]);
 
   var emailRef = useRef(null);
   var suNameRef = useRef(null);
@@ -107,7 +112,10 @@ export default function Login({ brand, initialMode, onNav }) {
       if (res.error) {
         setErr(res.error.message.indexOf('already') !== -1 ? 'Já existe uma conta com este e-mail.' : 'Não foi possível criar a conta. Tente novamente.');
       } else if (!(res.data && res.data.session)) {
+        trackEvent('signup_complete');
         setSignupDone(true);
+      } else {
+        trackEvent('signup_complete');
       }
     } catch { setErr('Erro de conexão. Verifique sua internet.'); }
     finally { setLoading(false); }

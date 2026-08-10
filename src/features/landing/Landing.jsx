@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useScrollReveal } from '../../shared/hooks/useScrollReveal.js';
 import { fmt } from '../../lib/utils.js';
 import { waLink, PRICING_PLANS } from '../../lib/constants.js';
+import { trackEvent } from '../../lib/analytics.js';
 
 const delay = function(ms) { return { animationDelay: ms + 'ms', animationFillMode: 'both' }; };
 
@@ -34,6 +35,10 @@ const FAQ = [
 
 export default function Landing({ onEnter, onSignup, onNav }) {
   const createAccount = onSignup || onEnter;
+  const startSignup = function(placement) {
+    trackEvent('landing_cta_click', { placement: placement });
+    createAccount();
+  };
   const waLinkUrl = waLink('Quero conhecer o Financia para o meu negocio.');
   const statsRef = useScrollReveal();
   const dashRef = useScrollReveal();
@@ -45,6 +50,7 @@ export default function Landing({ onEnter, onSignup, onNav }) {
 
   // Estado do FAQ accordion
   const [openFaq, setOpenFaq] = useState(null);
+  React.useEffect(function() { trackEvent('landing_view'); }, []);
   const toggleFaq = function(idx) { setOpenFaq(function(prev) { return prev === idx ? null : idx; }); };
 
   return (
@@ -100,7 +106,7 @@ export default function Landing({ onEnter, onSignup, onNav }) {
             </p>
 
             <div className="anim-fade-up mt-8 flex flex-col sm:flex-row gap-3" style={delay(240)}>
-              <button onClick={createAccount} className="group text-sm font-semibold px-8 py-4 rounded-2xl text-white transition-all duration-200 hover:-translate-y-0.5" style={{ background: 'var(--brand-grad)', boxShadow: 'var(--shadow-xl)' }}>
+              <button onClick={function() { startSignup('hero'); }} className="group text-sm font-semibold px-8 py-4 rounded-2xl text-white transition-all duration-200 hover:-translate-y-0.5" style={{ background: 'var(--brand-grad)', boxShadow: 'var(--shadow-xl)' }}>
                 Criar conta grátis
                 <svg className="inline-block ml-2 w-4 h-4 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 12h14M12 5l7 7-7 7"/></svg>
               </button>
@@ -463,7 +469,7 @@ export default function Landing({ onEnter, onSignup, onNav }) {
                     <p className="text-xs mt-2" style={{ color: 'var(--text-sub)' }}>{isFree ? 'grátis para sempre, sem cartão' : 'cobrado mensalmente, cancele quando quiser'}</p>
                   </div>
 
-                  <button onClick={createAccount}
+                  <button onClick={function() { startSignup('pricing_' + p.id); }}
                     className="text-sm font-semibold py-3.5 rounded-2xl transition-all duration-200 min-h-[44px]"
                     style={popular ? { background: 'var(--brand-grad)', color: '#fff', boxShadow: '0 4px 16px rgba(59,191,160,0.25)' } : isFree ? { background: 'var(--brand-soft)', color: 'var(--brand)' } : { background: 'var(--brand)', color: '#fff' }}>
                     {p.cta}
@@ -549,7 +555,7 @@ export default function Landing({ onEnter, onSignup, onNav }) {
               Conta grátis, sem cartão de crédito. Quando crescer, você escolhe o plano ideal.
             </p>
             <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
-              <button onClick={createAccount} className="group text-sm font-semibold px-8 py-4 rounded-2xl transition-all duration-200 hover:-translate-y-0.5" style={{ background: 'var(--brand-grad)', color: '#fff', boxShadow: '0 6px 24px rgba(59,191,160,0.35)' }}>
+              <button onClick={function() { startSignup('final_cta'); }} className="group text-sm font-semibold px-8 py-4 rounded-2xl transition-all duration-200 hover:-translate-y-0.5" style={{ background: 'var(--brand-grad)', color: '#fff', boxShadow: '0 6px 24px rgba(59,191,160,0.35)' }}>
                 Criar conta grátis
                 <svg className="inline-block ml-2 w-4 h-4 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 12h14M12 5l7 7-7 7"/></svg>
               </button>

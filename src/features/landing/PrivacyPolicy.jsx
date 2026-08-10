@@ -6,7 +6,7 @@ var sections = [
   },
   {
     title: '2. Dados que coletamos',
-    content: 'Coletamos os seguintes dados pessoais:\n\n• Dados de cadastro: nome, endereço de e-mail e número de telefone.\n• Dados de uso: transações financeiras (entradas e saídas), produtos e perdas de estoque inseridos por você.\n• Dados técnicos: endereço IP, tipo de dispositivo, navegador e sistema operacional, coletados automaticamente para fins de segurança e desempenho.\n• Dados de pagamento: quando você contrata o plano Pro, os dados de cartão de crédito são processados diretamente pelo Stripe, Inc. e nunca chegam aos nossos servidores.'
+    content: 'Coletamos os seguintes dados pessoais:\n\n• Dados de cadastro: nome, endereço de e-mail e número de telefone.\n• Dados de uso: transações financeiras (entradas e saídas), produtos e perdas de estoque inseridos por você.\n• Eventos de uso para métricas agregadas do produto: etapas do funil, como visita, início de cadastro, conclusão do onboarding, primeira venda e início de checkout. Em contas autenticadas, um identificador técnico da conta pode acompanhar o evento; as propriedades não registram conteúdo financeiro, nome ou e-mail.\n• Dados técnicos: endereço IP, tipo de dispositivo, navegador e sistema operacional, coletados automaticamente para fins de segurança e desempenho.\n• Dados de pagamento: quando você contrata um plano pago, os dados de cartão de crédito são processados diretamente pelo Stripe, Inc. e nunca chegam aos nossos servidores.'
   },
   {
     title: '3. Finalidade do tratamento',

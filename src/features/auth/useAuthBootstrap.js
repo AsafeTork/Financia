@@ -1,5 +1,15 @@
 import { useEffect } from 'react';
 import { sb } from '../../lib/supabase.js';
+import { trackEvent } from '../../lib/analytics.js';
+
+function trackReturn(userId) {
+  var key = 'financia_return_tracked_' + userId + '_' + new Date().toISOString().slice(0, 10);
+  try {
+    if (localStorage.getItem(key)) return;
+    localStorage.setItem(key, '1');
+    trackEvent('return', { surface: 'authenticated_load' });
+  } catch (_) { /* analytics is best effort */ }
+}
 
 export function useAuthBootstrap(props) {
   var { setSession, setAppLoading, toast: _toast, uidRef, loadingRef: _loadingRef, channelRef: _channelRef, debounceRef: _debounceRef, retryRef: _retryRef, loadData, loadFromLocal, onSessionEnd } = props;
@@ -16,6 +26,7 @@ export function useAuthBootstrap(props) {
       if (s) {
         localStorage.setItem('financia_last_uid', s.user.id);
         localStorage.setItem('financia_seen', '1');
+        trackReturn(s.user.id);
         if (s.user.id !== uidRef.current) loadData(s.user.id);
       } else {
         localStorage.removeItem('financia_last_uid');
@@ -31,6 +42,7 @@ export function useAuthBootstrap(props) {
       if (s) {
         localStorage.setItem('financia_last_uid', s.user.id);
         localStorage.setItem('financia_seen', '1');
+        trackReturn(s.user.id);
         if (s.user.id !== uidRef.current) {
           loadData(s.user.id);
         }

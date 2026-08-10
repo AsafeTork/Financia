@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { getStripe, getPublishableKey, stripeAppearance, friendlyStripeError, friendlyStripeClientError, readFnErrorMessage } from '../../lib/stripe.js';
 import { sb } from '../../lib/supabase.js';
 import { isDarkTheme } from '../../lib/utils.js';
+import { trackEvent } from '../../lib/analytics.js';
 
 export default function useStripeCheckoutInit(plan, brand, checkoutMode, kind, onDone, onClose, toast) {
   var isChange = checkoutMode === 'subscription' && (kind === 'upgrade' || kind === 'downgrade');
@@ -31,6 +32,8 @@ export default function useStripeCheckoutInit(plan, brand, checkoutMode, kind, o
   };
 
   var done = function(customMsg) {
+    trackEvent('payment_success', { plan: plan && plan.id ? plan.id : 'white_label', mode: checkoutMode });
+    if (checkoutMode === 'subscription') trackEvent('subscription_active', { plan: plan.id });
     var msg = customMsg;
     if (!msg) {
       if (checkoutMode === 'payment') msg = 'Pagamento recebido! Sua personalização será liberada em instantes.';

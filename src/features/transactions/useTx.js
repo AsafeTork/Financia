@@ -3,6 +3,7 @@ import { sb } from '../../lib/supabase.js';
 import { ldb } from '../../lib/dexie.js';
 import { isRecurringId, addSkip } from '../../lib/recurring.js';
 import { rowMeta, updMeta, deletedMeta, applyEdit, countLimit, dexiePut, dexieUpdate, syncUpsert, syncUpdate, syncDelete } from '../../lib/crud.js';
+import { trackEvent } from '../../lib/analytics.js';
 
 export function useTx(session, enforceLimit, toast) {
   const [tx, setTx] = useState([]);
@@ -17,9 +18,13 @@ export function useTx(session, enforceLimit, toast) {
     const row = {id:t.id, type:t.type, description:t.desc, amount:Number(t.amount), date:t.date, method:t.method||null, category:t.cat||null, items:t.items||null, desc:t.desc, cat:t.cat||null, user_id:meta.user_id, registered_by:meta.registered_by, updated_at:meta.updated_at, _synced:meta._synced, _deleted:meta._deleted, _updated_at:meta._updated_at};
     if (!await dexiePut(ldb, 'transactions', row, toast)) return false;
     setTx(function(p) { return [row].concat(p); });
+    if (row.type === 'income' && !tx.some(function(item) { return item.type === 'income'; })) {
+      trackEvent('first_value', { action: 'first_sale' });
+      trackEvent('first_sale', { source: 'transaction_form' });
+    }
     await syncUpsert(sb, 'transactions', {id:row.id, type:row.type, description:row.description, amount:row.amount, date:row.date, method:row.method, category:row.category, items:row.items, user_id:meta.user_id, registered_by:meta.registered_by, updated_at:row.updated_at}, ldb, row.id, toast);
     return true;
-  }, [session, enforceLimit, toast]);
+  }, [session, enforceLimit, toast, tx]);
 
   const editTx = useCallback(async function(id, u) {
     if (!session) return false;

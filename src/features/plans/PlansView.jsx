@@ -5,6 +5,7 @@ import { fmt, fmtDate, brandAlpha } from '../../lib/utils.js';
 import { sb } from '../../lib/supabase.js';
 import { friendlyStripeError, readFnErrorMessage } from '../../lib/stripe.js';
 import StripeCheckout from '../../shared/ui/StripeCheckout.jsx';
+import { trackEvent } from '../../lib/analytics.js';
 
 var CheckIcon = function({ color }) {
   return (
@@ -246,6 +247,7 @@ export default React.memo(function PlansView({ brand, planInfo, toast, onNav, is
   // Decide o que fazer ao clicar no botao de um plano.
   var handleAction = function(p, kind) {
     if (kind === 'cancel') { setCancelOpen(true); return; }
+    trackEvent('checkout_started', { plan: p.id, kind: kind });
     setCheckout({ plan: p, kind: kind });
   };
 
