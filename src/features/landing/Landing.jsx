@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useScrollReveal } from '../../shared/hooks/useScrollReveal.js';
 import { fmt } from '../../lib/utils.js';
 import { waLink, PRICING_PLANS } from '../../lib/constants.js';
-import { trackEvent } from '../../lib/analytics.js';
+import { trackEvent, trackEventOnce } from '../../lib/analytics.js';
 
 const delay = function(ms) { return { animationDelay: ms + 'ms', animationFillMode: 'both' }; };
 
@@ -50,7 +50,7 @@ export default function Landing({ onEnter, onSignup, onNav }) {
 
   // Estado do FAQ accordion
   const [openFaq, setOpenFaq] = useState(null);
-  React.useEffect(function() { trackEvent('landing_view'); }, []);
+  React.useEffect(function() { trackEventOnce('landing_view', 'session'); }, []);
   const toggleFaq = function(idx) { setOpenFaq(function(prev) { return prev === idx ? null : idx; }); };
 
   return (

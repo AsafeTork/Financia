@@ -27,7 +27,8 @@
 
 - `supabase_list_tables`: confirmou `product_events` com RLS habilitado no projeto remoto.
 - `supabase_apply_migration`: migration aplicada com sucesso.
-- `supabase_execute_sql`: `product_events` está vazio após a aplicação; ainda não houve tráfego de produção instrumentado.
+- `supabase_execute_sql`: antes do teste manual, `product_events` estava vazio; os registros atuais são validação técnica do agente/CI.
+- Teste manual em produção posterior registrou `landing_view` e `landing_cta_click`; esses registros são tráfego de validação do agente/CI, não usuários reais e não devem ser usados como validação de mercado.
 - `supabase_get_advisors`: nenhuma nova falha crítica de RLS; o advisor existente continua apontando proteção contra senhas vazadas desativada e índices de tabelas antigas. O índice de `product_events.user_id` foi adicionado após o alerta de chave estrangeira sem índice.
 - `src/lib/constants.js:104-123`: preços exibidos ao usuário.
 - `supabase/functions/_shared/stripe.ts:6`: preços recorrentes usados para criar/resolver Prices.

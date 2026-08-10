@@ -115,3 +115,12 @@ export function trackEvent(eventName, properties) {
   writeQueue(queue);
   flushAnalytics().catch(function() { /* analytics never blocks product actions */ });
 }
+
+export function trackEventOnce(eventName, dedupeKey, properties) {
+  var key = 'financia_event_once_' + eventName + '_' + String(dedupeKey || eventName);
+  try {
+    if (sessionStorage.getItem(key)) return;
+    sessionStorage.setItem(key, '1');
+  } catch (_) { /* best effort; event can still be recorded if storage is unavailable */ }
+  trackEvent(eventName, properties);
+}

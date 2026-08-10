@@ -4,7 +4,7 @@ import PhoneInput from './PhoneInput.jsx';
 import Feedback from './Feedback.jsx';
 import Tip from './Tip.jsx';
 import { safe } from '../../lib/utils.js';
-import { trackEvent } from '../../lib/analytics.js';
+import { trackEvent, trackEventOnce } from '../../lib/analytics.js';
 
 // Onboarding em etapas (wizard):
 // - Indicador de progresso (segmentos + "Passo X de Y")
@@ -34,7 +34,7 @@ function clearProgress(uid) {
 }
 
 export default React.memo(function Onboarding({ brand, needsName, needsPhone, onSave, uid }) {
-  React.useEffect(function() { trackEvent('onboarding_started'); }, []);
+  React.useEffect(function() { trackEventOnce('onboarding_started', 'session'); }, []);
   var brandColor = (brand && brand.color) || '#002f59';
   var steps = [{ key: 'welcome', label: 'Boas-vindas' }];
   if (needsName) steps.push({ key: 'name', label: 'Empresa' });

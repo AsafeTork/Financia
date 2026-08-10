@@ -6,7 +6,7 @@ import WebAuthn from './WebAuthn.jsx';
 import { passwordStrength, safe, onColor, readableBrand } from '../../lib/utils.js';
 import { SUPPORT_EMAIL } from '../../lib/constants.js';
 import PhoneInput from '../../shared/ui/PhoneInput.jsx';
-import { trackEvent } from '../../lib/analytics.js';
+import { trackEvent, trackEventOnce } from '../../lib/analytics.js';
 
 var ACCENT = 'var(--success)';
 
@@ -41,7 +41,7 @@ export default function Login({ brand, initialMode, onNav }) {
   var [passError, setPassError] = useState('');
 
   useEffect(function() {
-    if (mode === 'signup' && !resetMode) trackEvent('signup_start');
+    if (mode === 'signup' && !resetMode) trackEventOnce('signup_start', 'session');
   }, [mode, resetMode]);
 
   var emailRef = useRef(null);
