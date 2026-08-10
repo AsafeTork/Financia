@@ -87,7 +87,7 @@ export default function Landing({ onEnter, onSignup, onNav }) {
           <div className="relative z-10">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold mb-6 anim-fade-up" style={{ background: 'var(--brand-accent-soft)', border: '1px solid rgba(26,107,92,0.15)', color: 'var(--brand-accent)' }}>
               <span className="w-1.5 h-1.5 rounded-full" style={{ background: 'var(--brand-accent)' }} />
-              Para o pequeno negocio brasileiro
+              Para o pequeno negócio brasileiro
             </div>
 
             <h1 className="anim-fade-up font-display font-semibold tracking-tight" style={Object.assign({ color: 'var(--brand)', fontSize: 'var(--text-display)', lineHeight: 1.0 }, delay(80))}>
@@ -107,7 +107,7 @@ export default function Landing({ onEnter, onSignup, onNav }) {
             </div>
 
             <div className="anim-fade-up mt-6 flex flex-wrap gap-x-5 gap-y-2 text-xs" style={Object.assign({ color: 'var(--text-sub)' }, delay(300))}>
-              {['Sem cartao de credito', 'Funciona offline', 'Pronto em 1 minuto'].map(function(t) {
+              {['Sem cartão de crédito', 'Funciona offline', 'Pronto em 1 minuto'].map(function(t) {
                 return (
                   <span key={t} className="flex items-center gap-1.5">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--success)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 13l4 4L19 7" /></svg>
@@ -189,30 +189,27 @@ export default function Landing({ onEnter, onSignup, onNav }) {
         </div>
       </section>
 
-      {/* ═══════ SOCIAL PROOF ═══════ */}
+      {/* ═══════ USE CASES ═══════ */}
       <section ref={statsRef} className="px-5 py-14 scroll-reveal" style={{ background: 'var(--bg-subtle)' }}>
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-10">
-            <p className="text-xs font-bold uppercase tracking-[0.15em]" style={{ color: 'var(--brand-accent)' }}>Quem já usa</p>
+            <p className="text-xs font-bold uppercase tracking-[0.15em]" style={{ color: 'var(--brand-accent)' }}>No dia a dia</p>
+            <h2 className="font-display font-semibold tracking-tight mt-2" style={{ color: 'var(--brand)', fontSize: 'var(--text-h2)' }}>Menos planilha. Mais clareza para decidir.</h2>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="rounded-2xl p-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)' }}>
-              <p className="font-display font-bold text-lg tracking-tight" style={{ color: 'var(--brand)' }}>R$ 12.400/mês de receita organizada</p>
-              <p className="text-sm mt-3 leading-relaxed" style={{ color: 'var(--text-sub)' }}>&ldquo;Deixei a planilha. Agora sei o lucro do mês no dia seguinte.&rdquo;</p>
-              <p className="text-xs mt-3 font-medium" style={{ color: 'var(--brand-accent)' }}>Ana — loja de roupas, Belém/PA</p>
+              <p className="font-display font-bold text-lg tracking-tight" style={{ color: 'var(--brand)' }}>No caixa</p>
+              <p className="text-sm mt-3 leading-relaxed" style={{ color: 'var(--text-sub)' }}>Registre a venda na hora, mesmo sem sinal, e continue atendendo sem depender da internet.</p>
             </div>
             <div className="rounded-2xl p-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)' }}>
-              <p className="font-display font-bold text-lg tracking-tight" style={{ color: 'var(--brand)' }}>3 minutos por dia no app</p>
-              <p className="text-sm mt-3 leading-relaxed" style={{ color: 'var(--text-sub)' }}>&ldquo;Resolvo o financeiro no celular entre um cliente e outro.&rdquo;</p>
-              <p className="text-xs mt-3 font-medium" style={{ color: 'var(--brand-accent)' }}>Carlos — oficina mecânica, Goiânia/GO</p>
+              <p className="font-display font-bold text-lg tracking-tight" style={{ color: 'var(--brand)' }}>No estoque</p>
+              <p className="text-sm mt-3 leading-relaxed" style={{ color: 'var(--text-sub)' }}>Acompanhe produtos, custos e perdas para saber o que precisa ser reposto antes de faltar.</p>
             </div>
             <div className="rounded-2xl p-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)' }}>
-              <p className="font-display font-bold text-lg tracking-tight" style={{ color: 'var(--brand)' }}>Nunca mais perdi uma venda</p>
-              <p className="text-sm mt-3 leading-relaxed" style={{ color: 'var(--text-sub)' }}>&ldquo;Anoto tudo offline e sincroniza quando chega sinal.&rdquo;</p>
-              <p className="text-xs mt-3 font-medium" style={{ color: 'var(--brand-accent)' }}>Juliana — salão de beleza, Recife/PE</p>
+              <p className="font-display font-bold text-lg tracking-tight" style={{ color: 'var(--brand)' }}>No fechamento</p>
+              <p className="text-sm mt-3 leading-relaxed" style={{ color: 'var(--text-sub)' }}>Veja entradas, despesas, resultado e previsão de caixa em uma visão simples do negócio.</p>
             </div>
           </div>
-          {/* TODO: depoimentos reais — coletar via WhatsApp */}
         </div>
       </section>
 
@@ -220,10 +217,10 @@ export default function Landing({ onEnter, onSignup, onNav }) {
       <section ref={dashRef} className="max-w-6xl mx-auto px-5 py-20 scroll-reveal">
         <div className="text-center mb-14">
           <h2 className="font-display font-semibold tracking-tight" style={{ color: 'var(--brand)', fontSize: 'var(--text-h1)', lineHeight: 1.1 }}>
-            O que aparece ao abrir o app
+            Uma visão do seu negócio ao abrir o app
           </h2>
           <p className="mt-3 text-sm max-w-lg mx-auto" style={{ color: 'var(--text-sub)' }}>
-            Seus números, gráficos e movimentos em tempo real. Tudo que importa em uma tela.
+            Exemplo ilustrativo dos números, gráficos e movimentos reunidos em uma tela.
           </p>
         </div>
 
@@ -306,7 +303,7 @@ export default function Landing({ onEnter, onSignup, onNav }) {
             <h2 className="font-display font-semibold tracking-tight" style={{ color: 'var(--brand)', fontSize: 'var(--text-h1)', lineHeight: 1.1 }}>
               Vendas e despesas organizadas por dia
             </h2>
-            <p className="mt-3 text-sm" style={{ color: 'var(--text-sub)' }}>Filtre, busque, edite e exporte. Seu extrato sempre à mão.</p>
+            <p className="mt-3 text-sm" style={{ color: 'var(--text-sub)' }}>Exemplo ilustrativo: filtre, busque, edite e exporte seu extrato.</p>
           </div>
 
           <div className="preview-card rounded-[20px] overflow-hidden" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-md)' }}>
@@ -428,7 +425,7 @@ export default function Landing({ onEnter, onSignup, onNav }) {
       <section ref={priceRef} id="planos" className="px-5 py-20 scroll-reveal" style={{ background: 'var(--bg-subtle)' }}>
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-14">
-            <h2 className="font-display font-semibold tracking-tight" style={{ color: 'var(--brand)', fontSize: 'var(--text-h1)' }}>Um preço justo para cada fase</h2>
+            <h2 className="font-display font-semibold tracking-tight" style={{ color: 'var(--brand)', fontSize: 'var(--text-h1)' }}>Um preço claro para cada fase</h2>
             <p className="mt-3 text-sm" style={{ color: 'var(--text-sub)' }}>Comece de graça. Mude quando quiser, sem fidelidade.</p>
           </div>
 
@@ -545,7 +542,7 @@ export default function Landing({ onEnter, onSignup, onNav }) {
           <div className="relative">
             <p className="text-xs font-bold uppercase tracking-[0.15em] mb-4" style={{ color: 'rgba(59,191,160,0.8)' }}>Comece agora</p>
             <h2 className="font-display font-semibold text-white tracking-tight" style={{ fontSize: 'var(--text-display)', lineHeight: 1.05 }}>
-              Organize seu negocio em<br/>
+              Organize seu negócio em<br/>
               <span style={{ color: 'var(--success)' }}>menos de 1 minuto</span>
             </h2>
             <p className="mt-4 text-sm max-w-md mx-auto" style={{ color: 'rgba(255,255,255,0.65)' }}>
