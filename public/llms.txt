@@ -1,0 +1,38 @@
+# FinanciaBR.me
+
+> Financia é uma plataforma brasileira de gestão financeira para pequenos negócios.
+
+## Resumo
+
+O produto reúne registro de vendas, despesas, estoque e relatórios em uma aplicação web instalável. O registro pode continuar sem conexão e sincroniza quando a conexão volta.
+
+## Público
+
+Pequenos negócios brasileiros, especialmente operações presenciais que precisam registrar vendas e acompanhar estoque e resultado sem depender de uma planilha.
+
+## Funcionalidades públicas
+
+- Registro de vendas e ganhos.
+- Registro de despesas e categorias.
+- Produtos, estoque e perdas.
+- Dashboard com resultado, entradas, despesas e saldo.
+- Relatórios e exportação nos planos pagos.
+- Aplicação para celular e computador via navegador/PWA.
+
+## Planos publicados
+
+- Grátis: 50 transações, 20 produtos, 10 perdas, operação offline e 1 dispositivo.
+- Pro: R$ 49,90 por mês, com registros ilimitados e relatórios/exportação.
+- Premium: R$ 99,90 por mês, com recursos para equipes e relatórios avançados.
+
+Os preços e condições devem ser conferidos na página pública antes de qualquer recomendação comercial.
+
+## Limites e escopo
+
+Financia organiza informações do negócio. Não é serviço contábil, não substitui contador e não deve ser descrito como emissor fiscal ou consultoria financeira.
+
+## Links
+
+- Landing: https://financiabr.me/
+- Privacidade: https://financiabr.me/privacidade
+- Termos: https://financiabr.me/termos

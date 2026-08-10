@@ -268,9 +268,11 @@ export default function Landing({ onEnter, onSignup, onNav }) {
                 const ih = Math.max((m.i / maxChart) * 100, 4);
                 const oh = Math.max((m.o / maxChart) * 100, 4);
                 return (
-                  <div key={'bc-' + i} className="flex-1 flex flex-col items-center gap-0.5 justify-end">
-                    <div className="w-3/4 rounded-t-sm" style={{ height: oh + '%', background: 'var(--danger)', minHeight: 3 }} />
-                    <div className="w-3/4 rounded-t-sm" style={{ height: ih + '%', background: 'var(--green)', minHeight: 3 }} />
+                  <div key={'bc-' + i} className="flex-1 flex flex-col items-center justify-end min-w-0">
+                    <div className="h-32 w-full flex items-end justify-center gap-0.5">
+                      <div className="w-1/2 rounded-t-sm flex-shrink-0" style={{ height: oh + '%', background: 'var(--danger)', minHeight: 3 }} />
+                      <div className="w-1/2 rounded-t-sm flex-shrink-0" style={{ height: ih + '%', background: 'var(--green)', minHeight: 3 }} />
+                    </div>
                     <span className="text-[10px] tabular mt-0.5" style={{ color: 'var(--text-sub)' }}>{m.day}</span>
                   </div>
                 );
@@ -549,13 +551,13 @@ export default function Landing({ onEnter, onSignup, onNav }) {
             <p className="text-xs font-bold uppercase tracking-[0.15em] mb-4" style={{ color: 'rgba(59,191,160,0.8)' }}>Comece agora</p>
             <h2 className="font-display font-semibold text-white tracking-tight" style={{ fontSize: 'var(--text-display)', lineHeight: 1.05 }}>
               Organize seu negócio em<br/>
-              <span style={{ color: 'var(--success)' }}>menos de 1 minuto</span>
+              <span style={{ color: 'var(--bg-card)' }}>menos de 1 minuto</span>
             </h2>
             <p className="mt-4 text-sm max-w-md mx-auto" style={{ color: 'rgba(255,255,255,0.65)' }}>
               Conta grátis, sem cartão de crédito. Quando crescer, você escolhe o plano ideal.
             </p>
             <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
-              <button onClick={function() { startSignup('final_cta'); }} className="group text-sm font-semibold px-8 py-4 rounded-2xl transition-all duration-200 hover:-translate-y-0.5" style={{ background: 'var(--brand-grad)', color: '#fff', boxShadow: '0 6px 24px rgba(59,191,160,0.35)' }}>
+                <button onClick={function() { startSignup('final_cta'); }} className="group text-sm font-semibold px-8 py-4 rounded-2xl transition-all duration-200 hover:-translate-y-0.5" style={{ background: 'var(--bg-card)', color: 'var(--brand)', boxShadow: '0 6px 24px rgba(59,191,160,0.35)' }}>
                 Criar conta grátis
                 <svg className="inline-block ml-2 w-4 h-4 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 12h14M12 5l7 7-7 7"/></svg>
               </button>

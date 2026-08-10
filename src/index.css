@@ -397,6 +397,17 @@ input:focus, select:focus, textarea:focus {
   box-shadow: var(--shadow-sm), 0 0 0 1px var(--glow-card, transparent);
 }
 
+/* Admin inherits a few legacy gray utilities; keep them theme-aware. */
+.admin-panel .border-gray-200 { border-color: var(--border) !important; }
+.admin-panel .border-gray-100 { border-color: var(--border) !important; }
+.admin-panel .bg-gray-50,
+.admin-panel .bg-gray-100,
+.admin-panel .bg-white { background: var(--bg-subtle) !important; }
+.admin-panel .text-gray-400 { color: var(--text-muted) !important; }
+.admin-panel .text-gray-500,
+.admin-panel .text-gray-600,
+.admin-panel .text-gray-700 { color: var(--text-sub) !important; }
+
 .badge-plan {
   color: var(--plan-badge, #6b7280);
   background: var(--plan-badge-bg, rgba(107,114,128,0.10));

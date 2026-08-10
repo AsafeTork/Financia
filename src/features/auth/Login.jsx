@@ -175,7 +175,7 @@ export default function Login({ brand, initialMode, onNav }) {
         <div className="relative anim-up">
           {brandLogo
             ? <img src={brandLogo} alt="logo" fetchPriority="high" decoding="sync" className="w-12 h-12 rounded-2xl object-cover" style={{ border: '2px solid ' + onBrandBorder }} />
-            : <img src="/icon-192.svg" alt="" fetchPriority="high" decoding="sync" className="w-12 h-12" />}
+             : <img src="/icon-192.svg" alt="" fetchPriority="high" decoding="sync" className="w-12 h-12" style={{ filter: lightOnBrand ? 'brightness(0) invert(1)' : 'none' }} />}
           <p className="font-display font-semibold text-2xl mt-4" style={{ color: onBrand, letterSpacing: '-0.3px' }}>{brandName}</p>
         </div>
         <div className="relative">

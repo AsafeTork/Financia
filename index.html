@@ -4,8 +4,12 @@
   <meta charset="UTF-8">
   <title>Financia — Gestão financeira para pequenos negócios brasileiros</title>
   <meta name="description" content="Vendas, despesas e estoque no controle, mesmo offline. Registre no celular ou computador, funciona sem internet e sincroniza sozinho.">
+  <meta name="robots" content="index, follow">
+  <meta name="googlebot" content="index, follow">
   <link rel="canonical" href="https://financiabr.me/">
   <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Financia">
+  <meta property="og:locale" content="pt_BR">
   <meta property="og:url" content="https://financiabr.me/">
   <meta property="og:title" content="Financia — Gestão financeira para pequenos negócios brasileiros">
   <meta property="og:description" content="Vendas, despesas e estoque no controle, mesmo offline. Registre no celular ou computador, funciona sem internet e sincroniza sozinho.">
@@ -13,6 +17,7 @@
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="Financia — Gestão financeira para pequenos negócios brasileiros">
   <meta name="twitter:description" content="Gestão financeira offline-first para pequenos negócios brasileiros.">
+  <meta name="twitter:image" content="https://financiabr.me/logo.svg">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-hashes' 'sha256-MhtPZXr7+LpJUY5qtMutB+qWfQtMaPccfe7QXtCcEYc=' 'sha256-0hxAeVSYS0wa6XFpXDSo8lhMZYkWFftujqLvCVnRh14=' https://js.stripe.com https://*.stripe.com https://*.stripe.network https://challenges.cloudflare.com https://*.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https://*.supabase.co https://*.stripe.com https://lh3.googleusercontent.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.stripe.com https://*.stripe.com https://*.stripe.network https://api.github.com https://fonts.googleapis.com https://fonts.gstatic.com https://challenges.cloudflare.com https://*.cloudflare.com; font-src 'self' https://fonts.gstatic.com data:; frame-src 'self' https://js.stripe.com https://*.stripe.com https://*.stripe.network https://hooks.stripe.com https://checkout.stripe.com; object-src 'none'; base-uri 'self'; form-action 'self'; manifest-src 'self'; upgrade-insecure-requests">
@@ -22,13 +27,17 @@
     "@type": "SoftwareApplication",
     "name": "Financia",
     "applicationCategory": "FinanceApplication",
-    "operatingSystem": "Web, Android, Windows",
-    "description": "Vendas, despesas e estoque no controle, mesmo offline. Gestão financeira para pequenos negócios brasileiros.",
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "BRL"
-    }
+      "operatingSystem": "Web, Android, Windows",
+      "url": "https://financiabr.me/",
+      "image": "https://financiabr.me/logo.svg",
+      "inLanguage": "pt-BR",
+      "description": "Vendas, despesas e estoque no controle, mesmo offline. Gestão financeira para pequenos negócios brasileiros.",
+      "featureList": ["Vendas", "Despesas", "Estoque", "Relatórios", "Operação offline"],
+      "offers": [
+        { "@type": "Offer", "name": "Grátis", "price": "0", "priceCurrency": "BRL" },
+        { "@type": "Offer", "name": "Pro", "price": "49.90", "priceCurrency": "BRL", "priceSpecification": { "@type": "UnitPriceSpecification", "price": "49.90", "priceCurrency": "BRL", "unitText": "MONTH" } },
+        { "@type": "Offer", "name": "Premium", "price": "99.90", "priceCurrency": "BRL", "priceSpecification": { "@type": "UnitPriceSpecification", "price": "99.90", "priceCurrency": "BRL", "unitText": "MONTH" } }
+      ]
   }
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -45,13 +54,13 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Gestao">
+  <meta name="apple-mobile-web-app-title" content="Financia">
 <meta name="app-version" content="%APP_VERSION%">
-<link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
 <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png">
-<link rel="icon" type="image/svg+xml" href="/icon-192.svg">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 </head>
 <body>

@@ -59,7 +59,7 @@ export const SUPPORT_EMAIL = 'gestao.financia@gmail.com';
 
 // URL base do app (configurada via VITE_APP_URL no .env).
 // Usada em e-mails de boas-vindas, links de convite, etc.
-export const APP_URL = import.meta.env.VITE_APP_URL || 'https://financia-gestao.onrender.com';
+export const APP_URL = import.meta.env.VITE_APP_URL || 'https://financiabr.me';
 
 // Monta link wa.me com mensagem pre-preenchida (abre conversa pronta).
 export const waLink = function(msg) {
@@ -184,7 +184,7 @@ export const NAV = [
 ];
 
 export const TEMPLATES = [
-  { id: 'welcome',  name: 'Boas-vindas',       subject: 'Seu acesso ao sistema de gestão está pronto!', body: 'Olá [Nome],\n\nSeu acesso está pronto.\n\nLink: ' + APP_URL + '\nE-mail: [email]\nSenha: [senha]\n\nQualquer dúvida, estou à disposição!\n\nAbraços,\n[Seu nome]' },
+  { id: 'welcome',  name: 'Boas-vindas',       subject: 'Ative sua conta no Financia', body: 'Olá [Nome],\n\nSua conta foi criada no Financia.\n\nAcesse: ' + APP_URL + '\nConfirme seu e-mail pelo link recebido e defina sua senha no primeiro acesso.\n\nPor segurança, nunca envie senhas por e-mail.\n\nQualquer dúvida, estou à disposição!\n\nAbraços,\n[Seu nome]' },
   { id: 'report',   name: 'Relatório mensal',  subject: 'Relatório financeiro de [Mês]', body: 'Olá [Nome],\n\nResumo de [Mês]:\n\nEntradas: R$ [valor]\nSaídas: R$ [valor]\nLucro: R$ [valor]\n\nAcesse o sistema para o detalhamento completo.\n\nAbraços,\n[Seu nome]' },
   { id: 'reminder', name: 'Lembrete mensalidade', subject: 'Mensalidade do sistema de gestão', body: 'Olá [Nome],\n\nLembrando que a mensalidade vence em breve.\n\nValor: R$ [valor]\nVencimento: [data]\n\nAbraços,\n[Seu nome]' },
   { id: 'custom',   name: 'Personalizado',     subject: '', body: '' },

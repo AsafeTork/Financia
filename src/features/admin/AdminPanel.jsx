@@ -294,7 +294,7 @@ export default function AdminPanel({ toast, confirm, session, brand }) {
   };
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="admin-panel flex flex-col gap-5">
       {/* === FINANCEIRO (Stripe) — azul === */}
       <div className="rounded-2xl p-4" style={{background:'var(--bg-card)', border:'1px solid var(--border)', borderTop:'3px solid var(--info)'}}>
         <SectionHead color="var(--info)" title="Financeiro — Stripe"

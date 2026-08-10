@@ -97,7 +97,7 @@ async function handler(req: Request): Promise<Response> {
       return corsResponse({ user_id: newUid, profile_error: String(profileRes.error.message || '') }, 207);
     }
 
-    const loginUrl = 'https://financia-gestao.onrender.com';
+    const loginUrl = 'https://financiabr.me';
     let confirmUrl = '';
     try {
       const linkRes = await admin.auth.admin.generateLink({

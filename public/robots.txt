@@ -5,6 +5,9 @@ User-agent: *
 Allow: /$
 Allow: /index.html
 Allow: /manifest.json
+Allow: /llms.txt
+Allow: /privacidade
+Allow: /termos
 
 # Area logada / rotas internas do app (evita indexacao acidental)
 Disallow: /dashboard
@@ -27,4 +30,4 @@ Disallow: /package-lock.json
 Disallow: /vite.config.js
 Disallow: /sw.js
 
-Sitemap: https://financia-gestao.onrender.com/sitemap.xml
+Sitemap: https://financiabr.me/sitemap.xml
