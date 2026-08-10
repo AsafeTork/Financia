@@ -416,6 +416,9 @@ input:focus, select:focus, textarea:focus {
 .app-shell .border-gray-100,
 .app-shell .border-gray-200,
 .app-shell .border-gray-300 { border-color: var(--border) !important; }
+.app-shell .border { border-color: var(--border) !important; }
+.app-shell .bg-card { background: var(--bg-card) !important; }
+.app-shell .text-card-foreground { color: var(--text-main) !important; }
 .app-shell .bg-white,
 .app-shell .bg-gray-50,
 .app-shell .bg-gray-100 { background: var(--bg-card) !important; }
