@@ -1,7 +1,7 @@
 # CI Report
 
-**Gerado:** 2026-08-10 17:56 UTC
-**Commit:** `4cfbb1a55af8e1744dfea9e069256f2710684d04`
+**Gerado:** 2026-08-10 18:02 UTC
+**Commit:** `113432f601e660f9823ea578df279c918592c334`
 **Branch:** `main`
 
 ---
@@ -86,9 +86,9 @@ computing gzip size...
 ```
 
 Running 26 tests using 4 workers
-°···°°°°°°°°···°·°°°··°···
-  14 skipped
-  12 passed (12.6s)
+°°··°°°°°°°°···°°°°···°···
+  15 skipped
+  11 passed (16.0s)
 
 ```
 
@@ -116,8 +116,8 @@ Running 42 tests using 4 workers
 [10/42] [chromium] › e2e/indexeddb-migration.spec.ts:92:5 › IndexedDB Recovery - Migration › Migration Test › should preserve data integrity during migration
 [11/42] [chromium] › e2e/memory-leak.spec.ts:6:3 › Memory Leak Detection › cyclic navigation - no detached DOM nodes
 [12/42] [chromium] › e2e/memory-leak.spec.ts:57:3 › Memory Leak Detection › event listeners cleaned up on unmount
-[13/42] [chromium] › e2e/memory-leak.spec.ts:110:3 › Memory Leak Detection › IndexedDB connections closed properly
-[14/42] [chromium] › e2e/memory-leak.spec.ts:84:3 › Memory Leak Detection › timers and intervals cleared on unmount
+[13/42] [chromium] › e2e/memory-leak.spec.ts:84:3 › Memory Leak Detection › timers and intervals cleared on unmount
+[14/42] [chromium] › e2e/memory-leak.spec.ts:110:3 › Memory Leak Detection › IndexedDB connections closed properly
 [15/42] [chromium] › e2e/memory-leak.spec.ts:135:3 › Memory Leak Detection › BroadcastChannel closed on unmount
 [16/42] [chromium] › e2e/memory-leak.spec.ts:164:3 › Memory Leak Detection › memory usage stable under load
 [17/42] [chromium] › e2e/memory-leak.spec.ts:207:3 › Offline Storage Persistence › navigator.storage.persist() prevents eviction
@@ -172,4 +172,4 @@ Nenhum relatorio admin gerado.
 
 | Data | Correcao | Commit |
 |------|----------|--------|
-| 2026-08-10 17:56 UTC | CI report gerado automaticamente | `4cfbb1a55af8e1744dfea9e069256f2710684d04` |
+| 2026-08-10 18:02 UTC | CI report gerado automaticamente | `113432f601e660f9823ea578df279c918592c334` |
