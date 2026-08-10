@@ -13,7 +13,7 @@
 
 ## Executado
 
-- Criada migration `supabase/migrations/20260810000000_product_funnel_events.sql`.
+- Criadas as migrations `supabase/migrations/20260810110357_product_funnel_events.sql` e `supabase/migrations/20260810111527_product_events_user_index.sql`.
 - Migration aplicada no projeto Supabase `kxeqhorxhlgwcgywovqr`.
 - Criado `src/lib/analytics.js` com eventos whitelisted, fila offline, limite de fila e propriedades sanitizadas.
 - Instrumentados landing view, cliques de CTA, início/conclusão de cadastro, onboarding, primeira venda, retorno, checkout e pagamento.
