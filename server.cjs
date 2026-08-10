@@ -45,7 +45,7 @@ function isNavigationRequest(request, pathname) {
 }
 
 function cacheControl(pathname, isFallback) {
-  if (isFallback || pathname === '/' || pathname === '/index.html' || pathname === '/sw.js' || pathname === '/manifest.json' || pathname === '/manifest.webmanifest') {
+  if (isFallback || pathname === '/' || pathname === '/index.html' || pathname === '/sw.js' || pathname === '/manifest.json' || pathname === '/manifest.webmanifest' || pathname === '/favicon.svg' || pathname === '/favicon-v2.svg' || pathname === '/robots.txt' || pathname === '/sitemap.xml' || pathname === '/llms.txt') {
     return 'no-cache, no-store, must-revalidate';
   }
   if (pathname.startsWith('/assets/')) {
