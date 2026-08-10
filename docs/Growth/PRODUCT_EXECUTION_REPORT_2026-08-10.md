@@ -76,6 +76,27 @@ order by event_name;
 
 Detalhes e critérios estão em `docs/Growth/COMMERCIAL_PLAYBOOK.md`.
 
+## Pesquisa Atualizada de Mercado e Canais
+
+- **Conta Azul:** https://contaazul.com/planos/ — planos segmentados por faturamento, teste de 3 dias e dependência declarada de internet. **Implicação:** não competir por amplitude; testar simplicidade e offline.
+- **MarketUP:** https://marketup.com/ — ERP/PDV gratuito, fiscal, estoque, segmentos e plano pago a partir de R$ 149,99/mês. **Implicação:** Free do Financia precisa vencer por foco e facilidade, não por quantidade de módulos.
+- **Nibo:** https://www.nibo.com.br/ — gestão financeira para empresas, contadores e BPO; homepage declara mais de 440 mil empresas. **Implicação:** contadores são canal estruturado, mas o Financia ainda não tem ecossistema equivalente.
+- **Nibo Parcerias:** https://www.nibo.com.br/programa-de-parceria — descontos de 30% a 50% por nível e possibilidade de conversão em comissão. **Implicação:** parceiro espera benefício econômico e operacional, não apenas logo customizada.
+- **Omie Contadores:** https://www.omie.com.br/contadores/ — posiciona integração, atração de clientes e ecossistema para escritórios contábeis. **Implicação:** abordagem B2B deve falar de retenção/serviço ao cliente, não só white-label.
+- **WhatsApp Business:** https://business.whatsapp.com/policy — exige que a pessoa forneça o número e dê opt-in para receber mensagens; exige respeito a bloqueio/opt-out e templates aprovados para iniciar conversas na plataforma. **Implicação:** o experimento deve usar contatos autorizados ou indicação, sem disparo em massa.
+- **ANPD:** https://www.gov.br/anpd/pt-br/acesso-a-informacao/perguntas-frequentes — LGPD protege dados de pessoas naturais e exige base legal para tratamento. **Implicação:** registrar origem do contato e finalidade no processo comercial.
+
+### Comparação de canais
+
+| Canal | Custo | Velocidade | Medição | Repetibilidade | Decisão |
+|---|---|---|---|---|---|
+| Contato local/indicação | Baixo | Alta | Média | Média | Primeiro experimento |
+| WhatsApp opt-in | Baixo | Alta | Alta | Alta, se consentido | Complementar ao contato local |
+| Contadores/consultores | Baixo | Média | Média | Alta | Segundo experimento B2B |
+| Conteúdo/SEO | Médio | Baixa | Alta | Alta | Não é primeiro caminho para receita |
+| Anúncios pagos | Alto | Alta | Alta | Alta | Adiar até validar mensagem e ativação |
+| White-label completo | Alto | Baixa | Média | Alta | Não construir antes de demanda |
+
 ## Validação Técnica
 
 - `npm run lint`: passou.

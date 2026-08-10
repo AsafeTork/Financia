@@ -9,6 +9,7 @@ const QUEUE_KEY = 'financia_product_event_queue';
 const ANON_KEY = 'financia_analytics_anonymous_id';
 const SESSION_KEY = 'financia_analytics_session_id';
 const MAX_QUEUE = 100;
+const PRIVATE_KEYS = new Set(['email', 'name', 'phone', 'description', 'amount', 'value', 'user_id']);
 var flushPromise = null;
 
 function randomId(prefix) {
@@ -58,6 +59,7 @@ function safeProperties(input) {
   var out = {};
   if (!input || typeof input !== 'object') return out;
   Object.keys(input).slice(0, 8).forEach(function(key) {
+    if (PRIVATE_KEYS.has(key)) return;
     var value = input[key];
     if (typeof value === 'string') out[key] = value.slice(0, 80);
     else if (typeof value === 'number' && Number.isFinite(value)) out[key] = value;
