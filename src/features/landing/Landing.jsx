@@ -263,15 +263,15 @@ export default function Landing({ onEnter, onSignup, onNav }) {
                 <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-sm" style={{ background: 'var(--danger)' }} />Saidas</span>
               </div>
             </div>
-            <div className="flex items-end gap-2 h-36">
+             <div className="flex items-end gap-2 h-40" aria-label="Comparação ilustrativa entre entradas e saídas nos últimos sete dias">
               {MOCK_CHART.map(function(m, i) {
                 const ih = Math.max((m.i / maxChart) * 100, 4);
                 const oh = Math.max((m.o / maxChart) * 100, 4);
                 return (
                   <div key={'bc-' + i} className="flex-1 flex flex-col items-center justify-end min-w-0">
-                    <div className="h-32 w-full flex items-end justify-center gap-0.5">
-                      <div className="w-1/2 rounded-t-sm flex-shrink-0" style={{ height: oh + '%', background: 'var(--danger)', minHeight: 3 }} />
-                      <div className="w-1/2 rounded-t-sm flex-shrink-0" style={{ height: ih + '%', background: 'var(--green)', minHeight: 3 }} />
+                     <div className="h-36 w-full flex items-end justify-center gap-1">
+                       <div className="w-[calc(50%-2px)] rounded-t-sm flex-shrink-0" style={{ height: oh + '%', background: 'var(--danger)', minHeight: 8 }} />
+                       <div className="w-[calc(50%-2px)] rounded-t-sm flex-shrink-0" style={{ height: ih + '%', background: 'var(--success)', minHeight: 8 }} />
                     </div>
                     <span className="text-[10px] tabular mt-0.5" style={{ color: 'var(--text-sub)' }}>{m.day}</span>
                   </div>
@@ -551,7 +551,7 @@ export default function Landing({ onEnter, onSignup, onNav }) {
             <p className="text-xs font-bold uppercase tracking-[0.15em] mb-4" style={{ color: 'rgba(59,191,160,0.8)' }}>Comece agora</p>
             <h2 className="font-display font-semibold text-white tracking-tight" style={{ fontSize: 'var(--text-display)', lineHeight: 1.05 }}>
               Organize seu negócio em<br/>
-              <span style={{ color: 'var(--bg-card)' }}>menos de 1 minuto</span>
+               <span style={{ color: '#ffffff' }}>menos de 1 minuto</span>
             </h2>
             <p className="mt-4 text-sm max-w-md mx-auto" style={{ color: 'rgba(255,255,255,0.65)' }}>
               Conta grátis, sem cartão de crédito. Quando crescer, você escolhe o plano ideal.

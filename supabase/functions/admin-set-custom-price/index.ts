@@ -55,21 +55,16 @@ async function handler(req: Request): Promise<Response> {
     const allowed = await enforceRateLimit(secAdmin, caller.id, 'admin_set_custom_price', 60, 20);
     if (!allowed) return corsResponse({ error: 'rate_limited' }, 429);
 
-    // Update custom price in DB
-    if (planIdInput) {
-      let col = 'custom_price_cents_pro';
-      if (planIdInput === 'premium') col = 'custom_price_cents_premium';
-      if (planIdInput === 'white_label') col = 'custom_price_cents_white_label';
-      const updateData = { [col]: (cents && cents > 0) ? cents : null };
-      const upd = await admin.from('company_profiles').update(updateData).eq('user_id', targetUserId);
-      if (upd.error) return corsResponse({ error: String(upd.error.message || 'update_failed') }, 400);
-    } else {
-      const rpcRes = await supabase.rpc('admin_set_custom_price', { a_target: targetUserId, b_cents: cents });
-      if (rpcRes.error) {
-        const msg = rpcRes.error.message || 'rpc_failed';
-        const code = msg.indexOf('not authorized') !== -1 ? 403 : 400;
-        return corsResponse({ error: String(msg) }, code);
-      }
+    if (!planIdInput) return corsResponse({ error: 'missing_plan' }, 400);
+    const rpcRes = await supabase.rpc('admin_set_custom_price', {
+      p_target: targetUserId,
+      p_plan: planIdInput,
+      p_cents: cents,
+    });
+    if (rpcRes.error) {
+      const msg = rpcRes.error.message || 'rpc_failed';
+      const code = msg.indexOf('not authorized') !== -1 || msg.indexOf('forbidden') !== -1 ? 403 : 400;
+      return corsResponse({ error: String(msg) }, code);
     }
 
     // 2) Aplica na assinatura ativa, se existir.

@@ -215,7 +215,8 @@ export default React.memo(function BrandStudioView({ brand, planInfo, onSave, to
           },
         }),
       };
-      await onSave(updated);
+      const saved = await onSave(updated);
+      if (saved === false) return;
       if (toast) toast('Logo global atualizada!', 'success');
     } catch (err) {
       if (toast) toast('Erro ao salvar logo: ' + (err.message || 'tente novamente'), 'error');

@@ -401,12 +401,15 @@ input:focus, select:focus, textarea:focus {
 .admin-panel .border-gray-200 { border-color: var(--border) !important; }
 .admin-panel .border-gray-100 { border-color: var(--border) !important; }
 .admin-panel .bg-gray-50,
-.admin-panel .bg-gray-100,
-.admin-panel .bg-white { background: var(--bg-subtle) !important; }
+.admin-panel .bg-gray-100 { background: var(--bg-subtle) !important; }
 .admin-panel .text-gray-400 { color: var(--text-muted) !important; }
 .admin-panel .text-gray-500,
 .admin-panel .text-gray-600,
 .admin-panel .text-gray-700 { color: var(--text-sub) !important; }
+
+.admin-panel .border-red-200 { border-color: color-mix(in srgb, var(--danger) 45%, var(--border)) !important; }
+.admin-panel .text-red-500 { color: var(--danger) !important; }
+.admin-panel .bg-red-50 { background: color-mix(in srgb, var(--danger) 10%, var(--bg-card)) !important; }
 
 .badge-plan {
   color: var(--plan-badge, #6b7280);

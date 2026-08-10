@@ -44,7 +44,7 @@ export function useBrandManager(props) {
       _updated_at:now(),
     });
     try { await ldb.profiles.put(row); }
-    catch(e) { toast('Erro ao salvar configurações: ' + (e.message || 'tente novamente'), 'error'); return; }
+    catch(e) { toast('Erro ao salvar configurações: ' + (e.message || 'tente novamente'), 'error'); return false; }
     setBrand(Object.assign({}, nb, {
       color: finalColor,
       color_secondary: finalSecondary,
@@ -66,17 +66,18 @@ export function useBrandManager(props) {
         if (res.error) throw res.error;
       } catch(_e) {
         toast('Não sincronizado — tentaremos em breve', 'warning');
-        return;
+         return false;
       }
       if (brandConfig != null) {
         var bcResult = await updateBrandConfig(sb, brandConfig);
         if (!bcResult.ok) {
           toast('Configuração de marca não sincronizada — tentaremos em breve', 'warning');
-          return;
+           return false;
         }
       }
       await ldb.profiles.update(userId, {_synced:1});
     }
+    return true;
   };
 
   var savePhone = async function(newPhone) {

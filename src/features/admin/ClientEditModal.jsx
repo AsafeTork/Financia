@@ -10,12 +10,12 @@ function PreviewPaleta({ primary, secondary, accent }) {
   var lum = luminance(primary || 'var(--brand)');
   var warn = lum > 0.4;
   return (
-    <div className="rounded-xl border border-gray-200 overflow-hidden">
+    <div className="rounded-xl overflow-hidden" style={{border:'1px solid var(--border)'}}>
       <div className="px-3 py-2 flex items-center gap-2" style={{background: primary || 'var(--brand)'}}>
         <div className="w-5 h-5 rounded-md flex items-center justify-center text-xs font-bold" style={{background:'rgba(255,255,255,0.2)', color:'white'}}>F</div>
         <span className="text-xs font-semibold text-white truncate">Preview sidebar</span>
       </div>
-      <div className="bg-white p-3 flex flex-col gap-2.5">
+      <div className="p-3 flex flex-col gap-2.5" style={{background:'var(--bg-card)'}}>
         <div className="flex items-center gap-2">
           <button className="px-3 py-1.5 rounded-lg text-xs font-semibold text-white" style={{background: primary || 'var(--brand)'}}>
             Salvar
@@ -30,10 +30,10 @@ function PreviewPaleta({ primary, secondary, accent }) {
         </div>
         <div className="flex flex-col gap-1">
           <div className="flex justify-between">
-            <span className="text-xs text-gray-500">Transações</span>
-            <span className="text-xs text-gray-400">32/50</span>
+            <span className="text-xs" style={{color:'var(--text-sub)'}}>Transações</span>
+            <span className="text-xs" style={{color:'var(--text-muted)'}}>32/50</span>
           </div>
-          <div className="h-1.5 rounded-full overflow-hidden bg-gray-100">
+          <div className="h-1.5 rounded-full overflow-hidden" style={{background:'var(--bg-subtle)'}}>
             <div className="h-full rounded-full" style={{width:'64%', background: accent || primary || 'var(--brand)'}}/>
           </div>
         </div>

@@ -109,17 +109,6 @@ self.addEventListener('activate', (event) => {
   })());
 });
 
-// Responde navigation requests com preload response quando disponivel,
-// fallback para o shell precached.
-self.addEventListener('fetch', (event) => {
-  if (event.request.mode === 'navigate' && event.preloadResponse) {
-    event.respondWith((async () => {
-      try { return await event.preloadResponse; }
-      catch { return await createHandlerBoundToURL('/index.html')({ request: event.request, event, url: new URL(event.request.url) }); }
-    })());
-  }
-});
-
 self.addEventListener('install', (event) => {
   self.skipWaiting();
   // Posta progresso minimo para a UI (pwa.js) saber que houve instalacao.

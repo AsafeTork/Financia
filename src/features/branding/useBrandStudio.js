@@ -78,7 +78,8 @@ export default function useBrandStudio(brand, planInfo, onSave, toast) {
   }, [history, onSave, toast]);
 
   const savePlanOverride = useCallback(async (planId, overrideData) => {
-    await onSave(applyPlanOverride(brand, planId, overrideData));
+    const saved = await onSave(applyPlanOverride(brand, planId, overrideData));
+    if (saved === false) return;
     exitPreviewMode();
   }, [brand, onSave]);
 
@@ -96,7 +97,8 @@ export default function useBrandStudio(brand, planInfo, onSave, toast) {
     }
     saveToHistory(brand);
     const updated = { ...brand, brand_config: JSON.stringify(cfg) };
-    await onSave(updated);
+    const saved = await onSave(updated);
+    if (saved === false) return;
     exitPreviewMode();
     if (toast) toast(logoColors ? `Logo personalizada salva para ${planId}!` : `Plano ${planId} agora usa a logo global.`, 'success');
   }, [brand, onSave, toast, saveToHistory]);
