@@ -58,6 +58,8 @@ function computeEffectiveTheme(themePref, appBrand) {
 
 function resolvePlanLogo(brand, planInfo) {
   if (!brand) return null;
+  // The logo explicitly saved in Brand Studio > Global is the canonical app mark.
+  if (brand.logo_url) return brand.logo_url;
   let cfg = brand.brand_config;
   try { cfg = typeof cfg === 'string' ? JSON.parse(cfg) : cfg; } catch { cfg = null; }
   const overrides = (cfg && cfg.modules && cfg.modules.planOverrides) || (cfg && cfg.planOverrides) || {};
@@ -66,7 +68,7 @@ function resolvePlanLogo(brand, planInfo) {
   const override = overrides[plan] || {};
   if (override.logo_url) return override.logo_url;
   if (override.logoColors) return logoSvgToDataUrl(generateLogoSvg(override.logoColors));
-  return brand.logo_url || null;
+  return null;
 }
 
 function applyTokenDiff(el, tokens) {
