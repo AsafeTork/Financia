@@ -428,6 +428,8 @@ input:focus, select:focus, textarea:focus {
 .app-shell .text-gray-500,
 .app-shell .text-gray-600,
 .app-shell .text-gray-700 { color: var(--text-sub) !important; }
+.period-select { appearance: auto; outline: none; }
+.period-select:focus { border-color: var(--brand) !important; box-shadow: 0 0 0 3px var(--brand-soft) !important; }
 .login-mark { object-fit: contain; }
 .login-mark-light { filter: brightness(0.35) saturate(1.3); }
 

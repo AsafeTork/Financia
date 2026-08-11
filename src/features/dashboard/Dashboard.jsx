@@ -102,8 +102,8 @@ export default React.memo(function Dashboard({ tx, products, brand, onNav, planI
           </p>
         </div>
         <select aria-label="Periodo" value={period} onChange={function(e){startPeriodTransition(function(){setPeriod(e.target.value)})}}
-          className="text-xs rounded-xl px-3 py-2 border min-h-[44px] flex-shrink-0"
-          style={{background:'var(--bg-card)', color:'var(--text-main)', borderColor:'var(--border)'}}>
+           className="period-select text-xs rounded-xl px-3 py-2 min-h-[44px] flex-shrink-0"
+           style={{background:'var(--bg-card)', color:'var(--text-main)', border:'1px solid var(--border)', boxShadow:'none', position:'relative', zIndex:1}}>
           {PERIODS.map(function(p){return <option key={p.v} value={p.v}>{p.l}</option>})}
         </select>
       </div>
