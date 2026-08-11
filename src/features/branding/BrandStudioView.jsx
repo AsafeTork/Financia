@@ -123,14 +123,14 @@ function LogoTabContent({ brand, bs, brandColor, applyLogoScheme, toast }) {
 
       <div className="flex flex-col sm:flex-row gap-4 mb-3">
         <div className="flex-shrink-0 flex items-center justify-center">
-          <div className="rounded-xl overflow-hidden bg-white" style={{width:120, height:120}}>
-            <svg width="120" height="120" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Preview da logo">
+           <div className="rounded-xl overflow-hidden" style={{width:120, height:120, background:'var(--bg-card)'}}>
+             {isGlobal && brand.logo_url ? <img src={brand.logo_url} alt="Preview da logo global" className="w-full h-full object-contain" /> : <svg width="120" height="120" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Preview da logo">
               <rect width="400" height="400" fill="transparent" />
               <g transform="translate(34,200)"><rect width="71" height="125" rx="10" fill={lps.form.blue || OFFICIAL_LOGO_COLORS.blue} /></g>
               <g transform="translate(134,129)"><rect width="71" height="196" rx="10" fill={lps.form.green || OFFICIAL_LOGO_COLORS.green} /></g>
               <g transform="translate(234,75)"><rect width="72" height="250" rx="10" fill={lps.form.teal || OFFICIAL_LOGO_COLORS.teal} /></g>
               <g transform="translate(169,126)"><path d={buildCheckPath(197, 148)} fill={lps.form.check || OFFICIAL_LOGO_COLORS.check} /></g>
-            </svg>
+             </svg>}
           </div>
         </div>
 
@@ -229,7 +229,7 @@ export default React.memo(function BrandStudioView({ brand, planInfo, onSave, to
 
       <Card className="p-4">
         <p className="text-xs font-semibold uppercase tracking-wide mb-2" style={{color:'var(--text-muted, #94a3b8)'}}>Preview do estado atual</p>
-        <PreviewGeral brandConfig={bs.brandConfig} brandColor={brandColor} />
+         <PreviewGeral brandConfig={bs.brandConfig} brandColor={brandColor} logoUrl={brand && brand.logo_url} />
         <div className="flex gap-2 mt-2">
           <button onClick={bs.undo} disabled={bs.historyIndex <= 0}
             className="text-xs px-2.5 py-1.5 rounded-lg disabled:opacity-30 transition min-h-[var(--touch-target-min)]"

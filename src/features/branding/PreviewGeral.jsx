@@ -4,7 +4,7 @@ import { generateLogoSvg, logoSvgToDataUrl } from './logoUtils.js';
 
 const SWATCHES = ['primary','secondary','accent','bgPage','bgCard','bgInput','bgSubtle','surface','textMain','textSub','textMuted','border','success','warning','danger','info'];
 
-export default function PreviewGeral({ brandConfig, brandColor }) {
+export default function PreviewGeral({ brandConfig, brandColor, logoUrl }) {
   const pal = brandConfig && (brandConfig.modules && brandConfig.modules.palette || brandConfig.palette) || {};
   const typ = brandConfig && brandConfig.modules && brandConfig.modules.typography || {};
   const btn = brandConfig && brandConfig.modules && brandConfig.modules.buttons || {};
@@ -30,7 +30,7 @@ export default function PreviewGeral({ brandConfig, brandColor }) {
   const sidebarActiveBg = sidebar.activeBg || SIDEBAR_DEFAULTS.activeBg;
   const sidebarTextMuted = sidebar.textMuted || SIDEBAR_DEFAULTS.textMuted;
   const logoColors = brandConfig && brandConfig.modules && brandConfig.modules.logo && brandConfig.modules.logo.colors;
-  const logoSrc = logoColors ? logoSvgToDataUrl(generateLogoSvg(logoColors)) : '/icon-mark.svg';
+  const logoSrc = logoUrl || (logoColors ? logoSvgToDataUrl(generateLogoSvg(logoColors)) : '/icon-mark.svg');
 
   const containerStyle = {
     background: `var(--bg-page, ${bgPage})`,
