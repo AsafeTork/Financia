@@ -21,8 +21,6 @@ var NavLink = React.memo(function NavLink({ href, label, onClick, variant = 'def
 });
 
 export default React.memo(function Footer({ brand, onNav, isMobile }) {
-  var brandColor = (brand && brand.color) || 'var(--brand)';
-  var brandColorHex = (brand && brand.color) || '#002f59';
   var currentYear = new Date().getFullYear();
   var appVersion = '2.3.0';
 
