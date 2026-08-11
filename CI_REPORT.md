@@ -1,7 +1,7 @@
 # CI Report
 
-**Gerado:** 2026-08-10 23:55 UTC
-**Commit:** `86e33de60ad3d3f911758dbbc55ceb5494bcf93b`
+**Gerado:** 2026-08-11 00:00 UTC
+**Commit:** `7d9b7f430888777b155e7ddea8f0ccf5d6fcab86`
 **Branch:** `main`
 
 ---
@@ -61,17 +61,17 @@ computing gzip size...
 [2mdist/[22m[2massets/[22m[36mshared-runtime-vwDjcXxQ.js          [39m[1m[2m  0.00 kB[22m[1m[22m[2m │ gzip:  0.02 kB[22m
 [2mdist/[22m[2massets/[22m[36museDebouncedValue-2VSGL6HB.js       [39m[1m[2m  0.21 kB[22m[1m[22m[2m │ gzip:  0.17 kB[22m
 [2mdist/[22m[2massets/[22m[36mDebugBadge-C9B5q9cL.js              [39m[1m[2m  0.83 kB[22m[1m[22m[2m │ gzip:  0.47 kB[22m
-[2mdist/[22m[2massets/[22m[36mlogoUtils-DZelMh3i.js               [39m[1m[2m  0.88 kB[22m[1m[22m[2m │ gzip:  0.46 kB[22m
+[2mdist/[22m[2massets/[22m[36mlogoUtils-Cc60_CPO.js               [39m[1m[2m  0.88 kB[22m[1m[22m[2m │ gzip:  0.46 kB[22m
 [2mdist/[22m[2massets/[22m[36mvirtual-vendor-DNVO4DF9.js          [39m[1m[2m  1.82 kB[22m[1m[22m[2m │ gzip:  0.92 kB[22m
 [2mdist/[22m[2massets/[22m[36maiClient-DsOu_xOS.js                [39m[1m[2m  2.87 kB[22m[1m[22m[2m │ gzip:  1.50 kB[22m
 [2mdist/[22m[2massets/[22m[36mPullToRefreshIndicator-qGVDq_3U.js  [39m[1m[2m  3.31 kB[22m[1m[22m[2m │ gzip:  1.38 kB[22m
 [2mdist/[22m[2massets/[22m[36mexporters-B-p9KxkL.js               [39m[1m[2m  4.25 kB[22m[1m[22m[2m │ gzip:  1.79 kB[22m
-[2mdist/[22m[2massets/[22m[36mEmailView-Dt7KQoEV.js               [39m[1m[2m  5.17 kB[22m[1m[22m[2m │ gzip:  2.08 kB[22m
+[2mdist/[22m[2massets/[22m[36mEmailView-BQen8nN2.js               [39m[1m[2m  5.17 kB[22m[1m[22m[2m │ gzip:  2.08 kB[22m
 [2mdist/[22m[2massets/[22m[36mCardPreview-IWEidqVK.js             [39m[1m[2m  6.27 kB[22m[1m[22m[2m │ gzip:  2.76 kB[22m
-[2mdist/[22m[2massets/[22m[36mSaleForm-Chxde_uo.js                [39m[1m[2m  7.48 kB[22m[1m[22m[2m │ gzip:  2.52 kB[22m
+[2mdist/[22m[2massets/[22m[36mSaleForm-CW8AwHnj.js                [39m[1m[2m  7.48 kB[22m[1m[22m[2m │ gzip:  2.52 kB[22m
 [2mdist/[22m[2massets/[22m[36mPrivacyPolicy-BUH1je9Q.js           [39m[1m[2m  8.49 kB[22m[1m[22m[2m │ gzip:  3.54 kB[22m
 [2mdist/[22m[2massets/[22m[36mTermsOfService-Cs8Ji53h.js          [39m[1m[2m  9.13 kB[22m[1m[22m[2m │ gzip:  3.70 kB[22m
-[2mdist/[22m[2massets/[22m[36mReportView-edwdAk6y.js              [39m[1m[2m 10.73 kB[22m[1m[22m[2m │ gzip:  3.27 kB[22m
+[2mdist/[22m[2massets/[22m[36mReportView-C_j7nF02.js              [39m[1m[2m 10.73 kB[22m[1m[22m[2m │ gzip:  3.27 kB[22m
 [2mdist/[22m[2massets/[22m[36mstripe-vendo
 ```
 
@@ -86,9 +86,9 @@ computing gzip size...
 ```
 
 Running 26 tests using 4 workers
-°···°°°°°°°°···°°°°····°··
-  14 skipped
-  12 passed (12.8s)
+°°·°·°°°°°°°····°°°°··°···
+  15 skipped
+  11 passed (13.3s)
 
 ```
 
@@ -104,10 +104,10 @@ Running 26 tests using 4 workers
 
 Running 42 tests using 4 workers
 
-[1/42] [chromium] › e2e/deep-sync-conflict.spec.ts:10:3 › Deep Sync Conflict Scenarios › BroadcastChannel ping/pong survives rapid tab switching
-[2/42] [chromium] › e2e/deep-sync-conflict.spec.ts:94:3 › Deep Sync Conflict Scenarios › sync worker survives unhandled rejection
-[3/42] [chromium] › e2e/deep-sync-conflict.spec.ts:127:3 › Deep Sync Conflict Scenarios › memory leak check after sync broadcast storm
-[4/42] [chromium] › e2e/deep-sync-conflict.spec.ts:59:3 › Deep Sync Conflict Scenarios › BroadcastChannel handles duplicate messages without errors
+[1/42] [chromium] › e2e/deep-sync-conflict.spec.ts:59:3 › Deep Sync Conflict Scenarios › BroadcastChannel handles duplicate messages without errors
+[2/42] [chromium] › e2e/deep-sync-conflict.spec.ts:127:3 › Deep Sync Conflict Scenarios › memory leak check after sync broadcast storm
+[3/42] [chromium] › e2e/deep-sync-conflict.spec.ts:10:3 › Deep Sync Conflict Scenarios › BroadcastChannel ping/pong survives rapid tab switching
+[4/42] [chromium] › e2e/deep-sync-conflict.spec.ts:94:3 › Deep Sync Conflict Scenarios › sync worker survives unhandled rejection
 [5/42] [chromium] › e2e/indexeddb-corruption.spec.ts:54:6 › IndexedDB Recovery - Corruption › Corruption Simulation › should recover from corrupted IndexedDB data
 [6/42] [chromium] › e2e/indexeddb-corruption.spec.ts:117:5 › IndexedDB Recovery - Corruption › Corruption Simulation › should handle invalid schema gracefully
 [7/42] [chromium] › e2e/indexeddb-eviction.spec.ts:12:5 › IndexedDB Recovery - Eviction › Eviction Test › should handle storage pressure and persist()
@@ -172,4 +172,4 @@ Nenhum relatorio admin gerado.
 
 | Data | Correcao | Commit |
 |------|----------|--------|
-| 2026-08-10 23:55 UTC | CI report gerado automaticamente | `86e33de60ad3d3f911758dbbc55ceb5494bcf93b` |
+| 2026-08-11 00:00 UTC | CI report gerado automaticamente | `7d9b7f430888777b155e7ddea8f0ccf5d6fcab86` |
