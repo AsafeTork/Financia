@@ -43,7 +43,7 @@ export default React.memo(function Footer({ brand, onNav, isMobile }) {
       className={'w-full py-6 lg:py-8 transition-colors ' + (isMobile ? 'lg:hidden' : 'hidden lg:block')}
       style={{
         background: 'var(--bg-page)',
-        borderTop: '1px solid var(--border-color, #e5e7eb)',
+        borderTop: '1px solid var(--border)',
         marginTop: 'auto',
       }}
     >
@@ -54,9 +54,7 @@ export default React.memo(function Footer({ brand, onNav, isMobile }) {
               {brand?.logo_url ? (
                 <img src={brand.logo_url} alt="" className="w-8 h-8 rounded-lg object-cover" />
               ) : (
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center text-base" style={{ background: brandAlpha(brandColorHex, 0.15) }}>
-                  <span className="font-bold" style={{ color: brandColor }}>{(brand?.logo || 'F')[0]}</span>
-                </div>
+                <img src="/favicon-v3.svg" alt="" className="w-8 h-8" />
               )}
               <span className="font-semibold text-sm" style={{ color: 'var(--text-main)' }}>{brand?.name || 'Financia'}</span>
             </div>
@@ -115,7 +113,7 @@ export default React.memo(function Footer({ brand, onNav, isMobile }) {
           </div>
         </div>
 
-        <div className="mt-6 pt-4 border-t border-gray-100 flex flex-col md:flex-row items-center justify-between gap-3" style={{ borderColor: 'var(--border-color, #e5e7eb)' }}>
+        <div className="mt-6 pt-4 border-t flex flex-col md:flex-row items-center justify-between gap-3" style={{ borderColor: 'var(--border)' }}>
           <p className="text-xs text-gray-400 text-center md:text-left">
             © {currentYear} Financia. Todos os direitos reservados.
           </p>

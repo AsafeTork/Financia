@@ -51,9 +51,7 @@ function Sidebar({ view, onNav, brand, open, onClose, isAdmin }) {
         <div className="px-5 py-5 flex items-center gap-3" style={{borderBottom:'1px solid rgba(255,255,255,0.08)'}}>
           {isValidUrl(brand?.logo_url)
             ? <img src={brand.logo_url} alt="logo" fetchPriority="high" decoding="sync" className="w-10 h-10 rounded-xl object-cover flex-shrink-0"/>
-            : <div className="w-10 h-10 rounded-xl flex items-center justify-center text-base flex-shrink-0" style={{background:'rgba(255,255,255,0.15)'}}>
-                <span className="text-white font-bold">{(brand?.logo || 'F')[0]}</span>
-              </div>
+             : <img src="/icon-mark.svg" alt="" className="w-10 h-10 flex-shrink-0" />
           }
           <div className="min-w-0">
             <p className="font-bold text-white truncate text-sm">{brand?.name || 'Financia'}</p>

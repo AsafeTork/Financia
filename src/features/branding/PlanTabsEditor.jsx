@@ -63,7 +63,7 @@ export default function PlanTabsEditor({ brandConfig, onSavePlan, onCopyJSON, on
           return (
             <button key={k} onClick={() => setActivePlan(k)} role="tab" aria-selected={active}
               className={'flex items-center gap-2 px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors border-b-2 -mb-px min-h-[var(--touch-target-min)] ' + (active ? '' : 'text-gray-400 border-transparent hover:text-gray-600')}
-              style={active ? {borderColor: brandColor, color: brandColor} : {}}>
+               style={active ? {borderColor: brandColor, color: 'var(--text-main)'} : {}}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d={meta.icon} /></svg>
               {meta.label}
             </button>

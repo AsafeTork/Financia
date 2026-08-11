@@ -225,8 +225,8 @@ export default React.memo(function SettingsView({ brand, session, planInfo, onSa
                   document.getElementById('tab-' + nextTab)?.focus();
                 }
               }}
-              className={'px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors border-b-2 -mb-px ' + (active ? 'text-gray-900' : 'text-gray-400 border-transparent hover:text-gray-600')}
-              style={active ? {borderColor: brand.color, color: brand.color} : {}}>
+               className={'px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors border-b-2 -mb-px ' + (active ? '' : 'text-gray-400 border-transparent hover:text-gray-600')}
+               style={active ? {borderColor: brand.color, color: 'var(--text-main)'} : {}}>
               {t.label}
             </button>
           );
@@ -265,7 +265,7 @@ export default React.memo(function SettingsView({ brand, session, planInfo, onSa
             <InstallButton brand={brand}/>
           </div>
 
-          <div className="pt-1">
+           <div className="rounded-xl p-4" style={{background:'var(--bg-subtle)', border:'1px solid var(--border)'}}>
             <p className="text-xs font-semibold uppercase tracking-wide" style={{color:'var(--text-muted)'}}>Login sem senha (passkey)</p>
             <p className="text-xs mt-1" style={{color:'var(--text-sub)'}}>Registre uma passkey para entrar com biometria, PIN ou chave de segurança. A senha continua disponível como fallback.</p>
             {session && (
@@ -275,7 +275,7 @@ export default React.memo(function SettingsView({ brand, session, planInfo, onSa
             )}
           </div>
 
-          <div className="pt-1">
+           <div className="rounded-xl p-4" style={{background:'var(--bg-subtle)', border:'1px solid var(--border)'}}>
             <p className="text-xs font-semibold uppercase tracking-wide" style={{color:'var(--text-muted)'}}>Verificação em duas etapas (2FA)</p>
             <p className="text-xs mt-1" style={{color:'var(--text-sub)'}}>Adicione uma camada extra de proteção com um app autenticador. Nenhuma ferramenta adicional é necessária.</p>
             {session && (
@@ -285,7 +285,7 @@ export default React.memo(function SettingsView({ brand, session, planInfo, onSa
             )}
           </div>
 
-          <div className="pt-1">
+           <div className="rounded-xl p-4" style={{background:'var(--bg-subtle)', border:'1px solid var(--border)'}}>
             <PhoneInput label="Atualizar número de telefone" value={brand.phone || ''} onChange={setPhoneData}/>
             <button onClick={savePhone} disabled={phoneSaving || !phoneData.valid || phoneData.e164 === initE164} className="w-full mt-3 text-white rounded-xl py-3 text-sm font-semibold hover:opacity-90 flex items-center justify-center gap-2 disabled:opacity-40 min-h-12" style={{background:brand.color}}>
               {phoneSaving ? <Spin white/> : 'Salvar telefone'}

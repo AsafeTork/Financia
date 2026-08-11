@@ -109,13 +109,13 @@ function LogoTabContent({ brand, bs, brandColor, applyLogoScheme, toast }) {
       <div className="flex flex-wrap items-center gap-1 border-b pb-1 mb-4" style={{borderColor:'var(--border, #e2e8f0)'}}>
         <button onClick={() => setActiveTab('_global')}
           className={'text-xs font-semibold px-3 py-2 rounded-t-lg transition ' + (activeTab === '_global' ? 'border-b-2' : 'opacity-50')}
-          style={activeTab === '_global' ? {borderColor:brandColor, color:brandColor} : {}}>
+           style={activeTab === '_global' ? {borderColor:brandColor, color:'var(--text-main)'} : {}}>
         Global
         </button>
         {Object.keys(PLAN_LOGO_META).map(k => (
           <button key={k} onClick={() => setActiveTab(k)}
             className={'text-xs font-semibold px-3 py-2 rounded-t-lg transition ' + (activeTab === k ? 'border-b-2' : 'opacity-50')}
-            style={activeTab === k ? {borderColor:brandColor, color:brandColor} : {}}>
+             style={activeTab === k ? {borderColor:brandColor, color:'var(--text-main)'} : {}}>
           {PLAN_LOGO_META[k].label}
           </button>
         ))}
@@ -250,7 +250,7 @@ export default React.memo(function BrandStudioView({ brand, planInfo, onSave, to
           return (
             <button key={s.key} role="tab" id={"tab-" + s.key} aria-selected={active} aria-controls={"panel-" + s.key} onClick={() => setSection(s.key)}
               className={'flex items-center gap-2 px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors border-b-2 -mb-px ' + (active ? '' : 'text-gray-400 border-transparent hover:text-gray-600')}
-              style={active ? {borderColor: brandColor, color: brandColor} : {}}>
+               style={active ? {borderColor: brandColor, color: 'var(--text-main)'} : {}}>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d={s.icon} /></svg>
             {s.label}
             </button>
