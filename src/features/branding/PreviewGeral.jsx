@@ -1,5 +1,6 @@
 import React from 'react';
 import { PALETTE_DEFAULTS, BUTTONS_DEFAULTS, INPUTS_DEFAULTS, CARDS_DEFAULTS, SIDEBAR_DEFAULTS } from './defaults.js';
+import { generateLogoSvg, logoSvgToDataUrl } from './logoUtils.js';
 
 const SWATCHES = ['primary','secondary','accent','bgPage','bgCard','bgInput','bgSubtle','surface','textMain','textSub','textMuted','border','success','warning','danger','info'];
 
@@ -28,6 +29,8 @@ export default function PreviewGeral({ brandConfig, brandColor }) {
   const sidebarBg = sidebar.background || SIDEBAR_DEFAULTS.background;
   const sidebarActiveBg = sidebar.activeBg || SIDEBAR_DEFAULTS.activeBg;
   const sidebarTextMuted = sidebar.textMuted || SIDEBAR_DEFAULTS.textMuted;
+  const logoColors = brandConfig && brandConfig.modules && brandConfig.modules.logo && brandConfig.modules.logo.colors;
+  const logoSrc = logoColors ? logoSvgToDataUrl(generateLogoSvg(logoColors)) : '/icon-mark.svg';
 
   const containerStyle = {
     background: `var(--bg-page, ${bgPage})`,
@@ -107,7 +110,7 @@ export default function PreviewGeral({ brandConfig, brandColor }) {
     <div className="rounded-2xl overflow-hidden" style={containerStyle}>
       <div className="flex items-center justify-between px-4 py-2.5" style={headerStyle}>
         <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold" style={{background:'rgba(255,255,255,0.2)'}}>F</div>
+           <img src={logoSrc} alt="" className="w-7 h-7 object-contain" />
           <span className="text-sm font-semibold">Financia</span>
         </div>
         <div className="flex items-center gap-2">

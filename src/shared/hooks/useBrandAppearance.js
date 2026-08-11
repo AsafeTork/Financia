@@ -1,7 +1,8 @@
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { deriveCores } from '../../lib/utils.js';
-import { planVisualDefaults, WHITE_LABEL_VISUAL_DEFAULT } from '../../lib/constants.js';
+import { planVisualDefaults, WHITE_LABEL_VISUAL_DEFAULT, effectivePlan } from '../../lib/constants.js';
 import { PALETTE_DEFAULTS } from '../../features/branding/defaults.js';
+import { generateLogoSvg, logoSvgToDataUrl } from '../../features/branding/logoUtils.js';
 
 function getLuminance(hex) {
   const r = parseInt(hex.slice(1, 3), 16) / 255;
@@ -53,6 +54,19 @@ function computeUseWhiteLabelFallback(hasWhiteLabel, brand, missingCustomPalette
 
 function computeEffectiveTheme(themePref, appBrand) {
   return themePref || (appBrand && appBrand.theme) || 'light';
+}
+
+function resolvePlanLogo(brand, planInfo) {
+  if (!brand) return null;
+  let cfg = brand.brand_config;
+  try { cfg = typeof cfg === 'string' ? JSON.parse(cfg) : cfg; } catch { cfg = null; }
+  const overrides = (cfg && cfg.modules && cfg.modules.planOverrides) || (cfg && cfg.planOverrides) || {};
+  const plan = (planInfo && planInfo.plan === 'white_label') || (brand.white_label && overrides.white_label)
+    ? 'white_label' : effectivePlan(planInfo);
+  const override = overrides[plan] || {};
+  if (override.logo_url) return override.logo_url;
+  if (override.logoColors) return logoSvgToDataUrl(generateLogoSvg(override.logoColors));
+  return brand.logo_url || null;
 }
 
 function applyTokenDiff(el, tokens) {
@@ -273,14 +287,14 @@ export default function useBrandAppearance(brand, planInfo) {
   const appBrand = useMemo(() => {
     const next = hasWhiteLabel
       ? (useWhiteLabelFallback
-        ? { ...brand, color: WHITE_LABEL_VISUAL_DEFAULT.color, color_secondary: WHITE_LABEL_VISUAL_DEFAULT.color_secondary, color_accent: WHITE_LABEL_VISUAL_DEFAULT.color_accent, theme: WHITE_LABEL_VISUAL_DEFAULT.theme }
-        : brand)
-      : { ...brand, color: visualPreset.color, color_secondary: visualPreset.color_secondary, color_accent: visualPreset.color_accent, theme: visualPreset.theme };
+        ? { ...brand, logo_url: resolvePlanLogo(brand, planInfo), color: WHITE_LABEL_VISUAL_DEFAULT.color, color_secondary: WHITE_LABEL_VISUAL_DEFAULT.color_secondary, color_accent: WHITE_LABEL_VISUAL_DEFAULT.color_accent, theme: WHITE_LABEL_VISUAL_DEFAULT.theme }
+        : { ...brand, logo_url: resolvePlanLogo(brand, planInfo) })
+      : { ...brand, logo_url: resolvePlanLogo(brand, planInfo), color: visualPreset.color, color_secondary: visualPreset.color_secondary, color_accent: visualPreset.color_accent, theme: visualPreset.theme };
     const prev = appBrandRef.current;
     if (prev && prev.name===next.name && prev.logo===next.logo && prev.color===next.color && prev.color_secondary===next.color_secondary && prev.color_accent===next.color_accent && prev.theme===next.theme && prev.logo_url===next.logo_url && prev.phone===next.phone && prev.white_label===next.white_label && prev.niche===next.niche && prev.visual_version===next.visual_version && prev.custom_palette===next.custom_palette && prev.brand_config===next.brand_config) return prev;
     appBrandRef.current = next;
     return next;
-  }, [hasWhiteLabel, useWhiteLabelFallback, brand, visualPreset]);
+  }, [hasWhiteLabel, useWhiteLabelFallback, brand, visualPreset, planInfo]);
 
   const effectiveTheme = computeEffectiveTheme(themePref, appBrand);
 
