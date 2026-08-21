@@ -204,10 +204,16 @@ function setNested(obj, path, val) {
   let cur = obj;
   for (let i = 0; i < parts.length - 1; i++) {
     if (UNSAFE_KEYS.has(parts[i])) return;
-    if (!Object.prototype.hasOwnProperty.call(cur, parts[i]) || !cur[parts[i]]) cur[parts[i]] = {};
+    if (!isSafeObject(cur)) return;
+    const next = cur[parts[i]];
+    if (!Object.prototype.hasOwnProperty.call(cur, parts[i]) || !isSafeObject(next)) {
+      cur[parts[i]] = Object.create(null);
+    }
+    // nosemgrep: javascript.lang.security.audit.prototype-pollution.prototype-pollution-loop.prototype-pollution-loop - keys come from schema/UI path and unsafe keys are blocked
     cur = cur[parts[i]];
   }
   if (UNSAFE_KEYS.has(parts[parts.length - 1])) return;
+  if (!isSafeObject(cur)) return;
   cur[parts[parts.length - 1]] = val;
 }
 
@@ -215,10 +221,17 @@ function getNested(obj, path) {
   const parts = path.split('.');
   let cur = obj;
   for (let i = 0; i < parts.length; i++) {
-    if (cur === null || cur === undefined) return undefined;
+    if (!isSafeObject(cur)) return undefined;
     if (UNSAFE_KEYS.has(parts[i])) return undefined;
     if (!Object.prototype.hasOwnProperty.call(cur, parts[i])) return undefined;
+    // nosemgrep: javascript.lang.security.audit.prototype-pollution.prototype-pollution-loop.prototype-pollution-loop - read path is guarded by hasOwnProperty + unsafe key denylist
     cur = cur[parts[i]];
   }
   return cur;
+}
+
+function isSafeObject(value) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+  const proto = Object.getPrototypeOf(value);
+  return proto === Object.prototype || proto === null;
 }

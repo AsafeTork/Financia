@@ -145,6 +145,7 @@ function checkFile(filePath) {
   if (SCRIPT_EXCLUSIONS.has(filePath)) return []
   if (DOC_EXCLUSIONS.has(filePath)) return []
 
+  // nosemgrep: javascript.lang.security.audit.path-traversal.path-join-resolve-traversal.path-join-resolve-traversal - filePath comes from git-tracked file list in repo root
   const fullPath = path.join(ROOT, filePath)
   if (!fs.existsSync(fullPath)) return []
 

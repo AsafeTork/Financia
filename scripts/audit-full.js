@@ -6,6 +6,7 @@ const fs = require('fs');
 
 function exec(cmd) {
   try {
+    // nosemgrep: javascript.lang.security.detect-child-process.detect-child-process - cmd values are hardcoded maintenance commands in this script
     execSync(cmd, { stdio: 'inherit' });
   } catch (e) {
     console.error(`❌ Falha: ${cmd}`);

@@ -87,6 +87,7 @@ function checkNoOrphanedDocs() {
   const allFiles = []
   function walk(dir) {
     for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      // nosemgrep: javascript.lang.security.audit.path-traversal.path-join-resolve-traversal.path-join-resolve-traversal - directory traversal is bounded to local docs walk roots
       const full = path.join(dir, entry.name)
       if (entry.isDirectory() && entry.name !== 'archive') {
         walk(full)
@@ -146,6 +147,7 @@ function checkNoStaleFrontmatter() {
 
   function walk(dir) {
     for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      // nosemgrep: javascript.lang.security.audit.path-traversal.path-join-resolve-traversal.path-join-resolve-traversal - directory traversal is bounded to local docs walk roots
       const full = path.join(dir, entry.name)
       if (entry.isDirectory() && entry.name !== 'archive') {
         walk(full)

@@ -5,6 +5,7 @@ const { execSync } = require('child_process');
 
 function exec(cmd) {
   try {
+    // nosemgrep: javascript.lang.security.detect-child-process.detect-child-process - cmd values are fixed internal validation commands
     execSync(cmd, { stdio: 'inherit', stdio: ['ignore', 'inherit', 'inherit'] });
   } catch (e) {
     console.error(`❌ Falha: ${cmd}`);

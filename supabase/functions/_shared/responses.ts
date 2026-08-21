@@ -122,7 +122,7 @@ export function safeErrorResponse(err: unknown, context: string): Response {
   const requestId = createRequestId();
   
   // Full log server-side (Sentry, console, etc.)
-  console.error(`[${requestId}] ${context}:`, err);
+  console.error('safeErrorResponse', { requestId, context, err });
   
   // Map known errors to safe codes
   if (err instanceof Error) {

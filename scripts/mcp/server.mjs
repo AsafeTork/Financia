@@ -65,7 +65,16 @@ function globToRegex(pattern) {
       re += escapeRe(c);
     }
   }
+  // nosemgrep: javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp - glob patterns are translated to constrained regex tokens only
   return new RegExp("^" + re + "$");
+}
+
+function isSafeRegexPattern(pattern) {
+  if (typeof pattern !== "string") return false;
+  if (pattern.length === 0 || pattern.length > 256) return false;
+  if (/(\([^\)]*[+*][^\)]*\)[+*])/.test(pattern)) return false;
+  if (/(\{\d+,\d+\}\+)|(\+\+)|(\*\*)/.test(pattern)) return false;
+  return true;
 }
 
 function walkFiles(root, outArr, rel = "") {
@@ -388,8 +397,12 @@ reg("n_grep", {
     required: ["pattern"],
   },
   run: async ({ pattern, path, include, ignoreCase, maxResults }) => {
+    if (!isSafeRegexPattern(pattern)) {
+      return out("unsafe regex pattern rejected", true);
+    }
     let rx;
     try {
+      // nosemgrep: javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp - pattern is pre-validated by isSafeRegexPattern guard above
       rx = new RegExp(pattern, ignoreCase ? "i" : "");
     } catch (e) {
       return out(`invalid regex: ${e.message}`, true);

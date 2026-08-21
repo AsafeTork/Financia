@@ -79,6 +79,7 @@ function checkDocsExistForChangedCode(stagedFiles) {
   const changedAreas = getChangedAreas(changedCodeFiles)
 
   for (const areaDir of changedAreas) {
+    // nosemgrep: javascript.lang.security.audit.path-traversal.path-join-resolve-traversal.path-join-resolve-traversal - areaDir is selected from static AREA_DOC_MAP values
     const areaPath = path.join(ROOT, areaDir)
     if (!fs.existsSync(areaPath)) continue
 
@@ -103,6 +104,7 @@ function checkDocsReferenceChangedFiles(stagedFiles) {
   const allDocs = []
   function walkDocs(dir) {
     for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      // nosemgrep: javascript.lang.security.audit.path-traversal.path-join-resolve-traversal.path-join-resolve-traversal - entry names come from fs.readdirSync of local repo folders
       const full = path.join(dir, entry.name)
       if (entry.isDirectory() && entry.name !== 'archive') {
         walkDocs(full)

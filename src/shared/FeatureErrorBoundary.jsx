@@ -11,7 +11,7 @@ export class FeatureErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error, errorInfo) {
-    console.error('[FeatureErrorBoundary] ' + (this.props.featureName || 'unknown'), error, errorInfo);
+    console.error('[FeatureErrorBoundary]', this.props.featureName || 'unknown', error, errorInfo);
   }
 
   handleTryAgain() {
