@@ -1,11 +1,11 @@
 {
-  "timestamp": "2026-08-07T13:11:17.014Z",
-  "projectRoot": "/home/tork/Projetos/financia",
+  "timestamp": "2026-08-21T18:19:22.005Z",
+  "projectRoot": "/home/runner/work/Financia/Financia",
   "structure": {
     "hasPackageJson": true,
     "hasTsConfig": true,
     "hasClaudeConfig": true,
     "hasClaudeFlow": true
   },
-  "scannedAt": 1786108277014
+  "scannedAt": 1787336362005
 }
