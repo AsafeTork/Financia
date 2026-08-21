@@ -26,18 +26,18 @@ jobs:
       lint_exit_code: ${{ steps.lint.outputs.exit_code }}
       typecheck_exit_code: ${{ steps.typecheck.outputs.exit_code }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
         with:
           persist-credentials: false
 
       - name: Setup Node.js 24
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
         with:
           node-version: '24'
           cache: 'npm'
 
       - name: Cache npm dependencies
-        uses: actions/cache@v5
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25
         with:
           path: ~/.npm
           key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
@@ -69,7 +69,7 @@ jobs:
 
       - name: Upload lint artifacts
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
         with:
           name: lint-typecheck
           path: /tmp/*-output.txt
@@ -94,18 +94,18 @@ jobs:
     outputs:
       test_exit_code: ${{ steps.test.outputs.exit_code }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
         with:
           persist-credentials: false
 
       - name: Setup Node.js 24
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
         with:
           node-version: '24'
           cache: 'npm'
 
       - name: Cache npm dependencies
-        uses: actions/cache@v5
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25
         with:
           path: ~/.npm
           key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
@@ -134,7 +134,7 @@ jobs:
 
       - name: Upload test artifacts
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
         with:
           name: unit-tests-shard${{ matrix.shard }}
           path: /tmp/test-output-shard${{ matrix.shard }}.txt
@@ -146,18 +146,18 @@ jobs:
     timeout-minutes: 20
     needs: build
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
         with:
           persist-credentials: false
 
       - name: Setup Node.js 24
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
         with:
           node-version: '24'
           cache: 'npm'
 
       - name: Cache npm dependencies
-        uses: actions/cache@v5
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25
         with:
           path: ~/.npm
           key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
@@ -165,7 +165,7 @@ jobs:
             ${{ runner.os }}-npm-
 
       - name: Cache Playwright browsers
-        uses: actions/cache@v5
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25
         with:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
@@ -209,7 +209,7 @@ jobs:
 
       - name: Upload integration artifacts
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
         with:
           name: integration-tests
           path: |
@@ -227,18 +227,18 @@ jobs:
       needs.lint-typecheck.result == 'success' &&
       needs.unit-tests.result == 'success'
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
         with:
           persist-credentials: false
 
       - name: Setup Node.js 24
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
         with:
           node-version: '24'
           cache: 'npm'
 
       - name: Cache npm dependencies
-        uses: actions/cache@v5
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25
         with:
           path: ~/.npm
           key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
@@ -246,7 +246,7 @@ jobs:
             ${{ runner.os }}-npm-
 
       - name: Cache Vite
-        uses: actions/cache@v5
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25
         with:
           path: node_modules/.vite
           key: ${{ runner.os }}-vite-${{ hashFiles('vite.config.js', 'package-lock.json') }}
@@ -277,7 +277,7 @@ jobs:
 
       - name: Upload build artifacts
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
         with:
           name: build
           path: |
@@ -291,18 +291,18 @@ jobs:
     timeout-minutes: 5
     continue-on-error: true
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
         with:
           persist-credentials: false
 
       - name: Setup Node.js 24
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
         with:
           node-version: '24'
           cache: 'npm'
 
       - name: Cache npm dependencies
-        uses: actions/cache@v5
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25
         with:
           path: ~/.npm
           key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
@@ -326,18 +326,18 @@ jobs:
     timeout-minutes: 15
     needs: build
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
         with:
           persist-credentials: false
 
       - name: Setup Node.js 24
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
         with:
           node-version: '24'
           cache: 'npm'
 
       - name: Cache npm dependencies
-        uses: actions/cache@v5
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25
         with:
           path: ~/.npm
           key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
@@ -345,7 +345,7 @@ jobs:
             ${{ runner.os }}-npm-
 
       - name: Cache Playwright browsers
-        uses: actions/cache@v5
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25
         with:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
@@ -363,7 +363,7 @@ jobs:
 
       - name: Upload prod audit results
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
         with:
           name: prod-audit-results
           path: prod-audit-results.json
@@ -375,18 +375,18 @@ jobs:
     timeout-minutes: 10
     needs: build
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
         with:
           persist-credentials: false
 
       - name: Setup Node.js 24
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
         with:
           node-version: '24'
           cache: 'npm'
 
       - name: Cache npm dependencies
-        uses: actions/cache@v5
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25
         with:
           path: ~/.npm
           key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
@@ -394,7 +394,7 @@ jobs:
             ${{ runner.os }}-npm-
 
       - name: Cache Playwright browsers
-        uses: actions/cache@v5
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25
         with:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
@@ -423,7 +423,7 @@ jobs:
 
       - name: Upload admin audit report
         if: always() && steps.run-admin-audit.outputs.ran == 'true'
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
         with:
           name: admin-audit-report-md
           path: admin-audit-report.md
@@ -431,7 +431,7 @@ jobs:
 
       - name: Upload admin audit JSON
         if: always() && steps.run-admin-audit.outputs.ran == 'true'
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
         with:
           name: admin-audit-results-json
           path: admin-audit-results.json
@@ -454,18 +454,18 @@ jobs:
     timeout-minutes: 20
     needs: build
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
         with:
           persist-credentials: false
 
       - name: Setup Node.js 24
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
         with:
           node-version: '24'
           cache: 'npm'
 
       - name: Cache npm dependencies
-        uses: actions/cache@v5
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25
         with:
           path: ~/.npm
           key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
@@ -473,7 +473,7 @@ jobs:
             ${{ runner.os }}-npm-
 
       - name: Cache Playwright browsers
-        uses: actions/cache@v5
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25
         with:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
@@ -508,7 +508,7 @@ jobs:
 
       - name: Upload E2E artifacts
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
         with:
           name: e2e-tests
           path: |
@@ -526,7 +526,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
 
       - name: Download CI artifacts
         if: always()
@@ -557,7 +557,7 @@ jobs:
 
       - name: Upload report artifact
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
         with:
           name: ci-report-md
           path: CI_REPORT.md
@@ -569,12 +569,12 @@ jobs:
     needs: [lint-typecheck, unit-tests, build, security-audit, production-audit, admin-audit, e2e, integration-tests, extract-errors]
     if: always()
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           persist-credentials: false
 
-      - uses: actions/download-artifact@v7
+      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131
         continue-on-error: true
         with:
           name: ci-report-md
@@ -582,7 +582,7 @@ jobs:
 
       - name: Upload CI_REPORT.md artifact
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
         with:
           name: ci-summary-report
           path: CI_REPORT.md
@@ -618,63 +618,53 @@ jobs:
       - name: Discord Notification
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          GITHUB_BRANCH: ${{ github.ref_name }}
+          GITHUB_SHA: ${{ github.sha }}
+          GITHUB_WORKFLOW: ${{ github.workflow }}
+          SUMMARY_STATUS: ${{ needs.summary.result }}
         if: env.DISCORD_WEBHOOK_URL != ''
         run: |
-          STATUS="${{ needs.summary.result }}"
+          STATUS="$SUMMARY_STATUS"
           COLOR=3066993
           if [ "$STATUS" != "success" ]; then
             COLOR=15158332
           fi
-          PAYLOAD=$(cat <<EOF
-          {
-            "embeds": [{
-              "title": "Financia CI/CD Pipeline",
-              "description": "Status: ${STATUS}",
-              "color": ${COLOR},
-              "fields": [
-                {"name": "Branch", "value": "${{ github.ref_name }}", "inline": true},
-                {"name": "Commit", "value": "${{ github.sha }}", "inline": true},
-                {"name": "Workflow", "value": "${{ github.workflow }}", "inline": true}
-              ],
-              "footer": {"text": "GitHub Actions"}
-            }]
-          }
-          EOF
-          )
+          PAYLOAD=$(jq -n \
+            --arg status "$STATUS" \
+            --arg branch "$GITHUB_BRANCH" \
+            --arg commit "$GITHUB_SHA" \
+            --arg workflow "$GITHUB_WORKFLOW" \
+            --argjson color "$COLOR" \
+            '{embeds:[{title:"Financia CI/CD Pipeline",description:("Status: " + $status),color:$color,fields:[{name:"Branch",value:$branch,inline:true},{name:"Commit",value:$commit,inline:true},{name:"Workflow",value:$workflow,inline:true}],footer:{text:"GitHub Actions"}}]}')
           curl -s -H "Content-Type: application/json" -d "$PAYLOAD" "${DISCORD_WEBHOOK_URL}" || true
 
       - name: Slack Notification
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          GITHUB_BRANCH: ${{ github.ref_name }}
+          GITHUB_SHA: ${{ github.sha }}
+          SUMMARY_STATUS: ${{ needs.summary.result }}
         if: env.SLACK_WEBHOOK_URL != ''
         run: |
-          STATUS="${{ needs.summary.result }}"
+          STATUS="$SUMMARY_STATUS"
           COLOR="good"
           if [ "$STATUS" != "success" ]; then
             COLOR="danger"
           fi
-          PAYLOAD=$(cat <<EOF
-          {
-            "attachments": [{
-              "color": "${COLOR}",
-              "title": "Financia CI/CD Pipeline",
-              "text": "Status: ${STATUS}",
-              "fields": [
-                {"title": "Branch", "value": "${{ github.ref_name }}", "short": true},
-                {"title": "Commit", "value": "${{ github.sha }}", "short": true}
-              ]
-            }]
-          }
-          EOF
-          )
+          PAYLOAD=$(jq -n \
+            --arg color "$COLOR" \
+            --arg status "$STATUS" \
+            --arg branch "$GITHUB_BRANCH" \
+            --arg commit "$GITHUB_SHA" \
+            '{attachments:[{color:$color,title:"Financia CI/CD Pipeline",text:("Status: " + $status),fields:[{title:"Branch",value:$branch,short:true},{title:"Commit",value:$commit,short:true}]}]}')
           curl -s -H "Content-Type: application/json" -d "$PAYLOAD" "${SLACK_WEBHOOK_URL}" || true
 
   docs-health-check:
     name: Docs Health Check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: 22
           cache: 'npm'
@@ -687,8 +677,8 @@ jobs:
     name: Docs Drift Check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: 22
           cache: 'npm'
@@ -705,13 +695,15 @@ jobs:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
       - name: Trigger Render Deploy
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
         run: |
           if [ -z "${{ secrets.RENDER_SERVICE_ID }}" ] || [ -z "${{ secrets.RENDER_API_KEY }}" ]; then
             echo "SKIP: Render service secrets not configured (development environment)"
           else
             curl -s -X POST \
               "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID }}/deploys" \
-              -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+              -H "Authorization: Bearer $RENDER_API_KEY" \\
               -H "Content-Type: application/json" \
               -d '{"auto": true}' || echo "Render deploy trigger failed (service may auto-deploy from GitHub)"
             echo "Render deploy triggered for production branch (main)"

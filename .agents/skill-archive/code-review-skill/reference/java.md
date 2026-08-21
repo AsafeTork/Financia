@@ -177,7 +177,7 @@ public class UserService {
 // ❌ 硬编码配置值
 @Service
 public class PaymentService {
-    private String apiKey = "sk_live_12345";
+    private String apiKey = "<api-key-from-env>";
 }
 
 // ❌ 直接使用 @Value 散落在代码中

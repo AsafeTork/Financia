@@ -1,5 +1,7 @@
 import React from 'react';
 
+const UNSAFE_KEYS = new Set(['__proto__', 'prototype', 'constructor']);
+
 export default function ModuleEditor({ mod, brandConfig, onApply, brandColor }) {
   const currentConfig = (brandConfig && brandConfig.modules && brandConfig.modules[mod.name]) || {};
   const props = (mod.def.schema && mod.def.schema.properties) || {};
@@ -187,6 +189,7 @@ function defaultsFromSchema(props) {
 function deepMerge(base, override) {
   const result = JSON.parse(JSON.stringify(base));
   Object.keys(override).forEach(k => {
+    if (UNSAFE_KEYS.has(k)) return;
     if (typeof override[k] === 'object' && override[k] !== null && !Array.isArray(override[k]) && typeof result[k] === 'object' && result[k] !== null) {
       result[k] = deepMerge(result[k], override[k]);
     } else {
@@ -200,9 +203,11 @@ function setNested(obj, path, val) {
   const parts = path.split('.');
   let cur = obj;
   for (let i = 0; i < parts.length - 1; i++) {
-    if (!cur[parts[i]]) cur[parts[i]] = {};
+    if (UNSAFE_KEYS.has(parts[i])) return;
+    if (!Object.prototype.hasOwnProperty.call(cur, parts[i]) || !cur[parts[i]]) cur[parts[i]] = {};
     cur = cur[parts[i]];
   }
+  if (UNSAFE_KEYS.has(parts[parts.length - 1])) return;
   cur[parts[parts.length - 1]] = val;
 }
 
@@ -211,6 +216,8 @@ function getNested(obj, path) {
   let cur = obj;
   for (let i = 0; i < parts.length; i++) {
     if (cur === null || cur === undefined) return undefined;
+    if (UNSAFE_KEYS.has(parts[i])) return undefined;
+    if (!Object.prototype.hasOwnProperty.call(cur, parts[i])) return undefined;
     cur = cur[parts[i]];
   }
   return cur;

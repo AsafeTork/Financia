@@ -1,22 +1,25 @@
 #!/usr/bin/env node
 // validate-fast.js - Validação rápida apenas dos arquivos alterados
 
-const { execSync } = require('child_process');
-const fs = require('fs');
+const { execFileSync } = require('child_process');
 
-function exec(cmd, options = {}) {
+function exec(bin, args, options = {}) {
   try {
-    return execSync(cmd, { encoding: 'utf8', stdio: 'inherit', ...options });
+    return execFileSync(bin, args, { encoding: 'utf8', stdio: 'inherit', ...options });
   } catch (e) {
-    console.error(`❌ Falha: ${cmd}`);
+    console.error(`❌ Falha: ${bin} ${args.join(' ')}`);
     process.exit(1);
   }
 }
 
 function getChangedFiles() {
   try {
-    const output = execSync('git diff --name-only --diff-filter=d origin/main...HEAD -- "*.ts" "*.tsx" "*.js" "*.jsx" 2>/dev/null', { encoding: 'utf8' });
-    return output.trim().split('\n').filter(f => f.length > 0);
+    const output = execFileSync(
+      'git',
+      ['diff', '--name-only', '--diff-filter=d', '-z', 'origin/main...HEAD', '--', '*.ts', '*.tsx', '*.js', '*.jsx'],
+      { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }
+    );
+    return output.split('\0').filter(f => f.length > 0);
   } catch {
     return [];
   }
@@ -39,7 +42,7 @@ async function main() {
   // 1. Lint apenas alterados
   console.log('🔍 Linting arquivos alterados...');
   try {
-    exec(`npx eslint --cache --cache-strategy content ${changedFiles.map(f => `"${f}"`).join(' ')}`, { stdio: 'inherit' });
+    exec('npx', ['eslint', '--cache', '--cache-strategy', 'content', ...changedFiles], { stdio: 'inherit' });
     console.log('✅ Lint OK\n');
   } catch {
     console.error('❌ Lint falhou');
@@ -50,7 +53,7 @@ async function main() {
   console.log('🔍 TypeCheck incremental...');
   const tsFiles = changedFiles.filter(f => f.endsWith('.ts') || f.endsWith('.tsx'));
   if (tsFiles.length > 0) {
-    exec(`npx tsc --noEmit --incremental --skipLibCheck ${tsFiles.map(f => `"${f}"`).join(' ')}`, { stdio: 'inherit' });
+    exec('npx', ['tsc', '--noEmit', '--incremental', '--skipLibCheck', ...tsFiles], { stdio: 'inherit' });
     console.log('✅ TypeCheck OK\n');
   } else {
     console.log('ℹ️  Nenhum arquivo TS/TSX alterado, pulando typecheck\n');
@@ -58,12 +61,12 @@ async function main() {
 
   // 3. Testes apenas dos arquivos alterados
   console.log('🧪 Testes afetados...');
-  exec('npx vitest run --changed --reporter=dot', { stdio: 'inherit' });
+  exec('npx', ['vitest', 'run', '--changed', '--reporter=dot'], { stdio: 'inherit' });
   console.log('✅ Testes OK\n');
 
   // 4. Build incremental
   console.log('🏗️ Build incremental...');
-  exec('npm run build', { stdio: 'inherit' });
+  exec('npm', ['run', 'build'], { stdio: 'inherit' });
   console.log('✅ Build OK\n');
 
   console.log('✅ VALIDAÇÃO RÁPIDA CONCLUÍDA COM SUCESSO');

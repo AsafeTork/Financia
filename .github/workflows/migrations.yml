@@ -42,20 +42,20 @@ jobs:
     needs: validate-secrets
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           persist-credentials: false
 
       - name: Setup Node.js 24
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: '24'
           cache: 'npm'
 
       - name: Setup Supabase CLI
-        uses: supabase/setup-cli@v3
+        uses: supabase/setup-cli@46f7f98c7f948ad727d22c1e67fab04c223a0520
         with:
-          version: latest
+          version: 2.58.3
 
       - name: Link Supabase project
         run: supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_REF }}

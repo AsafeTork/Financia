@@ -22,6 +22,8 @@ import {
   CHECK_NORM,
 } from './defaults.js';
 
+const HEX_COLOR_PATTERN = /^#[0-9a-fA-F]{6}$/;
+
 const MODULE_DEFS = {
   palette: {
     schema: {
@@ -220,6 +222,11 @@ const MODULE_DEFS = {
   },
 };
 
+function matchesSchemaPattern(value, pattern) {
+  if (pattern === '^#[0-9a-fA-F]{6}$') return HEX_COLOR_PATTERN.test(value);
+  return false;
+}
+
 /**
  * Validates a field value against a schema definition.
  * @param {*} value - Value to validate
@@ -243,7 +250,7 @@ function validateField(value, schemaDef, path, errors) {
       errors.push(`tipo invalido em ${path}: esperado string, recebido ${typeof value}`);
       return;
     }
-    if (schemaDef.pattern && !new RegExp(schemaDef.pattern).test(value)) {
+    if (schemaDef.pattern && !matchesSchemaPattern(value, schemaDef.pattern)) {
       errors.push(`formato invalido em ${path}: deve corresponder a ${schemaDef.pattern}`);
     }
     if (schemaDef.enum && !schemaDef.enum.includes(value)) {

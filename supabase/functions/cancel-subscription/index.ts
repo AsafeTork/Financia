@@ -88,7 +88,7 @@ async function handler(req: Request, logger: Logger): Promise<Response> {
         to: user.email,
         subject: 'Cancelamento agendado - Financia',
         text: txt,
-        html: '<div style="font-family:Inter,Arial,sans-serif;white-space:pre-wrap;line-height:1.45;color:#0f172a">' + txt.replace(/\n/g, '<br>') + '</div>',
+        html: htmlFromText(txt),
       });
     }
 

@@ -1,22 +1,21 @@
 #!/usr/bin/env node
 // audit-changed.js - Auditoria incremental apenas de arquivos alterados
 
-const { execSync } = require('child_process');
-const fs = require('fs');
+const { execFileSync } = require('child_process');
 
-function run(cmd) {
+function run(bin, args, options = {}) {
   try {
-    return execSync(cmd, { encoding: 'utf8', stdio: 'pipe', timeout: 120000 }).trim();
+    return execFileSync(bin, args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], timeout: 120000, ...options });
   } catch (e) {
     return '';
   }
 }
 
-function exec(cmd) {
+function exec(bin, args, options = {}) {
   try {
-    execSync(cmd, { stdio: 'inherit', stdio: ['ignore', 'inherit', 'inherit'], timeout: 120000 });
+    execFileSync(bin, args, { stdio: ['ignore', 'inherit', 'inherit'], timeout: 120000, ...options });
   } catch (e) {
-    console.error(`❌ Falha: ${cmd}`);
+    console.error(`❌ Falha: ${bin} ${args.join(' ')}`);
     process.exit(1);
   }
 }
@@ -24,7 +23,7 @@ function exec(cmd) {
 async function main() {
   console.log('🔍 AUDITORIA INCREMENTAL - apenas arquivos alterados\n');
 
-  const files = run('git diff --name-only --diff-filter=d origin/main...HEAD').split('\n').filter(f => f.length > 0);
+  const files = run('git', ['diff', '--name-only', '--diff-filter=d', '-z', 'origin/main...HEAD']).split('\0').filter(f => f.length > 0);
   
   if (files.length === 0) {
     console.log('ℹ️  Nenhum arquivo alterado');
@@ -55,7 +54,7 @@ async function main() {
     console.log('\n📦 Migrações novas:');
     migrations.forEach(m => console.log(`  - ${m}`));
     try {
-      execSync('npx supabase db diff --schema public --dry-run', { stdio: 'ignore' });
+      execFileSync('npx', ['supabase', 'db', 'diff', '--schema', 'public', '--dry-run'], { stdio: 'ignore' });
       console.log('  ✅ Migrações aplicam sem erro');
     } catch (e) {
       issues.push({ file: 'migrations', issue: 'Migração falha no dry-run', severity: 'high' });
@@ -77,7 +76,7 @@ async function main() {
   // 4. Build rápido
   console.log('\n🔨 Verificando build...');
   try {
-    execSync('npm run build', { stdio: 'ignore', timeout: 120000 });
+    execFileSync('npm', ['run', 'build'], { stdio: 'ignore', timeout: 120000 });
     console.log('  ✅ Build OK');
   } catch (e) {
     issues.push({ file: 'build', issue: 'Build falhou', severity: 'critical' });
@@ -85,12 +84,12 @@ async function main() {
 
   // 5. Lint apenas alterados
   console.log('\n🔍 Lint nos alterados...');
-  const changedTS = run('git diff --name-only --diff-filter=d origin/main...HEAD -- *.ts *.tsx');
+  const changedTS = run('git', ['diff', '--name-only', '--diff-filter=d', '-z', 'origin/main...HEAD', '--', '*.ts', '*.tsx']);
   if (changedTS) {
-    const changedTSFiles = changedTS.split('\n').filter(f => f.length > 0);
+    const changedTSFiles = changedTS.split('\0').filter(f => f.length > 0);
     if (changedTSFiles.length > 0) {
       try {
-        execSync(`npx eslint --cache --cache-strategy content ${changedTSFiles.join(' ')}`, { stdio: 'ignore' });
+        execFileSync('npx', ['eslint', '--cache', '--cache-strategy', 'content', ...changedTSFiles], { stdio: 'ignore' });
         console.log('  ✅ Lint OK');
       } catch (e) {
         issues.push({ file: 'lint', issue: 'Lint falhou em arquivos alterados', severity: 'high' });
@@ -100,10 +99,10 @@ async function main() {
 
   // 4. Typecheck apenas alterados
   console.log('\n🔍 Typecheck nos alterados...');
-  const changedTSFilesList = changedTS.split('\n').filter(f => f.length > 0);
+  const changedTSFilesList = changedTS.split('\0').filter(f => f.length > 0);
   if (changedTSFilesList.length > 0) {
     try {
-      execSync(`npx tsc --noEmit --incremental ${changedTSFilesList.join(' ')}`, { stdio: 'ignore' });
+      execFileSync('npx', ['tsc', '--noEmit', '--incremental', ...changedTSFilesList], { stdio: 'ignore' });
       console.log('  ✅ Typecheck OK');
     } catch (e) {
       issues.push({ file: 'typecheck', issue: 'Typecheck falhou em arquivos alterados', severity: 'high' });
@@ -113,7 +112,7 @@ async function main() {
   // 5. Testes alterados
   console.log('\n🧪 Testes alterados...');
   try {
-    execSync('npx vitest run --changed', { stdio: 'ignore', timeout: 60000 });
+    execFileSync('npx', ['vitest', 'run', '--changed'], { stdio: 'ignore', timeout: 60000 });
     console.log('  ✅ Testes alterados OK');
   } catch (e) {
     issues.push({ file: 'test:changed', issue: 'Testes alterados falharam', severity: 'high' });
@@ -128,14 +127,6 @@ async function main() {
     console.log('❌ AUDITORIA INCREMENTAL FALHOU:');
     issues.forEach(i => console.log(`  [${i.severity.toUpperCase()}] ${i.file}: ${i.issue}`));
     process.exit(1);
-  }
-}
-
-function run(cmd) {
-  try {
-    return execSync(cmd, { encoding: 'utf8', stdio: 'pipe', timeout: 120000 }).trim();
-  } catch (e) {
-    return '';
   }
 }
 
